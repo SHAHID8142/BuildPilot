@@ -394,13 +394,18 @@ def s4(r):
         r.ok("roadmap P3 evidence records present: %s" % ", ".join(ev_ids))
     elif ev_ids:
         r.bad("P3_EVIDENCE_MISLABELLED: %s" % ev_ids)
-    probe = sources[0] if sources else "sps2/RESUME.md"
-    detected = [s for s in (probe, "no/such/resume-source.md")
+    # C4 exercises the SAME existence predicate the assertion above uses, with
+    # exactly one deliberately-missing source injected. A hardcoded absent path
+    # alone would make this control vacuously true (it can never be present), so
+    # the injected list must resolve to exactly the injected entry: the control
+    # fails if the predicate misses the missing source OR flags a real one.
+    injected = list(sources) + ["sps2/no/such/resume-source.md"]
+    detected = [s for s in injected
                 if not os.path.exists(os.path.join(REPO, s))]
-    if detected:
+    if detected == ["sps2/no/such/resume-source.md"]:
         r.control("C4 a missing resume source is detected")
     else:
-        r.bad("C4 missing resume source MISSED")
+        r.bad("C4 missing resume source MISSED (detected=%r)" % detected)
 
 
 def main():

@@ -34,6 +34,28 @@ GREEN, RED, BOLD, NC = (
     "\033[0;32m", "\033[0;31m", "\033[1m", "\033[0m")
 
 
+def neutrality_hits(core):
+    """Files under core/ outside the sanctioned adapter surface naming an agent.
+
+    The adapter surface (core/adapters/) is the single sanctioned location for
+    vendor names, matching validate-sps2.sh section 8 and core_is_adapter_free()
+    (D-P3-G.2). Shared by the section 2 assertion and its POSCTRL-I control, so
+    the control exercises the same walk instead of reading a probe back.
+    """
+    hits = []
+    for root, _d, files in os.walk(core):
+        if "adapters" in root:
+            continue
+        for f in files:
+            if f.endswith((".py", ".json")):
+                with open(os.path.join(root, f)) as fh:
+                    low = fh.read().lower()
+                for n in AGENT_NAMES:
+                    if n in low:
+                        hits.append("%s references %s" % (f, n))
+    return hits
+
+
 class Result:
     def __init__(self):
         self.passed = self.failed = self.neg_ok = 0
@@ -75,22 +97,12 @@ def s1(r):
 
 def s2(r):
     r.section("2. Agent-neutral core boundary")
-    bad = []
     core = os.path.join(SPS2, "core")
-    for root, _d, files in os.walk(core):
-        # The intended adapter surface (core/adapters/) is the single
-        # sanctioned location for vendor names; this mirrors the existing
-        # boundary in validate-sps2.sh section 8 and core_is_adapter_free().
-        # Everything else under core/ must remain agent-neutral (D-P3-G.2).
-        if "adapters" in root:
-            continue
-        for f in files:
-            if f.endswith((".py", ".json")):
-                with open(os.path.join(root, f)) as fh:
-                    low = fh.read().lower()
-                for n in AGENT_NAMES:
-                    if n in low:
-                        bad.append("%s references %s" % (f, n))
+    # The intended adapter surface (core/adapters/) is the single sanctioned
+    # location for vendor names; this mirrors the existing boundary in
+    # validate-sps2.sh section 8 and core_is_adapter_free(). Everything else
+    # under core/ must remain agent-neutral (D-P3-G.2).
+    bad = neutrality_hits(core)
     for b in bad:
         r.bad(b)
     if not bad:
@@ -99,10 +111,12 @@ def s2(r):
     with open(probe, "w") as fh:
         fh.write("# claude cursor\n")
     try:
-        with open(probe) as fh:
-            low = fh.read().lower()
+        # Exercise the same walk the assertion above uses. Reading the probe
+        # back would be vacuously true; the planted file is outside adapters/,
+        # so the walk must flag it (D-P3-G.2).
+        hits = neutrality_hits(core)
         r.control("POSCTRL-I  neutrality check detects a planted agent name") \
-            if any(n in low for n in AGENT_NAMES) \
+            if any("_probe_neutrality_tmp" in h for h in hits) \
             else r.bad("POSCTRL-I  neutrality check MISSED a planted name")
     finally:
         os.unlink(probe)

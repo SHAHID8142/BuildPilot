@@ -54,12 +54,14 @@ mut "M8 a fifth production capability promoted" "$REG" \
   "[c['promotion_assessment'].__setitem__('promotion_decision','PROMOTED_TO_PRODUCTION') for c in d['capabilities'] if c['capability_id']=='CAP-P03-005']"
 
 # MUTATIONS FOR THE ROADMAP P3 DECISIONS AND COMPLETION CONTROL (D-P3-G.1)
+# Labels are M20..M22 (not M15..M17): M15..M17 are already used below by the
+# P7 decision mutations, and duplicate labels make the evidence untraceable.
 P3D="$REPO/sps2/decisions/ROADMAP-P3-DECISIONS.json"
-mut "M15 P3 completion approval forged to an agent" "$P3D" \
+mut "M20 P3 completion approval forged to an agent" "$P3D" \
   "d['completion']['state']='APPROVED';d['completion']['approval']={'state':'APPROVED','decided_by':'Cline','decided_on':'2026-10-04'}"
-mut "M16 P3 completion approval undated" "$P3D" \
+mut "M21 P3 completion approval undated" "$P3D" \
   "d['completion']['state']='APPROVED';d['completion']['approval']={'state':'APPROVED','decided_by':'User'}"
-mut "M17 P3 completion state invalid" "$P3D" \
+mut "M22 P3 completion state invalid" "$P3D" \
   "d['completion']['state']='DONE'"
 
 # MUTATIONS FOR THE P7 READINESS DECISIONS

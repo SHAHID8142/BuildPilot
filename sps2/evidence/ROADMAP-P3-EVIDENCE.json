@@ -74,7 +74,7 @@
       "timestamp": "2026-10-04T00:00:00Z",
       "command": "bash sps2/tools/test-p7-readiness-mutation.sh; python3 sps2/tests/test_p5.py",
       "expected_result": "The two authorised guard corrections keep their controls non-vacuous and no other guard was weakened.",
-      "observed_result": "D-P3-G.1: the corrected P7-readiness check caught M1 (P3 claimed SATISFIED while the completion approval is still pending) via RECORD_OVERSTATES_P3, and the three new controls M15 (agent-forged completion approval), M16 (undated completion approval) and M17 (invalid completion state) were all caught via P3_COMPLETION_APPROVAL_NOT_USER_ATTRIBUTABLE and P3_COMPLETION_STATE_INVALID; 22 readiness mutations and 11 phase-validator mutations caught, 0 missed. D-P3-G.2: TestAgentNeutrality now excludes the sanctioned adapter surface and a new negative test plants a vendor name outside adapters/ to prove the walk still catches it; the unit suite ran 40 tests, OK.",
+      "observed_result": "D-P3-G.1: the corrected P7-readiness check caught M1 (P3 claimed SATISFIED while the completion approval is still pending) via RECORD_OVERSTATES_P3, and the three new controls M20 (agent-forged completion approval), M21 (undated completion approval) and M22 (invalid completion state) were all caught via P3_COMPLETION_APPROVAL_NOT_USER_ATTRIBUTABLE and P3_COMPLETION_STATE_INVALID; 22 readiness mutations and 11 phase-validator mutations caught, 0 missed. D-P3-G.2: TestAgentNeutrality now excludes the sanctioned adapter surface and a new negative test plants a vendor name outside adapters/ to prove the walk still catches it; the unit suite ran 40 tests, OK.",
       "result": "PASS",
       "exit_code": 0,
       "relates_to": {
