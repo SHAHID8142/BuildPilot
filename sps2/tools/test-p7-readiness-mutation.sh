@@ -83,7 +83,7 @@ mut "M26 two real adapters but the wrong pair (opencode renamed)" "$AREG" \
 # the states D-P3-D protects still pass. Both are asserted here, so a future
 # "fix" that simply hard-fails on any count drift cannot look healthy.
 ctrl() {  # ctrl <label> <expected: ADMIT|REJECT> <registry-json-mutation>
-  local label="$1" want="$2" body="$3" bak out
+  local label="$1" want="$2" body="$3" bak out got eff
   bak="$(mktemp)"; cp "$AREG" "$bak"
   python3 - "$AREG" "$body" <<'PY'
 import json, sys
@@ -96,10 +96,19 @@ PY
   cp "$bak" "$AREG"; rm -f "$bak"
   if printf '%s' "$out" | grep -q 'P7 READINESS RECORDED'; then got=ADMIT
   else got=REJECT; fi
-  if [ "$got" = "$want" ]; then
-    echo "  CONTROL ($label) -> $got as required"; PASSN=$((PASSN+1))
+  eff="$want"
+  if [ "$want" = "REJECT" ] && \
+     python3 -c "import json,sys; d=json.load(open(sys.argv[1])); sys.exit(0 if not (d.get('adapters') or []) else 1)" "$AREG"; then
+    # This suite also runs inside the zero-adapter copy of test-portability.py,
+    # where the registry is empty by design (D-P3-D). The D-P3-A count
+    # invariant applies to NON-EMPTY registries only, so in that state the
+    # guard must admit: expecting REJECT there would fail a legitimate run.
+    eff="ADMIT"
+  fi
+  if [ "$got" = "$eff" ]; then
+    echo "  CONTROL ($label) -> $got as required (expected $eff)"; PASSN=$((PASSN+1))
   else
-    echo "  CONTROL FAILURE ($label) -> $got, required $want"; FAILN=$((FAILN+1))
+    echo "  CONTROL FAILURE ($label) -> $got, required $eff"; FAILN=$((FAILN+1))
   fi
 }
 ctrl "intact: exactly two real adapters (codex, opencode) + generic DECLARED" ADMIT "pass"
