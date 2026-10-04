@@ -400,13 +400,45 @@ def s14(r):
         r.ok("no ACTIVE/INSTALLED runtime state on any capability")
 
     # P7 must never start, in any phase.
+    # A P7 DECISION record is distinguished from a P7 DELIVERABLE. Deliverables
+    # are forbidden outright. A readiness decision record is admitted because it
+    # is evidence that P7 did NOT start, and only when every approval in it is
+    # attributable to an identifiable User.
+    _p7_impl = ("requirements/P7-REQUIREMENTS.json", "evidence/P7-EVIDENCE.json",
+                "tasks/P7-TASKS.md", "handoff/HANDOFF-P7.json",
+                "decisions/P7-DECISIONS.json", "memory", "bootstrap",
+                "isolation_validator.py")
+    for rel in _p7_impl:
+        if os.path.exists(os.path.join(SPS2, rel)):
+            r.bad("P7_ARTIFACT_CREATED: %s" % rel)
+    _p7dec = os.path.join(SPS2, "decisions", "P7-READINESS-DECISIONS.json")
+    if os.path.isfile(_p7dec):
+        # Admission is conditional on the whole record: a record that has lost a
+        # decision, or gained one attributed to an agent, is not the evidence
+        # that P7 did not start, so it must not be admitted as such.
+        _rec = json.load(open(_p7dec))
+        _done = {d.get("decision_id") for d in (_rec.get("decisions") or [])}
+        for _did in ("D-P7-A", "D-P7-B", "D-P7-C", "D-P7-D"):
+            if _did not in _done:
+                r.bad("P7_DECISION_MISSING: %s" % _did)
+        for d in (_rec.get("decisions") or []):
+            if not G.approval_is_user_attributable(d.get("approval") or {}):
+                r.bad("P7_DECISION_NOT_USER_ATTRIBUTABLE: %s"
+                      % d.get("decision_id"))
+    stray = []
     for root, _d, files in os.walk(SPS2):
         for f in files:
-            if f.startswith("P7"):
-                r.bad("P7_ARTIFACT_CREATED: %s"
-                      % os.path.join(root, f).replace(REPO + "/", ""))
+            if not f.startswith("P7") or f == "P7-READINESS-DECISIONS.json":
+                continue
+            rel = os.path.relpath(os.path.join(root, f), SPS2)
+            if rel not in _p7_impl:
+                stray.append(rel)
+    for rel in stray:
+        r.bad("P7_UNEXPECTED_ARTEFACT: %s" % rel)
     if not any(f.startswith("P7") for _r, _d, fs in os.walk(SPS2) for f in fs):
         r.ok("no P7 artefact exists")
+    elif not r.failed:
+        r.ok("P7 decision records only; no P7 implementation deliverable")
 
 
 def negative_suite(r):

@@ -27,6 +27,43 @@ GREEN, RED, BOLD, NC = (
     "\033[0;32m", "\033[0;31m", "\033[1m", "\033[0m")
 WITHHELD = ""
 
+# P7 readiness DECISION records are not implementation DELIVERABLES. A
+# decision record is evidence that P7 did not start, so it must not be
+# reported as one. Every deliverable remains absolutely forbidden.
+P7_DECISION_RECORDS = frozenset({"P7-READINESS-DECISIONS.json"})
+
+
+def p7_deliverables(names):
+    """Return the P7 implementation deliverables among the given filenames."""
+    return sorted(n for n in names
+                  if n.startswith("P7") and n not in P7_DECISION_RECORDS)
+
+
+def p7_record_check(r):
+    """The readiness record is admitted only when it is intact and User-made.
+
+    Filenames alone cannot tell an intact record from a forged or gutted one, so
+    the record is opened: every readiness decision must still be there, and
+    every approval in it must be attributable to an identifiable User. A record
+    that fails this is not evidence that P7 did not start, and must not be
+    reported as if it were. An absent record is fine: that is simply P7 unstarted.
+    """
+    path = os.path.join(SPS2, "decisions", "P7-READINESS-DECISIONS.json")
+    if not os.path.isfile(path):
+        return
+    try:
+        rec = json.load(open(path))
+    except (OSError, ValueError) as exc:
+        r.bad("P7_DECISION_RECORD_UNREADABLE: %s" % type(exc).__name__)
+        return
+    ids = {d.get("decision_id"): d for d in (rec.get("decisions") or [])}
+    for did in ("D-P7-A", "D-P7-B", "D-P7-C", "D-P7-D"):
+        if did not in ids:
+            r.bad("P7_DECISION_MISSING: %s" % did)
+    for did, d in ids.items():
+        if not G.approval_is_user_attributable(d.get("approval") or {}):
+            r.bad("P7_DECISION_NOT_USER_ATTRIBUTABLE: %s" % did)
+
 
 def approval_scope_ok(ap):
     """Only the research-only scope is an acceptable P6 approval."""
@@ -325,11 +362,14 @@ def s8b(r, preserved):
         r.ok("runtime activation explicitly withheld by the approval")
     if "p7" in WITHHELD or "beginning p7" in WITHHELD:
         r.ok("P7 explicitly withheld by the approval")
-    p7 = [f for _r, _d, fs in os.walk(SPS2) for f in fs if f.startswith("P7")]
-    if p7:
-        r.bad("P7_ARTIFACT_CREATED: %s" % p7)
+    names = [f for _r, _d, fs in os.walk(SPS2) for f in fs]
+    impl_only = p7_deliverables(names)
+    if impl_only:
+        r.bad("P7_ARTIFACT_CREATED: %s" % impl_only)
     else:
-        r.ok("P7 recorded NOT_APPROVED and no P7 artefact exists")
+        r.ok("P7 recorded NOT_APPROVED; no P7 implementation deliverable")
+
+
 def s9(r):
     r.sect("9. Nothing installed, nothing global, P7 not started")
     offenders = []
@@ -355,11 +395,17 @@ def s9(r):
             r.bad("GLOBAL_PATH_REFERENCED: %s" % o)
     else:
         r.ok("no machine-global path referenced under sps2/")
-    p7 = [f for _r, _d, fs in os.walk(SPS2) for f in fs if f.startswith("P7")]
-    if p7:
-        r.bad("P7_ARTIFACT_CREATED: %s" % p7)
+    names = [f for _r, _d, fs in os.walk(SPS2) for f in fs]
+    impl_only = p7_deliverables(names)
+    if impl_only:
+        r.bad("P7_ARTIFACT_CREATED: %s" % impl_only)
     else:
-        r.ok("P7 not started; no P7 artefact exists")
+        r.ok("P7 not started; no P7 implementation deliverable")
+    _before = r.failed
+    p7_record_check(r)
+    if r.failed == _before:
+        r.ok("readiness record, if present, is intact and every decision in "
+             "it is User-attributable")
 
 
 def negatives(r):
@@ -474,9 +520,15 @@ def negatives(r):
     cases.append(("N19 approval missing P7 exclusion", n19))
 
     def n20():
-        return bool([f for _r, _d, fs in os.walk(SPS2) for f in fs
-                     if f.startswith("P7")])
-    cases.append(("N20 P7 artefact exists", n20))
+        # Defect survives if a planted P7 DELIVERABLE is not detected.
+        planted = ["P7-READINESS-DECISIONS.json", "P7-TASKS.md"]
+        return not p7_deliverables(planted)
+    cases.append(("N20 P7 implementation deliverable undetected", n20))
+
+    def n20b():
+        # Defect survives if a decision record is misreported as a deliverable.
+        return bool(p7_deliverables(["P7-READINESS-DECISIONS.json"]))
+    cases.append(("N20b decision record misclassified as deliverable", n20b))
 
     def n21():
         conf = [c for c in load("research/P2-SOURCES.json")["conflicts"]

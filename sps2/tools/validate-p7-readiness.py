@@ -18,7 +18,9 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))
 SPS2 = os.path.join(REPO, "sps2")
 sys.path.insert(0, os.path.join(SPS2, "core"))
+sys.path.insert(0, os.path.join(SPS2, "governance"))
 
+import attribution as G             # noqa: E402
 import registry_api as R            # noqa: E402
 
 GREEN, RED, BOLD, NC = (
@@ -94,6 +96,22 @@ def r2(r):
         r.ok("record is a distinct additive artefact, not a rewrite")
     else:
         r.bad("RECONCILIATION_SCHEMA_UNEXPECTED")
+    # The four ambiguities are recorded as resolved by name. The audit claims
+    # they are RESOLVED, so the claim is checked rather than trusted: an
+    # ambiguity quietly marked unresolved again, or re-pointed at a different
+    # decision, would otherwise leave the readiness claim unsupported.
+    amb = {a.get("id"): a for a in (doc.get("unresolved_ambiguity") or [])}
+    expect = {"AMB-PHASE-1": "D-P7-A", "AMB-PHASE-2": "D-P7-B",
+              "AMB-PHASE-3": "D-P7-C", "AMB-PHASE-4": "D-P7-D"}
+    drift = [i for i, did in sorted(expect.items())
+             if not (amb.get(i) or {}).get("resolved")
+             or (amb.get(i) or {}).get("resolved_by") != did]
+    if drift:
+        r.bad("AMBIGUITY_RESOLUTION_DRIFT: %s" % ",".join(drift))
+    else:
+        r.ok("all four ambiguities recorded resolved by D-P7-A..D")
+
+
 def r3(r):
     r.sect("3. Roadmap P3 unsatisfied claim matches repository reality")
     doc = json.load(open(RECON))
@@ -117,17 +135,57 @@ def r3(r):
         r.ok("no threat-model artefact, matching the recorded gap")
 
 
-def r4(r):
-    r.sect("4. P7 has not started")
+def p7_implementation_files():
+    """P7 IMPLEMENTATION deliverables. Forbidden while P7 is unauthorised."""
     found = [rel for rel in P7_IMPL_ARTEFACTS
              if os.path.exists(os.path.join(SPS2, rel))]
+    return found
+
+
+def p7_decision_files_ok():
+    """P7 decision records are permitted only if User-attributable.
+
+    A readiness decision record is evidence that P7 has NOT started, so
+    forbidding it would be backwards. It is admitted under a stricter rule:
+    every approval inside it must be attributable to an identifiable User,
+    and it must contain no implementation content.
+    """
+    p = os.path.join(SPS2, "decisions", "P7-READINESS-DECISIONS.json")
+    if not os.path.isfile(p):
+        return True, "no P7 decision record present"
+    doc = json.load(open(p))
+    for d in doc.get("decisions") or []:
+        if not G.approval_is_user_attributable(d.get("approval") or {}):
+            return False, "P7_DECISION_NOT_USER_ATTRIBUTABLE: %s" % (
+                d.get("decision_id"))
+    for bad in ("requirements", "evidence", "tasks", "memory", "bootstrap"):
+        if bad in [k.lower() for k in doc]:
+            return False, "P7_DECISION_RECORD_CONTAINS_IMPLEMENTATION: %s" % bad
+    return True, "P7 decision record is User-attributable and decision-only"
+
+
+def r4(r):
+    r.sect("4. P7 has not started")
+    # The guard distinguishes a P7 DECISION record from a P7 DELIVERABLE.
+    # Deliverables remain absolutely forbidden. A decision record is admitted
+    # only because it proves P7 was not started, and only under the stricter
+    # attribution rule enforced above.
+    impl = p7_implementation_files()
     stray = [f for _r, _d, fs in os.walk(SPS2) for f in fs
-             if f.startswith("P7")]
-    if found or stray:
-        for f in found + stray:
+             if f.startswith("P7")
+             and os.path.join(_r, f) not in
+             [os.path.join(SPS2, d) for d in P7_IMPL_ARTEFACTS]]
+    stray = [f for f in stray if f != "P7-READINESS-DECISIONS.json"]
+    if impl or stray:
+        for f in impl + stray:
             r.bad("P7_IMPLEMENTATION_ARTEFACT: %s" % f)
     else:
-        r.ok("no P7 implementation artefact exists")
+        r.ok("no P7 implementation deliverable exists")
+    ok, why = p7_decision_files_ok()
+    if ok:
+        r.ok(why)
+    else:
+        r.bad(why)
     body = json.dumps(json.load(open(os.path.join(SPS2, "decisions",
                                                    "P6-DECISIONS.json"))))
     if "beginning P7" in body:
@@ -186,6 +244,67 @@ def r6(r):
         r.ok("CAP-P03-005 still DEFERRED / NOT_PROMOTED")
     else:
         r.bad("CAP005_NOT_DEFERRED")
+
+
+def r7(r):
+    r.sect("7. P7 readiness decisions recorded, bounded and User-attributed")
+    p = os.path.join(SPS2, "decisions", "P7-READINESS-DECISIONS.json")
+    if not os.path.isfile(p):
+        r.bad("P7_READINESS_DECISIONS_MISSING")
+        return
+    doc = json.load(open(p))
+    ids = {d["decision_id"]: d for d in doc.get("decisions") or []}
+    for did in ("D-P7-A", "D-P7-B", "D-P7-C", "D-P7-D"):
+        d = ids.get(did)
+        if not d:
+            r.bad("P7_DECISION_MISSING: %s" % did)
+            continue
+        if not G.approval_is_user_attributable(d.get("approval") or {}):
+            r.bad("P7_DECISION_NOT_USER_ATTRIBUTABLE: %s" % did)
+        if not (d.get("bounded_scope") or "").strip():
+            r.bad("P7_DECISION_UNBOUNDED: %s has no bounded_scope" % did)
+        if not (d.get("rationale") or "").strip():
+            r.bad("P7_DECISION_WITHOUT_RATIONALE: %s" % did)
+    if not r.failed:
+        r.ok("all four decisions User-attributable, dated, bounded, with rationale")
+    # D-P7-B must not be silently downgraded into a waiver. The wording is read
+    # from the decision itself, and the prerequisites must still name the
+    # adapters and the portability test, so a waiver-by-deletion is caught.
+    b = ids.get("D-P7-B") or {}
+    breq = " ".join(b.get("required_before_p7") or []).lower()
+    if "not waived" in (b.get("decision") or "").lower() and \
+            "adapter" in breq and "portability" in breq:
+        r.ok("D-P7-B holds roadmap P3 unwaived with explicit prerequisites")
+    else:
+        r.bad("P7_B_WAIVED_OR_UNSPECIFIED: roadmap P3 prerequisite weakened")
+    # D-P7-C must keep legacy out of scope and forbid the retirement claim.
+    # Both are read from the structured fields, so a reworded decision cannot
+    # leave the checks passing on a quoted sentence alone.
+    c = ids.get("D-P7-C") or {}
+    narrowed = " ".join(c.get("explicitly_narrowed") or []).lower()
+    if "install.sh" in narrowed and "out of scope" in narrowed:
+        r.ok("D-P7-C explicitly places legacy installers out of scope")
+    else:
+        r.bad("P7_C_LEGACY_NOT_EXCLUDED")
+    if "no claim may be made that legacy global memory has been retired" \
+            in (c.get("required_assertion") or "").lower():
+        r.ok("D-P7-C forbids claiming legacy global memory was retired")
+    else:
+        r.bad("P7_C_RETIREMENT_CLAIM_NOT_FORBIDDEN")
+    # D-P7-D must actually require a threat model covering isolation and
+    # rollback: a threat model that ignores either is not the required one.
+    d4 = ids.get("D-P7-D") or {}
+    dreq = " ".join(d4.get("required_before_p7") or []).lower()
+    if "threat model" in (d4.get("decision") or "").lower() and \
+            "isolation" in dreq and "rollback" in dreq:
+        r.ok("D-P7-D requires a threat model before P7 implementation")
+    else:
+        r.bad("P7_D_THREAT_MODEL_NOT_REQUIRED")
+    # The decisions must not authorise P7 implementation.
+    if (doc.get("what_these_decisions_do_not_authorise") or []):
+        r.ok("record explicitly withholds P7 implementation authorisation")
+    else:
+        r.bad("P7_DECISIONS_MISSING_WITHHOLDING_SECTION")
 
 
 def negatives(r):
@@ -249,7 +368,7 @@ def main():
     r = Res()
     print("%sSPS 2.0 P7 Readiness Checks (audit only; P7 not authorised)%s"
           % (BOLD, NC))
-    for fn in (r1, r2, r3, r4, r5, r6):
+    for fn in (r1, r2, r3, r4, r5, r6, r7):
         fn(r)
     negatives(r)
     print("")

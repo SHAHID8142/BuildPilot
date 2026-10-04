@@ -388,11 +388,41 @@ if not _p6open:
         if os.path.exists(os.path.join(B, p)):
             print("P6_ARTIFACT_WITHOUT_AUTHORISATION: %s" % p)
 # Unconditional: no phase beyond P6 may begin.
+# A P7 DECISION record is distinguished from a P7 DELIVERABLE. Deliverables are
+# forbidden outright. The readiness decision record is evidence that P7 did NOT
+# start, so it is admitted under a stricter rule: every approval inside it must
+# be attributable to an identifiable User, judged by the AGENT control already
+# defined in this script, and each decision must resolve the ambiguity it
+# claims to resolve. Admitting a decision record never admits a deliverable.
 for p in ('requirements/P7-REQUIREMENTS.json', 'evidence/P7-EVIDENCE.json',
           'tasks/P7-TASKS.md', 'handoff/HANDOFF-P7.json',
-          'decisions/P7-DECISIONS.json'):
+          'decisions/P7-DECISIONS.json', 'memory', 'bootstrap',
+          'isolation_validator.py'):
     if os.path.exists(os.path.join(B, p)):
         print("P7_ARTIFACT_CREATED: %s" % p)
+_p7d = os.path.join(B, 'decisions/P7-READINESS-DECISIONS.json')
+if os.path.exists(_p7d):
+    _p7ids = {x.get('decision_id'): x for x in
+              (json.load(open(_p7d)).get('decisions') or [])}
+    for _did, _amb in (('D-P7-A', 'AMB-PHASE-1'),
+                       ('D-P7-B', 'AMB-PHASE-2'),
+                       ('D-P7-C', 'AMB-PHASE-3'),
+                       ('D-P7-D', 'AMB-PHASE-4')):
+        _rec = _p7ids.get(_did)
+        if not _rec:
+            print("P7_DECISION_MISSING: %s" % _did)
+            continue
+        _a = _rec.get('approval') or {}
+        _w = (_a.get('decided_by') or '').strip()
+        _t = (_a.get('decided_on') or _a.get('decided_at') or '').strip()
+        if _a.get('state') != 'APPROVED' or not _w or not _t or \
+                AGENT.search(_w):
+            print("P7_DECISION_NOT_USER_ATTRIBUTABLE: %s" % _did)
+        if _rec.get('resolves_ambiguity') != _amb:
+            print("P7_DECISION_WRONG_AMBIGUITY: %s -> %s" % (
+                _did, _rec.get('resolves_ambiguity')))
+    if not (_p7ids.get('D-P7-B') or {}).get('required_before_p7'):
+        print("P7_B_MISSING_REQUIREMENTS: roadmap P3 prerequisites absent")
 if ho.get('current_state') != 'APPROVED':
     print("HANDOFF_STATE: %s" % ho.get('current_state'))
 notapp = ho.get('approval_scope', {}).get('explicitly_not_approved', [])
