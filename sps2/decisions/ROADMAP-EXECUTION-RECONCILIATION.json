@@ -1,0 +1,140 @@
+{
+  "schema": "sps2.phase-reconciliation/v1",
+  "record_id": "REC-PHASES-0001",
+  "generated": "2026-10-04",
+  "author": "implementation agent (User review pending; not an approval)",
+  "purpose": "Additive reconciliation between the authoritative roadmap phase definitions and the phases actually executed here. It renames nothing, reclassifies nothing, and rewrites no history. Every entry cites repository evidence.",
+  "rules_observed": [
+    "No completed phase was renamed.",
+    "No completed phase was reclassified.",
+    "No history was rewritten.",
+    "This record is purely additive; it modifies no existing phase artefact.",
+    "Disagreements are recorded, not resolved."
+  ],
+  "authoritative_roadmap": {
+    "file": ".sps/architecture/SPS2-ROADMAP.md",
+    "note": "Roadmap numbering below is the roadmap's own, from its section headings."
+  },
+  "mapping": [
+    {
+      "roadmap_phase": "P1",
+      "roadmap_title": "Repository Foundation",
+      "executed_as": "P1 — Repository Foundation",
+      "alignment": "ALIGNED",
+      "satisfaction": "SATISFIED",
+      "evidence": ["sps2/requirements/P1-REQUIREMENTS.json", "sps2/handoff/HANDOFF-P1.json"],
+      "note": "The only phase where roadmap and executed numbering already agree."
+    },
+    {
+      "roadmap_phase": "P2",
+      "roadmap_title": "Core Orchestration & Governance",
+      "executed_as": "spread across executed P1-P4; never executed under this title",
+      "alignment": "CONTENT_ALREADY_DELIVERED_NUMBERING_DIVERGES",
+      "satisfaction": "SUBSTANTIALLY_SATISFIED",
+      "roadmap_deliverables": [
+        {"deliverable": "core/, governance/", "status": "PRESENT", "evidence": "sps2/core/, sps2/governance/"},
+        {"deliverable": "JSON Schemas", "status": "PARTIAL", "evidence": "sps2/governance/SCHEMAS/ has action, capability, decision, evidence, handoff schemas; sps2/schemas/ is still a README placeholder"},
+        {"deliverable": "migrated validators", "status": "PRESENT", "evidence": "sps2/tools/validate-sps2.sh and phase validators"},
+        {"deliverable": "conformance suite", "status": "PRESENT", "evidence": "sps2/tools/check_sps2.py and the negative suites"}
+      ],
+      "note": "The work exists but never carried the roadmap's P2 number."
+    },
+    {
+      "roadmap_phase": "P3",
+      "roadmap_title": "Agent Interoperability",
+      "executed_as": "NOT EXECUTED as interoperability; executed P3 was Production Capability",
+      "alignment": "NOT_SATISFIED",
+      "satisfaction": "NOT_SATISFIED",
+      "roadmap_deliverables": [
+        {"deliverable": "contract.schema.json", "status": "PRESENT", "evidence": "sps2/core/adapters/contract.schema.json"},
+        {"deliverable": "adapters", "status": "INSUFFICIENT", "evidence": "one adapter only, id 'generic', maturity DECLARED; roadmap requires real adapters"},
+        {"deliverable": "conformance test", "status": "ABSENT", "evidence": "no portability or delete-all-adapters test in sps2/tools/"}
+      ],
+      "acceptance_unmet": [
+        "deleting all adapters must leave core validators passing - untested",
+        "a fresh agent must resume from .sps/ alone - no onboarding dry run exists"
+      ],
+      "note": "The material gap. P7's stated dependency on P3 is unmet."
+    },
+    {
+      "roadmap_phase": "P4",
+      "roadmap_title": "Capability Discovery",
+      "executed_as": "executed P2 (Capability Intelligence) and P3 (Production Capability)",
+      "alignment": "CONTENT_PARTIALLY_DELIVERED_NUMBERING_DIVERGES",
+      "satisfaction": "PARTIALLY_SATISFIED",
+      "roadmap_deliverables": [
+        {"deliverable": "discovery engine", "status": "PARTIAL", "evidence": "ranking exists in sps2/capability/engine.py; no discovery crawl"},
+        {"deliverable": "ranking", "status": "PRESENT", "evidence": "sps2/capability/engine.py, sps2/core/selection.py"},
+        {"deliverable": "registry schema", "status": "PRESENT", "evidence": "sps2/governance/SCHEMAS/capability.schema.json"},
+        {"deliverable": "threat model", "status": "ABSENT", "evidence": "no threat-model artefact under sps2/"}
+      ],
+      "acceptance_unmet": [
+        "at least two candidates per domain - registry holds four governance and one SEO"
+      ],
+      "note": "Executed P4 was Production Promotion, a different activity."
+    },
+    {
+      "roadmap_phase": "P5",
+      "roadmap_title": "Dynamic Skill Selection",
+      "executed_as": "executed P5 (Implementation / Integration)",
+      "alignment": "CONTENT_PARTIALLY_OVERLAPPED_NUMBERING_DIVERGES",
+      "satisfaction": "PARTIALLY_SATISFIED",
+      "roadmap_deliverables": [
+        {"deliverable": "selection workflow", "status": "PRESENT", "evidence": "sps2/project/SELECTION-P5-0001.json"},
+        {"deliverable": "provenance records", "status": "PRESENT", "evidence": "provenance fields on every registry capability"},
+        {"deliverable": "staleness monitor (report-only)", "status": "PARTIAL", "evidence": "staleness fields and validators exist; no monitor component"}
+      ],
+      "deliberately_not_done": [
+        "the roadmap install step was NOT performed; installation is prohibited by D-P6-2 and all four capabilities remain never-installed"
+      ],
+      "note": "The install leg is intentionally absent."
+    },
+    {
+      "roadmap_phase": "P6",
+      "roadmap_title": "Technology Research",
+      "executed_as": "executed P6 (Technology Research)",
+      "alignment": "ALIGNED_BY_USER_DECISION",
+      "satisfaction": "SATISFIED",
+      "evidence": ["sps2/requirements/P6-REQUIREMENTS.json", "sps2/core/technology_readiness.py"],
+      "note": "Resolved by explicit User decision D-P6-1."
+    }
+  ],
+  "unresolved_ambiguity": [
+    {
+      "id": "AMB-PHASE-1",
+      "summary": "Roadmap and executed numbering disagree for roadmap P2, P3, P4 and P5.",
+      "detail": "Executed P2/P3/P4/P5 are Capability Intelligence, Production Capability, Production Promotion and Implementation/Integration. Roadmap P2/P3/P4/P5 are Core Orchestration & Governance, Agent Interoperability, Capability Discovery and Dynamic Skill Selection. Only roadmap P1 and P6 align.",
+      "why_it_matters": "Roadmap P7 declares dependencies 'P2, P3'. Read as roadmap numbers, P7 depends on roadmap P2 (substantially satisfied) and roadmap P3 (NOT satisfied). Read as executed numbers, it depends on executed P2 and P3, which are satisfied. The dependency has two opposite readings.",
+      "resolved": false
+    },
+    {
+      "id": "AMB-PHASE-2",
+      "summary": "Roadmap P3 (Agent Interoperability) is not satisfied and is a stated P7 prerequisite.",
+      "detail": "Only a DECLARED generic adapter exists and no portability conformance test exists. Roadmap P3 acceptance is unmet.",
+      "why_it_matters": "Starting P7 with this unmet builds memory and isolation on an unproven portability base.",
+      "resolved": false
+    },
+    {
+      "id": "AMB-PHASE-3",
+      "summary": "Roadmap P7's 'retire global memory' objective may require touching legacy files.",
+      "detail": "Global-memory concepts appear in sps2/research/P2-MEMORY-CONTEXT-AUDIT.md, P2-ECOSYSTEM-MAP.md, P2-COMPARATIVE-AUDIT.md and in .sps/. Legacy global installers install.sh, uninstall.sh and get-sps.sh still exist.",
+      "why_it_matters": "Retiring a global mechanism usually means changing or removing the installer that performs it. Legacy modification is prohibited and legacy diff must stay 0, so the objective may be unsatisfiable within the approved boundary.",
+      "resolved": false
+    },
+    {
+      "id": "AMB-PHASE-4",
+      "summary": "Roadmap P4's threat model deliverable is absent.",
+      "detail": "No threat-model artefact exists. Roadmap P4 is otherwise partially delivered.",
+      "why_it_matters": "P7 introduces persistent project state. Introducing state without a threat model is exactly the change that should not proceed unexamined.",
+      "resolved": false
+    }
+  ],
+  "what_this_record_does_not_do": [
+    "It does not rename any executed phase.",
+    "It does not reclassify any completed phase.",
+    "It does not declare roadmap P3 satisfied.",
+    "It does not close CONF-001.",
+    "It does not authorise P7.",
+    "It does not modify the production capability registry."
+  ]
+}

@@ -177,6 +177,7 @@ INSTALLERS=$(find "$SPS2" \( -name '*.sh' -o -name '*.ps1' \) 2>/dev/null \
   | grep -v '/tools/validate-p3.sh' | grep -v '/tools/validate-p4.sh' \
   | grep -v '/tools/test-snapshot-integrity.sh' \
   | grep -v '/tools/test-phase-boundary.sh' \
+  | grep -v '/tools/test-p7-readiness-mutation.sh' \
   | grep -v '/security/test-secret-safety.sh')
 if [ -n "$INSTALLERS" ]; then
   fail "sps2/ ships executable installers: $INSTALLERS"
