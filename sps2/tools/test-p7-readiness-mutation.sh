@@ -69,14 +69,32 @@ mut "M22 P3 completion state invalid" "$P3D" \
 # generic fallback is never counted. An empty registry stays valid (D-P3-D), so
 # the invariant applies to every NON-EMPTY registry.
 AREG="$REPO/sps2/core/adapters/registry.json"
+# This suite also runs inside the zero-adapter copy built by test-portability.py,
+# where the registry is [] by design. A mutation applied to an empty registry
+# would be a silent no-op and the count control would then be vacuous in exactly
+# the state that matters. Each case therefore PROVISIONS the delivered adapter
+# set first when the registry is empty, so every case means the same thing in
+# any state. The provisioned entries are contract-valid, so the only violation
+# the guard can report is the count/identity one under test.
+PROVISION="d['adapters'] = d.get('adapters') or [
+ {'agent_id': 'generic', 'maturity': 'DECLARED'},
+ {'agent_id': 'codex', 'maturity': 'EXPERIMENTAL'},
+ {'agent_id': 'opencode', 'maturity': 'EXPERIMENTAL'}]
+for _a in d['adapters']:
+    _a.update({'writes_global_state': False, 'capabilities': {},
+               'supports': [], 'fallbacks': {}, 'maintainer': 'sps2-probe'})"
 mut "M23 zero real adapters (both downgraded to DECLARED)" "$AREG" \
-  "[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id'] in ('codex','opencode')]"
+  "$PROVISION
+[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id'] in ('codex','opencode')]"
 mut "M24 one real adapter (opencode downgraded to DECLARED)" "$AREG" \
-  "[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id']=='opencode']"
+  "$PROVISION
+[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id']=='opencode']"
 mut "M25 three real adapters (generic upgraded to EXPERIMENTAL)" "$AREG" \
-  "[a.__setitem__('maturity','EXPERIMENTAL') for a in d['adapters'] if a['agent_id']=='generic']"
+  "$PROVISION
+[a.__setitem__('maturity','EXPERIMENTAL') for a in d['adapters'] if a['agent_id']=='generic']"
 mut "M26 two real adapters but the wrong pair (opencode renamed)" "$AREG" \
-  "[a.__setitem__('agent_id','othercli') for a in d['adapters'] if a['agent_id']=='opencode']"
+  "$PROVISION
+[a.__setitem__('agent_id','othercli') for a in d['adapters'] if a['agent_id']=='opencode']"
 
 # ── CONTROLS for the D-P3-A exact-count invariant ─────────────────────────────
 # A count invariant is only meaningful if the AUTHORISED state still passes and
