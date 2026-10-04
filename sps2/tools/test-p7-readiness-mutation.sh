@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Mutation-test the P7 readiness invariants.
-# Each mutation must make validate-p7-readiness.py FAIL. Registry restored.
+# Each mutation must make validate-p7-readiness.py FAIL. The mutated file is
+# restored after every case (registry, reconciliation and decision records).
 set -uo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 RECON="$REPO/sps2/decisions/ROADMAP-EXECUTION-RECONCILIATION.json"
@@ -27,7 +28,7 @@ PY
     echo "  MISSED  $label"; FAILN=$((FAILN+1))
   else
     echo "  CAUGHT  $label  ->  $(printf '%s' "$out" | grep -oE \
-      'RECORD_OVERSTATES_P3|RECONCILIATION_INCOMPLETE|MAPPING_WITHOUT_EXECUTED_PHASE|INVALID_SATISFACTION|AMBIGUITY_RESOLUTION_DRIFT|CONF_001_NO_LONGER_UNRESOLVED|LCP_OR_INP_CLAIMED|INVENTED_THRESHOLD|PRODUCTION_COUNT_CHANGED|RUNTIME_STATE_PRESENT|CAP005_NOT_DEFERRED|P7_IMPLEMENTATION_ARTEFACT|P7_DECISION_[A-Z_]*|P7_B_WAIVED_OR_UNSPECIFIED|P7_C_[A-Z_]*|P7_D_THREAT_MODEL_NOT_REQUIRED' \
+      'RECORD_OVERSTATES_P3|ADAPTER_REGISTRY_INVALID|P3_COMPLETION_[A-Z_]*|RECONCILIATION_INCOMPLETE|MAPPING_WITHOUT_EXECUTED_PHASE|INVALID_SATISFACTION|AMBIGUITY_RESOLUTION_DRIFT|CONF_001_NO_LONGER_UNRESOLVED|LCP_OR_INP_CLAIMED|INVENTED_THRESHOLD|PRODUCTION_COUNT_CHANGED|RUNTIME_STATE_PRESENT|CAP005_NOT_DEFERRED|P7_IMPLEMENTATION_ARTEFACT|P7_DECISION_[A-Z_]*|P7_B_WAIVED_OR_UNSPECIFIED|P7_C_[A-Z_]*|P7_D_THREAT_MODEL_NOT_REQUIRED' \
       | sort -u | tr '\n' ' ')"
     PASSN=$((PASSN+1))
   fi
@@ -51,6 +52,15 @@ mut "M7 CAP-05 promoted" "$REG" \
   "[c.__setitem__('lifecycle_state','ACTIVE') for c in d['capabilities'] if c['capability_id']=='CAP-P03-005']"
 mut "M8 a fifth production capability promoted" "$REG" \
   "[c['promotion_assessment'].__setitem__('promotion_decision','PROMOTED_TO_PRODUCTION') for c in d['capabilities'] if c['capability_id']=='CAP-P03-005']"
+
+# MUTATIONS FOR THE ROADMAP P3 DECISIONS AND COMPLETION CONTROL (D-P3-G.1)
+P3D="$REPO/sps2/decisions/ROADMAP-P3-DECISIONS.json"
+mut "M15 P3 completion approval forged to an agent" "$P3D" \
+  "d['completion']['state']='APPROVED';d['completion']['approval']={'state':'APPROVED','decided_by':'Cline','decided_on':'2026-10-04'}"
+mut "M16 P3 completion approval undated" "$P3D" \
+  "d['completion']['state']='APPROVED';d['completion']['approval']={'state':'APPROVED','decided_by':'User'}"
+mut "M17 P3 completion state invalid" "$P3D" \
+  "d['completion']['state']='DONE'"
 
 # MUTATIONS FOR THE P7 READINESS DECISIONS
 P7D="$REPO/sps2/decisions/P7-READINESS-DECISIONS.json"

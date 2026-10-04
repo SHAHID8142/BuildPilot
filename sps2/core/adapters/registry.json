@@ -1,14 +1,56 @@
 {
   "schema": "sps2.adapter-registry/v1",
-  "version": "0.1.0-foundation",
-  "generated": "2026-10-03",
-  "note": "P1 ships only the generic adapter. Concrete agent adapters are a later phase and require their own verification. The core must pass with every adapter deleted.",
+  "version": "0.2.0-roadmap-p3",
+  "generated": "2026-10-04",
+  "note": "Roadmap P3 (D-P3-A..G): two declarative per-agent adapters (EXPERIMENTAL) plus the DECLARED generic fallback. Adapters remain optional and disposable; the core must pass with every adapter deleted (exercised by sps2/tools/test-portability.py). Each entry has an equal declarative mirror at core/adapters/<agent_id>/adapter.json.",
   "adapters": [
     {
       "agent_id": "generic",
       "display_name": "Generic (any repository-reading agent)",
       "maturity": "DECLARED",
       "writes_global_state": false,
+      "capabilities": {"skills": false, "mcp": false, "shell": true,
+                       "subagents": false, "browser": false,
+                       "structured_questions": false},
+      "supports": ["repository-state-reading", "markdown", "json"],
+      "fallbacks": {
+        "structured_questions": "Use plain conversational questions and record the answer in project state.",
+        "subagents": "Execute sequentially in the primary agent.",
+        "browser": "Record verification as NOT RUN rather than claiming success."
+      },
+      "maintainer": "sps2-core"
+    },
+    {
+      "agent_id": "codex",
+      "display_name": "OpenAI Codex CLI",
+      "maturity": "EXPERIMENTAL",
+      "writes_global_state": false,
+      "detection": {
+        "paths": ["AGENTS.md", ".codex/", "requirements.toml"],
+        "cli": ["codex"],
+        "read_only": true
+      },
+      "capabilities": {"skills": false, "mcp": false, "shell": true,
+                       "subagents": false, "browser": false,
+                       "structured_questions": false},
+      "supports": ["repository-state-reading", "markdown", "json"],
+      "fallbacks": {
+        "structured_questions": "Use plain conversational questions and record the answer in project state.",
+        "subagents": "Execute sequentially in the primary agent.",
+        "browser": "Record verification as NOT RUN rather than claiming success."
+      },
+      "maintainer": "sps2-core"
+    },
+    {
+      "agent_id": "opencode",
+      "display_name": "OpenCode",
+      "maturity": "EXPERIMENTAL",
+      "writes_global_state": false,
+      "detection": {
+        "paths": ["AGENTS.md", "opencode.json", ".opencode/"],
+        "cli": ["opencode"],
+        "read_only": true
+      },
       "capabilities": {"skills": false, "mcp": false, "shell": true,
                        "subagents": false, "browser": false,
                        "structured_questions": false},

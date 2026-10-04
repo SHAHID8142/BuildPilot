@@ -61,9 +61,9 @@
     {
       "roadmap_phase": "P3",
       "roadmap_title": "Agent Interoperability",
-      "executed_as": "NOT EXECUTED as interoperability; executed P3 was Production Capability",
-      "alignment": "NOT_SATISFIED",
-      "satisfaction": "NOT_SATISFIED",
+      "executed_as": "Roadmap P3 execution under D-P3-F (adapter surface); executed-phase P3 was Production Capability",
+      "alignment": "CONTENT_DELIVERED_UNDER_ITS_OWN_ROADMAP_PHASE",
+      "satisfaction": "SUBSTANTIALLY_SATISFIED",
       "roadmap_deliverables": [
         {
           "deliverable": "contract.schema.json",
@@ -72,20 +72,27 @@
         },
         {
           "deliverable": "adapters",
-          "status": "INSUFFICIENT",
-          "evidence": "one adapter only, id 'generic', maturity DECLARED; roadmap requires real adapters"
+          "status": "PRESENT",
+          "evidence": "two declarative per-agent adapters (codex, opencode) at EXPERIMENTAL under D-P3-A/B, generic fallback intact; contract-validated by sps2/tools/test-portability.py section 1"
         },
         {
           "deliverable": "conformance test",
-          "status": "ABSENT",
-          "evidence": "no portability or delete-all-adapters test in sps2/tools/"
+          "status": "PRESENT",
+          "evidence": "sps2/tools/test-portability.py; zero-adapter exercise green on an isolated copy; evidence EV-RP3-002"
         }
       ],
-      "acceptance_unmet": [
-        "deleting all adapters must leave core validators passing - untested",
-        "a fresh agent must resume from .sps/ alone - no onboarding dry run exists"
+      "acceptance_met": [
+        "deleting all adapters leaves core validators passing - exercised on an isolated copy under D-P3-D (EV-RP3-002)",
+        "a fresh agent resumes from repository state alone via the mechanical checklist under D-P3-E (EV-RP3-003)"
       ],
-      "note": "The material gap. P7's stated dependency on P3 is unmet."
+      "remaining": [
+        "User approval of the delivered state (roadmap P3 verification: 'Approval: user'); until that approval is recorded, this record must not report SATISFIED"
+      ],
+      "guard_updates": [
+        "validate-p7-readiness.py section 3: one-adapter DECLARED pin replaced by a decision-derived, approval-gated claim check (D-P3-G.1)",
+        "test_p5.py TestAgentNeutrality and validate-p5.py section 2: the adapter surface is excluded, matching validate-sps2.sh section 8 and core_is_adapter_free (D-P3-G.2)"
+      ],
+      "note": "Delivered under D-P3-F; satisfaction stays below SATISFIED pending User approval. P7's stated dependency on P3 is implemented and verified; approval outstanding."
     },
     {
       "roadmap_phase": "P4",
@@ -166,19 +173,19 @@
       "id": "AMB-PHASE-1",
       "summary": "Roadmap and executed numbering disagree for roadmap P2, P3, P4 and P5.",
       "detail": "Executed P2/P3/P4/P5 are Capability Intelligence, Production Capability, Production Promotion and Implementation/Integration. Roadmap P2/P3/P4/P5 are Core Orchestration & Governance, Agent Interoperability, Capability Discovery and Dynamic Skill Selection. Only roadmap P1 and P6 align.",
-      "why_it_matters": "Roadmap P7 declares dependencies 'P2, P3'. Read as roadmap numbers, P7 depends on roadmap P2 (substantially satisfied) and roadmap P3 (NOT satisfied). Read as executed numbers, it depends on executed P2 and P3, which are satisfied. The dependency has two opposite readings.",
+      "why_it_matters": "Roadmap P7 declares dependencies 'P2, P3'. Read as roadmap numbers, P7 depends on roadmap P2 (substantially satisfied) and roadmap P3 (implemented under D-P3-F; User approval of the delivered state pending). Read as executed numbers, it depends on executed P2 and P3, which are satisfied. The dependency has two opposite readings.",
       "resolved": true,
       "resolved_by": "D-P7-A",
       "resolution": "Resolved by explicit User decision recorded in sps2/decisions/P7-READINESS-DECISIONS.json. The ambiguity is closed as a DECISION; the underlying work it describes remains OUTSTANDING and is now a tracked prerequisite."
     },
     {
       "id": "AMB-PHASE-2",
-      "summary": "Roadmap P3 (Agent Interoperability) is not satisfied and is a stated P7 prerequisite.",
-      "detail": "Only a DECLARED generic adapter exists and no portability conformance test exists. Roadmap P3 acceptance is unmet.",
-      "why_it_matters": "Starting P7 with this unmet builds memory and isolation on an unproven portability base.",
+      "summary": "Roadmap P3 (Agent Interoperability) was not satisfied and is a stated P7 prerequisite.",
+      "detail": "When this ambiguity was recorded, only a DECLARED generic adapter existed and no portability conformance test existed. The D-P3-F delivery added two EXPERIMENTAL adapters and the conformance test under User decisions D-P3-A..G.",
+      "why_it_matters": "Starting P7 with this unmet would have built memory and isolation on an unproven portability base.",
       "resolved": true,
       "resolved_by": "D-P7-B",
-      "resolution": "Resolved by explicit User decision recorded in sps2/decisions/P7-READINESS-DECISIONS.json. The ambiguity is closed as a DECISION; the underlying work it describes remains OUTSTANDING and is now a tracked prerequisite."
+      "resolution": "Resolved by explicit User decisions recorded in sps2/decisions/P7-READINESS-DECISIONS.json and sps2/decisions/ROADMAP-P3-DECISIONS.json. The underlying work was delivered and verified under D-P3-F; User approval of the delivered state remains PENDING, so D-P7-B still gates P7."
     },
     {
       "id": "AMB-PHASE-3",

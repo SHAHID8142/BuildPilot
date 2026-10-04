@@ -78,6 +78,12 @@ def s2(r):
     bad = []
     core = os.path.join(SPS2, "core")
     for root, _d, files in os.walk(core):
+        # The intended adapter surface (core/adapters/) is the single
+        # sanctioned location for vendor names; this mirrors the existing
+        # boundary in validate-sps2.sh section 8 and core_is_adapter_free().
+        # Everything else under core/ must remain agent-neutral (D-P3-G.2).
+        if "adapters" in root:
+            continue
         for f in files:
             if f.endswith((".py", ".json")):
                 with open(os.path.join(root, f)) as fh:

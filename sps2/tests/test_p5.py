@@ -289,22 +289,45 @@ class TestAdapterBoundary(unittest.TestCase):
 
 
 class TestAgentNeutrality(unittest.TestCase):
-    """The core must not name a specific coding agent."""
+    """The core must not name a specific coding agent.
+
+    The intended adapter surface (sps2/core/adapters/) is the single
+    sanctioned location for vendor-named adapters, consistent with
+    validate-sps2.sh section 8 and core_is_adapter_free(). Everything else
+    under sps2/core/ must remain neutral (D-P3-G.2).
+    """
 
     AGENTS = ("cline", "claude", "codex", "cursor", "copilot", "windsurf",
               "aider", "gemini", "opencode", "gpt")
 
-    def test_positive_core_sources_name_no_agent(self):
+    def _core_vendor_hits(self):
         core = os.path.join(REPO, "sps2", "core")
+        hits = []
         for root, _dirs, files in os.walk(core):
+            if "adapters" in root:
+                continue
             for f in files:
                 if not f.endswith((".py", ".json")):
                     continue
                 with open(os.path.join(root, f)) as fh:
                     low = fh.read().lower()
                 for a in self.AGENTS:
-                    self.assertNotIn(
-                        a, low, "%s references agent %r" % (f, a))
+                    if a in low:
+                        hits.append("%s references agent %r" % (f, a))
+        return hits
+
+    def test_positive_core_sources_name_no_agent_outside_adapters(self):
+        self.assertEqual(self._core_vendor_hits(), [])
+
+    def test_negative_unintended_vendor_reference_is_detected(self):
+        probe = os.path.join(REPO, "sps2", "core", "_probe_vendor_tmp.json")
+        with open(probe, "w") as fh:
+            fh.write('{"note": "claude cursor"}\n')
+        try:
+            hits = self._core_vendor_hits()
+            self.assertTrue(any("_probe_vendor_tmp" in h for h in hits))
+        finally:
+            os.unlink(probe)
 
     def test_positive_core_imports_stdlib_only(self):
         core = os.path.join(REPO, "sps2", "core")

@@ -20,12 +20,15 @@ SPS2 = os.path.join(REPO, "sps2")
 sys.path.insert(0, os.path.join(SPS2, "core"))
 sys.path.insert(0, os.path.join(SPS2, "governance"))
 
+import adapter_registry as A        # noqa: E402
 import attribution as G             # noqa: E402
 import registry_api as R            # noqa: E402
 
 GREEN, RED, BOLD, NC = (
     "\033[0;32m", "\033[0;31m", "\033[1m", "\033[0m")
 RECON = os.path.join(SPS2, "decisions", "ROADMAP-EXECUTION-RECONCILIATION.json")
+P3_DECISIONS = os.path.join(SPS2, "decisions", "ROADMAP-P3-DECISIONS.json")
+PORTABILITY_TOOL = os.path.join(SPS2, "tools", "test-portability.py")
 AUDIT = os.path.join(REPO, "AUDIT-P7-READINESS-AND-DECISION.md")
 # Roadmap P7 deliverables. None may exist while P7 is unauthorised.
 P7_IMPL_ARTEFACTS = ("requirements/P7-REQUIREMENTS.json",
@@ -112,21 +115,73 @@ def r2(r):
         r.ok("all four ambiguities recorded resolved by D-P7-A..D")
 
 
+def p3_delivery_state():
+    """Mechanical view of the roadmap P3 deliverables and approval.
+
+    delivered: the adapter registry is contract-valid, the generic fallback is
+    still present, at least two adapters are beyond DECLARED (D-P3-B: DECLARED
+    alone is insufficient for P3 completion) and the portability conformance
+    test exists (D-P3-D).
+    approved: the roadmap P3 decisions record carries a User-attributable
+    completion approval. Roadmap P3 verification says "Approval: user", so the
+    record may not report SATISFIED before the User approves the delivered
+    state. Attribution reuses the governance predicate, so an agent can never
+    self-approve.
+
+    D-P3-G.1: this replaces the old one-adapter DECLARED pin
+    (ADAPTER_STATE_CHANGED) with a decision-derived claim check, so a
+    legitimate Roadmap P3 adapter does not falsely fail.
+    """
+    errors = []
+    try:
+        errs, _summary = A.validate_registry()
+    except Exception as exc:            # unreadable or malformed registry
+        return False, False, ["ADAPTER_REGISTRY_UNREADABLE: %s"
+                              % type(exc).__name__]
+    if errs:
+        errors.append("ADAPTER_REGISTRY_INVALID: %s" % "; ".join(errs))
+    adapters = json.load(open(os.path.join(
+        SPS2, "core", "adapters", "registry.json"))).get("adapters") or []
+    generic = any(a.get("agent_id") == "generic" for a in adapters)
+    real = [a for a in adapters
+            if a.get("maturity") in ("EXPERIMENTAL", "VERIFIED")]
+    conformance = os.path.isfile(PORTABILITY_TOOL)
+    delivered = bool(not errs and generic and len(real) >= 2 and conformance)
+    approved = False
+    if os.path.isfile(P3_DECISIONS):
+        rec = json.load(open(P3_DECISIONS))
+        comp = rec.get("completion") or {}
+        state = comp.get("state")
+        if state not in ("PENDING_USER_APPROVAL", "APPROVED"):
+            errors.append("P3_COMPLETION_STATE_INVALID: %r" % (state,))
+        elif state == "APPROVED":
+            if G.approval_is_user_attributable(comp.get("approval") or {}):
+                approved = True
+            else:
+                errors.append(
+                    "P3_COMPLETION_APPROVAL_NOT_USER_ATTRIBUTABLE")
+    return delivered, approved, errors
+
+
 def r3(r):
-    r.sect("3. Roadmap P3 unsatisfied claim matches repository reality")
+    r.sect("3. Roadmap P3 claim matches repository reality")
     doc = json.load(open(RECON))
     p3 = next((m for m in doc["mapping"] if m["roadmap_phase"] == "P3"), None)
-    adapters = json.load(open(os.path.join(SPS2, "core", "adapters",
-                                           "registry.json")))["adapters"]
     claimed = (p3 or {}).get("satisfaction")
-    if len(adapters) == 1 and adapters[0].get("maturity") == "DECLARED":
-        if claimed == "NOT_SATISFIED":
-            r.ok("record correctly reports roadmap P3 NOT_SATISFIED")
+    delivered, approved, errors = p3_delivery_state()
+    for e in errors:
+        r.bad(e)
+    if not errors:
+        if claimed == "SATISFIED":
+            if delivered and approved:
+                r.ok("record reports roadmap P3 SATISFIED, delivered and "
+                     "User-approved")
+            else:
+                r.bad("RECORD_OVERSTATES_P3: claims SATISFIED but "
+                      "delivered=%s approved=%s" % (delivered, approved))
         else:
-            r.bad("RECORD_OVERSTATES_P3: claims %r with 1 DECLARED adapter"
-                  % claimed)
-    else:
-        r.bad("ADAPTER_STATE_CHANGED: %d adapters" % len(adapters))
+            r.ok("record does not overstate roadmap P3 (%r); the adapter "
+                 "state is no longer pinned to a fixed count" % claimed)
     tm = [f for _r, _d, fs in os.walk(SPS2) for f in fs
           if "threat" in f.lower()]
     if tm:
