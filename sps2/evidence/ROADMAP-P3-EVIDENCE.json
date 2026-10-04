@@ -109,6 +109,20 @@
         "decision_ids": ["D-P3-D", "D-P3-F"],
         "deliverable": "rollback"
       }
+    },
+    {
+      "evidence_id": "EV-RP3-007",
+      "source": "MUTATION_SUITE",
+      "timestamp": "2026-10-04T00:00:00Z",
+      "command": "bash sps2/tools/test-p7-readiness-mutation.sh (M23..M26 plus the three D-P3-A controls); independent count probe (0/1/2/3 real adapters, wrong pair, empty registry); python3 sps2/tools/validate-p7-readiness.py; python3 sps2/tools/test-portability.py",
+      "expected_result": "D-P3-A's 'exactly two' bound is machine-enforced, the DECLARED generic fallback is never counted as a real adapter, and the D-P3-D empty-registry state stays valid.",
+      "observed_result": "Both enforcement points replaced their '>= 2' floor with an exact bound: validate-p7-readiness.py p3_delivery_state() and test-portability.py section 1 now emit ADAPTER_COUNT_VIOLATION (expected exactly 2, found N) and ADAPTER_IDENTITY_VIOLATION (authorised pair codex, opencode). Measured: M23 zero real adapters -> CAUGHT ADAPTER_COUNT_VIOLATION; M24 one real adapter -> CAUGHT ADAPTER_COUNT_VIOLATION; M25 three real adapters (generic upgraded) -> CAUGHT ADAPTER_COUNT_VIOLATION; M26 two real adapters with the wrong pair -> CAUGHT ADAPTER_IDENTITY_VIOLATION. Controls all satisfied: exactly two authorised real adapters + generic DECLARED -> ADMITTED; D-P3-D empty registry [] -> ADMITTED (the fix did not break the delete-all criterion); generic DECLARED alone -> REJECTED as an incomplete delivery. Independent count probe: 7 of 7 cases behaved as required, 0 wrong. Mutation suite total after this change: 29 caught-or-control-satisfied, 0 missed (readiness) + 11 caught, 0 missed (phase validators). An independent neuter-the-guard experiment on the pre-fix control confirmed the earlier POSCTRL-I was vacuous; that control was fixed by the secondary review in d368a9f, not here. Note: the suite counts quoted in EV-RP3-004 and EV-RP3-005 are the counts observed at delivery time and are left unmodified as historical record; the mutation-suite count is superseded by this record. Roadmap P3 completion remains PENDING_USER_APPROVAL.",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "decision_ids": ["D-P3-A", "D-P3-B", "D-P3-D"],
+        "deliverable": "adapter-count invariant"
+      }
     }
   ]
 }

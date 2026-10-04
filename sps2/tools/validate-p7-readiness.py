@@ -29,6 +29,11 @@ GREEN, RED, BOLD, NC = (
 RECON = os.path.join(SPS2, "decisions", "ROADMAP-EXECUTION-RECONCILIATION.json")
 P3_DECISIONS = os.path.join(SPS2, "decisions", "ROADMAP-P3-DECISIONS.json")
 PORTABILITY_TOOL = os.path.join(SPS2, "tools", "test-portability.py")
+# D-P3-A: "Implement real adapters for exactly two low-risk targets: Codex and
+# OpenCode", bounded to "Two adapters only. Adding any further adapter requires
+# a new decision." The DECLARED generic fallback is never a real adapter.
+AUTHORISED_REAL_ADAPTERS = ("codex", "opencode")
+REAL_MATURITIES = ("EXPERIMENTAL", "VERIFIED")
 AUDIT = os.path.join(REPO, "AUDIT-P7-READINESS-AND-DECISION.md")
 # Roadmap P7 deliverables. None may exist while P7 is unauthorised.
 P7_IMPL_ARTEFACTS = ("requirements/P7-REQUIREMENTS.json",
@@ -143,10 +148,31 @@ def p3_delivery_state():
     adapters = json.load(open(os.path.join(
         SPS2, "core", "adapters", "registry.json"))).get("adapters") or []
     generic = any(a.get("agent_id") == "generic" for a in adapters)
-    real = [a for a in adapters
-            if a.get("maturity") in ("EXPERIMENTAL", "VERIFIED")]
+    real = [a.get("agent_id") for a in adapters
+            if a.get("maturity") in REAL_MATURITIES]
+    # D-P3-A authorises EXACTLY two real adapters, and names them. The DECLARED
+    # generic fallback is never counted as a real adapter. An empty registry is
+    # still a VALID state under D-P3-D (the delete-all portability criterion),
+    # so the exact-count invariant applies to every NON-EMPTY registry: a
+    # registry that ships adapters but declares zero, one or more than two real
+    # adapters (or a different pair) is a defect, not a warning.
+    count_ok = True
+    if not adapters:
+        pass                                # zero-adapter state, valid (D-P3-D)
+    elif len(real) != len(AUTHORISED_REAL_ADAPTERS):
+        count_ok = False
+        errors.append(
+            "ADAPTER_COUNT_VIOLATION: D-P3-A authorises exactly %d real "
+            "adapters, found %d (%s)"
+            % (len(AUTHORISED_REAL_ADAPTERS), len(real),
+               ",".join(sorted(real)) or "none"))
+    elif set(real) != set(AUTHORISED_REAL_ADAPTERS):
+        count_ok = False
+        errors.append(
+            "ADAPTER_IDENTITY_VIOLATION: D-P3-A authorises %s, found %s"
+            % (",".join(AUTHORISED_REAL_ADAPTERS), ",".join(sorted(real))))
     conformance = os.path.isfile(PORTABILITY_TOOL)
-    delivered = bool(not errs and generic and len(real) >= 2 and conformance)
+    delivered = bool(not errs and count_ok and generic and conformance)
     approved = False
     if os.path.isfile(P3_DECISIONS):
         rec = json.load(open(P3_DECISIONS))

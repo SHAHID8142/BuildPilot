@@ -50,6 +50,12 @@ EVIDENCE = os.path.join(SPS2, "evidence", "ROADMAP-P3-EVIDENCE.json")
 # exercise (D-P3-D).
 CORE_OWNED = ("README.md", "contract.schema.json", "registry.json")
 
+# D-P3-A: "Implement real adapters for exactly two low-risk targets: Codex and
+# OpenCode", bounded to "Two adapters only. Adding any further adapter requires
+# a new decision." The DECLARED generic fallback is never a real adapter.
+AUTHORISED_REAL_ADAPTERS = ("codex", "opencode")
+REAL_MATURITIES = ("EXPERIMENTAL", "VERIFIED")
+
 # The same vendor list the existing neutrality guards use.
 VENDORS = ("cline", "claude", "codex", "cursor", "copilot", "windsurf",
            "aider", "gemini", "opencode", "gpt")
@@ -207,11 +213,22 @@ def s1(r):
     else:
         r.bad("GENERIC_FALLBACK_CHANGED_OR_MISSING")
     real = sorted(a.get("agent_id") for a in entries.values()
-                  if a.get("maturity") in ("EXPERIMENTAL", "VERIFIED"))
-    if len(real) >= 2:
-        r.ok("at least two adapters beyond DECLARED (D-P3-A/B): %s" % real)
+                  if a.get("maturity") in REAL_MATURITIES)
+    # D-P3-A authorises EXACTLY two real adapters and names them; the DECLARED
+    # generic fallback is never counted. An empty registry remains valid under
+    # D-P3-D, so this invariant applies to every non-empty registry.
+    if not entries:
+        r.ok("zero-adapter registry accepted as valid (D-P3-D)")
+    elif len(real) != len(AUTHORISED_REAL_ADAPTERS):
+        r.bad("ADAPTER_COUNT_VIOLATION: D-P3-A authorises exactly %d real "
+              "adapters, found %d (%s)"
+              % (len(AUTHORISED_REAL_ADAPTERS), len(real),
+                 ", ".join(real) or "none"))
+    elif set(real) != set(AUTHORISED_REAL_ADAPTERS):
+        r.bad("ADAPTER_IDENTITY_VIOLATION: D-P3-A authorises %s, found %s"
+              % (", ".join(AUTHORISED_REAL_ADAPTERS), ", ".join(real)))
     else:
-        r.bad("REAL_ADAPTERS_INSUFFICIENT: %s" % real)
+        r.ok("exactly the two authorised real adapters (D-P3-A): %s" % real)
 
 
 def s2(r):

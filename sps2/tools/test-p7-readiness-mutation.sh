@@ -28,7 +28,7 @@ PY
     echo "  MISSED  $label"; FAILN=$((FAILN+1))
   else
     echo "  CAUGHT  $label  ->  $(printf '%s' "$out" | grep -oE \
-      'RECORD_OVERSTATES_P3|ADAPTER_REGISTRY_INVALID|P3_COMPLETION_[A-Z_]*|RECONCILIATION_INCOMPLETE|MAPPING_WITHOUT_EXECUTED_PHASE|INVALID_SATISFACTION|AMBIGUITY_RESOLUTION_DRIFT|CONF_001_NO_LONGER_UNRESOLVED|LCP_OR_INP_CLAIMED|INVENTED_THRESHOLD|PRODUCTION_COUNT_CHANGED|RUNTIME_STATE_PRESENT|CAP005_NOT_DEFERRED|P7_IMPLEMENTATION_ARTEFACT|P7_DECISION_[A-Z_]*|P7_B_WAIVED_OR_UNSPECIFIED|P7_C_[A-Z_]*|P7_D_THREAT_MODEL_NOT_REQUIRED' \
+      'RECORD_OVERSTATES_P3|ADAPTER_REGISTRY_INVALID|ADAPTER_COUNT_VIOLATION|ADAPTER_IDENTITY_VIOLATION|P3_COMPLETION_[A-Z_]*|RECONCILIATION_INCOMPLETE|MAPPING_WITHOUT_EXECUTED_PHASE|INVALID_SATISFACTION|AMBIGUITY_RESOLUTION_DRIFT|CONF_001_NO_LONGER_UNRESOLVED|LCP_OR_INP_CLAIMED|INVENTED_THRESHOLD|PRODUCTION_COUNT_CHANGED|RUNTIME_STATE_PRESENT|CAP005_NOT_DEFERRED|P7_IMPLEMENTATION_ARTEFACT|P7_DECISION_[A-Z_]*|P7_B_WAIVED_OR_UNSPECIFIED|P7_C_[A-Z_]*|P7_D_THREAT_MODEL_NOT_REQUIRED' \
       | sort -u | tr '\n' ' ')"
     PASSN=$((PASSN+1))
   fi
@@ -63,6 +63,49 @@ mut "M21 P3 completion approval undated" "$P3D" \
   "d['completion']['state']='APPROVED';d['completion']['approval']={'state':'APPROVED','decided_by':'User'}"
 mut "M22 P3 completion state invalid" "$P3D" \
   "d['completion']['state']='DONE'"
+
+# MUTATIONS FOR THE D-P3-A EXACT-COUNT INVARIANT
+# D-P3-A authorises EXACTLY two real adapters: codex and opencode. The DECLARED
+# generic fallback is never counted. An empty registry stays valid (D-P3-D), so
+# the invariant applies to every NON-EMPTY registry.
+AREG="$REPO/sps2/core/adapters/registry.json"
+mut "M23 zero real adapters (both downgraded to DECLARED)" "$AREG" \
+  "[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id'] in ('codex','opencode')]"
+mut "M24 one real adapter (opencode downgraded to DECLARED)" "$AREG" \
+  "[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id']=='opencode']"
+mut "M25 three real adapters (generic upgraded to EXPERIMENTAL)" "$AREG" \
+  "[a.__setitem__('maturity','EXPERIMENTAL') for a in d['adapters'] if a['agent_id']=='generic']"
+mut "M26 two real adapters but the wrong pair (opencode renamed)" "$AREG" \
+  "[a.__setitem__('agent_id','othercli') for a in d['adapters'] if a['agent_id']=='opencode']"
+
+# ── CONTROLS for the D-P3-A exact-count invariant ─────────────────────────────
+# A count invariant is only meaningful if the AUTHORISED state still passes and
+# the states D-P3-D protects still pass. Both are asserted here, so a future
+# "fix" that simply hard-fails on any count drift cannot look healthy.
+ctrl() {  # ctrl <label> <expected: ADMIT|REJECT> <registry-json-mutation>
+  local label="$1" want="$2" body="$3" bak out
+  bak="$(mktemp)"; cp "$AREG" "$bak"
+  python3 - "$AREG" "$body" <<'PY'
+import json, sys
+p, body = sys.argv[1], sys.argv[2]
+d = json.load(open(p))
+exec(body)
+json.dump(d, open(p, "w"), indent=2)
+PY
+  out="$(python3 "$REPO/sps2/tools/validate-p7-readiness.py" 2>&1)"
+  cp "$bak" "$AREG"; rm -f "$bak"
+  if printf '%s' "$out" | grep -q 'P7 READINESS RECORDED'; then got=ADMIT
+  else got=REJECT; fi
+  if [ "$got" = "$want" ]; then
+    echo "  CONTROL ($label) -> $got as required"; PASSN=$((PASSN+1))
+  else
+    echo "  CONTROL FAILURE ($label) -> $got, required $want"; FAILN=$((FAILN+1))
+  fi
+}
+ctrl "intact: exactly two real adapters (codex, opencode) + generic DECLARED" ADMIT "pass"
+ctrl "D-P3-D: empty registry [] stays valid" ADMIT "d['adapters']=[]"
+ctrl "D-P3-B: generic DECLARED fallback alone is not a completed P3 delivery" \
+  REJECT "[a.__setitem__('maturity','DECLARED') for a in d['adapters'] if a['agent_id'] in ('codex','opencode')]"
 
 # MUTATIONS FOR THE P7 READINESS DECISIONS
 P7D="$REPO/sps2/decisions/P7-READINESS-DECISIONS.json"
@@ -181,7 +224,7 @@ verdict "intact record, no false alarm" p6 admitted
 FAILN=$((FAILN+V_M))
 echo ""
 if [ "$FAILN" -eq 0 ]; then
-  echo "== P7 READINESS MUTATION SUITE: $PASSN caught, 0 missed (readiness) + $V_N caught, 0 missed (phase validators) =="
+  echo "== P7 READINESS MUTATION SUITE: $PASSN caught-or-control-satisfied, 0 missed (readiness) + $V_N caught, 0 missed (phase validators) =="
   exit 0
 fi
 echo "== P7 READINESS MUTATION SUITE: $PASSN caught, $FAILN MISSED =="
