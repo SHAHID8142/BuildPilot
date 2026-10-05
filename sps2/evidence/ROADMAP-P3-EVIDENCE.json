@@ -123,6 +123,48 @@
         "decision_ids": ["D-P3-A", "D-P3-B", "D-P3-D"],
         "deliverable": "adapter-count invariant"
       }
+    },
+    {
+      "evidence_id": "EV-RP3-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-05T00:00:00Z",
+      "command": "python3 sps2/tools/portability.py (rehearse, --verify, and --apply on an isolated copy); python3 sps2/tools/test-portability.py (sections 1 and 3); python3 sps2/tools/validate-p7-readiness.py; bash sps2/tools/test-p7-readiness-mutation.sh",
+      "expected_result": "The delete-all / rollback operation is implemented once and is reusable: it proves the zero-adapter state, proves the delivered state, is reversible, and cannot be pointed at the live tree by accident.",
+      "observed_result": "The operation now lives in sps2/tools/portability.py: plan_delete_all/apply_delete_all (D-P3-D: per-agent entries and directories removed, core-owned contract.schema.json, registry.json and README.md kept), snapshot_surface/restore_surface/rehearse, verify_zero_adapter_state, verify_delivered_state, run_core_validators, and the single definition site of the D-P3-A bound. Rehearsal on an isolated copy: deleted codex, generic and opencode, emptied the registry to [], kept the three core-owned files, validated the empty registry as a valid zero-adapter state, ran all 13 sps2-scoped core validators green in that state, then restored the surface byte-identically (sha256 equal) and re-validated the delivered state; the live adapter surface sha256 was unchanged throughout. The destructive form was exercised on a separate temporary copy only: without --confirm it refused (rc=1), with '--apply --root <copy> --confirm' it deleted all three adapter directories, emptied the registry and reported the zero-adapter state valid (rc=0); --verify in that state reports the rollback state rather than a missing delivered set. The enforced D-P3-A pair is read from portability.py by both test-portability.py and validate-p7-readiness.py, and decision_bound() fails when it disagrees with the recorded decision: an in-process probe with the constant widened to (codex, opencode, claude) returned D-P3-A_BOUND_DRIFT and with (codex) likewise, while the intact constant returned no error. P7 readiness stayed 30 passed / 0 failed / 7 negative cases and the mutation suite 29 caught-or-control-satisfied / 0 missed (readiness) plus 11 caught / 0 missed (phase validators).",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "decision_ids": ["D-P3-D", "D-P3-A"],
+        "deliverable": "portability operation"
+      }
+    },
+    {
+      "evidence_id": "EV-RP3-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-05T00:00:00Z",
+      "command": "python3 sps2/tools/test-portability.py (section 4)",
+      "expected_result": "A session with no prior memory can determine from repository state alone what P3 is, what was authorised, which adapters exist and why, what remains, what is forbidden, which decisions were made and where the authoritative records live, and the checklist agrees with live state.",
+      "observed_result": "The checklist sps2/RESUME.md now names 11 canonical sources, all resolving, including the roadmap and interoperability architecture documents that define P3 itself, and answers all 10 required questions (What P3 is; What was authorised; Adapters delivered; Current phase; Current task; Next allowed action; What remains; Forbidden actions; Authoritative records; Rollback). Two new integration assertions bind it to live state: the machine-readable COMPLETION line equals the decisions record (PENDING_USER_APPROVAL), and the adapter inventory table equals the registry exactly (codex=EXPERIMENTAL, generic=DECLARED, opencode=EXPERIMENTAL), so neither the resume state nor the inventory can go stale behind the decisions record or the adapter surface. The recorded invariants still hold: D-P3-A..G all User-attributed and dated, D-P7-A..D present, the reconciliation record still maps roadmap P3, and the evidence set is EV-RP3-*. Controls: C4 detects a missing resume source and the new C5 detects an injected adapter maturity drift (codex EXPERIMENTAL -> VERIFIED) while reporting nothing for the real registry. Suite total 39 checks passed, 0 failed, 5 controls enforced.",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "decision_ids": ["D-P3-E"],
+        "deliverable": "resume checklist"
+      }
+    },
+    {
+      "evidence_id": "EV-RP3-010",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-05T00:00:00Z",
+      "command": "validate-sps2.sh; validate-p2.sh; validate-p3.sh; validate-p4.sh; validate-p5.py; validate-p6.py; validate-p7-readiness.py; sps2/tests/test_p5.py; test-snapshot-integrity.sh; test-phase-boundary.sh; test-p7-readiness-mutation.sh; sps2/security/test-secret-safety.sh; .sps/tools/validate-governance.sh; test-history-credential-check.py; check_emoji.py sps2; test-portability.py",
+      "expected_result": "Every suite is green on the state committed by this build work, with no guard weakened and no standing boundary moved.",
+      "observed_result": "Run sequentially on an isolated clone of the branch state so that no uncommitted file in the working tree could affect the result: SPS2 foundation 72 passed / 0 failed / 25 negative; P2 69 / 0 / 22; P3 67 / 0 / 18; P4 59 / 0 / 22 + 7 controls; P5 46 / 0 / 18 + 1 control; P6 65 / 0 / 24 + 1 control; P7 readiness 30 / 0 / 7; unit tests 40 ran, OK; snapshot mutations 9 caught / 0 missed; phase-boundary mutations 11 caught / 0 missed; P7 readiness mutations 29 caught-or-control-satisfied / 0 missed plus 11 caught / 0 missed; secret safety 9 checks / 0 failed; .sps governance 54 / 0; history-credential all 4 scenarios as required; emoji scanned=125 violations=0; portability conformance 39 checks / 0 failed / 5 controls. Production capability registry sha256 5f95f62b03851748f95ac501221597f95243aae80f69cde2a8aea9105537af56 unchanged; legacy diff empty; checkpoint a7767cf present; .sps/ unmodified. The counts in EV-RP3-004 and EV-RP3-005 are the counts observed at first delivery and remain untouched as historical record; this record supersedes the mutation-suite count only in the sense that it is unchanged (29 + 11). No suite was modified to accommodate this work: the only guards changed are the two already authorised by D-P3-G, and the portability and resume suites gained checks, never lost them. Roadmap P3 completion remains PENDING_USER_APPROVAL.",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "decision_ids": ["D-P3-F", "D-P3-G"],
+        "deliverable": "full suite"
+      }
     }
   ]
 }
