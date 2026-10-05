@@ -142,7 +142,7 @@ def resume_inventory(text):
 
 def inventory_drift(rows, entries):
     """Checklist rows that disagree with the live adapter registry."""
-    live = {a.get("agent_id"): a.get("maturity") for a in entries}
+    live = {aid: a.get("maturity") for aid, a in PT.entry_pairs(entries)}
     drift = []
     for aid, maturity in sorted(rows.items()):
         if live.get(aid) != maturity:
@@ -175,7 +175,7 @@ def s1(r):
     else:
         r.ok("registry contract-valid: %d adapters %s"
              % (summary["adapters"], summary["ids"]))
-    entries = {a.get("agent_id"): a for a in reg.get("adapters") or []}
+    entries = dict(PT.entry_pairs(reg.get("adapters") or []))
     dirs = sorted(d for d in os.listdir(ADAPTERS)
                   if os.path.isdir(os.path.join(ADAPTERS, d)))
     for d in dirs:
@@ -244,27 +244,57 @@ def s1(r):
     else:
         r.ok("enforced adapter bound matches the recorded %s decision: %s"
              % (PT.BOUND_DECISION_ID, ", ".join(named)))
-    # C6: a malformed entry (a real maturity with no agent_id) must be rejected
-    # by the contract check AND must not crash the count invariant that both
-    # enforcement points derive from portability.real_adapter_ids(). The control
-    # fails if the predicate raises, or if the entry stops being reported.
-    malformed = copy.deepcopy(list(entries.values()))
+    # C6: a malformed entry must be rejected by the contract check AND must not
+    # crash either count predicate. Each control fails if any call raises, if
+    # the entry stops being reported under its own violation code, if the count
+    # invariant moves, or if the summary callers render their messages from stops
+    # being a sortable list of strings. The shapes below are the ones that used
+    # to raise an unhandled TypeError or AttributeError out of the core
+    # validator rather than returning a violation.
     baseline = PT.real_adapter_ids(entries=entries)
-    malformed.append({"maturity": "EXPERIMENTAL"})
-    try:
-        mal_ids = PT.real_adapter_ids(entries=malformed)
-        mal_errs = A.validate_registry({"adapters": malformed})[0]
-    except Exception as exc:                       # a crash is a defect here
-        r.bad("C6 count invariant crashed on a malformed adapter entry (%s)"
-              % type(exc).__name__)
-    else:
-        reported = [e for e in mal_errs if "MISSING_FIELD" in e]
-        if reported and mal_ids == baseline:
-            r.control("C6 a malformed adapter entry is rejected by the "
-                      "contract and skipped by the count invariant")
+    delivered = copy.deepcopy(list(entries.values()))
+    malformed_cases = (
+        ("a real maturity with no agent_id",
+         {"maturity": "EXPERIMENTAL"}, "MISSING_FIELD: agent_id"),
+        ("a null agent_id",
+         {"agent_id": None, "maturity": "EXPERIMENTAL"}, "INVALID_AGENT_ID"),
+        ("a non-string agent_id",
+         {"agent_id": 42, "maturity": "EXPERIMENTAL"}, "INVALID_AGENT_ID"),
+        ("an unhashable agent_id",
+         {"agent_id": ["x"], "maturity": "EXPERIMENTAL"}, "INVALID_AGENT_ID"),
+        ("a missing maturity",
+         {"agent_id": "ghost"}, "INVALID_MATURITY"),
+        ("a non-string maturity",
+         {"agent_id": "ghost", "maturity": 7}, "INVALID_MATURITY"),
+        ("an entry that is not an object",
+         "opencode", "ADAPTER_NOT_AN_OBJECT"),
+        ("a null entry",
+         None, "ADAPTER_NOT_AN_OBJECT"),
+        ("a non-object detection",
+         dict(delivered[0], detection="AGENTS.md"),
+         "ADAPTER_DETECTION_NOT_AN_OBJECT"),
+    )
+    for label, bad, expect in malformed_cases:
+        probe = copy.deepcopy(delivered) + [bad]
+        try:
+            mal_ids = PT.real_adapter_ids(entries=probe)
+            mal_errs, mal_summary = A.validate_registry({"adapters": probe})
+        except Exception as exc:                   # a crash is a defect here
+            r.bad("C6 count invariant crashed on %s (%s)"
+                  % (label, type(exc).__name__))
+            continue
+        if not [e for e in mal_errs if expect in e]:
+            r.bad("C6 %s stopped being reported (errs=%r)" % (label, mal_errs))
+        elif mal_ids != baseline:
+            r.bad("C6 %s perturbed the count invariant (%r != %r)"
+                  % (label, mal_ids, baseline))
+        elif not all(isinstance(x, str) for x in mal_summary["ids"]) or \
+                not all(isinstance(m, str) for m in mal_summary["maturities"]):
+            r.bad("C6 %s produced an unrenderable summary (%r)"
+                  % (label, mal_summary))
         else:
-            r.bad("C6 malformed entry mishandled (errs=%r real=%r)"
-                  % (mal_errs, mal_ids))
+            r.control("C6 %s is rejected by the contract and skipped by the "
+                      "count invariant" % label)
 
 
 def s2(r):
@@ -452,7 +482,7 @@ def s4(r):
     # must report nothing, and with it exactly that one adapter; otherwise the
     # control would be vacuous in either direction.
     injected_registry = copy.deepcopy(entries)
-    target = next((a for a in injected_registry
+    target = next((a for _aid, a in PT.entry_pairs(injected_registry)
                    if a.get("agent_id") != PT.FALLBACK_ADAPTER_ID), None)
     if target is None:
         r.bad("C5 no real adapter available to inject a maturity drift")

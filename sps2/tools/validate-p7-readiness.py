@@ -151,7 +151,7 @@ def p3_delivery_state():
         errors.append("ADAPTER_REGISTRY_INVALID: %s" % "; ".join(errs))
     adapters = json.load(open(os.path.join(
         SPS2, "core", "adapters", "registry.json"))).get("adapters") or []
-    generic = any(a.get("agent_id") == "generic" for a in adapters)
+    generic = PT.FALLBACK_ADAPTER_ID in PT.entry_ids(adapters)
     real = PT.real_adapter_ids(entries=adapters)
     # D-P3-A authorises EXACTLY two real adapters, and names them. The DECLARED
     # generic fallback is never counted as a real adapter. An empty registry is

@@ -104,6 +104,65 @@ mut "M27 malformed adapter entry (real maturity, no agent_id)" "$AREG" \
   "$PROVISION
 d['adapters'].append({'maturity': 'EXPERIMENTAL'})"
 
+# M28-M33 pin the malformed-entry shapes that reached an unhandled TypeError or
+# AttributeError inside the core adapter validator. They deliberately do NOT use
+# mut(): that helper decides CAUGHT from the absence of the success marker, and
+# an unhandled crash also removes that marker, so mut() would score a traceback
+# as a clean detection. mal() instead demands the specific contract violation
+# the entry should produce, and rejects any output carrying a traceback.
+mal() {  # mal <label> <registry-json-mutation> <expected-violation>
+  local label="$1" body="$2" expect="$3" bak out
+  bak="$(mktemp)"; cp "$AREG" "$bak"
+  python3 - "$AREG" "$body" <<'PY'
+import json, sys
+p, body = sys.argv[1], sys.argv[2]
+d = json.load(open(p))
+exec(body)
+json.dump(d, open(p, "w"), indent=2)
+PY
+  if [ $? -ne 0 ]; then
+    # A mutation that never applied leaves the registry intact, which would
+    # otherwise be scored below as a clean detection of the intended case.
+    echo "  ERROR   $label (mutation did not apply)"; FAILN=$((FAILN+1))
+    cp "$bak" "$AREG"; rm -f "$bak"; return
+  fi
+  out="$(python3 "$REPO/sps2/tools/validate-p7-readiness.py" 2>&1)"
+  cp "$bak" "$AREG"; rm -f "$bak"
+  if printf '%s' "$out" | grep -q 'Traceback (most recent call last)'; then
+    echo "  MISSED  $label  ->  escaped a traceback"; FAILN=$((FAILN+1))
+  elif printf '%s' "$out" | grep -q 'P7 READINESS RECORDED'; then
+    echo "  MISSED  $label  ->  admitted"; FAILN=$((FAILN+1))
+  elif printf '%s' "$out" | grep -q "$expect"; then
+    echo "  CAUGHT  $label  ->  $expect"; PASSN=$((PASSN+1))
+  else
+    echo "  MISSED  $label  ->  expected $expect, got: $(printf '%s' "$out" \
+      | grep -oE 'ADAPTER_REGISTRY_[A-Z_]*' | sort -u | tr '\n' ' ')"
+    FAILN=$((FAILN+1))
+  fi
+}
+MALBASE="'maturity': 'EXPERIMENTAL', 'writes_global_state': False, \
+'capabilities': {}, 'supports': [], 'fallbacks': {}, \
+'maintainer': 'sps2-probe'"
+MALFIED="$PROVISION
+d['adapters'].append({%s})"
+mal "M28 malformed entry: null agent_id" \
+  "$(printf "$MALFIED" "'agent_id': None, $MALBASE")" 'INVALID_AGENT_ID'
+mal "M29 malformed entry: non-string agent_id" \
+  "$(printf "$MALFIED" "'agent_id': 42, $MALBASE")" 'INVALID_AGENT_ID'
+mal "M30 malformed entry: unhashable agent_id" \
+  "$(printf "$MALFIED" "'agent_id': ['x'], $MALBASE")" 'INVALID_AGENT_ID'
+mal "M31 malformed entry: non-string maturity" \
+  "$(printf "$MALFIED" "'agent_id': 'ghost', 'maturity': 7, \
+'writes_global_state': False, 'capabilities': {}, 'supports': [], \
+'fallbacks': {}, 'maintainer': 'sps2-probe'")" 'INVALID_MATURITY'
+mal "M32 malformed entry: entry is not an object" \
+  "$PROVISION
+d['adapters'].append('opencode')" 'ADAPTER_NOT_AN_OBJECT'
+mal "M33 malformed entry: non-object detection" \
+  "$PROVISION
+d['adapters'].append(dict(d['adapters'][1], detection='AGENTS.md'))" \
+  'ADAPTER_DETECTION_NOT_AN_OBJECT'
+
 # ── CONTROLS for the D-P3-A exact-count invariant ─────────────────────────────
 # A count invariant is only meaningful if the AUTHORISED state still passes and
 # the states D-P3-D protects still pass. Both are asserted here, so a future

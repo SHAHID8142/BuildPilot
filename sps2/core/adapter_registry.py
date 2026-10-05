@@ -10,6 +10,7 @@ It never branches on a specific agent identity.
 """
 import json
 import os
+from collections.abc import Hashable
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))
@@ -33,6 +34,17 @@ def load_registry(path=None):
         return json.load(fh)
 
 
+def _entry(a):
+    """A registry entry coerced to a dict.
+
+    A malformed entry (a bare string, a number, null) has no fields to read, so
+    every field access goes through here instead of assuming `.get` exists. The
+    entry is still rejected by `validate_adapter`; this only keeps the summary
+    that callers render into messages computable instead of fatal.
+    """
+    return a if isinstance(a, dict) else {}
+
+
 def validate_adapter(adapter):
     """Return a list of contract violations. Empty list means compliant."""
     errs = []
@@ -52,8 +64,11 @@ def validate_adapter(adapter):
     if adapter.get("writes_global_state") is not False:
         errs.append("ADAPTER_WRITES_GLOBAL_STATE: %s" % aid)
     det = adapter.get("detection")
-    if det is not None and det.get("read_only") is not True:
-        errs.append("ADAPTER_DETECTION_NOT_READ_ONLY: %s" % aid)
+    if det is not None:
+        if not isinstance(det, dict):
+            errs.append("ADAPTER_DETECTION_NOT_AN_OBJECT: %s" % aid)
+        elif det.get("read_only") is not True:
+            errs.append("ADAPTER_DETECTION_NOT_READ_ONLY: %s" % aid)
     if not isinstance(adapter.get("capabilities"), dict):
         errs.append("CAPABILITIES_NOT_AN_OBJECT: %s" % aid)
     if not isinstance(adapter.get("supports"), list):
@@ -73,16 +88,23 @@ def validate_registry(registry=None):
     seen = set()
     for a in adapters:
         errs.extend(validate_adapter(a))
-        aid = (a or {}).get("agent_id")
+        aid = _entry(a).get("agent_id")
+        if not isinstance(aid, Hashable):
+            continue        # an unhashable id is reported as INVALID_AGENT_ID
         if aid in seen:
             errs.append("DUPLICATE_ADAPTER_ID: %s" % aid)
         seen.add(aid)
     summary = {
         "adapters": len(adapters),
-        "ids": sorted(x for x in seen if x),
+        # Only usable string ids are listed. A malformed entry has no id to
+        # report, and mixing shapes here would break the sort that callers
+        # build their messages from; the entry itself is rejected above.
+        "ids": sorted(x for x in seen if isinstance(x, str) and x),
         "all_write_project_local": all(
-            a.get("writes_global_state") is False for a in adapters),
-        "maturities": sorted({a.get("maturity") for a in adapters}),
+            _entry(a).get("writes_global_state") is False for a in adapters),
+        "maturities": sorted({m for m in (_entry(a).get("maturity")
+                                          for a in adapters)
+                              if isinstance(m, str)}),
     }
     return errs, summary
 

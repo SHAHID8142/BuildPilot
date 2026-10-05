@@ -38,6 +38,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Hashable
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SPS2 = os.path.dirname(HERE)
@@ -166,6 +167,18 @@ def entry_ids(entries):
             and a.get("agent_id")]
 
 
+def entry_pairs(entries):
+    """`(agent_id, entry)` for every entry that is an object with a usable id.
+
+    A malformed entry (not an object, or an `agent_id` that is not a hashable
+    key) is dropped here instead of crashing a caller that keys a map by id or
+    reads fields off each entry. It is still rejected by the contract check,
+    which reports both `ADAPTER_NOT_AN_OBJECT` and `INVALID_AGENT_ID`.
+    """
+    return [(aid, a) for a in entry_list(entries) if isinstance(a, dict)
+            for aid in (a.get("agent_id"),) if isinstance(aid, Hashable)]
+
+
 def real_adapter_ids(root=None, entries=None):
     """Ids whose maturity is beyond DECLARED; the DECLARED fallback never is.
 
@@ -280,7 +293,7 @@ def plan_delete_all(root=None):
     return {
         "dirs": dirs,
         "files": files,
-        "entries": [a.get("agent_id") for a in registry_entries(root)],
+        "entries": [aid for aid, _a in entry_pairs(registry_entries(root))],
         "kept": list(CORE_OWNED_FILES),
     }
 
@@ -302,7 +315,7 @@ def apply_delete_all(root=None):
     regp = registry_path(root)
     with open(regp) as fh:
         reg = json.load(fh)
-    dropped = [a.get("agent_id") for a in (reg.get("adapters") or [])]
+    dropped = [aid for aid, _a in entry_pairs(reg.get("adapters"))]
     reg["adapters"] = []
     reg["note"] = ZERO_ADAPTER_NOTE
     with open(regp, "w") as fh:
@@ -388,7 +401,7 @@ def verify_delivered_state(root=None):
         return ["ADAPTER_REGISTRY_UNREADABLE: %s" % type(exc).__name__]
     errs, _summary = A.validate_registry(reg)
     errors.extend(errs)
-    entries = {a.get("agent_id"): a for a in (reg.get("adapters") or [])}
+    entries = dict(entry_pairs(reg.get("adapters")))
     for d in adapter_dirs(root):
         mirror = os.path.join(adapter_dir(root), d, DECLARATION_NAME)
         if not os.path.isfile(mirror):

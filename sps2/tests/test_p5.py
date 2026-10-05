@@ -282,6 +282,60 @@ class TestAdapterBoundary(unittest.TestCase):
         errs, _ = A.validate_registry(reg)
         self.assertTrue(any("DUPLICATE_ADAPTER_ID" in e for e in errs))
 
+    def _assert_malformed_is_reported(self, bad, expect):
+        """A malformed entry must be reported, never fatal.
+
+        `expect` identifies the contract violation. Each shape is checked alone
+        AND beside a valid adapter, because that is where the summary callers
+        render their messages from used to raise instead of returning.
+        """
+        for adapters in ([bad], [GOOD_ADAPTER, bad]):
+            try:
+                errs, _summary = A.validate_registry({"adapters": adapters})
+            except Exception as exc:                    # a crash is the defect
+                self.fail("validate_registry raised %s: %s"
+                          % (type(exc).__name__, exc))
+            self.assertTrue(any(expect in e for e in errs),
+                            "expected %r in %r" % (expect, errs))
+
+    def test_negative_missing_agent_id_at_real_maturity(self):
+        self._assert_malformed_is_reported({"maturity": "EXPERIMENTAL"},
+                                           "MISSING_FIELD: agent_id")
+
+    def test_negative_null_agent_id(self):
+        self._assert_malformed_is_reported(dict(GOOD_ADAPTER, agent_id=None),
+                                           "INVALID_AGENT_ID")
+
+    def test_negative_non_string_agent_id(self):
+        self._assert_malformed_is_reported(dict(GOOD_ADAPTER, agent_id=42),
+                                           "INVALID_AGENT_ID")
+
+    def test_negative_unhashable_agent_id(self):
+        self._assert_malformed_is_reported(dict(GOOD_ADAPTER, agent_id=["x"]),
+                                           "INVALID_AGENT_ID")
+
+    def test_negative_entry_is_not_an_object(self):
+        for bad in ("opencode", 7, None):
+            self._assert_malformed_is_reported(bad, "ADAPTER_NOT_AN_OBJECT")
+
+    def test_negative_missing_or_non_string_maturity(self):
+        for bad in (None, 7):
+            self._assert_malformed_is_reported(
+                dict(GOOD_ADAPTER, maturity=bad), "INVALID_MATURITY")
+
+    def test_negative_detection_not_an_object(self):
+        self._assert_malformed_is_reported(
+            dict(GOOD_ADAPTER, detection="AGENTS.md"),
+            "ADAPTER_DETECTION_NOT_AN_OBJECT")
+
+    def test_malformed_entry_leaves_the_summary_renderable(self):
+        """The summary callers build messages from stays sorted and string-only."""
+        reg = {"adapters": [GOOD_ADAPTER, {"maturity": "EXPERIMENTAL"},
+                            {"agent_id": None, "maturity": "EXPERIMENTAL"}]}
+        _errs, summary = A.validate_registry(reg)
+        self.assertEqual(summary["ids"], [GOOD_ADAPTER["agent_id"]])
+        self.assertEqual(summary["maturities"], ["DECLARED", "EXPERIMENTAL"])
+
     def test_boundary_empty_adapter_registry(self):
         errs, summary = A.validate_registry({"adapters": []})
         self.assertEqual(errs, [])
