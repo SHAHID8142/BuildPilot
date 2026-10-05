@@ -203,9 +203,10 @@ def s1(r):
             r.bad("ADAPTER_MIRROR_DRIFT: %s differs from its registry entry" % d)
         else:
             r.ok("mirrored declaration matches registry: %s" % d)
-    undeclared = sorted(set(entries) - set(dirs))
+    undeclared = sorted(set(PT.entry_ids(reg.get("adapters") or [])) - set(dirs))
     if undeclared:
-        r.bad("REGISTRY_ENTRY_WITHOUT_ADAPTER_DIR: %s" % undeclared)
+        r.bad("REGISTRY_ENTRY_WITHOUT_ADAPTER_DIR: %s"
+              % ", ".join(undeclared))
     gen = entries.get(PT.FALLBACK_ADAPTER_ID) or {}
     if gen.get("maturity") == "DECLARED" and PT.FALLBACK_ADAPTER_ID in dirs:
         r.ok("generic fallback intact (DECLARED) and mirrored")
@@ -241,7 +242,7 @@ def s1(r):
     # by the contract check AND must not crash the count invariant that both
     # enforcement points derive from portability.real_adapter_ids(). The control
     # fails if the predicate raises, or if the entry stops being reported.
-    malformed = copy.deepcopy(entries)
+    malformed = copy.deepcopy(list(entries.values()))
     malformed.append({"maturity": "EXPERIMENTAL"})
     try:
         mal_ids = PT.real_adapter_ids(entries=malformed)

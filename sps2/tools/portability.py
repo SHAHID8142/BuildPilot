@@ -142,6 +142,30 @@ def registry_entries(root=None):
     return list(load_registry(root).get("adapters") or [])
 
 
+def entry_list(entries):
+    """Normalise an entries argument to a list of entries.
+
+    Callers hold either the registry's `adapters` list or a dict keyed by
+    `agent_id`; both are accepted so a caller cannot silently pass the wrong
+    shape and get an empty (or wrong) answer back.
+    """
+    if isinstance(entries, dict):
+        return [entries[k] for k in entries]
+    return list(entries or [])
+
+
+def entry_ids(entries):
+    """The agent ids of `entries` that are actually usable strings.
+
+    A malformed entry (a real maturity with no `agent_id`, or a non-string one)
+    has no usable id, so it is dropped here instead of crashing whatever builds
+    a message from the ids. It is still rejected by the contract check.
+    """
+    return [a.get("agent_id") for a in entry_list(entries)
+            if isinstance(a, dict) and isinstance(a.get("agent_id"), str)
+            and a.get("agent_id")]
+
+
 def real_adapter_ids(root=None, entries=None):
     """Ids whose maturity is beyond DECLARED; the DECLARED fallback never is.
 
@@ -150,7 +174,8 @@ def real_adapter_ids(root=None, entries=None):
     enforcement point derives from here. Such an entry is still rejected by
     `adapter_registry.validate_adapter`, which reports the missing field.
     """
-    source = entries if entries is not None else registry_entries(root)
+    source = entry_list(entries) if entries is not None \
+        else registry_entries(root)
     return sorted(a.get("agent_id") for a in source
                   if isinstance(a, dict)
                   and a.get("maturity") in REAL_MATURITIES
@@ -225,10 +250,9 @@ def decision_bound(root=None, registry=None):
         return [], errors
     doc_adapters = registry_entries(root) if registry is None else \
         list(registry.get("adapters") or []) \
-        if isinstance(registry, dict) else list(registry)
-    ids = [a.get("agent_id") for a in doc_adapters if isinstance(a, dict)]
-    universe = sorted({i for i in list(ids) + list(AUTHORISED_REAL_ADAPTERS)
-                       if isinstance(i, str)})
+        if isinstance(registry, dict) else entry_list(registry)
+    universe = sorted(set(entry_ids(doc_adapters))
+                      | set(AUTHORISED_REAL_ADAPTERS))
     named = decision_named_adapters(universe, root=root)
     if not named:
         errors.append("%s_NAMES_NO_ADAPTER: none of %s appears in the recorded "
@@ -374,7 +398,8 @@ def verify_delivered_state(root=None):
             entry = json.load(fh)
         if entry != entries.get(d):
             errors.append("ADAPTER_MIRROR_DRIFT: %s" % d)
-    undeclared = sorted(set(entries) - set(adapter_dirs(root)))
+    undeclared = sorted(set(entry_ids(reg.get("adapters") or []))
+                        - set(adapter_dirs(root)))
     if undeclared:
         errors.append("REGISTRY_ENTRY_WITHOUT_ADAPTER_DIR: %s"
                       % ", ".join(undeclared))
