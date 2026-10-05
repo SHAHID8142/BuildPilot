@@ -428,14 +428,12 @@ def s14(r):
                 "tasks/P7-TASKS.md", "handoff/HANDOFF-P7.json",
                 "decisions/P7-DECISIONS.json", "memory", "bootstrap",
                 "isolation_validator.py")
+    _p7_governance = ("governance/P7-THREAT-MODEL.md",)
     for rel in _p7_impl:
         if os.path.exists(os.path.join(SPS2, rel)):
             r.bad("P7_ARTIFACT_CREATED: %s" % rel)
     _p7dec = os.path.join(SPS2, "decisions", "P7-READINESS-DECISIONS.json")
     if os.path.isfile(_p7dec):
-        # Admission is conditional on the whole record: a record that has lost a
-        # decision, or gained one attributed to an agent, is not the evidence
-        # that P7 did not start, so it must not be admitted as such.
         _rec = json.load(open(_p7dec))
         _done = {d.get("decision_id") for d in (_rec.get("decisions") or [])}
         for _did in ("D-P7-A", "D-P7-B", "D-P7-C", "D-P7-D"):
@@ -451,6 +449,8 @@ def s14(r):
             if not f.startswith("P7") or f == "P7-READINESS-DECISIONS.json":
                 continue
             rel = os.path.relpath(os.path.join(root, f), SPS2)
+            if rel in _p7_governance:
+                continue
             if rel not in _p7_impl:
                 stray.append(rel)
     for rel in stray:

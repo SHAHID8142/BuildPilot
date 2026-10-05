@@ -26,7 +26,7 @@ No phase was renamed, reclassified or rewritten.
 |---|---|---|---|
 | P1 | Repository Foundation | P1 | ALIGNED — SATISFIED |
 | P2 | Core Orchestration & Governance | spread across executed P1–P4 | SUBSTANTIALLY_SATISFIED |
-| P3 | Agent Interoperability | **not executed** | **NOT_SATISFIED** |
+| P3 | Agent Interoperability | executed under D-P3-F | SATISFIED (User-approved 2026-10-05) |
 | P4 | Capability Discovery | executed P2 + P3 | PARTIALLY_SATISFIED |
 | P5 | Dynamic Skill Selection | executed P5 | PARTIALLY_SATISFIED |
 | P6 | Technology Research | executed P6 (D-P6-1) | SATISFIED |
@@ -138,19 +138,20 @@ No LCP or INP value was introduced, imported, or inferred.
 ## 4. Why P7 must not start yet
 
 Roadmap P7 introduces **persistent project state**, the most state-creating
-phase so far. Following D-P7-A and D-P7-B, the prerequisites are now explicit
-and none is yet met:
+phase so far. Following D-P7-A and D-P7-B, the prerequisites are now explicit.
 
-- Roadmap P3 (Agent Interoperability) is a **hard prerequisite** and is
-  **NOT_SATISFIED**: one `DECLARED` generic adapter, no portability
-  conformance test.
-- A **threat model** for persistent project-local state does not exist
-  (D-P7-D makes it mandatory).
+- Roadmap P3 (Agent Interoperability) is a **hard prerequisite** and is now
+  **SATISFIED** (User-approved 2026-10-05; recorded in
+  ROADMAP-P3-DECISIONS.json completion block).
+- A **threat model** for persistent project-local state now exists
+  (`sps2/governance/P7-THREAT-MODEL.md`; D-P7-D makes it mandatory) and is
+  referenced by the readiness validator.
 - All three roadmap P7 deliverables — memory layout, team bootstrap,
-  isolation validator — are absent.
+  isolation validator — are still absent (they are P7 implementation artefacts,
+  not governance artefacts, and P7 is not authorised).
 
-Starting now would build memory and isolation on an unmet prerequisite with
-the security review deferred. That is exactly the ordering D-P7-D forbids.
+P7 implementation cannot begin without explicit User authorisation (Items 7–8
+below). The threat model is a prerequisite, not an implementation step.
 
 ---
 
@@ -160,13 +161,13 @@ Resolved decisions fix the rules; they do not do the work. Outstanding:
 
 | # | Prerequisite | Source | Status |
 |---|---|---|---|
-| 1 | Roadmap P3 satisfied: real adapters beyond `generic` | D-P7-B | NOT DONE |
-| 2 | Portability conformance test: deleting all adapters leaves core validators passing | D-P7-B | NOT DONE |
-| 3 | Roadmap P3 acceptance: fresh agent resumes from repository state alone | D-P7-B | NOT DONE |
-| 4 | Written threat model covering persistent project-local state | D-P7-D | NOT DONE |
-| 5 | Threat-model treatment of two-project isolation and memory rollback | D-P7-D | NOT DONE |
+| 1 | Roadmap P3 satisfied: real adapters beyond `generic` | D-P7-B | DONE (User-approved 2026-10-05) |
+| 2 | Portability conformance test: deleting all adapters leaves core validators passing | D-P7-B | DONE |
+| 3 | Roadmap P3 acceptance: fresh agent resumes from repository state alone | D-P7-B | DONE |
+| 4 | Written threat model covering persistent project-local state | D-P7-D | DONE — `sps2/governance/P7-THREAT-MODEL.md` |
+| 5 | Threat-model treatment of two-project isolation and memory rollback | D-P7-D | DONE — sections 3, 9, 11 |
 | 6 | Roadmap P2 confirmed against its own acceptance criteria under D-P7-A | D-P7-A | SUBSTANTIALLY SATISFIED |
-| 7 | Explicit User authorisation to begin roadmap P3 work | standing rule | NOT GIVEN |
+| 7 | Explicit User authorisation to begin roadmap P3 work | standing rule | NOT GIVEN (P3 approved separately) |
 | 8 | Explicit User authorisation to begin P7, with named scope and forbidden scope | standing rule | NOT GIVEN |
 
 Items 1–3 require roadmap P3 to be executed first. Items 4–5 require the
@@ -193,4 +194,8 @@ plant any P7 deliverable, and P4, P5 and P6 all fail. The mutation suite reports
 and it carries controls proving the legitimate record is still admitted, so the
 guards cannot silently decay into a blanket ban.
 
-**Stopping here and awaiting User decision.**
+**Threat model**: `sps2/governance/P7-THREAT-MODEL.md` covers P7 persistent
+state, isolation, rollback, and prohibited behaviours. It is a governance
+artefact — it authorises nothing and does not start P7.
+
+**Stopping here and awaiting User decision on P7 authorisation.**

@@ -31,12 +31,15 @@ WITHHELD = ""
 # decision record is evidence that P7 did not start, so it must not be
 # reported as one. Every deliverable remains absolutely forbidden.
 P7_DECISION_RECORDS = frozenset({"P7-READINESS-DECISIONS.json"})
+P7_GOVERNANCE_ARTEFACTS = frozenset({"P7-THREAT-MODEL.md"})
 
 
 def p7_deliverables(names):
     """Return the P7 implementation deliverables among the given filenames."""
     return sorted(n for n in names
-                  if n.startswith("P7") and n not in P7_DECISION_RECORDS)
+                  if n.startswith("P7")
+                  and n not in P7_DECISION_RECORDS
+                  and n not in P7_GOVERNANCE_ARTEFACTS)
 
 
 def p7_record_check(r):

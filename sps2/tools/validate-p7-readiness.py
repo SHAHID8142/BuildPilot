@@ -220,10 +220,18 @@ def r3(r):
                  "state is no longer pinned to a fixed count" % claimed)
     tm = [f for _r, _d, fs in os.walk(SPS2) for f in fs
           if "threat" in f.lower()]
-    if tm:
-        r.bad("THREAT_MODEL_NOW_EXISTS: %s" % tm)
+    expected = os.path.join(SPS2, "governance", "P7-THREAT-MODEL.md")
+    if os.path.isfile(expected):
+        body = open(expected).read()
+        if "threat actor" in body.lower() and "rollback" in body.lower() \
+                and "prohibited" in body.lower():
+            r.ok("threat model present and covers actors, rollback, prohibited behaviours")
+        else:
+            r.bad("THREAT_MODEL_INCOMPLETE: missing required sections")
+    elif tm:
+        r.bad("THREAT_MODEL_UNEXPECTED: %s" % tm)
     else:
-        r.ok("no threat-model artefact, matching the recorded gap")
+        r.bad("THREAT_MODEL_MISSING: D-P7-D requires one before P7")
 
 
 def p7_implementation_files():
@@ -266,7 +274,8 @@ def r4(r):
              if f.startswith("P7")
              and os.path.join(_r, f) not in
              [os.path.join(SPS2, d) for d in P7_IMPL_ARTEFACTS]]
-    stray = [f for f in stray if f != "P7-READINESS-DECISIONS.json"]
+    stray = [f for f in stray
+             if f not in ("P7-READINESS-DECISIONS.json", "P7-THREAT-MODEL.md")]
     if impl or stray:
         for f in impl + stray:
             r.bad("P7_IMPLEMENTATION_ARTEFACT: %s" % f)
@@ -410,10 +419,15 @@ def negatives(r):
     cases.append(("N02 roadmap P3 missing from mapping undetected", n2))
 
     def n3():
-        # Defect survives if the record OVERSTATES roadmap P3 as satisfied.
+        # Overstatement is caught only when SATISFIED is claimed without
+        # genuine delivery + User approval. In the current state both
+        # hold, so the test is vacuous and must not fire.
         doc = json.load(open(RECON))
         p3 = next(m for m in doc["mapping"] if m["roadmap_phase"] == "P3")
-        return p3.get("satisfaction") == "SATISFIED"
+        if p3.get("satisfaction") != "SATISFIED":
+            return False
+        delivered, approved, _errors = p3_delivery_state()
+        return not (delivered and approved)
     cases.append(("N03 overstated roadmap P3 undetected", n3))
 
     def n4():
