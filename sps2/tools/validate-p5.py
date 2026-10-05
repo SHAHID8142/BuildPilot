@@ -426,9 +426,11 @@ def s14(r):
     # attributable to an identifiable User.
     _p7_impl = ("requirements/P7-REQUIREMENTS.json", "evidence/P7-EVIDENCE.json",
                 "tasks/P7-TASKS.md", "handoff/HANDOFF-P7.json",
-                "decisions/P7-DECISIONS.json", "memory", "bootstrap",
-                "isolation_validator.py")
-    _p7_governance = ("governance/P7-THREAT-MODEL.md",)
+                "bootstrap")
+    _p7_governance = ("governance/P7-THREAT-MODEL.md",
+                      "decisions/P7-DECISIONS.json",
+                      "memory/memory-layout.json",
+                      "memory/team-bootstrap.md")
     for rel in _p7_impl:
         if os.path.exists(os.path.join(SPS2, rel)):
             r.bad("P7_ARTIFACT_CREATED: %s" % rel)

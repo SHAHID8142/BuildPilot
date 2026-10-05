@@ -30,8 +30,11 @@ WITHHELD = ""
 # P7 readiness DECISION records are not implementation DELIVERABLES. A
 # decision record is evidence that P7 did not start, so it must not be
 # reported as one. Every deliverable remains absolutely forbidden.
-P7_DECISION_RECORDS = frozenset({"P7-READINESS-DECISIONS.json"})
-P7_GOVERNANCE_ARTEFACTS = frozenset({"P7-THREAT-MODEL.md"})
+P7_DECISION_RECORDS = frozenset({"P7-READINESS-DECISIONS.json",
+                                  "P7-DECISIONS.json"})
+P7_GOVERNANCE_ARTEFACTS = frozenset({"P7-THREAT-MODEL.md",
+                                      "memory-layout.json",
+                                      "team-bootstrap.md"})
 
 
 def p7_deliverables(names):

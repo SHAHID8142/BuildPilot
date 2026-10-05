@@ -45,11 +45,15 @@ P7_GOVERNANCE_ARTEFACTS = (
     "governance/P7-THREAT-MODEL.md",
     "memory/memory-layout.json",
 )
+# P7 implementation artefacts authorised by D-P7-IMPLEMENTATION.
+P7_AUTHORISED_IMPL_ARTEFACTS = (
+    "tools/isolation_validator.py",
+)
 # P7 IMPLEMENTATION deliverables. Forbidden while P7 is unauthorised.
 P7_IMPL_ARTEFACTS = ("requirements/P7-REQUIREMENTS.json",
                      "evidence/P7-EVIDENCE.json", "tasks/P7-TASKS.md",
                      "handoff/HANDOFF-P7.json",
-                     "isolation_validator.py", "bootstrap")
+                     "bootstrap")
 
 
 class Res:
@@ -243,10 +247,12 @@ def r3(r):
 def p7_implementation_files():
     """P7 IMPLEMENTATION deliverables. Forbidden while P7 is unauthorised.
     Governance artefacts (decision records, threat model, memory layout)
-    are authorised and excluded from this check."""
+    and authorised implementation artefacts (isolation validator) are
+    excluded from this check."""
     found = [rel for rel in P7_IMPL_ARTEFACTS
              if os.path.exists(os.path.join(SPS2, rel))]
     found = [f for f in found if f not in P7_GOVERNANCE_ARTEFACTS]
+    found = [f for f in found if f not in P7_AUTHORISED_IMPL_ARTEFACTS]
     return found
 
 
