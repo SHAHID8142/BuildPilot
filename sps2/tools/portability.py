@@ -142,10 +142,19 @@ def registry_entries(root=None):
     return list(load_registry(root).get("adapters") or [])
 
 
-def real_adapter_ids(root=None):
-    """Ids whose maturity is beyond DECLARED; the DECLARED fallback never is."""
-    return sorted(a.get("agent_id") for a in registry_entries(root)
-                  if a.get("maturity") in REAL_MATURITIES and a.get("agent_id"))
+def real_adapter_ids(root=None, entries=None):
+    """Ids whose maturity is beyond DECLARED; the DECLARED fallback never is.
+
+    Only string ids are returned, so a malformed entry (a real maturity with no
+    `agent_id`) is skipped instead of crashing the count invariant that every
+    enforcement point derives from here. Such an entry is still rejected by
+    `adapter_registry.validate_adapter`, which reports the missing field.
+    """
+    source = entries if entries is not None else registry_entries(root)
+    return sorted(a.get("agent_id") for a in source
+                  if isinstance(a, dict)
+                  and a.get("maturity") in REAL_MATURITIES
+                  and isinstance(a.get("agent_id"), str) and a.get("agent_id"))
 
 
 def surface_digest(root=None):

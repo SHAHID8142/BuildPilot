@@ -95,6 +95,14 @@ mut "M25 three real adapters (generic upgraded to EXPERIMENTAL)" "$AREG" \
 mut "M26 two real adapters but the wrong pair (opencode renamed)" "$AREG" \
   "$PROVISION
 [a.__setitem__('agent_id','othercli') for a in d['adapters'] if a['agent_id']=='opencode']"
+# M27 is a malformed entry, not a count case: an adapter with a real maturity
+# and no agent_id must be rejected by the contract check with a controlled
+# message. Before the count invariant was derived from one safe predicate this
+# input crashed both enforcement points with an unhandled TypeError, which this
+# case now pins down.
+mut "M27 malformed adapter entry (real maturity, no agent_id)" "$AREG" \
+  "$PROVISION
+d['adapters'].append({'maturity': 'EXPERIMENTAL'})"
 
 # ── CONTROLS for the D-P3-A exact-count invariant ─────────────────────────────
 # A count invariant is only meaningful if the AUTHORISED state still passes and

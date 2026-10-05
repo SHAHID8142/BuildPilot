@@ -152,8 +152,7 @@ def p3_delivery_state():
     adapters = json.load(open(os.path.join(
         SPS2, "core", "adapters", "registry.json"))).get("adapters") or []
     generic = any(a.get("agent_id") == "generic" for a in adapters)
-    real = [a.get("agent_id") for a in adapters
-            if a.get("maturity") in REAL_MATURITIES]
+    real = PT.real_adapter_ids(entries=adapters)
     # D-P3-A authorises EXACTLY two real adapters, and names them. The DECLARED
     # generic fallback is never counted as a real adapter. An empty registry is
     # still a VALID state under D-P3-D (the delete-all portability criterion),

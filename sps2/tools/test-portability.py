@@ -211,8 +211,7 @@ def s1(r):
         r.ok("generic fallback intact (DECLARED) and mirrored")
     else:
         r.bad("GENERIC_FALLBACK_CHANGED_OR_MISSING")
-    real = sorted(a.get("agent_id") for a in entries.values()
-                  if a.get("maturity") in PT.REAL_MATURITIES)
+    real = PT.real_adapter_ids(entries=entries)
     # D-P3-A authorises EXACTLY two real adapters and names them; the DECLARED
     # generic fallback is never counted. An empty registry remains valid under
     # D-P3-D, so this invariant applies to every non-empty registry.
@@ -238,6 +237,26 @@ def s1(r):
     else:
         r.ok("enforced adapter bound matches the recorded %s decision: %s"
              % (PT.BOUND_DECISION_ID, ", ".join(named)))
+    # C6: a malformed entry (a real maturity with no agent_id) must be rejected
+    # by the contract check AND must not crash the count invariant that both
+    # enforcement points derive from portability.real_adapter_ids(). The control
+    # fails if the predicate raises, or if the entry stops being reported.
+    malformed = copy.deepcopy(entries)
+    malformed.append({"maturity": "EXPERIMENTAL"})
+    try:
+        mal_ids = PT.real_adapter_ids(entries=malformed)
+        mal_errs = A.validate_registry({"adapters": malformed})[0]
+    except Exception as exc:                       # a crash is a defect here
+        r.bad("C6 count invariant crashed on a malformed adapter entry (%s)"
+              % type(exc).__name__)
+    else:
+        reported = [e for e in mal_errs if "MISSING_FIELD" in e]
+        if reported and mal_ids == list(PT.AUTHORISED_REAL_ADAPTERS):
+            r.control("C6 a malformed adapter entry is rejected by the "
+                      "contract and skipped by the count invariant")
+        else:
+            r.bad("C6 malformed entry mishandled (errs=%r real=%r)"
+                  % (mal_errs, mal_ids))
 
 
 def s2(r):
