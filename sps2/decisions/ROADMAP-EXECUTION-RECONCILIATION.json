@@ -63,7 +63,7 @@
       "roadmap_title": "Agent Interoperability",
       "executed_as": "Roadmap P3 execution under D-P3-F (adapter surface); executed-phase P3 was Production Capability",
       "alignment": "CONTENT_DELIVERED_UNDER_ITS_OWN_ROADMAP_PHASE",
-      "satisfaction": "SUBSTANTIALLY_SATISFIED",
+      "satisfaction": "SATISFIED",
       "roadmap_deliverables": [
         {
           "deliverable": "contract.schema.json",
@@ -85,14 +85,12 @@
         "deleting all adapters leaves core validators passing - exercised on an isolated copy under D-P3-D (EV-RP3-002)",
         "a fresh agent resumes from repository state alone via the mechanical checklist under D-P3-E (EV-RP3-003)"
       ],
-      "remaining": [
-        "User approval of the delivered state (roadmap P3 verification: 'Approval: user'); until that approval is recorded, this record must not report SATISFIED"
-      ],
+      "remaining": [],
       "guard_updates": [
         "validate-p7-readiness.py section 3: one-adapter DECLARED pin replaced by a decision-derived, approval-gated claim check (D-P3-G.1)",
         "test_p5.py TestAgentNeutrality and validate-p5.py section 2: the adapter surface is excluded, matching validate-sps2.sh section 8 and core_is_adapter_free (D-P3-G.2)"
       ],
-      "note": "Delivered under D-P3-F; satisfaction stays below SATISFIED pending User approval. P7's stated dependency on P3 is implemented and verified; approval outstanding."
+      "note": "Delivered under D-P3-F; User approval recorded 2026-10-05. P7's stated dependency on P3 is implemented and verified; P7 not started."
     },
     {
       "roadmap_phase": "P4",

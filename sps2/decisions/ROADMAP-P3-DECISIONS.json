@@ -156,11 +156,11 @@
     "push": "not authorised; local commits only"
   },
   "completion": {
-    "state": "PENDING_USER_APPROVAL",
+    "state": "APPROVED",
     "approval": {
-      "state": "PENDING_USER_APPROVAL",
-      "decided_by": null,
-      "decided_on": null
+      "state": "APPROVED",
+      "decided_by": "User",
+      "decided_on": "2026-10-05"
     },
     "roadmap_rule": "Roadmap P3 verification says 'Approval: user'. The reconciliation record may not report SATISFIED until this completion block is APPROVED by the User with a date.",
     "delivered": [
@@ -171,11 +171,8 @@
       "the two guard corrections per D-P3-G",
       "sps2/evidence/ROADMAP-P3-EVIDENCE.json"
     ],
-    "pending": [
-      "User approval of the delivered state"
-    ],
+    "pending": [],
     "explicitly_not_approved_yet": [
-      "recording roadmap P3 as SATISFIED in the reconciliation record",
       "beginning P7",
       "every item in the D-P3-F forbidden list"
     ]
