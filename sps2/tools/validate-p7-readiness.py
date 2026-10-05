@@ -39,11 +39,17 @@ PORTABILITY_TOOL = os.path.join(SPS2, "tools", "test-portability.py")
 AUTHORISED_REAL_ADAPTERS = PT.AUTHORISED_REAL_ADAPTERS
 REAL_MATURITIES = PT.REAL_MATURITIES
 AUDIT = os.path.join(REPO, "AUDIT-P7-READINESS-AND-DECISION.md")
-# Roadmap P7 deliverables. None may exist while P7 is unauthorised.
+# P7 governance artefacts (authorised, not implementation deliverables).
+P7_GOVERNANCE_ARTEFACTS = (
+    "decisions/P7-DECISIONS.json",
+    "governance/P7-THREAT-MODEL.md",
+    "memory/memory-layout.json",
+)
+# P7 IMPLEMENTATION deliverables. Forbidden while P7 is unauthorised.
 P7_IMPL_ARTEFACTS = ("requirements/P7-REQUIREMENTS.json",
                      "evidence/P7-EVIDENCE.json", "tasks/P7-TASKS.md",
-                     "handoff/HANDOFF-P7.json", "decisions/P7-DECISIONS.json",
-                     "memory", "isolation_validator.py", "bootstrap")
+                     "handoff/HANDOFF-P7.json",
+                     "isolation_validator.py", "bootstrap")
 
 
 class Res:
@@ -235,9 +241,12 @@ def r3(r):
 
 
 def p7_implementation_files():
-    """P7 IMPLEMENTATION deliverables. Forbidden while P7 is unauthorised."""
+    """P7 IMPLEMENTATION deliverables. Forbidden while P7 is unauthorised.
+    Governance artefacts (decision records, threat model, memory layout)
+    are authorised and excluded from this check."""
     found = [rel for rel in P7_IMPL_ARTEFACTS
              if os.path.exists(os.path.join(SPS2, rel))]
+    found = [f for f in found if f not in P7_GOVERNANCE_ARTEFACTS]
     return found
 
 
@@ -275,7 +284,8 @@ def r4(r):
              and os.path.join(_r, f) not in
              [os.path.join(SPS2, d) for d in P7_IMPL_ARTEFACTS]]
     stray = [f for f in stray
-             if f not in ("P7-READINESS-DECISIONS.json", "P7-THREAT-MODEL.md")]
+             if f not in ("P7-READINESS-DECISIONS.json", "P7-THREAT-MODEL.md",
+                          "P7-DECISIONS.json", "memory-layout.json")]
     if impl or stray:
         for f in impl + stray:
             r.bad("P7_IMPLEMENTATION_ARTEFACT: %s" % f)
