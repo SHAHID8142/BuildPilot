@@ -11,9 +11,10 @@
       "P3",
       "P4",
       "P5",
-      "P6"
+      "P6",
+      "P7"
     ],
-    "p7_status": "APPROVED / NOT_IMPLEMENTED",
+    "p7_status": "IMPLEMENTED / VERIFIED / NOT_APPROVED",
     "p8_status": "NOT_STARTED"
   },
   "phase_index": {
@@ -22,7 +23,8 @@
     "P3": "SATISFIED (User-approved 2026-10-05)",
     "P4": "PARTIALLY_SATISFIED",
     "P5": "PARTIALLY_SATISFIED",
-    "P6": "SATISFIED"
+    "P6": "SATISFIED",
+    "P7": "IMPLEMENTED / VERIFIED / NOT_APPROVED (User approval pending)"
   },
   "capability_registry": {
     "path": "sps2/capability/registry.json",

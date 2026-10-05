@@ -44,6 +44,9 @@ P7_GOVERNANCE_ARTEFACTS = (
     "decisions/P7-DECISIONS.json",
     "governance/P7-THREAT-MODEL.md",
     "memory/memory-layout.json",
+    "memory/team-bootstrap.md",
+    "memory/README.md",
+    "memory/P7-IMPLEMENTATION-REPORT.md",
 )
 # P7 implementation artefacts authorised by D-P7-IMPLEMENTATION.
 P7_AUTHORISED_IMPL_ARTEFACTS = (
@@ -291,7 +294,8 @@ def r4(r):
              [os.path.join(SPS2, d) for d in P7_IMPL_ARTEFACTS]]
     stray = [f for f in stray
              if f not in ("P7-READINESS-DECISIONS.json", "P7-THREAT-MODEL.md",
-                          "P7-DECISIONS.json", "memory-layout.json")]
+                          "P7-DECISIONS.json", "memory-layout.json",
+                          "P7-IMPLEMENTATION-REPORT.md")]
     if impl or stray:
         for f in impl + stray:
             r.bad("P7_IMPLEMENTATION_ARTEFACT: %s" % f)

@@ -430,7 +430,9 @@ def s14(r):
     _p7_governance = ("governance/P7-THREAT-MODEL.md",
                       "decisions/P7-DECISIONS.json",
                       "memory/memory-layout.json",
-                      "memory/team-bootstrap.md")
+                      "memory/team-bootstrap.md",
+                      "memory/README.md",
+                      "memory/P7-IMPLEMENTATION-REPORT.md")
     for rel in _p7_impl:
         if os.path.exists(os.path.join(SPS2, rel)):
             r.bad("P7_ARTIFACT_CREATED: %s" % rel)

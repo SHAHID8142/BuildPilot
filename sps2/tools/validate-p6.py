@@ -34,7 +34,8 @@ P7_DECISION_RECORDS = frozenset({"P7-READINESS-DECISIONS.json",
                                   "P7-DECISIONS.json"})
 P7_GOVERNANCE_ARTEFACTS = frozenset({"P7-THREAT-MODEL.md",
                                       "memory-layout.json",
-                                      "team-bootstrap.md"})
+                                      "team-bootstrap.md",
+                                      "P7-IMPLEMENTATION-REPORT.md"})
 
 
 def p7_deliverables(names):
