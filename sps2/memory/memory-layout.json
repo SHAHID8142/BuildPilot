@@ -1,0 +1,226 @@
+{
+  "schema": "sps2.memory-layout/v1",
+  "record_id": "P7-MEMORY-LAYOUT",
+  "generated": "2026-10-05",
+  "purpose": "Single source of truth for project memory. Consolidates scattered state for fresh-agent onboarding and isolation validation. Project-local only; read-only for P1-P6 validators.",
+  "project": {
+    "name": "Shahid Master Skill (SPS 2.0)",
+    "phases": [
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6"
+    ],
+    "p7_status": "APPROVED / NOT_IMPLEMENTED",
+    "p8_status": "NOT_STARTED"
+  },
+  "phase_index": {
+    "P1": "ALIGNED \u2014 SATISFIED",
+    "P2": "SUBSTANTIALLY_SATISFIED",
+    "P3": "SATISFIED (User-approved 2026-10-05)",
+    "P4": "PARTIALLY_SATISFIED",
+    "P5": "PARTIALLY_SATISFIED",
+    "P6": "SATISFIED"
+  },
+  "capability_registry": {
+    "path": "sps2/capability/registry.json",
+    "sha256": "5f95f62b03851748f95ac501221597f95243aae80f69cde2a8aea9105537af56",
+    "count": 4,
+    "states": {
+      "EVALUATED": 4,
+      "DEFERRED": 1
+    },
+    "deferred": [
+      "CAP-P03-005"
+    ]
+  },
+  "decision_records": [
+    {
+      "file": "OPEN-DECISION-CLAUDE-SETTINGS.json",
+      "sha256": "f8b0041d82ff27a0c5ff8b7129d433159c2ca91c0661088fa34ff623d11bfd62"
+    },
+    {
+      "file": "OPEN-DECISION-LICENCE.json",
+      "sha256": "5c10ade2fbf17710dd89e96b35f99a2d68c7752367297510d9bbd3fdf8b75919"
+    },
+    {
+      "file": "P1-DECISIONS.json",
+      "sha256": "ceb1caa139795ef5ad7368823e00c703a879174d401119ba232e849c8dcc575d"
+    },
+    {
+      "file": "P2-DECISIONS.json",
+      "sha256": "6969f07234b3b2ac22473c462b81967b3b63111a56b5caa4742e830b5e5d803e"
+    },
+    {
+      "file": "P3-DECISIONS.json",
+      "sha256": "1c0aa3909133c40324f1950fcb334c2992ad324e3583ab8a1dbc5c832c21ff25"
+    },
+    {
+      "file": "P4-DECISIONS.json",
+      "sha256": "97d9f8ea24a5d288e45dc07a7a950ede28adb0595a103f8035920b29c95c2847"
+    },
+    {
+      "file": "P6-DECISIONS.json",
+      "sha256": "fc9a0df67128535f4e8effb8a40b0352572a21f8dfbee755e86bb197f0efcb94"
+    },
+    {
+      "file": "P7-DECISIONS.json",
+      "sha256": "5e08a7f96f4acdcf1d5f21e115bc3dc3962a36c4f9be15fd2dd29955ffe45a58"
+    },
+    {
+      "file": "P7-READINESS-DECISIONS.json",
+      "sha256": "db5899a00d038f6bcd585a3a4a77584bb34dc0be1eae12e6e3729134e1db134d"
+    },
+    {
+      "file": "PROVENANCE-SPS-CMS.json",
+      "sha256": "7f8eaab699c24397e0d05ced5bf797309df3543eafe594e43a41c7e9fb8ede44"
+    },
+    {
+      "file": "ROADMAP-EXECUTION-RECONCILIATION.json",
+      "sha256": "88a8e359665933ec828a3d9eb09d74d86eb72229f87475d2c3e236b809f9e980"
+    },
+    {
+      "file": "ROADMAP-P3-DECISIONS.json",
+      "sha256": "8d6f885510fe0187bcba9dc511367b12fbee1fa23b97e78cd750c536709edfe5"
+    }
+  ],
+  "evidence_records": [
+    {
+      "file": "P1-EVIDENCE.json",
+      "sha256": "160eea60d9de099501ed5c86fb35c87f96c8c920c531ef3122172ceec31e50fc"
+    },
+    {
+      "file": "P2-EVIDENCE.json",
+      "sha256": "539580e6a36582d0d9679afb56a3812402b143d52697ba88b353df5cad5c9c65"
+    },
+    {
+      "file": "P3-APPROVAL-EVIDENCE.json",
+      "sha256": "2a97b64f33d6d03de9e46f6651471189b94d0c24502c100e6f15ac799a911f8d"
+    },
+    {
+      "file": "P3-EVIDENCE.json",
+      "sha256": "cd1edf5f773f3da8afa30ec13ca8e449c4460266a3af0246b7ded87fd168e8b4"
+    },
+    {
+      "file": "P4-EVIDENCE.json",
+      "sha256": "f28d5fb6b039a845174db46f773ff27aab2c6760ca8286aca3f518dfa609aa3d"
+    },
+    {
+      "file": "P5-EVIDENCE.json",
+      "sha256": "d5026d333688acf0b80805a9491b5038e223838fe8cc99f30e9826537985981e"
+    },
+    {
+      "file": "ROADMAP-P3-EVIDENCE.json",
+      "sha256": "8e491e0844d2c3686fd16133b30174054e603b7e67f383dfe11d33d79654f652"
+    },
+    {
+      "file": "SEC-P3-CLOSURE-EVIDENCE.json",
+      "sha256": "716761246893fee24111351ec0b24cb3e6ceffdea51510562cc4e032686e9004"
+    },
+    {
+      "file": "SEC-P3-INCIDENT-EVIDENCE.json",
+      "sha256": "48ae26a20fa13744a52b8508bd1e0077c8893e1a3795d9bc335f63abffa632eb"
+    }
+  ],
+  "requirement_records": [
+    {
+      "file": "P1-REQUIREMENTS.json",
+      "sha256": "06b5ead89053b37377e8cadc369e4b528ef79f659f7fc9706a4d6b11eb8e733b"
+    },
+    {
+      "file": "P2-REQUIREMENTS.json",
+      "sha256": "7365b3f0e7e4b8c62b8180740543305f20255cb66092635527718a37d3537f1f"
+    },
+    {
+      "file": "P3-REQUIREMENTS.json",
+      "sha256": "382d408e25be0802b65b5a3ae8adf46c087ffc80e0257d0b4b5fa57393053945"
+    },
+    {
+      "file": "P4-REQUIREMENTS.json",
+      "sha256": "376f5e140e77f8922645634bee75b15c8ae3df3cbb5eff71cee4a2691588d185"
+    },
+    {
+      "file": "P5-REQUIREMENTS.json",
+      "sha256": "ef4aa69adf05dcf69f8b637d67c0092b681cec7e98e46a9c128f79fdc650dd1b"
+    },
+    {
+      "file": "P6-REQUIREMENTS.json",
+      "sha256": "9b0fc2508e52cd37be2dbdc6f638992c2f2be039f41e5f80316385a538236cf7"
+    }
+  ],
+  "research_entries": [
+    {
+      "file": "P2-CAPABILITY-EXTRACTION.json",
+      "sha256": "3a8892082fcc6e9665ed84ad74793afb84027fb9930de1d15619226743c9d388"
+    },
+    {
+      "file": "P2-CAPABILITY-MATRIX.json",
+      "sha256": "d713251ff1e44d75e56dd18b7ce7ab9719871b99dd84e2ee4f44d78776cc7a76"
+    },
+    {
+      "file": "P2-INTEROPERABILITY-MATRIX.json",
+      "sha256": "28cfb18200b527a3c7d952c8048ee4e8f7faaa9accda0ed64709366967a89cfe"
+    },
+    {
+      "file": "P2-SOURCES.json",
+      "sha256": "797281cb7eaf3a2559a904755fa54d036e7cd94650e693432f903efc64240f30"
+    },
+    {
+      "file": "cache.json",
+      "sha256": "4405bfa7375a9734a050a0fbb0e082b43f4ab1cc40e9cfcea69187b4ebd0d696"
+    }
+  ],
+  "handoff_records": [
+    {
+      "file": "HANDOFF-P1.json",
+      "sha256": "f45edbaf5e9c1659d7ea82d16f0f4ea35ed2a363ee54be939875ea5de507c3db"
+    },
+    {
+      "file": "HANDOFF-P2.json",
+      "sha256": "ba066fbd3cf97f616ef58ad02a871410bff8a626f56107baad49a0c572dbbdc9"
+    },
+    {
+      "file": "HANDOFF-P3.json",
+      "sha256": "e1ac1068ad60ae2e4cdf2b651f2ec2c76ef8c6e5ed401f2eff2d853a2f19c5a1"
+    },
+    {
+      "file": "HANDOFF-P4.json",
+      "sha256": "063d4c26135529206f94fd0106397e130ad53c90c0258a5983c81b6c8f88c5c9"
+    },
+    {
+      "file": "HANDOFF-P5.md",
+      "sha256": "6387aecfc11ec8c03f5f32f2f35459b7bb3b49b8331de5b212485389819c04b4"
+    },
+    {
+      "file": "HANDOFF-P6.md",
+      "sha256": "4cb5f17001033400f9ba987b9ca9c48775ae84db73a90d0c788f7e03c67e9a2d"
+    }
+  ],
+  "audit_reports": [
+    "AUDIT-P5.md"
+  ],
+  "task_lists": [
+    "P2-TASKS.md",
+    "P3-TASKS.md",
+    "P4-TASKS.md",
+    "P5-TASKS.md",
+    "P6-TASKS.md"
+  ],
+  "consolidation": {
+    "memory_layout": "sps2/memory/memory-layout.json",
+    "resume_checklist": "sps2/RESUME.md",
+    "readiness_validator": "sps2/tools/validate-p7-readiness.py",
+    "threat_model": "sps2/governance/P7-THREAT-MODEL.md",
+    "approval_record": "sps2/decisions/P7-DECISIONS.json"
+  },
+  "boundaries": {
+    "core_adapter_free": true,
+    "legacy_diff_zero": true,
+    "no_machine_global": true,
+    "no_state_outside_repo": true,
+    "conflict_001_unresolved": true,
+    "lcp_inp_not_observed": true
+  }
+}
