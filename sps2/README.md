@@ -43,6 +43,42 @@ core/  +  governance/      agent-neutral, portable, deterministic
 
 ---
 
+## Roadmap P3 — Agent Interoperability
+
+Delivered under the User decisions `D-P3-A..G`
+(`decisions/ROADMAP-P3-DECISIONS.json`); **User approval of the delivered state
+is still PENDING**, so the reconciliation record does not report roadmap P3 as
+satisfied.
+
+| Path | What it is |
+|---|---|
+| `core/adapters/contract.schema.json` | the adapter contract: one adapter's shape and its invariants |
+| `core/adapters/registry.json` | the adapter set, its maturities and its detection metadata |
+| `core/adapters/<agent_id>/adapter.json` | one declarative adapter, equal to its registry entry |
+| `core/adapters/README.md` | the surface, its invariants and its deletion semantics |
+| `tools/portability.py` | the delete-all operation, the `D-P3-A` bound, and its rehearsal |
+| `tools/test-portability.py` | the portability conformance suite (4 criteria) |
+| `RESUME.md` | the mechanical fresh-agent resume checklist |
+| `evidence/ROADMAP-P3-EVIDENCE.json` | the recorded output behind every roadmap P3 claim |
+
+Adapters: `generic` (DECLARED fallback) plus `codex` and `opencode`
+(EXPERIMENTAL; no `VERIFIED` claim, because no agent has been exercised under
+this authorisation). Adapters are declarative only, write nothing outside the
+project and are deletable without touching the core.
+
+```bash
+python3 sps2/tools/portability.py                # rehearse delete-all, isolated copy
+python3 sps2/tools/portability.py --verify       # check the delivered adapter state
+python3 sps2/tools/test-portability.py           # full conformance suite
+```
+
+**New here with no prior memory?** Start at [`RESUME.md`](RESUME.md): it names
+the canonical sources and answers the phase, task, next allowed action, what
+was authorised, which adapters exist and why, what remains and the forbidden
+actions.
+
+---
+
 ## Global vs project-local
 
 **Default: project-local.** Global state is exceptional and must be explicitly justified
@@ -79,6 +115,7 @@ This rule is machine-checked by `tools/validate-sps2.sh`, not merely documented.
 ```bash
 bash sps2/tools/validate-sps2.sh              # structural + negative suite
 bash sps2/tools/validate-sps2.sh --negative   # negative tests only
+python3 sps2/tools/test-portability.py        # roadmap P3 portability conformance
 ```
 
 Validates **structured state**, not the presence of words in Markdown. Exit `0` valid,
@@ -89,7 +126,17 @@ Validates **structured state**, not the presence of words in Markdown. Exit `0` 
 ## What P1 deliberately does NOT implement
 
 Dynamic discovery · skill selection · MCP discovery · CMS · SEO · application workflows ·
-concrete agent adapters beyond the contract · legacy migration · global installation ·
-machine-global configuration · any Phase 01 remediation.
+legacy migration · global installation · machine-global configuration · any Phase 01 remediation.
+
+Two items in that list were later phases, and are now delivered or explicitly
+deliberate:
+
+- **Concrete agent adapters beyond the contract** — roadmap P3 added two
+  declarative adapters (`codex`, `opencode`) and kept the `generic` fallback. No
+  adapter is executable, installs nothing, and none is required for the system
+  to work.
+- **Global installation** — still not implemented and not authorised: no
+  capability is installed, activated or promoted, and no machine-global state
+  is written.
 
 Those belong to later, separately approved phases.
