@@ -165,6 +165,20 @@
         "decision_ids": ["D-P3-F", "D-P3-G"],
         "deliverable": "full suite"
       }
+    },
+    {
+      "evidence_id": "EV-RP3-011",
+      "source": "MUTATION_SUITE",
+      "timestamp": "2026-10-05T00:00:00Z",
+      "command": "reproduction of the malformed-entry defect; python3 sps2/tools/validate-p7-readiness.py and sps2/tools/test-portability.py section 1 against a registry carrying a malformed entry; bash sps2/tools/test-p7-readiness-mutation.sh (M27); full suite re-run on the committed state",
+      "expected_result": "The D-P3-A enforcement points reject a malformed adapter entry with a controlled message instead of crashing, on either state, and stay non-vacuous.",
+      "observed_result": "Reproduction before the fix: an entry with maturity EXPERIMENTAL and no agent_id raised TypeError: sequence item 0: expected str instance, NoneType found while building the count message, in both enforcement points (test-portability section 1 and validate-p7-readiness.py p3_delivery_state). After the fix: validate-p7-readiness.py reports ADAPTER_REGISTRY_INVALID listing the missing fields and INVALID_AGENT_ID: None, and exits with the controlled rejection; test-portability section 1 reports the eleven contract violations and still identifies the two authorised real adapters, with control C6 confirming the entry is rejected by the contract and skipped by the count invariant; portability --verify exits 1 with the same controlled list. New mutation M27 pins the readiness enforcement point and is CAUGHT as ADAPTER_REGISTRY_INVALID. A second defect found while fixing this one: passing section 1's id-keyed dict into the new predicate made it read zero real adapters, fixed by entry_list() accepting either shape, with the same acceptance on both states re-verified. Suite after the change: portability conformance 39 passed / 0 failed / 6 controls (was 5 controls); P7 readiness mutations 30 caught-or-control-satisfied / 0 missed plus 11 caught / 0 missed (was 29; one new case); every other suite count identical to EV-RP3-010, which this record supersedes for those two counts. No guard was weakened, no decision reinterpreted, and roadmap P3 completion remains PENDING_USER_APPROVAL.",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "decision_ids": ["D-P3-A", "D-P3-G"],
+        "deliverable": "adapter-count invariant robustness"
+      }
     }
   ]
 }
