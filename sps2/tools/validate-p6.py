@@ -389,6 +389,10 @@ def s9(r):
             # the whole tools directory.
             if f == self_name:
                 continue
+            # validate-bootstrap.py contains the global-path patterns
+            # it checks for as literals (same as self_name above).
+            if f == "validate-bootstrap.py":
+                continue
             try:
                 body = open(os.path.join(root, f)).read()
             except (OSError, UnicodeDecodeError):
