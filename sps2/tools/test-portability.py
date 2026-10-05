@@ -208,16 +208,22 @@ def s1(r):
         r.bad("REGISTRY_ENTRY_WITHOUT_ADAPTER_DIR: %s"
               % ", ".join(undeclared))
     gen = entries.get(PT.FALLBACK_ADAPTER_ID) or {}
-    if gen.get("maturity") == "DECLARED" and PT.FALLBACK_ADAPTER_ID in dirs:
+    real = PT.real_adapter_ids(entries=entries)
+    # D-P3-A authorises EXACTLY two real adapters and names them; the DECLARED
+    # generic fallback is never counted. D-P3-D keeps {"adapters": []} a valid
+    # state, so in that state the delivered-set requirements (the fallback and
+    # the exact bound) do not apply: what must hold there is that no adapter
+    # directory survived, which the mirroring and undeclared-entry checks above
+    # already enforce. Section 3 is where the zero-adapter state is exercised.
+    if not entries:
+        r.ok("zero-adapter registry accepted as valid (D-P3-D); the delivered "
+             "set (generic fallback, D-P3-A bound) does not apply to it")
+    elif gen.get("maturity") == "DECLARED" and PT.FALLBACK_ADAPTER_ID in dirs:
         r.ok("generic fallback intact (DECLARED) and mirrored")
     else:
         r.bad("GENERIC_FALLBACK_CHANGED_OR_MISSING")
-    real = PT.real_adapter_ids(entries=entries)
-    # D-P3-A authorises EXACTLY two real adapters and names them; the DECLARED
-    # generic fallback is never counted. An empty registry remains valid under
-    # D-P3-D, so this invariant applies to every non-empty registry.
     if not entries:
-        r.ok("zero-adapter registry accepted as valid (D-P3-D)")
+        pass
     elif len(real) != len(PT.AUTHORISED_REAL_ADAPTERS):
         r.bad("ADAPTER_COUNT_VIOLATION: D-P3-A authorises exactly %d real "
               "adapters, found %d (%s)"
@@ -243,6 +249,7 @@ def s1(r):
     # enforcement points derive from portability.real_adapter_ids(). The control
     # fails if the predicate raises, or if the entry stops being reported.
     malformed = copy.deepcopy(list(entries.values()))
+    baseline = PT.real_adapter_ids(entries=entries)
     malformed.append({"maturity": "EXPERIMENTAL"})
     try:
         mal_ids = PT.real_adapter_ids(entries=malformed)
@@ -252,7 +259,7 @@ def s1(r):
               % type(exc).__name__)
     else:
         reported = [e for e in mal_errs if "MISSING_FIELD" in e]
-        if reported and mal_ids == list(PT.AUTHORISED_REAL_ADAPTERS):
+        if reported and mal_ids == baseline:
             r.control("C6 a malformed adapter entry is rejected by the "
                       "contract and skipped by the count invariant")
         else:
