@@ -24,7 +24,9 @@ Invariants (machine-checked by `sps2/tools/test-portability.py` section 1 and
 - `writes_global_state` is always `false`;
 - `detection`, when declared, is read-only;
 - no duplicate `agent_id`;
-- the core never imports or branches on an adapter.
+- the core never imports or branches on an adapter;
+- the real-adapter set is exactly the pair the recorded User decision names
+  (`D-P3-A`), checked in `sps2/tools/portability.py`.
 
 ## Current adapters (delivered under roadmap P3, decision D-P3-A)
 
@@ -43,8 +45,24 @@ while the generic fallback remains available and no exercise has been recorded.
 "Delete all adapters" means: delete every `<agent-id>/` directory and empty
 the registry's adapter list. The contract and the registry file remain
 (core-owned), the registry becomes `{"adapters": []}` (valid), and every core
-suite must still pass. `sps2/tools/test-portability.py` section 3 rehearses
-exactly this on an isolated copy; it doubles as the documented rollback.
+suite must still pass.
+
+The operation is implemented once, in `sps2/tools/portability.py`, so the
+rehearsal and the rollback cannot drift apart:
+
+```
+python3 sps2/tools/portability.py                # rehearse delete-all on an isolated copy
+python3 sps2/tools/portability.py --verify       # check this delivered state
+python3 sps2/tools/portability.py --apply --root . --confirm   # DESTRUCTIVE rollback
+```
+
+The rehearsal copies the repository to a temp directory, deletes every adapter
+there, validates the zero-adapter state, runs every core validator in it,
+restores the adapter surface and re-validates it. It never modifies this
+surface. `--apply` is the rollback itself and is never run by a suite; it
+requires an explicit `--root` and `--confirm`, touches nothing outside this
+directory, and leaves the core, `.sps/`, the production capability registry and
+every legacy file untouched.
 
 ## Evidence
 

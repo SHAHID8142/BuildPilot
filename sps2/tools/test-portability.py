@@ -2,59 +2,66 @@
 """SPS 2.0 Roadmap P3 portability conformance test (D-P3-D, D-P3-E).
 
 Agent-neutral. Standard library only. Project-local: no installs, no network,
-no machine-global writes. The delete-all exercise of section 3 runs on an
-ISOLATED COPY of the repository in a temp directory, so the working tree is
-never modified; the adapter surface is hash-compared before and after.
+no machine-global writes. The delete-all exercise of section 3 is delegated to
+`portability.py`, which runs it on an ISOLATED COPY of the repository in a temp
+directory, so the working tree is never modified; the adapter surface is
+hash-compared before and after.
+
+The mechanics live in `portability.py`, not here: what an adapter is for
+deletion purposes, which core validators must stay green, and the single
+definition site of the D-P3-A adapter bound that both this suite and
+`validate-p7-readiness.py` import.
 
 Sections:
   1. Adapter surface is contract-conformant and mirrored (D-P3-A..C)
   2. Core stays agent-neutral outside adapters/ (verification criterion 4)
-  3. Zero-adapter portability on an isolated copy (criteria 1 and 2)
+  3. Zero-adapter portability on an isolated copy, and its restore
+     (criteria 1 and 2)
   4. Fresh-agent resume checklist executed mechanically (criterion 3)
 
-Scope note: the zero-adapter exercise runs every sps2-scoped suite (phase
-validators, unit tests, mutation suites, secret safety, emoji scan).
-.sps/ governance and the history-credential check do not read the adapter
-surface and are run as part of the normal-state suite instead.
+Scope note: the zero-adapter exercise runs every sps2-scoped suite listed in
+`portability.CORE_VALIDATORS` (phase validators, unit tests, mutation suites,
+secret safety, emoji scan). `check_sps2.py` is a library invoked by
+`validate-sps2.sh`, so it runs as part of the sps2 foundation entry; the .sps
+governance suite and the history-credential check read no adapter state and are
+run as part of the normal-state suite instead.
 
 Exit: 0 valid | 1 failure | 2 tooling unavailable.
 """
-import hashlib
+import copy
 import json
 import os
 import shutil
-import subprocess
 import sys
 import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SPS2 = os.path.dirname(HERE)
 REPO = os.path.dirname(SPS2)
-sys.path.insert(0, os.path.join(SPS2, "core"))
-sys.path.insert(0, os.path.join(SPS2, "governance"))
+for _p in (os.path.join(SPS2, "core"), os.path.join(SPS2, "governance"), HERE):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import adapter_registry as A        # noqa: E402
 import attribution as G             # noqa: E402
+import portability as PT           # noqa: E402
 
 ADAPTERS = os.path.join(SPS2, "core", "adapters")
 REGISTRY = os.path.join(ADAPTERS, "registry.json")
-CONTRACT = os.path.join(ADAPTERS, "contract.schema.json")
-ADAPTER_README = os.path.join(ADAPTERS, "README.md")
 RESUME = os.path.join(SPS2, "RESUME.md")
 P3_DECISIONS = os.path.join(SPS2, "decisions", "ROADMAP-P3-DECISIONS.json")
 P7_DECISIONS = os.path.join(SPS2, "decisions", "P7-READINESS-DECISIONS.json")
 RECON = os.path.join(SPS2, "decisions", "ROADMAP-EXECUTION-RECONCILIATION.json")
 EVIDENCE = os.path.join(SPS2, "evidence", "ROADMAP-P3-EVIDENCE.json")
 
-# Core-owned boundary files: never "an adapter" and must survive the delete-all
-# exercise (D-P3-D).
-CORE_OWNED = ("README.md", "contract.schema.json", "registry.json")
-
-# D-P3-A: "Implement real adapters for exactly two low-risk targets: Codex and
-# OpenCode", bounded to "Two adapters only. Adding any further adapter requires
-# a new decision." The DECLARED generic fallback is never a real adapter.
-AUTHORISED_REAL_ADAPTERS = ("codex", "opencode")
-REAL_MATURITIES = ("EXPERIMENTAL", "VERIFIED")
+# The answers a fresh agent must be able to obtain from the checklist
+# (D-P3-E). The historical four are kept; the rest were missing and are now
+# required, so the resume deliverable cannot silently regress to phase/task/
+# next/forbidden alone.
+RESUME_ANSWERS = ("What P3 is", "What was authorised", "Adapters delivered",
+                  "Current phase", "Current task", "Next allowed action",
+                  "What remains", "Forbidden actions", "Authoritative records",
+                  "Rollback")
 
 # The same vendor list the existing neutrality guards use.
 VENDORS = ("cline", "claude", "codex", "cursor", "copilot", "windsurf",
@@ -64,36 +71,6 @@ VENDORS = ("cline", "claude", "codex", "cursor", "copilot", "windsurf",
 ALLOWED_KEYS = {"agent_id", "display_name", "maturity", "writes_global_state",
                 "detection", "capabilities", "supports", "fallbacks",
                 "maintainer", "verified_by"}
-
-# Suites that must stay green with every adapter deleted.
-ZERO_ADAPTER_SUITES = (
-    ("sps2 foundation", ["bash", "sps2/tools/validate-sps2.sh"],
-     "SPS2 FOUNDATION VALID"),
-    ("P2 research", ["bash", "sps2/tools/validate-p2.sh"],
-     "P2 RESEARCH VALID"),
-    ("P3 production", ["bash", "sps2/tools/validate-p3.sh"],
-     "P3 PRODUCTION VALID"),
-    ("P4 promotion", ["bash", "sps2/tools/validate-p4.sh"],
-     "P4 PROMOTION VALID"),
-    ("P5 implementation", ["python3", "sps2/tools/validate-p5.py"],
-     "P5 IMPLEMENTATION VALID"),
-    ("P6 research", ["python3", "sps2/tools/validate-p6.py"],
-     "P6 RESEARCH VALID"),
-    ("P7 readiness", ["python3", "sps2/tools/validate-p7-readiness.py"],
-     "P7 READINESS RECORDED"),
-    ("P5 unit tests", ["python3", "sps2/tests/test_p5.py"], "OK"),
-    ("snapshot mutations", ["bash", "sps2/tools/test-snapshot-integrity.sh"],
-     "SNAPSHOT MUTATION SUITE"),
-    ("phase boundary mutations", ["bash", "sps2/tools/test-phase-boundary.sh"],
-     "PHASE BOUNDARY MUTATION SUITE"),
-    ("P7 readiness mutations", ["bash",
-                                "sps2/tools/test-p7-readiness-mutation.sh"],
-     "P7 READINESS MUTATION SUITE"),
-    ("secret safety", ["bash", "sps2/security/test-secret-safety.sh"],
-     "SECRET-SAFETY TEST PASSED"),
-    ("no-emoji", ["python3", "sps2/tools/check_emoji.py", "sps2"],
-     "violations=0"),
-)
 
 GREEN, RED, BOLD, NC = ("\033[0;32m", "\033[0;31m", "\033[1m", "\033[0m")
 
@@ -140,25 +117,47 @@ def vendor_hits(root):
     return hits
 
 
-def dir_hash(path):
-    """Content hash of a directory tree, order-independent."""
-    h = hashlib.sha256()
-    for r, dirs, files in os.walk(path):
-        dirs.sort()
-        for f in sorted(files):
-            p = os.path.join(r, f)
-            h.update(os.path.relpath(p, path).encode())
-            with open(p, "rb") as fh:
-                h.update(fh.read())
-    return h.hexdigest()
+def resume_sources(text):
+    return [ln.split("SOURCE:", 1)[1].strip()
+            for ln in text.splitlines() if ln.startswith("SOURCE:")]
+
+
+def resume_inventory(text):
+    """Adapter inventory rows of the resume checklist: id -> maturity."""
+    rows = {}
+    for line in text.splitlines():
+        s = line.strip()
+        if not s.startswith("|"):
+            continue
+        cells = [c.strip().strip("`").strip()
+                 for c in s.strip("|").split("|")]
+        if len(cells) < 2:
+            continue
+        aid, maturity = cells[0], cells[1]
+        if maturity in PT.REAL_MATURITIES or maturity == "DECLARED":
+            if aid and set(aid) - set("-: "):
+                rows[aid] = maturity
+    return rows
+
+
+def inventory_drift(rows, entries):
+    """Checklist rows that disagree with the live adapter registry."""
+    live = {a.get("agent_id"): a.get("maturity") for a in entries}
+    drift = []
+    for aid, maturity in sorted(rows.items()):
+        if live.get(aid) != maturity:
+            drift.append("%s: checklist %s, registry %s"
+                         % (aid, maturity, live.get(aid)))
+    for aid in sorted(live):
+        if aid not in rows:
+            drift.append("%s: in registry, absent from the checklist" % aid)
+    return drift
 
 
 def s1(r):
     r.sect("1. Adapter surface is contract-conformant and mirrored")
-    for p, label in ((CONTRACT, "contract.schema.json"),
-                     (REGISTRY, "registry.json"),
-                     (ADAPTER_README, "README.md")):
-        if os.path.isfile(p):
+    for label in PT.CORE_OWNED_FILES:
+        if os.path.isfile(os.path.join(ADAPTERS, label)):
             r.ok("present: sps2/core/adapters/%s" % label)
         else:
             r.bad("ADAPTER_SURFACE_FILE_MISSING: %s" % label)
@@ -207,28 +206,38 @@ def s1(r):
     undeclared = sorted(set(entries) - set(dirs))
     if undeclared:
         r.bad("REGISTRY_ENTRY_WITHOUT_ADAPTER_DIR: %s" % undeclared)
-    gen = entries.get("generic") or {}
-    if gen.get("maturity") == "DECLARED" and "generic" in dirs:
+    gen = entries.get(PT.FALLBACK_ADAPTER_ID) or {}
+    if gen.get("maturity") == "DECLARED" and PT.FALLBACK_ADAPTER_ID in dirs:
         r.ok("generic fallback intact (DECLARED) and mirrored")
     else:
         r.bad("GENERIC_FALLBACK_CHANGED_OR_MISSING")
     real = sorted(a.get("agent_id") for a in entries.values()
-                  if a.get("maturity") in REAL_MATURITIES)
+                  if a.get("maturity") in PT.REAL_MATURITIES)
     # D-P3-A authorises EXACTLY two real adapters and names them; the DECLARED
     # generic fallback is never counted. An empty registry remains valid under
     # D-P3-D, so this invariant applies to every non-empty registry.
     if not entries:
         r.ok("zero-adapter registry accepted as valid (D-P3-D)")
-    elif len(real) != len(AUTHORISED_REAL_ADAPTERS):
+    elif len(real) != len(PT.AUTHORISED_REAL_ADAPTERS):
         r.bad("ADAPTER_COUNT_VIOLATION: D-P3-A authorises exactly %d real "
               "adapters, found %d (%s)"
-              % (len(AUTHORISED_REAL_ADAPTERS), len(real),
+              % (len(PT.AUTHORISED_REAL_ADAPTERS), len(real),
                  ", ".join(real) or "none"))
-    elif set(real) != set(AUTHORISED_REAL_ADAPTERS):
+    elif set(real) != set(PT.AUTHORISED_REAL_ADAPTERS):
         r.bad("ADAPTER_IDENTITY_VIOLATION: D-P3-A authorises %s, found %s"
-              % (", ".join(AUTHORISED_REAL_ADAPTERS), ", ".join(real)))
+              % (", ".join(PT.AUTHORISED_REAL_ADAPTERS), ", ".join(real)))
     else:
         r.ok("exactly the two authorised real adapters (D-P3-A): %s" % real)
+    # The enforced bound is a single constant (portability.py); it must still
+    # match what the recorded User decision names, so the constant cannot drift
+    # away from ROADMAP-P3-DECISIONS.json without failing here.
+    named, bound_errors = PT.decision_bound(REPO, registry=reg)
+    if bound_errors:
+        for e in bound_errors:
+            r.bad(e)
+    else:
+        r.ok("enforced adapter bound matches the recorded %s decision: %s"
+             % (PT.BOUND_DECISION_ID, ", ".join(named)))
 
 
 def s2(r):
@@ -274,73 +283,35 @@ def s2(r):
 
 
 def s3(r):
-    r.sect("3. Zero-adapter portability on an isolated copy "
+    r.sect("3. Zero-adapter portability on an isolated copy, and its restore "
            "(criteria 1 and 2)")
-    before = dir_hash(ADAPTERS)
-    tmp = tempfile.mkdtemp(prefix="sps2-portability-copy-")
-    tree = os.path.join(tmp, "tree")
-    try:
-        shutil.copytree(REPO, tree,
-                        ignore=shutil.ignore_patterns(".kilo", "__pycache__"))
-        adir = os.path.join(tree, "sps2", "core", "adapters")
-        removed = []
-        for name in sorted(os.listdir(adir)):
-            p = os.path.join(adir, name)
-            if os.path.isdir(p):
-                shutil.rmtree(p)
-                removed.append(name)
-            elif name not in CORE_OWNED:
-                os.unlink(p)
-                removed.append(name)
-        regp = os.path.join(adir, "registry.json")
-        with open(regp) as fh:
-            reg = json.load(fh)
-        reg["adapters"] = []
-        reg["note"] = ("Zero-adapter portability state: every adapter "
-                       "directory and entry is deleted; the core-owned "
-                       "contract and registry remain (D-P3-D).")
-        with open(regp, "w") as fh:
-            json.dump(reg, fh, indent=2)
-        r.ok("isolated copy prepared: deleted %s; registry emptied to []"
-             % (", ".join(removed) or "nothing"))
-        code = (
-            "import sys\n"
-            "sys.path.insert(0, %r)\n"
-            "import adapter_registry as A\n"
-            "errs, summary = A.validate_registry()\n"
-            "print('EMPTY_REGISTRY_OK' if errs == [] and "
-            "summary['adapters'] == 0 else 'EMPTY_REGISTRY_ERR')\n"
-            "print('CORE_ADAPTER_FREE' if A.core_is_adapter_free() == [] "
-            "else 'CORE_DEPENDS_ON_ADAPTER')\n"
-            % os.path.join(tree, "sps2", "core"))
-        res = subprocess.run(["python3", "-c", code], cwd=tree,
-                             capture_output=True, text=True)
-        if "EMPTY_REGISTRY_OK" in res.stdout:
-            r.ok("copy: empty adapter registry [] accepted as valid")
+    before = PT.surface_digest(REPO)
+    report = PT.rehearse(REPO)
+    plan = report["plan"]
+    r.ok("isolated copy prepared: deleted %s; registry emptied to []"
+         % (", ".join(plan["dirs"]) or "nothing"))
+    if report["zero_state_errors"]:
+        for e in report["zero_state_errors"]:
+            r.bad("copy: %s" % e)
+    else:
+        r.ok("copy: empty adapter registry [] accepted as valid; core-owned "
+             "contract and registry remain")
+    for res in report["validators"]:
+        if res["ok"]:
+            r.ok("copy: %s green with zero adapters" % res["label"])
         else:
-            r.bad("copy: empty adapter registry rejected")
-        if "CORE_ADAPTER_FREE" in res.stdout:
-            r.ok("copy: core remains adapter-free with zero adapters")
-        else:
-            r.bad("copy: core depends on an adapter when none exist")
-        for label, cmd, marker in ZERO_ADAPTER_SUITES:
-            out = subprocess.run(cmd, cwd=tree, capture_output=True,
-                                 text=True, timeout=900)
-            blob = (out.stdout or "") + (out.stderr or "")
-            good = (out.returncode == 0) and (marker in blob) \
-                and ("MISSED" not in blob)
-            if good:
-                r.ok("copy: %s green with zero adapters" % label)
-            else:
-                r.bad("copy: %s not green with zero adapters (rc=%d)"
-                      % (label, out.returncode))
-        if before != dir_hash(ADAPTERS):
-            r.bad("WORKING_TREE_MODIFIED: adapter surface changed by the "
-                  "exercise")
-        else:
-            r.ok("working adapter surface untouched (sha256 unchanged)")
-    finally:
-        shutil.rmtree(tmp, ignore_errors=True)
+            r.bad("copy: %s not green with zero adapters (rc=%s)"
+                  % (res["label"], res["rc"]))
+    if report["restore_errors"]:
+        for e in report["restore_errors"]:
+            r.bad("copy: restore: %s" % e)
+    else:
+        r.ok("copy: adapter surface restored byte-identically and the "
+             "delivered state re-validated (rollback is reversible)")
+    if PT.surface_digest(REPO) != before:
+        r.bad("WORKING_TREE_MODIFIED: adapter surface changed by the exercise")
+    else:
+        r.ok("working adapter surface untouched (sha256 unchanged)")
 
 
 def s4(r):
@@ -351,8 +322,7 @@ def s4(r):
         return
     with open(RESUME, encoding="utf-8", errors="replace") as fh:
         text = fh.read()
-    sources = [ln.split("SOURCE:", 1)[1].strip()
-               for ln in text.splitlines() if ln.startswith("SOURCE:")]
+    sources = resume_sources(text)
     missing = [s for s in sources
                if not os.path.exists(os.path.join(REPO, s))]
     if not sources:
@@ -361,12 +331,12 @@ def s4(r):
         r.bad("RESUME_SOURCE_MISSING: %s" % missing)
     else:
         r.ok("all %d resume sources resolve" % len(sources))
-    for phrase in ("Current phase", "Current task", "Next allowed action",
-                   "Forbidden actions"):
-        if phrase in text:
-            r.ok("resume checklist answers %r" % phrase)
-        else:
-            r.bad("RESUME_ANSWER_MISSING: %r" % phrase)
+    absent_answers = [p for p in RESUME_ANSWERS if p not in text]
+    if absent_answers:
+        r.bad("RESUME_ANSWER_MISSING: %s" % absent_answers)
+    else:
+        r.ok("resume checklist answers all %d required questions"
+             % len(RESUME_ANSWERS))
     with open(P3_DECISIONS) as fh:
         dec = json.load(fh)
     ids = {d.get("decision_id"): d for d in dec.get("decisions") or []}
@@ -386,6 +356,33 @@ def s4(r):
         r.ok("roadmap P3 completion state: %s" % comp.get("state"))
     else:
         r.bad("P3_COMPLETION_STATE_INVALID: %r" % (comp.get("state"),))
+    # The checklist's machine-readable completion state must equal the recorded
+    # one, so the resume state cannot go stale behind the decisions record.
+    stated = [ln.split("COMPLETION:", 1)[1].strip()
+              for ln in text.splitlines() if ln.startswith("COMPLETION:")]
+    if comp.get("state") in stated:
+        r.ok("resume checklist states the recorded completion state (%s)"
+             % comp.get("state"))
+    else:
+        r.bad("RESUME_COMPLETION_STATE_DRIFT: checklist %s, record %r"
+              % (stated or "nothing", comp.get("state")))
+    # The checklist's adapter inventory must equal the live registry, so a
+    # fresh agent is never told about adapters that do not (or no longer) exist.
+    rows = resume_inventory(text)
+    try:
+        entries = A.load_registry().get("adapters") or []
+    except (OSError, ValueError) as exc:
+        entries = []
+        r.bad("ADAPTER_REGISTRY_UNREADABLE: %s" % type(exc).__name__)
+    drift = inventory_drift(rows, entries)
+    if not rows:
+        r.bad("RESUME_ADAPTER_INVENTORY_MISSING")
+    elif drift:
+        for d in drift:
+            r.bad("RESUME_ADAPTER_INVENTORY_DRIFT: %s" % d)
+    else:
+        r.ok("resume adapter inventory matches the registry: %s"
+             % ", ".join("%s=%s" % kv for kv in sorted(rows.items())))
     with open(P7_DECISIONS) as fh:
         p7ids = {d.get("decision_id")
                  for d in (json.load(fh).get("decisions") or [])}
@@ -423,6 +420,27 @@ def s4(r):
         r.control("C4 a missing resume source is detected")
     else:
         r.bad("C4 missing resume source MISSED (detected=%r)" % detected)
+    # C5 exercises the SAME drift predicate the inventory assertion uses, with
+    # exactly one injected registry change. Without the injection the predicate
+    # must report nothing, and with it exactly that one adapter; otherwise the
+    # control would be vacuous in either direction.
+    injected_registry = copy.deepcopy(entries)
+    target = next((a for a in injected_registry
+                   if a.get("agent_id") != PT.FALLBACK_ADAPTER_ID), None)
+    if target is None:
+        r.bad("C5 no real adapter available to inject a maturity drift")
+    else:
+        original = target.get("maturity")
+        target["maturity"] = "VERIFIED"
+        detected_drift = inventory_drift(rows, injected_registry)
+        if inventory_drift(rows, entries) or \
+                not any(d.startswith(target["agent_id"] + ":")
+                        for d in detected_drift):
+            r.bad("C5 maturity drift MISSED or falsely reported (detected=%r)"
+                  % detected_drift)
+        else:
+            r.control("C5 an injected adapter maturity drift is detected "
+                      "(%s %s -> VERIFIED)" % (target["agent_id"], original))
 
 
 def main():

@@ -17,23 +17,27 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))
 SPS2 = os.path.join(REPO, "sps2")
-sys.path.insert(0, os.path.join(SPS2, "core"))
-sys.path.insert(0, os.path.join(SPS2, "governance"))
+for _p in (os.path.join(SPS2, "core"), os.path.join(SPS2, "governance"),
+           os.path.dirname(os.path.abspath(__file__))):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 import adapter_registry as A        # noqa: E402
 import attribution as G             # noqa: E402
 import registry_api as R            # noqa: E402
+import portability as PT           # noqa: E402
 
 GREEN, RED, BOLD, NC = (
     "\033[0;32m", "\033[0;31m", "\033[1m", "\033[0m")
 RECON = os.path.join(SPS2, "decisions", "ROADMAP-EXECUTION-RECONCILIATION.json")
 P3_DECISIONS = os.path.join(SPS2, "decisions", "ROADMAP-P3-DECISIONS.json")
 PORTABILITY_TOOL = os.path.join(SPS2, "tools", "test-portability.py")
-# D-P3-A: "Implement real adapters for exactly two low-risk targets: Codex and
-# OpenCode", bounded to "Two adapters only. Adding any further adapter requires
-# a new decision." The DECLARED generic fallback is never a real adapter.
-AUTHORISED_REAL_ADAPTERS = ("codex", "opencode")
-REAL_MATURITIES = ("EXPERIMENTAL", "VERIFIED")
+# D-P3-A's bound (exactly two real adapters, Codex and OpenCode; the DECLARED
+# generic fallback never counted) has a single definition site, in
+# sps2/tools/portability.py, which also proves it against the recorded User
+# decision. This module reads it from there instead of repeating it.
+AUTHORISED_REAL_ADAPTERS = PT.AUTHORISED_REAL_ADAPTERS
+REAL_MATURITIES = PT.REAL_MATURITIES
 AUDIT = os.path.join(REPO, "AUDIT-P7-READINESS-AND-DECISION.md")
 # Roadmap P7 deliverables. None may exist while P7 is unauthorised.
 P7_IMPL_ARTEFACTS = ("requirements/P7-REQUIREMENTS.json",
@@ -172,7 +176,14 @@ def p3_delivery_state():
             "ADAPTER_IDENTITY_VIOLATION: D-P3-A authorises %s, found %s"
             % (",".join(AUTHORISED_REAL_ADAPTERS), ",".join(sorted(real))))
     conformance = os.path.isfile(PORTABILITY_TOOL)
-    delivered = bool(not errs and count_ok and generic and conformance)
+    # The enforced bound must still match what the recorded User decision names,
+    # so a changed adapter set cannot pass the count check while the decision
+    # record says something else.
+    _named, bound_errors = PT.decision_bound(REPO, registry={"adapters":
+                                                             adapters})
+    errors.extend(bound_errors)
+    delivered = bool(not errs and count_ok and generic and conformance
+                     and not bound_errors)
     approved = False
     if os.path.isfile(P3_DECISIONS):
         rec = json.load(open(P3_DECISIONS))
