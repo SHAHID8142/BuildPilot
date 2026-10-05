@@ -51,6 +51,60 @@
       }
     }
   ],
+  "completion": {
+    "state": "APPROVED",
+    "approval": {
+      "state": "APPROVED",
+      "decided_by": "User",
+      "decided_on": "2026-10-05",
+      "basis": "Explicit User decision: 'I approve the completed P7 implementation as delivered.' The approved scope is exactly G1-G8 and the forbidden scope is unchanged from D-P7-IMPLEMENTATION."
+    },
+    "transitions_from": "IMPLEMENTED / VERIFIED / NOT_APPROVED",
+    "scope_rule": "The approved scope is exactly the G1-G8 governance set and the existing forbidden scope of D-P7-IMPLEMENTATION. Approval does not widen, narrow or reinterpret either list.",
+    "approved_scope": [
+      "G1: Memory format: JSON with documented, machine-validatable schema. Deterministic, inspectable project-local files.",
+      "G2: Memory location: sps2/ subtree, outside sps2/core/. Not inside the adapter/core surface.",
+      "G3: Isolation: no shared persistent state, no cross-project imports, no cross-project registry/state references. Mechanically provable.",
+      "G4: Team bootstrap: mechanical checklist from repository state and authoritative sources. No unnecessary generated runtime state.",
+      "G5: Global-memory retirement: inventory first. No legacy modification. Stop if broader boundary needed.",
+      "G6: P2 SUBSTANTIALLY_SATISFIED is sufficient under D-P7-A.",
+      "G7: P7 has its own explicit User authorisation; does not inherit from P3.",
+      "G8: CONF-001 remains UNRESOLVED. No LCP/INP introduction."
+    ],
+    "explicitly_not_approved": [
+      "installing dependencies, packages, skills, MCPs, CLIs, or tools",
+      "machine-global state changes",
+      "runtime activation",
+      "capability promotion",
+      "production registry modification",
+      "legacy-file modification",
+      "modification of .sps/ global state",
+      "resolving CONF-001",
+      "introducing/inventing LCP or INP values",
+      "writing state outside the repository",
+      "P8 or later",
+      "unrelated refactoring",
+      "pushing to any remote",
+      "self-approval of P7"
+    ],
+    "delivered": [
+      "G1 memory layout: sps2/memory/memory-layout.json (schema sps2.memory-layout/v1)",
+      "G2 memory location: sps2/memory/, outside sps2/core/",
+      "G3 isolation validator: sps2/tools/isolation_validator.py (two-project proof, 8 negative cases)",
+      "G4 team bootstrap: sps2/memory/team-bootstrap.md plus sps2/tools/validate-bootstrap.py dry-run validator",
+      "G5 rollback/removal: sps2/tools/rollback-memory-layout.py (snapshot, rollback, remove, status; atomic and idempotent)",
+      "G8 CONF-001 remains UNRESOLVED; LCP and INP thresholds remain NOT_OBSERVED"
+    ],
+    "pending": [],
+    "explicitly_not_approved_yet": [
+      "P8 or any later phase",
+      "beginning any work beyond the G1-G8 approved scope",
+      "any action listed in explicitly_not_approved above",
+      "promoting any capability, including CAP-P03-005",
+      "runtime activation of any kind",
+      "closing CONF-001 or introducing LCP/INP values"
+    ]
+  },
   "what_these_decisions_do_not_authorise": [
     "P8 or later",
     "self-approval of P7",

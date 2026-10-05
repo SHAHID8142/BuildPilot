@@ -14,7 +14,7 @@
       "P6",
       "P7"
     ],
-    "p7_status": "IMPLEMENTED / VERIFIED / NOT_APPROVED",
+    "p7_status": "IMPLEMENTED / VERIFIED / APPROVED",
     "p8_status": "NOT_STARTED"
   },
   "phase_index": {
@@ -24,7 +24,7 @@
     "P4": "PARTIALLY_SATISFIED",
     "P5": "PARTIALLY_SATISFIED",
     "P6": "SATISFIED",
-    "P7": "IMPLEMENTED / VERIFIED / NOT_APPROVED (User approval pending)"
+    "P7": "IMPLEMENTED / VERIFIED / APPROVED (User-approved 2026-10-05)"
   },
   "capability_registry": {
     "path": "sps2/capability/registry.json",
@@ -69,7 +69,7 @@
     },
     {
       "file": "P7-DECISIONS.json",
-      "sha256": "5e08a7f96f4acdcf1d5f21e115bc3dc3962a36c4f9be15fd2dd29955ffe45a58"
+      "sha256": "1db733affad8e3f5315926b69bc093c0f1b00cf848adc8b5bd8291cce8936bbf"
     },
     {
       "file": "P7-READINESS-DECISIONS.json",
