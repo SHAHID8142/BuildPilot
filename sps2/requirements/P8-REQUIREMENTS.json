@@ -1,0 +1,361 @@
+{
+  "schema": "sps2.requirements/v1",
+  "phase": "P8",
+  "phase_definition": "CMS 2.0 (authoritative roadmap definition)",
+  "generated": "2026-10-06",
+  "note": "P8 Phase 1 — Discovery & Requirements only. No implementation is authorised by this document. IMPLEMENTED, VERIFIED and APPROVED remain three independent axes. Nothing here is self-approved.",
+  "roadmap_source": ".sps/architecture/SPS2-ROADMAP.md",
+  "roadmap_objective": "CMS with Super Admin / Admin separation and a unified asset picker.",
+  "roadmap_dependencies": ["P5", "P6", "P7"],
+  "roadmap_forbidden": [
+    "copying KI-01 (hardcoded secret)",
+    "exposing layout controls to Admins"
+  ],
+  "roadmap_deliverables": [
+    "architecture",
+    "reference implementation",
+    "schema"
+  ],
+  "roadmap_acceptance": [
+    "Super Admin keeps structural control",
+    "Admin cannot break layout",
+    "asset picker supports upload / existing media / external URL (validated, fetched, optimised, stored locally)"
+  ],
+  "roadmap_verification": [
+    "role-permission tests",
+    "vertical-slice integration test"
+  ],
+  "roadmap_approval": "user; security review mandatory",
+  "roadmap_rollback": "feature flag; removable without touching the core",
+  "dependency_state": {
+    "P5": {
+      "status": "PARTIALLY_SATISFIED",
+      "acceptance_criteria_met": true,
+      "remaining_gap": "staleness monitor (report-only) is PARTIAL — fields and validators exist but no named monitor component",
+      "gap_analysis": "The staleness monitor is a roadmap deliverable, not an acceptance criterion. P5's acceptance criteria (selection reproducible from registry; global install rejected) are both met. The gap does not block P8 but is tracked as a partial dependency.",
+      "p8_dependency": "P8 does not directly depend on the staleness monitor. P8 depends on P5's selection workflow and provenance records, which are complete."
+    },
+    "P6": {
+      "status": "SATISFIED",
+      "relevant_research": "TECH-PYTHON-STDLIB is SUFFICIENT; TECH-SPS-CMS is PARTIAL",
+      "p8_dependency": "P8 must use a technology with readiness SUFFICIENT. TECH-PYTHON-STDLIB is SUFFICIENT. TECH-SPS-CMS is NOT selectable without further research."
+    },
+    "P7": {
+      "status": "IMPLEMENTED / VERIFIED / APPROVED",
+      "approval_date": "2026-10-05",
+      "p8_dependency": "P8 must remain project-local, isolated, and rollback-safe per P7 governance."
+    }
+  },
+  "technology_assessment": {
+    "candidates": [
+      {
+        "technology_id": "TECH-PYTHON-STDLIB",
+        "readiness": "SUFFICIENT",
+        "selectable": true,
+        "relevance": "Implementation language for SPS 2.0 core, governance, validators, and P8 reference implementation",
+        "evidence": "sps2/research/cache.json — all 10 coverage areas COVERED, sources rank 2",
+        "notes": "Already the foundation for all SPS 2.0 code. P8 will use Python stdlib for the reference implementation."
+      },
+      {
+        "technology_id": "TECH-SPS-CMS",
+        "readiness": "PARTIAL",
+        "selectable": false,
+        "relevance": "Legacy CMS skill; candidate source for CMS 2.0 patterns",
+        "evidence": "sps2/research/cache.json — 3/10 coverage areas COVERED, 7 UNKNOWN",
+        "notes": "NOT selectable for P8 without further research. The legacy skill is a template-based system, not a CMS architecture. P8 requires a new architecture, not a port of the legacy skill. KI-01 (hardcoded secret) is classified NEVER COPY."
+      }
+    ],
+    "gap": "No existing technology candidate is a suitable CMS architecture for P8. TECH-PYTHON-STDLIB is SUFFICIENT as the implementation language, but P8 needs a CMS architecture pattern (content model, role separation, asset pipeline) that does not yet exist in the research cache.",
+    "required_action": "P8 Phase 2 must research and select a CMS architecture pattern. This may involve: (a) researching an existing open-source CMS architecture for reference patterns, or (b) designing a new architecture from first principles with documented evidence. No technology capability may be invented or inferred."
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-P8-01",
+      "title": "Super Admin / Admin role separation",
+      "objective": "Implement a role-based access control system where Super Admin has full structural control and Admin has content-only access.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Super Admin can create, modify, and delete content types, sections, and layout structure",
+        "Admin can create, edit, and publish content within existing structure only",
+        "Admin cannot modify layout, section structure, or content types",
+        "Role assignments are enforced on every operation",
+        "An operation attempted by an unauthorised role is rejected with a controlled message"
+      ],
+      "dependencies": ["P5", "P7"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "role-permission tests"
+      },
+      "security_implications": [
+        "Role escalation prevention: Admin must not be able to self-promote to Super Admin",
+        "Every authorisation decision must be logged for audit",
+        "Role checks must be server-side, not client-side only"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-02",
+      "title": "Content and section model",
+      "objective": "Define a typed content model with sections that can be composed into pages without hardcoding.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Content types are defined in schema, not hardcoded in templates",
+        "Sections are composable and reorderable by Super Admin",
+        "Every content field has a defined type and validation rule",
+        "Content can be previewed before publishing",
+        "Draft and published states are separate"
+      ],
+      "dependencies": ["REQ-P8-01"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "schema validation + vertical-slice integration test"
+      },
+      "security_implications": [
+        "Content injection: all user-supplied content must be sanitised",
+        "Schema changes must be versioned to prevent breaking existing content"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-03",
+      "title": "Unified asset picker",
+      "objective": "Provide a single asset picker that supports upload, existing media library, and external URL sources.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Upload: file is validated (type, size), virus-scanned if possible, and stored locally",
+        "Existing media: user can browse and select from previously uploaded assets",
+        "External URL: URL is validated, fetched, optimised, and stored locally (not hotlinked)",
+        "All three sources produce a uniform asset reference",
+        "Asset metadata (alt text, dimensions, size) is captured and editable"
+      ],
+      "dependencies": ["REQ-P8-02"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "asset picker integration test + negative tests for each source"
+      },
+      "security_implications": [
+        "External URL fetching must prevent SSRF (server-side request forgery)",
+        "Upload must enforce file type and size limits",
+        "Assets must be stored locally, not hotlinked to external servers",
+        "No hardcoded secrets or credentials in asset configuration (KI-01 forbidden)"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-04",
+      "title": "Preview and publishing workflow",
+      "objective": "Enable content authors to preview changes before publishing, and publish with audit trail.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Draft content is visible in preview mode but not in production",
+        "Publishing transitions content from draft to published atomically",
+        "Every publish action is recorded in audit history with actor, timestamp, and change summary",
+        "Unpublish is possible and also audited"
+      ],
+      "dependencies": ["REQ-P8-02"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "publishing workflow test + audit log verification"
+      },
+      "security_implications": [
+        "Preview must not be accessible to unauthorised users",
+        "Audit log must be append-only"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-05",
+      "title": "Audit history",
+      "objective": "Maintain a complete, append-only audit trail of all CMS operations.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every create, update, delete, publish, and role change is recorded",
+        "Audit entries include actor, action, target, timestamp, and before/after state",
+        "Audit log cannot be modified or deleted through the CMS API",
+        "Audit log is exportable for compliance review"
+      ],
+      "dependencies": ["REQ-P8-01"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "audit log completeness test + tamper-evidence test"
+      },
+      "security_implications": [
+        "Audit log is a security control — it must be tamper-evident",
+        "No credential values may appear in audit entries"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-06",
+      "title": "Project-local isolation and rollback safety",
+      "objective": "P8 must remain project-local, isolated per P7 governance, and removable without modifying SPS2 core.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "All P8 state lives inside the repository under domain/cms/",
+        "P8 does not write machine-global state",
+        "P8 does not modify SPS2 core, governance, or adapter surfaces",
+        "P8 can be removed by deleting domain/cms/ and reverting the feature flag",
+        "P8 validators pass on a fresh clone with P8 removed"
+      ],
+      "dependencies": ["P7"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "isolation validator + rollback rehearsal"
+      },
+      "security_implications": [
+        "P8 must not introduce cross-project state sharing",
+        "P8 must not depend on hidden machine-global memory"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-07",
+      "title": "KI-01 forbidden: no hardcoded secrets",
+      "objective": "P8 must not copy or reintroduce the KI-01 hardcoded secret mechanism from the legacy CMS.",
+      "scope": "IN_SCOPE",
+      "risk": "CRITICAL",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "No hardcoded secret, token, or credential exists anywhere in P8 code",
+        "All secrets are injected via environment variables or a secrets manager",
+        "A secret-detection validator scans P8 code and fails on any hardcoded credential pattern",
+        "The legacy KI-01 pattern (hardcoded secret fallback in auth helper) is explicitly documented as forbidden"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "secret detection scan + negative test"
+      },
+      "security_implications": [
+        "This is a CRITICAL security requirement. KI-01 is classified NEVER COPY in the migration matrix.",
+        "Any violation blocks P8 approval."
+      ]
+    },
+    {
+      "requirement_id": "REQ-P8-08",
+      "title": "CONF-001 preserved: no LCP/INP invention",
+      "objective": "P8 must not invent, infer, or introduce LCP or INP numeric thresholds. CONF-001 remains UNRESOLVED.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "No LCP or INP numeric threshold appears anywhere in P8 code or configuration",
+        "If P8 includes performance monitoring, it records observed values without comparing to invented thresholds",
+        "CONF-001 remains recorded as UNRESOLVED in all P8 documentation"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "regex scan for LCP/INP numeric values in P8 artefacts"
+      },
+      "security_implications": [
+        "Inventing performance thresholds would encode unverified facts into the system",
+        "This is a governance boundary, not a technical limitation"
+      ]
+    }
+  ],
+  "phase_1_boundary": {
+    "status": "COMPLETE",
+    "artefacts_produced": [
+      "sps2/requirements/P8-REQUIREMENTS.json"
+    ],
+    "next_phase_required": "User approval of P8 Phase 1 requirements before Phase 2 (Architecture & Schema) may begin",
+    "approval_required": "User must approve: (1) the P8 scope as defined, (2) the technology gap and required research, (3) the security implications, (4) the dependency state including the P5 staleness-monitor gap"
+  },
+  "unresolved_questions": [
+    {
+      "id": "UQ-P8-01",
+      "question": "What CMS architecture pattern should P8 use?",
+      "context": "No existing technology candidate is a suitable CMS architecture. TECH-SPS-CMS is PARTIAL and not selectable. A new architecture must be researched or designed.",
+      "options": [
+        "Research an existing open-source CMS architecture (e.g., Strapi, Directus, Ghost) for reference patterns",
+        "Design a new architecture from first principles with documented evidence",
+        "Use a hybrid approach: research existing patterns and adapt them"
+      ],
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P8-02",
+      "question": "Should the P5 staleness-monitor gap be addressed before or during P8?",
+      "context": "The staleness monitor is a PARTIAL P5 deliverable. It does not block P8 but is a tracked dependency.",
+      "options": [
+        "Address it in P8 as a related dependency",
+        "Address it as a separate P5 completion task",
+        "Defer it indefinitely"
+      ],
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P8-03",
+      "question": "What is the P8 technology stack?",
+      "context": "TECH-PYTHON-STDLIB is SUFFICIENT as the implementation language. But P8 may need additional technologies (e.g., a web framework, a database).",
+      "options": [
+        "Python stdlib only (consistent with SPS 2.0 policy)",
+        "Python stdlib + a lightweight web framework (requires research)",
+        "Python stdlib + a database (requires research)"
+      ],
+      "decision_required": "User"
+    }
+  ],
+  "security_review_requirement": {
+    "mandatory": true,
+    "per_roadmap": "P8 approval requires a security review",
+    "scope": [
+      "Role-based access control (REQ-P8-01)",
+      "Asset picker SSRF prevention (REQ-P8-03)",
+      "KI-01 forbidden secret scan (REQ-P8-07)",
+      "Audit log tamper-evidence (REQ-P8-05)",
+      "Content injection prevention (REQ-P8-02)"
+    ],
+    "timing": "Before P8 approval, after P8 implementation"
+  },
+  "files_changed": [
+    "sps2/requirements/P8-REQUIREMENTS.json"
+  ]
+}
