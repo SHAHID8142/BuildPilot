@@ -1,0 +1,427 @@
+{
+  "schema": "sps2.requirements/v1",
+  "phase": "P9",
+  "phase_definition": "SEO 2.0 (authoritative roadmap definition)",
+  "generated": "2026-10-06",
+  "note": "P9 Phase 1 — Discovery & Requirements only. No implementation is authorised by this document. IMPLEMENTED, VERIFIED and APPROVED remain three independent axes. Nothing here is self-approved.",
+  "roadmap_source": ".sps/architecture/SPS2-ROADMAP.md",
+  "roadmap_objective": "Build a real SEO subsystem (legacy has none — only a phantom dependency).",
+  "roadmap_dependencies": ["P8", "P5"],
+  "roadmap_forbidden": [
+    "shipping without a pre-deployment audit step",
+    "inventing LCP or INP numeric thresholds (CONF-001)",
+    "modifying legacy artefacts (legacy diff must remain 0)",
+    "third-party dependencies (Python standard library only)",
+    "writing machine-global state or external files"
+  ],
+  "roadmap_deliverables": [
+    "methodology",
+    "validator",
+    "audit tool"
+  ],
+  "roadmap_acceptance": [
+    "every listed dimension has a check or an explicit N/A rationale",
+    "pre-deployment audit step is executable and produces deterministic evidence",
+    "disabling SEO subsystem does not break core builds (advisory rollback)"
+  ],
+  "roadmap_verification": [
+    "SEO validator + audit report as evidence"
+  ],
+  "roadmap_approval": "user",
+  "roadmap_rollback": "advisory; disabling must not break builds",
+  "standing_bounds": {
+    "P5": "PARTIALLY_SATISFIED — tracked partial dependency; no runtime capability installation",
+    "CONF-001": "UNRESOLVED — no LCP/INP numeric thresholds invented; CWV handled via verified CLS + explicit documented N/A rationale for unretrieved metrics",
+    "SR-003_SR-007": "OPEN / non-blocking findings preserved",
+    "stack": "Python standard library only, project-local",
+    "legacy_diff": "must remain 0"
+  },
+  "dependency_state": {
+    "P8": {
+      "status": "APPROVED",
+      "approval_date": "2026-10-06",
+      "approval_commit": "e8f2509",
+      "p9_dependency": "P8 provides the content and section model (domain/cms/model.py), asset picker (domain/cms/assets.py), and publishing workflow. P9 SEO derives metadata, headings, and asset metadata from P8 content without coupling layout to presentation."
+    },
+    "P5": {
+      "status": "PARTIALLY_SATISFIED",
+      "acceptance_criteria_met": true,
+      "remaining_gap": "staleness monitor (report-only) is PARTIAL; install leg intentionally absent per D-P6-2",
+      "p9_dependency": "P9 does not depend on capability installation or the staleness monitor. P9 depends on project-local selection and provenance records. Tracked as a partial dependency per User authorization."
+    },
+    "P7": {
+      "status": "APPROVED",
+      "approval_date": "2026-10-05",
+      "p9_dependency": "P9 state must remain project-local (domain/seo/ or sps2/), isolated, and rollback-safe per P7 memory layout governance."
+    }
+  },
+  "technology_assessment": {
+    "candidates": [
+      {
+        "technology_id": "TECH-PYTHON-STDLIB",
+        "readiness": "SUFFICIENT",
+        "selectable": true,
+        "relevance": "Implementation language for SEO validator, audit tool, and metadata generators",
+        "evidence": "sps2/research/cache.json — 10/10 coverage, rank 2",
+        "notes": "Standard library modules (html.parser, urllib.parse, json, xml.etree.ElementTree, re, hashlib) suffice for all SEO parsing, schema generation, sitemap creation, and auditing without external dependencies."
+      },
+      {
+        "technology_id": "TECH-WEB-VITALS",
+        "readiness": "INSUFFICIENT",
+        "selectable": false,
+        "relevance": "Core Web Vitals metrics",
+        "evidence": "sps2/research/cache.json — CLS verified verbatim; LCP and INP thresholds not observed (CONF-001)",
+        "notes": "Cannot be selected for numeric LCP/INP verification. CWV dimension in P9 will verify CLS and document an explicit N/A rationale for unobserved metrics per CONF-001."
+      },
+      {
+        "technology_id": "CAP-P03-005",
+        "readiness": "DEFERRED",
+        "selectable": false,
+        "relevance": "Legacy SEO candidate",
+        "evidence": "sps2/capability/registry.json — blocked behind gates F and K; promotion decision NOT_PROMOTED",
+        "notes": "Remains DEFERRED. P9 builds a clean, new, evidence-backed SEO 2.0 subsystem from scratch, not a port of CAP-P03-005."
+      }
+    ],
+    "discovery_summary": "Legacy SPS has no working SEO skill — .sps/architecture/SPS2-MIGRATION-MATRIX.md line 40 confirms the legacy router referenced a phantom dependency ('no skill exists', disposition REWRITE). P2 research (sps2/research/P2-CMS-SEO-AUDIT.md) confirmed Google Search Central (SRC-016) and web.dev (SRC-017) guidelines: XML sitemaps, robots.txt, canonicalization, structured data (JSON-LD), headings, and CLS <= 0.1 are verified. All P9 components will be designed from first principles using Python stdlib."
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-P9-01",
+      "title": "Metadata and canonical URL engine",
+      "objective": "Generate and validate technical SEO page metadata, title tags, descriptions, and canonical URLs from content models.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Page title tag generated with length constraints (recommended 50-60 characters) and uniqueness check",
+        "Meta description generated with length constraints (recommended 120-160 characters)",
+        "Canonical URL is strictly absolute, lowercase-normalized, and handles query parameters deterministically",
+        "Self-referencing canonical URLs are enforced on canonical pages",
+        "Missing title, missing description, or duplicate titles across pages are flagged as audit errors"
+      ],
+      "dependencies": ["P8"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "metadata generator unit tests + canonical validator test suite"
+      },
+      "security_implications": [
+        "Metadata values derived from user content must be HTML-entity escaped to prevent tag injection",
+        "Canonical URLs must be validated against SSRF/open-redirect risks"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-02",
+      "title": "Robots and XML sitemap governance",
+      "objective": "Provide deterministic robots.txt and XML sitemap generation, indexing directives, and validation.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "robots.txt generator supports User-agent groups, Disallow, Allow, and Sitemap directive references",
+        "XML sitemap generator produces valid sitemap.xml conforming to sitemaps.org 0.9 schema",
+        "Only published, canonical, indexable URLs are included in sitemaps (no 404s, redirects, or noindex pages)",
+        "Meta robots directives (noindex, nofollow, noarchive) are supported at page level and validated against robots.txt to prevent conflicts",
+        "Sitemap index generation supported if URL count exceeds threshold"
+      ],
+      "dependencies": ["REQ-P9-01"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "robots.txt syntax validator + XML sitemap schema validator"
+      },
+      "security_implications": [
+        "robots.txt must not disclose sensitive or private administrative paths",
+        "Sitemap XML generator must use defused/safe XML parsing to prevent XXE"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-03",
+      "title": "Structured data (JSON-LD) and social graph engine",
+      "objective": "Generate and validate schema.org JSON-LD structured data and Open Graph / Twitter Card social metadata.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "JSON-LD generator produces valid schema.org objects (e.g., WebPage, Article, Organization, BreadcrumbList)",
+        "Structured data is validated for required schema.org fields and syntactically valid JSON-LD format",
+        "Open Graph tags (og:title, og:description, og:url, og:image, og:type) are generated and validated",
+        "Twitter Card tags (twitter:card, twitter:title, twitter:description, twitter:image) are generated and validated",
+        "Invalid schema types or missing required entity properties trigger audit warnings"
+      ],
+      "dependencies": ["REQ-P9-01"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "JSON-LD schema validation suite + social graph contract tests"
+      },
+      "security_implications": [
+        "JSON-LD output must be properly serialized to prevent script escape vulnerabilities in <script type='application/ld+json'>"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-04",
+      "title": "On-page structural hierarchy and internal linking",
+      "objective": "Validate document heading hierarchy, semantic structure, and internal link integrity.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Exactly one H1 element is enforced per page",
+        "Heading levels do not skip levels (e.g., H2 directly to H4 is flagged)",
+        "Internal links are extracted and resolved against the known route/content graph",
+        "Broken internal links (pointing to non-existent content or sections) are flagged as errors",
+        "Generic anchor text (e.g., 'click here', 'read more') is flagged as advisory warnings"
+      ],
+      "dependencies": ["P8"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "HTML heading parser test + link graph resolution tests"
+      },
+      "security_implications": [
+        "HTML parser must be robust against deeply nested malicious HTML payloads"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-05",
+      "title": "Media and image SEO integration",
+      "objective": "Ensure all media assets meet image SEO standards and layout stability requirements.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every <img> element must have a non-empty alt attribute unless marked explicitly decorative (aria-hidden)",
+        "Image filenames must be descriptive and hyphen-separated (validated against raw ID hashes)",
+        "Image elements specify explicit width and height (or aspect-ratio) to prevent Cumulative Layout Shift",
+        "Integration with P8 asset picker ensures media records provide required SEO metadata fields"
+      ],
+      "dependencies": ["P8"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "image SEO linter test suite"
+      },
+      "security_implications": [
+        "Alt text must be plain text and sanitized against attribute injection"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-06",
+      "title": "URL architecture, redirects, and pagination",
+      "objective": "Validate URL architecture, trailing slash consistency, redirect chains, and pagination structure.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Consistent URL slug architecture enforced (lowercase, hyphen-delimited, no trailing slash ambiguity)",
+        "Redirect taxonomy validation detects and flags redirect loops and redirect chains (>1 hop)",
+        "Temporary (302/307) vs permanent (301/308) redirect status codes are verified according to intent",
+        "Paginated collections enforce deterministic canonicalization (canonical to page 1 or self-referential with rel='prev'/'next')"
+      ],
+      "dependencies": ["REQ-P9-01"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "URL normalization test + redirect graph validator"
+      },
+      "security_implications": [
+        "Redirect targets must not allow open redirects to untrusted external domains"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-07",
+      "title": "Core Web Vitals dimension and CONF-001 boundary preservation",
+      "objective": "Provide layout-shift stability verification while strictly preserving the CONF-001 boundary.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "CLS verified threshold from SRC-017 is encoded and verified (CLS <= 0.1 good, > 0.25 poor)",
+        "Static layout shift prevention checks (e.g. required image dimensions, font-display) are enforced",
+        "No LCP or INP numeric threshold is invented, inferred, or introduced anywhere in code or config",
+        "Unobserved CWV dimensions (LCP, INP) carry an explicit, documented N/A rationale per P9 acceptance criteria",
+        "CONF-001 remains UNRESOLVED and is recorded as such in all P9 reports and evidence"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "CLS threshold unit test + regex scan asserting zero invented LCP/INP thresholds"
+      },
+      "security_implications": [
+        "Encoding unverified numbers breaches governance and compromises evidence integrity"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-08",
+      "title": "Specialized dimensions modular evaluation (i18n, local, ecommerce)",
+      "objective": "Support modular checks for internationalization, local SEO, and ecommerce, or provide explicit N/A rationales.",
+      "scope": "IN_SCOPE",
+      "risk": "LOW",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "If multilingual: hreflang tags, x-default, and bidirectional hreflang links are validated",
+        "If local business: LocalBusiness structured data, address, geo-coordinates, and openingHours are validated",
+        "If ecommerce: Product and Offer structured data with price, currency, and availability are validated",
+        "If a specialized dimension is not applicable to the site, an explicit machine-readable N/A rationale is recorded",
+        "Every dimension listed in roadmap P9 is guaranteed either a verified check or an explicit N/A rationale"
+      ],
+      "dependencies": ["REQ-P9-03"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "dimension completeness validator verifying check-or-NA coverage across all dimensions"
+      },
+      "security_implications": [
+        "Hreflang URLs must be validated against destination domain spoofing"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-09",
+      "title": "Mandatory pre-deployment SEO audit tool and evidence generator",
+      "objective": "Build the pre-deployment SEO audit tool that validates all dimensions and produces deterministic audit evidence.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Audit tool executes all defined dimension checks against pages, sitemaps, and content models",
+        "Audit outputs structured, machine-readable JSON and human-readable Markdown audit reports",
+        "Produces valid SPS 2.0 evidence record (EV-SEO-*) with timestamps, counts, pass/fail results, and exit codes",
+        "Roadmap forbidden rule is strictly enforced: deployment readiness (P13) must require a clean pre-deployment SEO audit",
+        "Audit differentiates between CRITICAL/ERROR (blocks deployment) and WARNING/ADVISORY (informational)"
+      ],
+      "dependencies": ["REQ-P9-01", "REQ-P9-02", "REQ-P9-03", "REQ-P9-04", "REQ-P9-05", "REQ-P9-06", "REQ-P9-07", "REQ-P9-08"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "CLI audit execution test + evidence schema validation"
+      },
+      "security_implications": [
+        "Audit tool must run project-locally without network dependencies or transmission of site data"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P9-10",
+      "title": "Advisory rollback and project-local stdlib isolation",
+      "objective": "Ensure SEO 2.0 implementation is project-local, stdlib-only, leaves legacy diff zero, and has advisory rollback.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "All SEO implementation code resides in domain/seo/ and sps2/tools/ without modifying sps2/core/",
+        "No third-party packages, CLIs, or npm modules installed (Python stdlib only)",
+        "Zero modifications to legacy repository files (legacy diff remains exactly 0)",
+        "Disabling the SEO subsystem via configuration or removal does not break core SPS 2.0 builds (advisory rollback contract)",
+        "Rollback rehearsal proves deletion of domain/seo/ leaves core validators passing"
+      ],
+      "dependencies": ["P7"],
+      "implementation": {
+        "state": "NOT_STARTED",
+        "refs": []
+      },
+      "verification": {
+        "state": "NOT_STARTED",
+        "method": "PENDING",
+        "verifier": "legacy diff validator + stdlib dependency scan + rollback rehearsal"
+      },
+      "security_implications": [
+        "No machine-global state writes; complete project isolation per P7 governance"
+      ]
+    }
+  ],
+  "phase_1_boundary": {
+    "status": "COMPLETE",
+    "artefacts_produced": [
+      "sps2/requirements/P9-REQUIREMENTS.json"
+    ],
+    "next_phase_required": "User approval of P9 Phase 1 requirements before Phase 2 (Architecture, Schemas & Threat Model) may begin",
+    "approval_required": "User must approve: (1) the 10 P9 requirements, (2) the CWV/CONF-001 explicit N/A handling strategy, (3) the pre-deployment audit gating mechanism, and (4) the standing governance bounds."
+  },
+  "unresolved_questions": [
+    {
+      "id": "UQ-P9-01",
+      "question": "What is the structural boundary and location for the SEO 2.0 subsystem?",
+      "context": "SPS 2.0 architecture specifies domain/ subsystems (SPS2-REPOSITORY-ARCHITECTURE.md line 59: domain/seo/). CMS content lives in domain/cms/. SEO needs to inspect content, generate metadata, and audit pages.",
+      "options": [
+        "Place SEO engine and models in domain/seo/, with a clean import interface from domain/cms/ and audit CLI in sps2/tools/",
+        "Embed SEO metadata generation directly into domain/cms/ content models, keeping only the audit tool in domain/seo/",
+        "Implement SEO purely as a standalone post-build audit CLI in sps2/tools/seo_audit.py"
+      ],
+      "recommended": "Option 1: Dedicated domain/seo/ subsystem with clean API and sps2/tools/ integration",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P9-02",
+      "question": "How should Core Web Vitals (CWV) be verified under the CONF-001 boundary?",
+      "context": "CLS thresholds are verified (<= 0.1 good, > 0.25 poor). LCP and INP numeric thresholds remain NOT_OBSERVED (CONF-001). Roadmap P9 acceptance requires 'every listed dimension has a check or an explicit N/A rationale'.",
+      "options": [
+        "Implement automated CLS verification and static layout-shift prevention rules (e.g. image dimensions), while recording an explicit machine-readable N/A rationale for unretrieved LCP/INP thresholds",
+        "Mark CWV entirely as N/A in the pre-deployment audit until a dedicated performance testing phase",
+        "Define qualitative heuristic checks for LCP/INP (e.g., verifying hero image preloading tags exist) without numeric thresholds"
+      ],
+      "recommended": "Option 1: Verified CLS check + static shift prevention + explicit N/A rationale for unobserved metrics per CONF-001",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P9-03",
+      "question": "How should the mandatory pre-deployment audit gate be enforced in CI and build workflows?",
+      "context": "Roadmap P9 explicitly forbids 'shipping without a pre-deployment audit step'. Rollback is described as 'advisory; disabling must not break builds'.",
+      "options": [
+        "Enforce pre-deployment audit as an advisory report by default, but make the generated EV-SEO-* record a mandatory prerequisite in P13 (Deployment Readiness)",
+        "Audit tool exits non-zero on CRITICAL SEO defects, halting deployment scripts unless an explicit --bypass flag is passed",
+        "Dual-mode: CLI exits non-zero on CRITICAL failures in deployment mode, and produces EV-SEO-* evidence records required for Level 4 deployment sign-off"
+      ],
+      "recommended": "Option 3: Dual-mode CLI (deterministic exit code + formal evidence artifact generation)",
+      "decision_required": "User"
+    }
+  ],
+  "security_and_governance_implications": {
+    "mandatory_controls": [
+      "Output encoding: all generated meta tags, JSON-LD, and HTML attributes must escape untrusted user input",
+      "SSRF prevention: canonical URL, sitemap URL, and redirect validators must prohibit internal/loopback IP targets",
+      "Safe XML handling: sitemap parsing/generation must protect against XML entity expansion (XXE)",
+      "Advisory rollback: disabling the SEO subsystem must never break core site builds or framework execution",
+      "CONF-001 invariant: zero invented LCP or INP thresholds in any SEO artefact"
+    ]
+  },
+  "files_changed": [
+    "sps2/requirements/P9-REQUIREMENTS.json"
+  ]
+}
