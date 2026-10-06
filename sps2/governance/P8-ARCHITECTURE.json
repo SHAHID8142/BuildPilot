@@ -3,17 +3,17 @@
   "record_id": "P8-ARCHITECTURE",
   "generated": "2026-10-06",
   "author": "implementation agent (not a User; not an approval)",
-  "note": "P8 Phase 2 — Architecture & Schema. No implementation is authorised by this document. All designs are project-local, evidence-backed, and machine-validatable.",
+  "note": "P8 Phase 2 \u2014 Architecture & Schema. No implementation is authorised by this document. All designs are project-local, evidence-backed, and machine-validatable.",
   "uq_resolutions": {
     "UQ-P8-01": {
       "question": "What CMS architecture pattern should P8 use?",
       "resolution": "SPS2-NATIVE headless CMS architecture",
       "rationale": "Evidence from research: (1) Headless CMS architecture separates content management from presentation, enabling Super Admin/Admin separation at the content-model level. (2) RBAC is the foundation of content governance (NIST SP 800-53 AC-6, Strapi governance patterns). (3) Draft/Publish lifecycle is a standard pattern in headless CMS. (4) Audit logging via append-only middleware is a proven pattern. (5) No existing Python CMS (Django CMS, Mezzanine, Kotti) is suitable without introducing third-party dependencies, which violates the stdlib-only policy. (6) A new SPS2-native architecture can be designed from first principles using evidence-backed patterns.",
       "evidence": [
-        "strapi.io/blog/content-governance-headless-cms-roles-workflows-audit-trails — RBAC, draft/publish, audit patterns",
-        "csrc.nist.gov RBAC framework — least privilege, separation of duties",
-        "medium.com CMS architecture patterns — headless, decoupled, traditional models",
-        "sps2/research/cache.json — TECH-PYTHON-STDLIB SUFFICIENT; TECH-SPS-CMS PARTIAL"
+        "strapi.io/blog/content-governance-headless-cms-roles-workflows-audit-trails \u2014 RBAC, draft/publish, audit patterns",
+        "csrc.nist.gov RBAC framework \u2014 least privilege, separation of duties",
+        "medium.com CMS architecture patterns \u2014 headless, decoupled, traditional models",
+        "sps2/research/cache.json \u2014 TECH-PYTHON-STDLIB SUFFICIENT; TECH-SPS-CMS PARTIAL"
       ],
       "decision": "Design a new SPS2-native headless CMS architecture using Python stdlib only. Do not port or copy any existing CMS. Use evidence-backed patterns (RBAC, draft/publish, audit middleware) adapted to SPS2 constraints."
     },
@@ -38,25 +38,45 @@
         "layer": "presentation",
         "description": "Read-only content delivery. Serves published content only. No admin access.",
         "project_local": true,
-        "stdlib_modules": ["http.server", "json", "pathlib"]
+        "stdlib_modules": [
+          "http.server",
+          "json",
+          "pathlib"
+        ]
       },
       {
         "layer": "application",
         "description": "Content CRUD, publishing, preview, audit. Enforces RBAC on every operation.",
         "project_local": true,
-        "stdlib_modules": ["json", "hashlib", "hmac", "datetime", "pathlib"]
+        "stdlib_modules": [
+          "json",
+          "hashlib",
+          "hmac",
+          "datetime",
+          "pathlib"
+        ]
       },
       {
         "layer": "persistence",
         "description": "JSON-file-based storage with atomic writes (write-temp, validate, rename). No database.",
         "project_local": true,
-        "stdlib_modules": ["json", "pathlib", "os", "tempfile"]
+        "stdlib_modules": [
+          "json",
+          "pathlib",
+          "os",
+          "tempfile"
+        ]
       },
       {
         "layer": "audit",
         "description": "Append-only audit log with HMAC signatures for tamper-evidence.",
         "project_local": true,
-        "stdlib_modules": ["json", "hashlib", "hmac", "datetime"]
+        "stdlib_modules": [
+          "json",
+          "hashlib",
+          "hmac",
+          "datetime"
+        ]
       }
     ],
     "feature_flag": {
@@ -72,11 +92,31 @@
         "entity": "ContentType",
         "description": "Defines a content type with fields, validation rules, and ownership",
         "fields": [
-          {"name": "id", "type": "string", "required": true},
-          {"name": "name", "type": "string", "required": true},
-          {"name": "fields", "type": "array", "required": true},
-          {"name": "created_at", "type": "datetime", "required": true},
-          {"name": "updated_at", "type": "datetime", "required": true}
+          {
+            "name": "id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "fields",
+            "type": "array",
+            "required": true
+          },
+          {
+            "name": "created_at",
+            "type": "datetime",
+            "required": true
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime",
+            "required": true
+          }
         ],
         "ownership": "Super Admin only"
       },
@@ -84,15 +124,56 @@
         "entity": "Content",
         "description": "A single content item of a defined type",
         "fields": [
-          {"name": "id", "type": "string", "required": true},
-          {"name": "type_id", "type": "string", "required": true},
-          {"name": "title", "type": "string", "required": true},
-          {"name": "body", "type": "string", "required": true},
-          {"name": "status", "type": "enum", "required": true, "values": ["draft", "published", "archived"]},
-          {"name": "author_id", "type": "string", "required": true},
-          {"name": "created_at", "type": "datetime", "required": true},
-          {"name": "updated_at", "type": "datetime", "required": true},
-          {"name": "published_at", "type": "datetime", "required": false}
+          {
+            "name": "id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "type_id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "title",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "status",
+            "type": "enum",
+            "required": true,
+            "values": [
+              "draft",
+              "published",
+              "archived"
+            ]
+          },
+          {
+            "name": "author_id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "created_at",
+            "type": "datetime",
+            "required": true
+          },
+          {
+            "name": "updated_at",
+            "type": "datetime",
+            "required": true
+          },
+          {
+            "name": "published_at",
+            "type": "datetime",
+            "required": false
+          }
         ],
         "ownership": "Admin can create/edit; Super Admin can create/edit/delete"
       },
@@ -100,11 +181,31 @@
         "entity": "Section",
         "description": "A structural section that composes content into pages",
         "fields": [
-          {"name": "id", "type": "string", "required": true},
-          {"name": "name", "type": "string", "required": true},
-          {"name": "layout", "type": "string", "required": true},
-          {"name": "content_ids", "type": "array", "required": true},
-          {"name": "order", "type": "integer", "required": true}
+          {
+            "name": "id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "layout",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "content_ids",
+            "type": "array",
+            "required": true
+          },
+          {
+            "name": "order",
+            "type": "integer",
+            "required": true
+          }
         ],
         "ownership": "Super Admin only"
       },
@@ -112,23 +213,96 @@
         "entity": "Revision",
         "description": "Immutable revision history for content",
         "fields": [
-          {"name": "id", "type": "string", "required": true},
-          {"name": "content_id", "type": "string", "required": true},
-          {"name": "version", "type": "integer", "required": true},
-          {"name": "body", "type": "string", "required": true},
-          {"name": "author_id", "type": "string", "required": true},
-          {"name": "created_at", "type": "datetime", "required": true}
+          {
+            "name": "id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "content_id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "version",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "body",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "author_id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "created_at",
+            "type": "datetime",
+            "required": true
+          }
         ],
         "ownership": "Append-only; no edits or deletes"
       }
-    ]
+    ],
+    "plain_text_constraint": {
+      "description": "Content.body is PLAIN TEXT ONLY. It must not be interpreted as HTML, Markdown, or rich text.",
+      "enforcement": "API/service validation enforces the plain-text contract. Any future browser/UI rendering must HTML-encode the value at the output/sink boundary.",
+      "storage_type": "string",
+      "security_boundary": "Content.body stores plain text. Never inject as trusted HTML."
+    }
   },
   "role_permission_matrix": {
     "description": "Explicit permission matrix for Super Admin and Admin roles. All permissions are machine-testable.",
-    "roles": ["super_admin", "admin"],
+    "roles": [
+      "super_admin",
+      "admin"
+    ],
     "permissions": [
-      {"role": "super_admin", "content_create": true, "content_edit": true, "content_delete": true, "content_publish": true, "content_preview": true, "section_create": true, "section_edit": true, "section_delete": true, "layout_modify": true, "media_upload": true, "media_select": true, "media_external_import": true, "revision_view": true, "revision_rollback": true, "user_admin": true, "role_admin": true, "audit_view": true, "audit_export": true},
-      {"role": "admin", "content_create": true, "content_edit": true, "content_delete": false, "content_publish": true, "content_preview": true, "section_create": false, "section_edit": false, "section_delete": false, "layout_modify": false, "media_upload": true, "media_select": true, "media_external_import": true, "revision_view": true, "revision_rollback": false, "user_admin": false, "role_admin": false, "audit_view": true, "audit_export": false}
+      {
+        "role": "super_admin",
+        "content_create": true,
+        "content_edit": true,
+        "content_delete": true,
+        "content_publish": true,
+        "content_preview": true,
+        "section_create": true,
+        "section_edit": true,
+        "section_delete": true,
+        "layout_modify": true,
+        "media_upload": true,
+        "media_select": true,
+        "media_external_import": true,
+        "revision_view": true,
+        "revision_rollback": true,
+        "user_admin": true,
+        "role_admin": true,
+        "audit_view": true,
+        "audit_export": true
+      },
+      {
+        "role": "admin",
+        "content_create": true,
+        "content_edit": true,
+        "content_delete": false,
+        "content_publish": true,
+        "content_preview": true,
+        "section_create": false,
+        "section_edit": false,
+        "section_delete": false,
+        "layout_modify": false,
+        "media_upload": true,
+        "media_select": true,
+        "media_external_import": true,
+        "revision_view": true,
+        "revision_rollback": false,
+        "user_admin": false,
+        "role_admin": false,
+        "audit_view": true,
+        "audit_export": false
+      }
     ],
     "invariants": [
       "Admin cannot self-promote to Super Admin",
@@ -145,23 +319,49 @@
       {
         "source": "upload",
         "description": "File upload with validation",
-        "validations": ["file_type", "file_size", "filename_sanitization"],
+        "validations": [
+          "file_type",
+          "file_size",
+          "filename_sanitization"
+        ],
         "storage": "domain/cms/assets/",
-        "stdlib_modules": ["pathlib", "mimetypes", "hashlib"]
+        "stdlib_modules": [
+          "pathlib",
+          "mimetypes",
+          "hashlib"
+        ]
       },
       {
         "source": "existing_media",
         "description": "Selection from previously uploaded assets",
-        "validations": ["asset_exists", "asset_accessible"],
+        "validations": [
+          "asset_exists",
+          "asset_accessible"
+        ],
         "storage": "domain/cms/assets/",
-        "stdlib_modules": ["pathlib", "json"]
+        "stdlib_modules": [
+          "pathlib",
+          "json"
+        ]
       },
       {
         "source": "external_url",
         "description": "Fetch, validate, optimize, and store external URL locally",
-        "validations": ["scheme_restriction", "ssrf_prevention", "content_type", "size_limit", "timeout", "decompression_limit"],
+        "validations": [
+          "scheme_restriction",
+          "ssrf_prevention",
+          "content_type",
+          "size_limit",
+          "timeout",
+          "decompression_limit"
+        ],
         "storage": "domain/cms/assets/external/",
-        "stdlib_modules": ["urllib.request", "urllib.parse", "socket", "ssl"],
+        "stdlib_modules": [
+          "urllib.request",
+          "urllib.parse",
+          "socket",
+          "ssl"
+        ],
         "ssrf_preventions": [
           "Block private IP ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, 169.254.0.0/16)",
           "Block link-local addresses",
@@ -177,29 +377,128 @@
     ],
     "uniform_asset_reference": {
       "fields": [
-        {"name": "id", "type": "string", "required": true},
-        {"name": "source", "type": "enum", "required": true, "values": ["upload", "existing_media", "external_url"]},
-        {"name": "original_url", "type": "string", "required": false},
-        {"name": "local_path", "type": "string", "required": true},
-        {"name": "media_type", "type": "string", "required": true},
-        {"name": "size_bytes", "type": "integer", "required": true},
-        {"name": "checksum", "type": "string", "required": true},
-        {"name": "uploaded_at", "type": "datetime", "required": true},
-        {"name": "uploaded_by", "type": "string", "required": true}
+        {
+          "name": "id",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "source",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "upload",
+            "existing_media",
+            "external_url"
+          ]
+        },
+        {
+          "name": "original_url",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "local_path",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "media_type",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "size_bytes",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "name": "checksum",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "uploaded_at",
+          "type": "datetime",
+          "required": true
+        },
+        {
+          "name": "uploaded_by",
+          "type": "string",
+          "required": true
+        }
       ]
     }
   },
   "preview_publishing_model": {
     "description": "Draft, preview, publish, revision, and rollback workflow",
-    "states": ["draft", "preview", "published", "archived"],
+    "states": [
+      "draft",
+      "preview",
+      "published",
+      "archived"
+    ],
     "transitions": [
-      {"from": "draft", "to": "preview", "action": "preview", "roles": ["super_admin", "admin"]},
-      {"from": "draft", "to": "published", "action": "publish", "roles": ["super_admin", "admin"]},
-      {"from": "preview", "to": "draft", "action": "unpreview", "roles": ["super_admin", "admin"]},
-      {"from": "preview", "to": "published", "action": "publish", "roles": ["super_admin", "admin"]},
-      {"from": "published", "to": "draft", "action": "unpublish", "roles": ["super_admin"]},
-      {"from": "published", "to": "archived", "action": "archive", "roles": ["super_admin"]},
-      {"from": "archived", "to": "draft", "action": "restore", "roles": ["super_admin"]}
+      {
+        "from": "draft",
+        "to": "preview",
+        "action": "preview",
+        "roles": [
+          "super_admin",
+          "admin"
+        ]
+      },
+      {
+        "from": "draft",
+        "to": "published",
+        "action": "publish",
+        "roles": [
+          "super_admin",
+          "admin"
+        ]
+      },
+      {
+        "from": "preview",
+        "to": "draft",
+        "action": "unpreview",
+        "roles": [
+          "super_admin",
+          "admin"
+        ]
+      },
+      {
+        "from": "preview",
+        "to": "published",
+        "action": "publish",
+        "roles": [
+          "super_admin",
+          "admin"
+        ]
+      },
+      {
+        "from": "published",
+        "to": "draft",
+        "action": "unpublish",
+        "roles": [
+          "super_admin"
+        ]
+      },
+      {
+        "from": "published",
+        "to": "archived",
+        "action": "archive",
+        "roles": [
+          "super_admin"
+        ]
+      },
+      {
+        "from": "archived",
+        "to": "draft",
+        "action": "restore",
+        "roles": [
+          "super_admin"
+        ]
+      }
     ],
     "revision_policy": "Every create, update, publish, unpublish, archive, and restore creates an immutable revision",
     "rollback_policy": "Super Admin can rollback to any previous revision. Admin cannot rollback."
@@ -209,15 +508,51 @@
     "storage": "domain/cms/audit/audit.log",
     "format": "JSON Lines (one JSON object per line)",
     "entry_fields": [
-      {"name": "timestamp", "type": "datetime", "required": true},
-      {"name": "actor_id", "type": "string", "required": true},
-      {"name": "action", "type": "string", "required": true},
-      {"name": "resource_type", "type": "string", "required": true},
-      {"name": "resource_id", "type": "string", "required": true},
-      {"name": "before_state", "type": "object", "required": false},
-      {"name": "after_state", "type": "object", "required": false},
-      {"name": "previous_hash", "type": "string", "required": true},
-      {"name": "entry_hash", "type": "string", "required": true}
+      {
+        "name": "timestamp",
+        "type": "datetime",
+        "required": true
+      },
+      {
+        "name": "actor_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "action",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "resource_type",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "resource_id",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "before_state",
+        "type": "object",
+        "required": false
+      },
+      {
+        "name": "after_state",
+        "type": "object",
+        "required": false
+      },
+      {
+        "name": "previous_hash",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "entry_hash",
+        "type": "string",
+        "required": true
+      }
     ],
     "tamper_evidence": "Each entry includes HMAC-SHA256 of (previous_hash + entry_content). Any modification breaks the chain.",
     "invariants": [
