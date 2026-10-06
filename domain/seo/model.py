@@ -1,0 +1,224 @@
+"""P9 SEO domain models.
+
+Defines core data contracts for SEO metadata, robots directives,
+social graph tags (Open Graph, Twitter Card), and validation issues.
+All models are pure Python dataclasses that serialize to dicts conforming
+to sps2/schemas/p9-metadata.schema.json.
+"""
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from enum import Enum
+from typing import Any
+
+
+class ValidationSeverity(str, Enum):
+    """Severity levels for SEO validation findings."""
+    INFO = "INFO"
+    WARNING = "WARNING"
+    CRITICAL = "CRITICAL"
+
+
+@dataclass
+class ValidationIssue:
+    """A single validation finding or diagnostic."""
+    code: str
+    message: str
+    severity: ValidationSeverity
+    field: str | None = None
+
+    def to_dict(self) -> dict[str, str]:
+        res = {
+            "code": self.code,
+            "message": self.message,
+            "severity": self.severity.value,
+        }
+        if self.field:
+            res["field"] = self.field
+        return res
+
+
+@dataclass
+class RobotsDirectives:
+    """Robots indexing and crawling directives."""
+    index: bool = True
+    follow: bool = True
+    noarchive: bool = False
+    nosnippet: bool = False
+    max_snippet: int | None = None
+    max_image_preview: str | None = None
+    max_video_preview: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "index": self.index,
+            "follow": self.follow,
+        }
+        if self.noarchive:
+            data["noarchive"] = True
+        if self.nosnippet:
+            data["nosnippet"] = True
+        if self.max_snippet is not None:
+            data["max_snippet"] = self.max_snippet
+        if self.max_image_preview is not None:
+            data["max_image_preview"] = self.max_image_preview
+        if self.max_video_preview is not None:
+            data["max_video_preview"] = self.max_video_preview
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RobotsDirectives:
+        return cls(
+            index=bool(data.get("index", True)),
+            follow=bool(data.get("follow", True)),
+            noarchive=bool(data.get("noarchive", False)),
+            nosnippet=bool(data.get("nosnippet", False)),
+            max_snippet=data.get("max_snippet"),
+            max_image_preview=data.get("max_image_preview"),
+            max_video_preview=data.get("max_video_preview"),
+        )
+
+    def to_directive_string(self) -> str:
+        """Render directives into a meta robots content string."""
+        parts: list[str] = []
+        parts.append("index" if self.index else "noindex")
+        parts.append("follow" if self.follow else "nofollow")
+        if self.noarchive:
+            parts.append("noarchive")
+        if self.nosnippet:
+            parts.append("nosnippet")
+        if self.max_snippet is not None:
+            parts.append(f"max-snippet:{self.max_snippet}")
+        if self.max_image_preview is not None:
+            parts.append(f"max-image-preview:{self.max_image_preview}")
+        if self.max_video_preview is not None:
+            parts.append(f"max-video-preview:{self.max_video_preview}")
+        return ", ".join(parts)
+
+
+@dataclass
+class OpenGraph:
+    """Open Graph protocol metadata."""
+    title: str
+    description: str
+    url: str
+    type: str = "website"
+    image: str | None = None
+    site_name: str | None = None
+    locale: str = "en_US"
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "title": self.title,
+            "description": self.description,
+            "url": self.url,
+            "type": self.type,
+            "locale": self.locale,
+        }
+        if self.image:
+            data["image"] = self.image
+        if self.site_name:
+            data["site_name"] = self.site_name
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> OpenGraph:
+        return cls(
+            title=data["title"],
+            description=data["description"],
+            url=data["url"],
+            type=data.get("type", "website"),
+            image=data.get("image"),
+            site_name=data.get("site_name"),
+            locale=data.get("locale", "en_US"),
+        )
+
+
+@dataclass
+class TwitterCard:
+    """Twitter Card metadata."""
+    card: str
+    title: str
+    description: str
+    image: str | None = None
+    site: str | None = None
+    creator: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "card": self.card,
+            "title": self.title,
+            "description": self.description,
+        }
+        if self.image:
+            data["image"] = self.image
+        if self.site:
+            data["site"] = self.site
+        if self.creator:
+            data["creator"] = self.creator
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> TwitterCard:
+        return cls(
+            card=data.get("card", "summary"),
+            title=data["title"],
+            description=data["description"],
+            image=data.get("image"),
+            site=data.get("site"),
+            creator=data.get("creator"),
+        )
+
+
+@dataclass
+class CanonicalValidationResult:
+    """Result of canonical URL analysis."""
+    is_valid: bool
+    normalized_url: str
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+
+@dataclass
+class SEOMetadata:
+    """Top-level page SEO metadata container conforming to p9-metadata.schema.json."""
+    title: str
+    description: str
+    canonical_url: str
+    robots: RobotsDirectives = field(default_factory=RobotsDirectives)
+    viewport: str = "width=device-width, initial-scale=1"
+    charset: str = "UTF-8"
+    open_graph: OpenGraph | None = None
+    twitter_card: TwitterCard | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dict validating against p9-metadata.schema.json."""
+        data: dict[str, Any] = {
+            "title": self.title,
+            "description": self.description,
+            "canonical_url": self.canonical_url,
+            "robots": self.robots.to_dict(),
+            "viewport": self.viewport,
+            "charset": self.charset,
+        }
+        if self.open_graph:
+            data["open_graph"] = self.open_graph.to_dict()
+        if self.twitter_card:
+            data["twitter_card"] = self.twitter_card.to_dict()
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> SEOMetadata:
+        robots = RobotsDirectives.from_dict(data["robots"]) if "robots" in data else RobotsDirectives()
+        og = OpenGraph.from_dict(data["open_graph"]) if data.get("open_graph") else None
+        twitter = TwitterCard.from_dict(data["twitter_card"]) if data.get("twitter_card") else None
+        return cls(
+            title=data["title"],
+            description=data["description"],
+            canonical_url=data["canonical_url"],
+            robots=robots,
+            viewport=data.get("viewport", "width=device-width, initial-scale=1"),
+            charset=data.get("charset", "UTF-8"),
+            open_graph=og,
+            twitter_card=twitter,
+        )
