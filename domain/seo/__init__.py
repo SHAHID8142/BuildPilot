@@ -19,6 +19,14 @@ from domain.seo.indexing import (
     parse_sitemap_index_xml,
     parse_sitemap_xml,
 )
+from domain.seo.media import (
+    MediaHTMLParser,
+    analyze_image_filename,
+    analyze_image_tag,
+    analyze_media,
+    render_image_tag,
+    validate_asset_seo,
+)
 from domain.seo.metadata import (
     generate_metadata_from_content,
     render_html_meta_tags,
@@ -33,8 +41,10 @@ from domain.seo.model import (
     CanonicalValidationResult,
     HeadingAnalysisResult,
     HeadingItem,
+    ImageItem,
     LinkGraphResult,
     LinkItem,
+    MediaAnalysisResult,
     OnPageAnalysisResult,
     OpenGraph,
     OrganizationSchema,
@@ -86,9 +96,12 @@ __all__ = [
     "CanonicalValidationResult",
     "HeadingAnalysisResult",
     "HeadingItem",
+    "ImageItem",
     "IndexingError",
     "LinkGraphResult",
     "LinkItem",
+    "MediaAnalysisResult",
+    "MediaHTMLParser",
     "OnPageAnalysisResult",
     "OnPageHTMLParser",
     "OpenGraph",
@@ -111,7 +124,10 @@ __all__ = [
     "WebPageSchema",
     "WebSiteSchema",
     "analyze_headings",
+    "analyze_image_filename",
+    "analyze_image_tag",
     "analyze_links",
+    "analyze_media",
     "analyze_onpage",
     "build_article_schema",
     "build_breadcrumb_list_schema",
@@ -134,13 +150,16 @@ __all__ = [
     "parse_sitemap_index_xml",
     "parse_sitemap_xml",
     "render_html_meta_tags",
+    "render_image_tag",
     "render_json_ld_script_tag",
     "serialize_json_ld",
     "validate_against_schema_file",
+    "validate_asset_seo",
     "validate_canonical_url",
     "validate_metadata",
     "validate_structured_data",
     "validate_structured_data_strict",
 ]
+
 
 

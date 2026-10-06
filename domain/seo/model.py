@@ -707,4 +707,56 @@ class OnPageAnalysisResult:
         }
 
 
+@dataclass
+class ImageItem:
+    """An image element extracted from HTML."""
+    src: str
+    alt: str | None = None
+    width: int | None = None
+    height: int | None = None
+    is_decorative: bool = False
+    has_aspect_ratio: bool = False
+    style: str | None = None
+    id: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "src": self.src,
+            "alt": self.alt,
+            "is_decorative": self.is_decorative,
+            "has_aspect_ratio": self.has_aspect_ratio,
+        }
+        if self.width is not None:
+            data["width"] = self.width
+        if self.height is not None:
+            data["height"] = self.height
+        if self.style:
+            data["style"] = self.style
+        if self.id:
+            data["id"] = self.id
+        return data
+
+
+@dataclass
+class MediaAnalysisResult:
+    """Result of media and image SEO analysis."""
+    images: list[ImageItem] = field(default_factory=list)
+    total_images: int = 0
+    decorative_count: int = 0
+    missing_alt_count: int = 0
+    missing_dimensions_count: int = 0
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "images": [img.to_dict() for img in self.images],
+            "total_images": self.total_images,
+            "decorative_count": self.decorative_count,
+            "missing_alt_count": self.missing_alt_count,
+            "missing_dimensions_count": self.missing_dimensions_count,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+
+
 
