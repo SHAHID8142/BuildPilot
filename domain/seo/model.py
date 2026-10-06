@@ -222,3 +222,118 @@ class SEOMetadata:
             open_graph=og,
             twitter_card=twitter,
         )
+
+
+@dataclass
+class SitemapEntry:
+    """A single URL entry in a sitemap.org compliant XML sitemap."""
+    loc: str
+    lastmod: str | None = None
+    changefreq: str | None = None
+    priority: float | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {"loc": self.loc}
+        if self.lastmod is not None:
+            data["lastmod"] = self.lastmod
+        if self.changefreq is not None:
+            data["changefreq"] = self.changefreq
+        if self.priority is not None:
+            data["priority"] = float(self.priority)
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> SitemapEntry:
+        return cls(
+            loc=data["loc"],
+            lastmod=data.get("lastmod"),
+            changefreq=data.get("changefreq"),
+            priority=data.get("priority"),
+        )
+
+
+@dataclass
+class SitemapModel:
+    """Internal model for an XML sitemap conforming to p9-sitemap.schema.json."""
+    entries: list[SitemapEntry] = field(default_factory=list)
+    total_urls: int = 0
+    generated_at: str = ""
+    sitemap_index: bool = False
+    sitemap_files: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "total_urls": self.total_urls,
+            "generated_at": self.generated_at,
+            "entries": [e.to_dict() for e in self.entries],
+            "sitemap_index": self.sitemap_index,
+        }
+        if self.sitemap_files:
+            data["sitemap_files"] = list(self.sitemap_files)
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> SitemapModel:
+        entries = [SitemapEntry.from_dict(e) for e in data.get("entries", [])]
+        return cls(
+            entries=entries,
+            total_urls=int(data.get("total_urls", len(entries))),
+            generated_at=data.get("generated_at", ""),
+            sitemap_index=bool(data.get("sitemap_index", False)),
+            sitemap_files=data.get("sitemap_files", []),
+        )
+
+
+@dataclass
+class RobotsGroup:
+    """User-agent directive group in a robots.txt file."""
+    user_agent: str = "*"
+    allow: list[str] = field(default_factory=list)
+    disallow: list[str] = field(default_factory=list)
+    crawl_delay: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "user_agent": self.user_agent,
+            "allow": list(self.allow),
+            "disallow": list(self.disallow),
+        }
+        if self.crawl_delay is not None:
+            data["crawl_delay"] = self.crawl_delay
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RobotsGroup:
+        return cls(
+            user_agent=data.get("user_agent", "*"),
+            allow=data.get("allow", []),
+            disallow=data.get("disallow", []),
+            crawl_delay=data.get("crawl_delay"),
+        )
+
+
+@dataclass
+class RobotsConfig:
+    """Structured configuration for a robots.txt file."""
+    groups: list[RobotsGroup] = field(default_factory=list)
+    sitemaps: list[str] = field(default_factory=list)
+    host: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "groups": [g.to_dict() for g in self.groups],
+            "sitemaps": list(self.sitemaps),
+        }
+        if self.host is not None:
+            data["host"] = self.host
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RobotsConfig:
+        groups = [RobotsGroup.from_dict(g) for g in data.get("groups", [])]
+        return cls(
+            groups=groups,
+            sitemaps=data.get("sitemaps", []),
+            host=data.get("host"),
+        )
+
