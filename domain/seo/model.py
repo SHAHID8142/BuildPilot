@@ -337,3 +337,281 @@ class RobotsConfig:
             host=data.get("host"),
         )
 
+
+@dataclass
+class AuthorInfo:
+    """Author representation for Schema.org structured data."""
+    name: str
+    type: str = "Person"  # "Person" or "Organization"
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "@type": self.type,
+            "name": self.name,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AuthorInfo:
+        return cls(
+            name=data.get("name", ""),
+            type=data.get("@type", data.get("type", "Person")),
+        )
+
+
+@dataclass
+class PublisherInfo:
+    """Publisher representation for Schema.org structured data."""
+    name: str
+    type: str = "Organization"
+    logo_url: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        res: dict[str, Any] = {
+            "@type": self.type,
+            "name": self.name,
+        }
+        if self.logo_url:
+            res["logo"] = {
+                "@type": "ImageObject",
+                "url": self.logo_url,
+            }
+        return res
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> PublisherInfo:
+        logo_url = None
+        logo = data.get("logo")
+        if isinstance(logo, dict):
+            logo_url = logo.get("url")
+        elif isinstance(logo, str):
+            logo_url = logo
+        return cls(
+            name=data.get("name", ""),
+            type=data.get("@type", data.get("type", "Organization")),
+            logo_url=logo_url,
+        )
+
+
+@dataclass
+class BreadcrumbItem:
+    """A single item in a Schema.org BreadcrumbList."""
+    name: str
+    item: str
+    position: int = 1
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "@type": "ListItem",
+            "position": self.position,
+            "name": self.name,
+            "item": self.item,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> BreadcrumbItem:
+        return cls(
+            name=data.get("name", ""),
+            item=data.get("item", ""),
+            position=int(data.get("position", 1)),
+        )
+
+
+@dataclass
+class BreadcrumbListSchema:
+    """Schema.org BreadcrumbList container."""
+    items: list[BreadcrumbItem] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [it.to_dict() for it in self.items],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> BreadcrumbListSchema:
+        raw_items = data.get("itemListElement", [])
+        return cls(items=[BreadcrumbItem.from_dict(it) for it in raw_items])
+
+
+@dataclass
+class WebSiteSchema:
+    """Schema.org WebSite representation."""
+    name: str
+    url: str
+    description: str | None = None
+    id: str | None = None
+    publisher: PublisherInfo | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        res: dict[str, Any] = {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": self.name,
+            "url": self.url,
+        }
+        if self.description:
+            res["description"] = self.description
+        if self.id:
+            res["@id"] = self.id
+        if self.publisher:
+            res["publisher"] = self.publisher.to_dict()
+        return res
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> WebSiteSchema:
+        pub = PublisherInfo.from_dict(data["publisher"]) if data.get("publisher") else None
+        return cls(
+            name=data.get("name", ""),
+            url=data.get("url", ""),
+            description=data.get("description"),
+            id=data.get("@id", data.get("id")),
+            publisher=pub,
+        )
+
+
+@dataclass
+class OrganizationSchema:
+    """Schema.org Organization representation."""
+    name: str
+    url: str
+    logo_url: str | None = None
+    description: str | None = None
+    id: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        res: dict[str, Any] = {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": self.name,
+            "url": self.url,
+        }
+        if self.logo_url:
+            res["logo"] = {
+                "@type": "ImageObject",
+                "url": self.logo_url,
+            }
+        if self.description:
+            res["description"] = self.description
+        if self.id:
+            res["@id"] = self.id
+        return res
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> OrganizationSchema:
+        logo_url = None
+        logo = data.get("logo")
+        if isinstance(logo, dict):
+            logo_url = logo.get("url")
+        elif isinstance(logo, str):
+            logo_url = logo
+        return cls(
+            name=data.get("name", ""),
+            url=data.get("url", ""),
+            logo_url=logo_url,
+            description=data.get("description"),
+            id=data.get("@id", data.get("id")),
+        )
+
+
+@dataclass
+class ArticleSchema:
+    """Schema.org Article representation."""
+    headline: str
+    url: str
+    date_published: str
+    date_modified: str | None = None
+    description: str | None = None
+    author: AuthorInfo | None = None
+    publisher: PublisherInfo | None = None
+    image: str | None = None
+    id: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        res: dict[str, Any] = {
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": self.headline,
+            "url": self.url,
+            "datePublished": self.date_published,
+        }
+        if self.date_modified:
+            res["dateModified"] = self.date_modified
+        if self.description:
+            res["description"] = self.description
+        if self.author:
+            res["author"] = self.author.to_dict()
+        if self.publisher:
+            res["publisher"] = self.publisher.to_dict()
+        if self.image:
+            res["image"] = self.image
+        if self.id:
+            res["@id"] = self.id
+        return res
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> ArticleSchema:
+        auth = AuthorInfo.from_dict(data["author"]) if data.get("author") else None
+        pub = PublisherInfo.from_dict(data["publisher"]) if data.get("publisher") else None
+        return cls(
+            headline=data.get("headline", data.get("name", "")),
+            url=data.get("url", ""),
+            date_published=data.get("datePublished", ""),
+            date_modified=data.get("dateModified"),
+            description=data.get("description"),
+            author=auth,
+            publisher=pub,
+            image=data.get("image"),
+            id=data.get("@id", data.get("id")),
+        )
+
+
+@dataclass
+class WebPageSchema:
+    """Schema.org WebPage representation."""
+    name: str
+    url: str
+    description: str | None = None
+    date_published: str | None = None
+    date_modified: str | None = None
+    author: AuthorInfo | None = None
+    publisher: PublisherInfo | None = None
+    id: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        res: dict[str, Any] = {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": self.name,
+            "url": self.url,
+        }
+        if self.description:
+            res["description"] = self.description
+        if self.date_published:
+            res["datePublished"] = self.date_published
+        if self.date_modified:
+            res["dateModified"] = self.date_modified
+        if self.author:
+            res["author"] = self.author.to_dict()
+        if self.publisher:
+            res["publisher"] = self.publisher.to_dict()
+        if self.id:
+            res["@id"] = self.id
+        return res
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> WebPageSchema:
+        auth = AuthorInfo.from_dict(data["author"]) if data.get("author") else None
+        pub = PublisherInfo.from_dict(data["publisher"]) if data.get("publisher") else None
+        return cls(
+            name=data.get("name", ""),
+            url=data.get("url", ""),
+            description=data.get("description"),
+            date_published=data.get("datePublished"),
+            date_modified=data.get("dateModified"),
+            author=auth,
+            publisher=pub,
+            id=data.get("@id", data.get("id")),
+        )
+
+
