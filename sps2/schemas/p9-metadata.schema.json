@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p9-metadata/v1",
+  "title": "P9 SEO Metadata Contract",
+  "description": "Schema for page-level SEO metadata, canonical URLs, and robots directives.",
+  "type": "object",
+  "required": ["title", "description", "canonical_url", "robots"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Page title tag content (ideal length: 50-60 chars)"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "description": "Meta description content (ideal length: 120-160 chars)"
+    },
+    "canonical_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://",
+      "description": "Absolute, normalized canonical URL"
+    },
+    "robots": {
+      "type": "object",
+      "required": ["index", "follow"],
+      "properties": {
+        "index": {"type": "boolean"},
+        "follow": {"type": "boolean"},
+        "noarchive": {"type": "boolean"},
+        "nosnippet": {"type": "boolean"},
+        "max_snippet": {"type": "integer", "minimum": -1},
+        "max_image_preview": {"enum": ["none", "standard", "large"]},
+        "max_video_preview": {"type": "integer", "minimum": -1}
+      },
+      "additionalProperties": false
+    },
+    "viewport": {
+      "type": "string",
+      "default": "width=device-width, initial-scale=1"
+    },
+    "charset": {
+      "type": "string",
+      "default": "UTF-8"
+    },
+    "open_graph": {
+      "$ref": "#/definitions/OpenGraph"
+    },
+    "twitter_card": {
+      "$ref": "#/definitions/TwitterCard"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "OpenGraph": {
+      "type": "object",
+      "required": ["title", "description", "url", "type"],
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "format": "uri"},
+        "type": {"enum": ["website", "article", "profile", "book"]},
+        "image": {"type": "string", "format": "uri"},
+        "site_name": {"type": "string"},
+        "locale": {"type": "string", "default": "en_US"}
+      },
+      "additionalProperties": false
+    },
+    "TwitterCard": {
+      "type": "object",
+      "required": ["card", "title", "description"],
+      "properties": {
+        "card": {"enum": ["summary", "summary_large_image", "app", "player"]},
+        "title": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "image": {"type": "string", "format": "uri"},
+        "site": {"type": "string", "pattern": "^@[A-Za-z0-9_]{1,15}$"},
+        "creator": {"type": "string", "pattern": "^@[A-Za-z0-9_]{1,15}$"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

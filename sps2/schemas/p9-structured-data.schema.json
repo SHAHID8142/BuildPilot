@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p9-structured-data/v1",
+  "title": "P9 Structured Data (JSON-LD) Contract",
+  "description": "Schema for schema.org JSON-LD generation and verification.",
+  "type": "object",
+  "required": ["@context", "@type"],
+  "properties": {
+    "@context": {
+      "type": "string",
+      "const": "https://schema.org"
+    },
+    "@type": {
+      "type": "string",
+      "enum": [
+        "WebSite",
+        "WebPage",
+        "Article",
+        "BlogPosting",
+        "Organization",
+        "Person",
+        "BreadcrumbList",
+        "LocalBusiness",
+        "Product"
+      ]
+    },
+    "@id": {
+      "type": "string",
+      "format": "uri"
+    },
+    "name": {"type": "string"},
+    "headline": {"type": "string"},
+    "description": {"type": "string"},
+    "url": {"type": "string", "format": "uri"},
+    "datePublished": {"type": "string", "format": "date-time"},
+    "dateModified": {"type": "string", "format": "date-time"},
+    "author": {
+      "type": "object",
+      "properties": {
+        "@type": {"type": "string", "enum": ["Person", "Organization"]},
+        "name": {"type": "string"}
+      }
+    },
+    "publisher": {
+      "type": "object",
+      "properties": {
+        "@type": {"type": "string", "const": "Organization"},
+        "name": {"type": "string"},
+        "logo": {
+          "type": "object",
+          "properties": {
+            "@type": {"type": "string", "const": "ImageObject"},
+            "url": {"type": "string", "format": "uri"}
+          }
+        }
+      }
+    },
+    "itemListElement": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["@type", "position", "name", "item"],
+        "properties": {
+          "@type": {"type": "string", "const": "ListItem"},
+          "position": {"type": "integer", "minimum": 1},
+          "name": {"type": "string"},
+          "item": {"type": "string", "format": "uri"}
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}

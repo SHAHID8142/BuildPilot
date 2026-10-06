@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p9-audit/v1",
+  "title": "P9 SEO Pre-Deployment Audit Report Contract",
+  "description": "Schema for pre-deployment SEO audit results, dimension findings, N/A rationales, and evidence records.",
+  "type": "object",
+  "required": [
+    "audit_id",
+    "timestamp",
+    "mode",
+    "exit_code",
+    "summary",
+    "dimensions",
+    "evidence_ref"
+  ],
+  "properties": {
+    "audit_id": {
+      "type": "string",
+      "pattern": "^AUDIT-SEO-[0-9]{8}-[0-9]{4,}$"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "mode": {
+      "enum": ["advisory", "deployment"],
+      "description": "Advisory mode reports warnings; deployment mode enforces non-zero exit code on CRITICAL errors"
+    },
+    "exit_code": {
+      "type": "integer",
+      "enum": [0, 1, 2]
+    },
+    "summary": {
+      "type": "object",
+      "required": ["total_checks", "passed", "warnings", "critical", "not_applicable"],
+      "properties": {
+        "total_checks": {"type": "integer", "minimum": 0},
+        "passed": {"type": "integer", "minimum": 0},
+        "warnings": {"type": "integer", "minimum": 0},
+        "critical": {"type": "integer", "minimum": 0},
+        "not_applicable": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "dimensions": {
+      "type": "array",
+      "minItems": 16,
+      "items": {
+        "type": "object",
+        "required": ["dimension_id", "dimension_name", "status"],
+        "properties": {
+          "dimension_id": {"type": "string"},
+          "dimension_name": {"type": "string"},
+          "status": {"enum": ["PASS", "WARNING", "FAIL", "NOT_APPLICABLE"]},
+          "na_rationale": {
+            "type": "string",
+            "description": "Mandatory if status is NOT_APPLICABLE (e.g. for CONF-001 or out-of-scope dimensions)"
+          },
+          "checks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["check_id", "name", "result", "severity"],
+              "properties": {
+                "check_id": {"type": "string"},
+                "name": {"type": "string"},
+                "result": {"enum": ["PASS", "FAIL", "NA"]},
+                "severity": {"enum": ["INFO", "WARNING", "CRITICAL"]},
+                "message": {"type": "string"},
+                "target_url": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evidence_ref": {
+      "type": "string",
+      "pattern": "^EV-SEO-[0-9]{3,}$"
+    },
+    "audited_artifacts_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 digest of audited HTML/sitemap/metadata outputs"
+    }
+  },
+  "additionalProperties": false
+}

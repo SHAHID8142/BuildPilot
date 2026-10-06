@@ -1,0 +1,122 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P9-DECISIONS",
+  "phase": "Roadmap P9 (SEO 2.0)",
+  "generated": "2026-10-06",
+  "author": "implementation agent (recording User decisions)",
+  "note": "Records User approval of P9 Phase 1 Requirements (commit 8873364), User resolutions for UQ-P9-01, UQ-P9-02, and UQ-P9-03, and authorization of P9 Phase 2 (Architecture, Schemas & Threat Model). No implementation is authorised.",
+  "standing_bounds": {
+    "P5": "PARTIALLY_SATISFIED — tracked partial dependency; no runtime capability installation",
+    "CONF-001": "UNRESOLVED — strictly no LCP or INP thresholds invented; CWV verified via CLS <= 0.1 and explicit documented N/A rationale for unobserved metrics",
+    "SR-003_SR-007": "OPEN / non-blocking findings preserved",
+    "P8": "APPROVED (commit e8f2509)",
+    "P7": "APPROVED (commit 75585b2)",
+    "stack": "Python standard library only, project-local",
+    "legacy_diff": "must remain 0",
+    "implementation": "NOT_AUTHORISED"
+  },
+  "decisions": [
+    {
+      "decision_id": "D-P9-1",
+      "title": "P9 Phase 1 Requirements Approved",
+      "decision": "P9 Phase 1 Requirements (sps2/requirements/P9-REQUIREMENTS.json at commit 8873364) are APPROVED by the User as the authoritative scope for Roadmap P9 (SEO 2.0).",
+      "scope": [
+        "REQ-P9-01: Metadata and canonical URL engine",
+        "REQ-P9-02: Robots and XML sitemap governance",
+        "REQ-P9-03: Structured data (JSON-LD) and social graph engine",
+        "REQ-P9-04: On-page structural hierarchy and internal linking",
+        "REQ-P9-05: Media and image SEO integration",
+        "REQ-P9-06: URL architecture, redirects, and pagination",
+        "REQ-P9-07: Core Web Vitals dimension and CONF-001 boundary preservation",
+        "REQ-P9-08: Specialized dimensions modular evaluation (i18n, local, ecommerce)",
+        "REQ-P9-09: Mandatory pre-deployment SEO audit tool and evidence generator",
+        "REQ-P9-10: Advisory rollback and project-local stdlib isolation"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-06",
+        "basis": "Explicit User decision in session: 'I approve the P9 Phase 1 Requirements as recorded in: sps2/requirements/P9-REQUIREMENTS.json Commit: 8873364'"
+      }
+    },
+    {
+      "decision_id": "D-P9-2",
+      "title": "Resolution of UQ-P9-01 — Structural Boundary & Location",
+      "decision": "Use OPTION 1: Dedicated domain/seo/ subsystem. SEO 2.0 will live under domain/seo/ with a clean subsystem API, consumed by domain/cms/ and integrated with a CLI in sps2/tools/.",
+      "rationale": "Preserves domain isolation per .sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md line 59, keeps CMS decoupled from presentation and audit concerns, and provides an independent advisory rollback boundary.",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-06",
+        "basis": "Explicit User decision: 'UQ-P9-01 — Structural Boundary & Location: OPTION 1. Use a dedicated: domain/seo/. SEO should have a clean subsystem API with sps2/tools/ CLI integration.'"
+      }
+    },
+    {
+      "decision_id": "D-P9-3",
+      "title": "Resolution of UQ-P9-02 — Core Web Vitals Strategy under CONF-001",
+      "decision": "Use OPTION 1: Implement automated CLS verification (<=0.1 good, >0.25 poor) and static layout-shift prevention rules where applicable, while recording an explicit machine-readable N/A rationale for LCP and INP because CONF-001 remains unresolved.",
+      "strict_constraints": [
+        "Do NOT invent LCP numeric thresholds",
+        "Do NOT invent INP numeric thresholds",
+        "Do NOT infer numeric values",
+        "CONF-001 remains UNRESOLVED"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-06",
+        "basis": "Explicit User decision: 'UQ-P9-02 — Core Web Vitals Strategy: OPTION 1. Implement: automated CLS verification; static layout-shift prevention rules where applicable; explicit machine-readable N/A rationale for LCP and INP because CONF-001 remains unresolved. STRICT CONSTRAINT: Do NOT invent LCP thresholds. Do NOT invent INP thresholds. Do NOT infer numeric values. CONF-001 remains UNRESOLVED.'"
+      }
+    },
+    {
+      "decision_id": "D-P9-4",
+      "title": "Resolution of UQ-P9-03 — Pre-Deployment Audit Enforcement",
+      "decision": "Use OPTION 3: Implement the dual-mode CLI concept: deterministic exit code on CRITICAL failures in deployment mode, and formal SEO evidence artifact generation (EV-SEO-*) for Level 4 deployment sign-off.",
+      "rationale": "Satisfies the roadmap rule forbidding shipping without a pre-deployment audit step, enables CI pipelines to fail fast on critical SEO bugs, and provides an unforgeable machine-verifiable audit trail for P13 Deployment Readiness.",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-06",
+        "basis": "Explicit User decision: 'UQ-P9-03 — Pre-Deployment Audit Enforcement: OPTION 3. Implement the dual-mode CLI concept: deterministic exit code on CRITICAL failures in deployment mode; formal SEO evidence artifact generation for Level 4 deployment sign-off.'"
+      }
+    },
+    {
+      "decision_id": "D-P9-5",
+      "title": "P9 Phase 2 Authorisation — Architecture, Schemas & Threat Model Only",
+      "decision": "P9 Phase 2 is AUTHORISED to produce the architecture (P9-ARCHITECTURE.json), schemas (sps2/schemas/p9-*.schema.json), threat model (P9-THREAT-MODEL.md), and validation evidence. Coding the SEO subsystem implementation is explicitly FORBIDDEN.",
+      "explicitly_forbidden": [
+        "Coding the SEO subsystem (domain/seo/*.py)",
+        "Self-approval of Phase 2 or Phase 3",
+        "Modifying legacy files (legacy diff must remain 0)",
+        "Installing third-party packages or tools",
+        "Writing machine-global state",
+        "Touching sps2/tools/portability.py",
+        "Pushing to any remote"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-06",
+        "basis": "Explicit User decision: 'This authorization is for: P9 Phase 2 — Architecture, Schemas & Threat Model. It is NOT authorization for implementation... Do NOT begin coding the SEO subsystem yet.'"
+      }
+    }
+  ],
+  "phase_2_boundary": {
+    "status": "IN_PROGRESS",
+    "deliverables": [
+      "sps2/decisions/P9-DECISIONS.json",
+      "sps2/governance/P9-ARCHITECTURE.json",
+      "sps2/governance/P9-THREAT-MODEL.md",
+      "sps2/schemas/p9-metadata.schema.json",
+      "sps2/schemas/p9-structured-data.schema.json",
+      "sps2/schemas/p9-sitemap.schema.json",
+      "sps2/schemas/p9-audit.schema.json"
+    ],
+    "next_phase_required": "User review and approval of Phase 2 architecture, schemas, and threat model before Phase 3 (Vertical Slice Implementation) may begin"
+  }
+}

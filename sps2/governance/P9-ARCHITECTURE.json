@@ -1,0 +1,224 @@
+{
+  "schema": "sps2.p9-architecture/v1",
+  "record_id": "P9-ARCHITECTURE",
+  "generated": "2026-10-06",
+  "author": "implementation agent (design author, not a User; not an approval)",
+  "note": "P9 Phase 2 — Architecture & Design. No implementation is authorised by this document. All designs are project-local, stdlib-only, evidence-backed, and machine-validatable.",
+  "uq_resolutions": {
+    "UQ-P9-01": {
+      "question": "What is the structural boundary and location for the SEO 2.0 subsystem?",
+      "resolution": "OPTION 1: Dedicated domain/seo/ subsystem",
+      "rationale": "Preserves domain isolation per .sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md line 59, keeps CMS decoupled from presentation and audit concerns, and provides an independent advisory rollback boundary.",
+      "decision": "Implement SEO 2.0 under domain/seo/ with clean public API and sps2/tools/ CLI integration."
+    },
+    "UQ-P9-02": {
+      "question": "How should Core Web Vitals (CWV) be verified under the CONF-001 boundary?",
+      "resolution": "OPTION 1: Verified CLS check + static shift prevention + explicit N/A rationale for unobserved metrics per CONF-001",
+      "rationale": "Cumulative Layout Shift (CLS) threshold (<=0.1 good, >0.25 poor) is officially verified from SRC-017 and is encoded. LCP and INP numeric thresholds remain NOT_OBSERVED (CONF-001) and must NEVER be invented. An explicit machine-readable N/A rationale fulfills the roadmap acceptance criterion that every dimension has a check or an explicit N/A rationale without fabricating numbers.",
+      "decision": "Implement automated CLS verification and static shift prevention; record machine-readable N/A rationale for LCP and INP; strictly preserve CONF-001."
+    },
+    "UQ-P9-03": {
+      "question": "How should the mandatory pre-deployment audit gate be enforced in CI and build workflows?",
+      "resolution": "OPTION 3: Dual-mode CLI (deterministic exit code + formal evidence artifact generation)",
+      "rationale": "Enforces the roadmap rule forbidding shipping without a pre-deployment audit step. In deployment mode, CRITICAL errors exit with non-zero exit code, immediately stopping CI deployments. In addition, every audit emits a machine-readable JSON/Markdown report and an EV-SEO-* evidence record required for Level 4 deployment readiness (P13).",
+      "decision": "Implement dual-mode CLI in domain/seo/audit.py and sps2/tools/seo_audit.py supporting advisory reporting and strict deployment gating."
+    },
+    "UQ-P9-04": {
+      "question": "How should the SEO auditor parse HTML in Python without third-party dependencies?",
+      "resolution": "html.parser.HTMLParser streaming extractor from Python standard library",
+      "rationale": "The SPS 2.0 policy enforces Python standard library only. Installing BeautifulSoup, lxml, or external packages is prohibited. html.parser is built into stdlib, provides SAX-style streaming tag extraction, does not build an in-memory DOM, is immune to XML entity expansion, and safely extracts <head> meta/link/script tags and <body> headings/links/images in a single pass.",
+      "decision": "Build a custom, safe streaming HTML parser subclassing html.parser.HTMLParser."
+    },
+    "UQ-P9-05": {
+      "question": "Should the SEO subsystem evaluate CMS models directly or evaluate rendered HTML?",
+      "resolution": "Dual ingestion interface (Model-to-Metadata for authoring; Rendered HTML for pre-deployment audit)",
+      "rationale": "CMS authoring workflows in P8/P10 need to derive metadata and structured data dictionaries directly from in-memory Content and Section models. Pre-deployment audits in P9/P13 must evaluate actual rendered HTML documents to verify final tag output, heading hierarchies, asset attributes, and internal link validity.",
+      "decision": "Provide both: (1) Model-to-Metadata generator for CMS integration, and (2) HTML document auditor for pre-deployment verification."
+    }
+  },
+  "architecture": {
+    "pattern": "SPS2-Native Decoupled SEO Engine & Pre-Deployment Auditor",
+    "description": "A standalone, modular SEO subsystem that generates search-optimized metadata, structured data, and indexing directives, and provides an independent, deterministic pre-deployment audit engine for web outputs.",
+    "subsystem_root": "domain/seo/",
+    "cli_entrypoint": "sps2/tools/seo_audit.py",
+    "layers": [
+      {
+        "layer": "model",
+        "description": "Pure data contracts and typed representations for SEO metadata, structured data, indexing directives, and audit results.",
+        "module": "domain/seo/model.py",
+        "stdlib_modules": ["dataclasses", "typing", "datetime", "enum"]
+      },
+      {
+        "layer": "generator",
+        "description": "Generates HTML meta tags, canonical URLs, robots.txt, XML sitemaps, and schema.org JSON-LD from CMS content models.",
+        "modules": [
+          "domain/seo/metadata.py",
+          "domain/seo/indexing.py",
+          "domain/seo/structured_data.py"
+        ],
+        "stdlib_modules": ["json", "urllib.parse", "xml.etree.ElementTree", "datetime", "html"]
+      },
+      {
+        "layer": "analyzer",
+        "description": "Parses rendered HTML documents, analyzes heading hierarchy, image attributes, internal links, redirect graphs, and layout stability.",
+        "modules": [
+          "domain/seo/onpage.py",
+          "domain/seo/media.py",
+          "domain/seo/url_taxonomy.py",
+          "domain/seo/cwv.py",
+          "domain/seo/specialized.py"
+        ],
+        "stdlib_modules": ["html.parser", "urllib.parse", "re", "pathlib"]
+      },
+      {
+        "layer": "audit",
+        "description": "Executes all 16 dimension checks, aggregates severity levels (CRITICAL, WARNING, INFO, NA), enforces pre-deployment gating, and emits evidence records.",
+        "modules": [
+          "domain/seo/audit.py",
+          "sps2/tools/seo_audit.py"
+        ],
+        "stdlib_modules": ["json", "hashlib", "datetime", "pathlib", "sys"]
+      }
+    ],
+    "advisory_rollback": {
+      "mechanism": "Feature flag and modular directory removal",
+      "description": "Disabling the SEO subsystem via configuration or deleting domain/seo/ does not break core SPS 2.0 framework execution, governance validators, or base CMS publishing. The SEO audit tool is an advisory verification gate during development, and an explicit prerequisite only during P13 deployment readiness.",
+      "rollback_procedure": "Remove domain/seo/ and sps2/tools/seo_audit.py; re-run core validators (validate-sps2.sh, validate-p7-readiness.py) to prove zero regression."
+    }
+  },
+  "subsystem_components": [
+    {
+      "component": "Metadata & Canonical Engine",
+      "module": "domain/seo/metadata.py",
+      "inputs": ["Page title", "Page description", "Page slug", "Base URL", "Keywords/Tags"],
+      "outputs": ["HTML <title> tag", "<meta name='description'>", "<link rel='canonical'>"],
+      "rules": [
+        "Title length check (ideal: 50-60 chars, max: 70 chars)",
+        "Description length check (ideal: 120-160 chars, max: 200 chars)",
+        "Canonical URL must be absolute, lowercase, trailing-slash consistent, without tracking parameters",
+        "Self-referencing canonical required on canonical pages",
+        "HTML entity escaping applied to all user-derived values"
+      ]
+    },
+    {
+      "component": "Indexing & Robots Engine",
+      "module": "domain/seo/indexing.py",
+      "inputs": ["Route manifest", "Page indexing directives (index/noindex, follow/nofollow)", "Sitemap URL"],
+      "outputs": ["robots.txt content", "sitemap.xml document", "<meta name='robots'> tags"],
+      "rules": [
+        "robots.txt syntax conforms to standard format with User-agent, Disallow, Allow, and Sitemap",
+        "XML sitemap strictly follows sitemaps.org 0.9 schema",
+        "Only published, canonical, indexable (200 OK) URLs appear in sitemap",
+        "Defused XML generation prevents entity expansion vulnerabilities",
+        "robots.txt never discloses private or admin URLs"
+      ]
+    },
+    {
+      "component": "Structured Data (JSON-LD) Engine",
+      "module": "domain/seo/structured_data.py",
+      "inputs": ["Content type", "Title", "Body", "Author", "Dates", "Organization info", "Breadcrumb hierarchy"],
+      "outputs": ["<script type='application/ld+json'> script blocks", "Open Graph tags", "Twitter Card tags"],
+      "rules": [
+        "Generates schema.org compliant JSON-LD for WebPage, Article, Organization, BreadcrumbList",
+        "Generates og:title, og:description, og:url, og:image, og:type",
+        "Generates twitter:card, twitter:title, twitter:description, twitter:image",
+        "Sanitizes JSON-LD strings against script breakout ('</script>' escaped as '<\\/script>')"
+      ]
+    },
+    {
+      "component": "On-Page Structural & Link Auditor",
+      "module": "domain/seo/onpage.py",
+      "inputs": ["Rendered HTML string/file", "Known site route graph"],
+      "outputs": ["Heading hierarchy evaluation", "Internal link graph and broken link report"],
+      "rules": [
+        "Enforces exactly one H1 per page",
+        "Detects skipped heading levels (e.g. H1 to H3 without H2)",
+        "Extracts all internal <a href> links and verifies destination route exists",
+        "Flags broken links as CRITICAL and generic anchor text ('click here') as WARNING"
+      ]
+    },
+    {
+      "component": "Media & Image SEO Auditor",
+      "module": "domain/seo/media.py",
+      "inputs": ["Rendered HTML image elements", "P8 Asset records"],
+      "outputs": ["Image SEO audit report"],
+      "rules": [
+        "Every <img> must have a non-empty alt attribute unless aria-hidden='true'",
+        "Every <img> must have explicit width and height attributes (or aspect-ratio style) to prevent layout shift",
+        "Filenames must be descriptive, lowercase, and hyphenated (rejects raw unreadable hash names in public markup)"
+      ]
+    },
+    {
+      "component": "URL Architecture & Redirect Taxonomy Validator",
+      "module": "domain/seo/url_taxonomy.py",
+      "inputs": ["Site route inventory", "Redirect table / mappings"],
+      "outputs": ["URL normalization report", "Redirect loop/chain report"],
+      "rules": [
+        "URL paths must be lowercase, hyphen-separated, without special characters",
+        "Detects and flags redirect loops (A -> B -> A)",
+        "Detects and flags redirect chains (> 1 hop: A -> B -> C)",
+        "Verifies redirect status codes (301 permanent vs 302 temporary)",
+        "Paginated URLs enforce consistent canonicalization"
+      ]
+    },
+    {
+      "component": "Core Web Vitals & Layout Stability Engine",
+      "module": "domain/seo/cwv.py",
+      "inputs": ["Observed CLS measurements (if present)", "Rendered page layout markers"],
+      "outputs": ["CLS verification result", "Static shift prevention checks", "CONF-001 N/A rationale"],
+      "rules": [
+        "Encodes verified CLS threshold (CLS <= 0.1 PASS, > 0.25 FAIL)",
+        "Asserts static shift prevention rules (image dimensions present, font-display: swap)",
+        "Strictly outputs machine-readable N/A rationale for LCP and INP per CONF-001 boundary",
+        "Prohibits any invented numeric threshold for LCP or INP"
+      ]
+    },
+    {
+      "component": "Specialized Dimensions Evaluator",
+      "module": "domain/seo/specialized.py",
+      "inputs": ["Project configuration", "Multilingual mappings", "Local business data", "Product catalog"],
+      "outputs": ["Evaluation results for i18n, Local SEO, and Ecommerce"],
+      "rules": [
+        "Evaluates hreflang bidirectional validity if project is multilingual",
+        "Evaluates LocalBusiness schema if project is local business",
+        "Evaluates Product/Offer schema if project is ecommerce",
+        "Emits explicit, documented N/A rationale for dimensions that are not in project scope",
+        "Guarantees 100% check-or-N/A coverage across all 16 roadmap dimensions"
+      ]
+    },
+    {
+      "component": "Pre-Deployment Audit Runner & Evidence Emitter",
+      "module": "domain/seo/audit.py",
+      "inputs": ["Site build directory or rendered route bundle", "CLI flags (--mode=advisory|deployment, --format=json|md)"],
+      "outputs": ["Structured audit report (JSON)", "Markdown human-readable summary", "EV-SEO-* evidence record"],
+      "rules": [
+        "Executes all dimension checks across all pages and sitemaps",
+        "Classifies findings into CRITICAL, WARNING, INFO, NA",
+        "In deployment mode (--mode=deployment), exits non-zero if any CRITICAL finding exists",
+        "In advisory mode (--mode=advisory), exits zero and outputs report",
+        "Emits immutable EV-SEO-* JSON evidence record with SHA-256 digest of audited artifacts"
+      ]
+    }
+  ],
+  "dimension_coverage_matrix": [
+    {"dimension": "1. technical SEO", "module": "domain/seo/metadata.py", "handling": "CHECK"},
+    {"dimension": "2. metadata", "module": "domain/seo/metadata.py", "handling": "CHECK"},
+    {"dimension": "3. canonical", "module": "domain/seo/metadata.py", "handling": "CHECK"},
+    {"dimension": "4. robots", "module": "domain/seo/indexing.py", "handling": "CHECK"},
+    {"dimension": "5. sitemap", "module": "domain/seo/indexing.py", "handling": "CHECK"},
+    {"dimension": "6. structured data", "module": "domain/seo/structured_data.py", "handling": "CHECK"},
+    {"dimension": "7. OG/social", "module": "domain/seo/structured_data.py", "handling": "CHECK"},
+    {"dimension": "8. headings", "module": "domain/seo/onpage.py", "handling": "CHECK"},
+    {"dimension": "9. internal linking", "module": "domain/seo/onpage.py", "handling": "CHECK"},
+    {"dimension": "10. image SEO", "module": "domain/seo/media.py", "handling": "CHECK"},
+    {"dimension": "11. CWV (CLS)", "module": "domain/seo/cwv.py", "handling": "CHECK"},
+    {"dimension": "11. CWV (LCP/INP)", "module": "domain/seo/cwv.py", "handling": "EXPLICIT_NA_RATIONALE (CONF-001)"},
+    {"dimension": "12. redirects", "module": "domain/seo/url_taxonomy.py", "handling": "CHECK"},
+    {"dimension": "13. URL architecture", "module": "domain/seo/url_taxonomy.py", "handling": "CHECK"},
+    {"dimension": "14. pagination", "module": "domain/seo/url_taxonomy.py", "handling": "CHECK"},
+    {"dimension": "15. i18n", "module": "domain/seo/specialized.py", "handling": "CHECK_OR_EXPLICIT_NA"},
+    {"dimension": "15. local", "module": "domain/seo/specialized.py", "handling": "CHECK_OR_EXPLICIT_NA"},
+    {"dimension": "15. ecommerce", "module": "domain/seo/specialized.py", "handling": "CHECK_OR_EXPLICIT_NA"},
+    {"dimension": "16. pre-deployment audit", "module": "domain/seo/audit.py", "handling": "CHECK (MANDATORY GATE)"}
+  ]
+}
