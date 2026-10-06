@@ -1,7 +1,8 @@
 """P8 CMS asset picker with SSRF protection.
 
 Three sources: upload, existing_media, external_url.
-External URL ingestion enforces comprehensive SSRF prevention.
+External URL ingestion enforces comprehensive SSRF prevention including
+per-hop redirect validation.
 """
 from __future__ import annotations
 
@@ -249,21 +250,55 @@ def handle_existing_media(
     raise NotImplementedError("Existing media selection requires asset store integration")
 
 
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Custom redirect handler that validates each hop before following."""
+
+    def __init__(self, max_redirects: int = MAX_REDIRECTS) -> None:
+        self.max_redirects = max_redirects
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        """Validate the redirect target before following."""
+        # Check redirect limit
+        if self.max_redirects <= 0:
+            raise SSRFError(f"Exceeded maximum redirects ({MAX_REDIRECTS})")
+        self.max_redirects -= 1
+
+        # Validate the new URL
+        _validate_redirect_url(newurl, MAX_REDIRECTS - self.max_redirects)
+
+        # Build and return the new request
+        return urllib.request.Request(
+            newurl,
+            headers={
+                "User-Agent": "SPS2-CMS-Asset-Picker/1.0",
+                "Accept": "image/*,application/pdf,text/plain,text/markdown",
+            },
+        )
+
+
 def handle_external_url(
     url: str,
     storage_dir: str | Path,
     uploaded_by: str,
 ) -> Asset:
-    """Handle external URL ingestion with SSRF protection."""
-    # Validate URL
-    parsed = _validate_url(url)
+    """Handle external URL ingestion with SSRF protection.
 
-    # Resolve and validate host
+    Implements per-hop redirect validation. Does NOT rely on urllib's
+    default redirect behavior. Every redirect target is validated before
+    the next request is made.
+    """
+    # Validate initial URL
+    parsed = _validate_url(url)
     _resolve_and_validate_host(parsed.hostname)
 
-    # Build request with redirect handler that validates each hop
+    # Build opener with custom redirect handler
+    redirect_handler = _NoRedirectHandler(max_redirects=MAX_REDIRECTS)
+    opener = urllib.request.build_opener(redirect_handler)
+
+    # Track redirect hops manually
     current_url = url
     for hop in range(MAX_REDIRECTS + 1):
+        # Validate current URL before making request
         parsed = _validate_url(current_url)
         _resolve_and_validate_host(parsed.hostname)
 
@@ -278,8 +313,16 @@ def handle_external_url(
 
         # Open with timeout
         try:
-            with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as response:
-                # Validate content type
+            with opener.open(req, timeout=TIMEOUT_SECONDS) as response:
+                # Check if this is a redirect
+                if response.geturl() != current_url:
+                    # Redirect happened — validate the new URL
+                    new_url = response.geturl()
+                    _validate_redirect_url(new_url, hop + 1)
+                    current_url = new_url
+                    continue
+
+                # Not a redirect — process the response
                 content_type = response.headers.get("Content-Type", "").split(";")[0]
                 if content_type not in ALLOWED_UPLOAD_TYPES:
                     raise ValidationError(
@@ -326,6 +369,18 @@ def handle_external_url(
                 return asset
 
         except urllib.error.HTTPError as e:
+            # Check if this is a redirect status code
+            if e.code in (301, 302, 303, 307, 308):
+                # Get the redirect location
+                location = e.headers.get("Location")
+                if not location:
+                    raise AssetError(f"Redirect {e.code} without Location header")
+                # Resolve relative URLs
+                new_url = urllib.parse.urljoin(current_url, location)
+                # Validate the redirect target
+                _validate_redirect_url(new_url, hop + 1)
+                current_url = new_url
+                continue
             raise AssetError(f"HTTP error {e.code}: {e.reason}") from e
         except urllib.error.URLError as e:
             raise AssetError(f"URL error: {e.reason}") from e
