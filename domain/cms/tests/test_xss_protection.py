@@ -151,6 +151,40 @@ class TestAPIContentSafety(unittest.TestCase):
         retrieved = self.api.get_content(content["id"])
         self.assertEqual(retrieved["body"], "Normal text content")
 
+    def test_raw_api_vs_safe_output_boundary(self) -> None:
+        """Verify the distinction between raw API and safe output.
+
+        get_content() is a plain-text data API — it returns raw body.
+        get_content_with_safe_output() is the HTML-safe output API —
+        it returns HTML-encoded body.
+
+        Consumers targeting HTML must use get_content_with_safe_output()
+        or encode_for_html() to prevent stored XSS.
+        """
+        ct = self.api.create_content_type(
+            "super_admin", "Blog Post", [{"name": "title", "type": "string", "required": True}]
+        )
+        # Store content with HTML-like payload
+        payload = "<script>alert('xss')</script>"
+        content = self.api.create_content(
+            "admin", ct["id"], "Test", payload, "user1"
+        )
+
+        # Raw API returns plain text (not encoded)
+        raw = self.api.get_content(content["id"])
+        self.assertEqual(raw["body"], payload)
+
+        # Safe output API returns HTML-encoded text
+        safe = get_content_with_safe_output(raw)
+        self.assertNotEqual(safe["body"], payload)
+        self.assertNotIn("<script>", safe["body"])
+        self.assertIn("&lt;script&gt;", safe["body"])
+
+        # Verify the raw API is NOT safe for direct HTML injection
+        # (This is why get_content_with_safe_output exists)
+        self.assertIn("<script>", raw["body"])  # Raw is dangerous for HTML
+        self.assertNotIn("<script>", safe["body"])  # Safe is not
+
 
 if __name__ == "__main__":
     unittest.main()

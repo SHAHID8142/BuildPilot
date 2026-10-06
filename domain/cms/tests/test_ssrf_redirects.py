@@ -67,15 +67,143 @@ class TestSSRFRedirectValidation(unittest.TestCase):
         self.assertTrue(_is_ip_blocked("::ffff:192.168.1.1"))
 
     def test_multi_hop_redirect_ending_in_private(self) -> None:
-        """Multi-hop redirect ending in private address is rejected."""
-        # Simulate a redirect chain: public -> public -> private
-        # The validation should catch the private address at the end
-        self.assertTrue(_is_ip_blocked("10.0.0.1"))
+        """Multi-hop redirect chain public->public->private is rejected.
+
+        Exercises the real handle_external_url redirect loop with a
+        deterministic fake opener (mocked at build_opener so only the
+        network fetch is replaced). Verifies that each hop is validated
+        and the private final target is rejected BEFORE a request to
+        it is made.
+        """
+        # Simulate: public1 -> public2 -> private(10.0.0.1)
+        redirect_map = {
+            "https://public1.example.com/image.png":
+                "https://public2.example.com/image.png",
+            "https://public2.example.com/image.png":
+                "http://10.0.0.1/image.png",
+        }
+
+        class FakeResponse:
+            def __init__(self, url):
+                self._url = url
+                self.headers = {"Content-Type": "image/png"}
+
+            def geturl(self):
+                return self._url
+
+            def read(self, n=-1):
+                return b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+        class FakeOpener:
+            def __init__(self):
+                self.requested = []
+
+            def open(self, req, timeout=None):
+                url = req.get_full_url()
+                self.requested.append(url)
+                # geturl() differs from the request URL => redirect.
+                return FakeResponse(redirect_map.get(url, url))
+
+        fake_opener = FakeOpener()
+
+        with patch('urllib.request.build_opener', return_value=fake_opener):
+            with patch('socket.getaddrinfo') as mock_getaddrinfo:
+                def fake_getaddrinfo(*args):
+                    hostname = args[0]
+                    if hostname in ("public1.example.com", "public2.example.com"):
+                        return [(2, 1, 6, '', ("93.184.216.34", 80))]
+                    elif hostname == "10.0.0.1":
+                        return [(2, 1, 6, '', ("10.0.0.1", 80))]
+                    raise socket.gaierror(f"Unknown host: {hostname}")
+                mock_getaddrinfo.side_effect = fake_getaddrinfo
+
+                # The private final target must be rejected before any
+                # request to 10.0.0.1 is made.
+                with self.assertRaises(SSRFError):
+                    handle_external_url(
+                        "https://public1.example.com/image.png",
+                        self.tmpdir,
+                        "user1",
+                    )
+
+        # Only the two public hops were requested. The private target was
+        # rejected during redirect validation, before it was fetched.
+        self.assertEqual(
+            fake_opener.requested,
+            [
+                "https://public1.example.com/image.png",
+                "https://public2.example.com/image.png",
+            ],
+        )
+        self.assertNotIn("http://10.0.0.1/image.png", fake_opener.requested)
 
     def test_redirect_limit_enforced(self) -> None:
-        """Redirect limit is enforced."""
-        handler = _NoRedirectHandler(max_redirects=MAX_REDIRECTS)
-        self.assertEqual(handler.max_redirects, MAX_REDIRECTS)
+        """Redirect limit is enforced — chain exceeding MAX_REDIRECTS is rejected.
+
+        Exercises the real handle_external_url redirect loop with a
+        deterministic fake opener that always redirects. Verifies the
+        request is rejected because the redirect limit is exceeded.
+        """
+        class FakeResponse:
+            def __init__(self, url):
+                self._url = url
+                self.headers = {"Content-Type": "image/png"}
+
+            def geturl(self):
+                return self._url
+
+            def read(self, n=-1):
+                return b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+        class FakeOpener:
+            def __init__(self):
+                self.requested = []
+                self.hop = 0
+
+            def open(self, req, timeout=None):
+                url = req.get_full_url()
+                self.requested.append(url)
+                self.hop += 1
+                # Always redirect to a new public URL, forcing a long chain.
+                return FakeResponse(
+                    f"https://redirect{self.hop}.example.com/image.png"
+                )
+
+        fake_opener = FakeOpener()
+
+        with patch('urllib.request.build_opener', return_value=fake_opener):
+            with patch('socket.getaddrinfo') as mock_getaddrinfo:
+                def fake_getaddrinfo(*args):
+                    # Every redirect host resolves to a public IP.
+                    return [(2, 1, 6, '', ("93.184.216.34", 80))]
+                mock_getaddrinfo.side_effect = fake_getaddrinfo
+
+                with self.assertRaises(SSRFError) as ctx:
+                    handle_external_url(
+                        "https://redirect0.example.com/image.png",
+                        self.tmpdir,
+                        "user1",
+                    )
+
+        # Rejected because the redirect limit was exceeded.
+        self.assertIn("redirect", str(ctx.exception).lower())
+        # The limit check fired during redirect validation: exactly
+        # MAX_REDIRECTS requests were made before the chain was cut.
+        # (If enforcement relied only on the loop backstop, this would
+        # be MAX_REDIRECTS + 1.)
+        self.assertEqual(len(fake_opener.requested), MAX_REDIRECTS)
 
     def test_redirect_to_disallowed_scheme(self) -> None:
         """Redirect to disallowed scheme is rejected."""

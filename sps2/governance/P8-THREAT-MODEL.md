@@ -140,6 +140,25 @@ P8 is the first SPS 2.0 phase to introduce **user-facing operations** (content c
 | Event handler injection | Strip event handlers (onload, onclick, etc.) |
 | JavaScript URLs | Reject javascript: URLs |
 
+### 10.1 Output boundary (SR-002) — verified
+
+`Content.body` is **PLAIN TEXT ONLY**. There is **no HTML/UI sink in P8**;
+P8 exposes data APIs only. The boundary is:
+
+- `get_content()` (service and API) is a **plain-text data API**. It returns
+  the stored body unchanged. It is **not** an HTML-safe rendering API and its
+  output must never be injected directly into an HTML sink.
+- `get_content_with_safe_output()` and `encode_for_html()` are the **only**
+  sanctioned paths for any consumer that targets an HTML/browser context.
+  They HTML-encode the body at the output/sink boundary.
+- `validate_plain_text()` enforces the type contract (string) at the
+  service/API boundary; it does not strip or mutate content.
+
+**Invariant**: any future browser/UI code must preserve this boundary — raw
+`get_content()` output must never be placed into an HTML sink without
+`encode_for_html()`/`get_content_with_safe_output()`. Regression test
+`test_raw_api_vs_safe_output_boundary` locks this distinction.
+
 ---
 
 ## 11. Unsafe external content risks
