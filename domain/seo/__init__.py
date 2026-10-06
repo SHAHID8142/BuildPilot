@@ -48,7 +48,13 @@ from domain.seo.model import (
     OnPageAnalysisResult,
     OpenGraph,
     OrganizationSchema,
+    PaginationAnalysisResult,
+    PaginationSignals,
     PublisherInfo,
+    RedirectAnalysisResult,
+    RedirectChain,
+    RedirectHop,
+    RedirectRule,
     RobotsConfig,
     RobotsDirectives,
     RobotsGroup,
@@ -87,6 +93,14 @@ from domain.seo.structured_data import (
     validate_structured_data,
     validate_structured_data_strict,
 )
+from domain.seo.url_taxonomy import (
+    PaginationHTMLParser,
+    analyze_pagination_html,
+    analyze_redirect_graph,
+    normalize_slug,
+    validate_pagination_signals,
+    validate_url_taxonomy,
+)
 
 __all__ = [
     "ArticleSchema",
@@ -106,7 +120,14 @@ __all__ = [
     "OnPageHTMLParser",
     "OpenGraph",
     "OrganizationSchema",
+    "PaginationAnalysisResult",
+    "PaginationHTMLParser",
+    "PaginationSignals",
     "PublisherInfo",
+    "RedirectAnalysisResult",
+    "RedirectChain",
+    "RedirectHop",
+    "RedirectRule",
     "RobotsConfig",
     "RobotsDirectives",
     "RobotsGroup",
@@ -129,6 +150,8 @@ __all__ = [
     "analyze_links",
     "analyze_media",
     "analyze_onpage",
+    "analyze_pagination_html",
+    "analyze_redirect_graph",
     "build_article_schema",
     "build_breadcrumb_list_schema",
     "build_organization_schema",
@@ -146,6 +169,7 @@ __all__ = [
     "generate_webpage_structured_data",
     "generate_website_structured_data",
     "is_path_allowed_by_robots",
+    "normalize_slug",
     "parse_robots_txt",
     "parse_sitemap_index_xml",
     "parse_sitemap_xml",
@@ -157,8 +181,10 @@ __all__ = [
     "validate_asset_seo",
     "validate_canonical_url",
     "validate_metadata",
+    "validate_pagination_signals",
     "validate_structured_data",
     "validate_structured_data_strict",
+    "validate_url_taxonomy",
 ]
 
 

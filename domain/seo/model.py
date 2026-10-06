@@ -758,5 +758,147 @@ class MediaAnalysisResult:
         }
 
 
+@dataclass
+class RedirectRule:
+    """A configured HTTP redirect rule."""
+    source: str
+    target: str
+    status_code: int = 301
+    allow_external: bool = False
+    reason: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "source": self.source,
+            "target": self.target,
+            "status_code": self.status_code,
+            "allow_external": self.allow_external,
+        }
+        if self.reason:
+            data["reason"] = self.reason
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> RedirectRule:
+        return cls(
+            source=data.get("source", ""),
+            target=data.get("target", ""),
+            status_code=int(data.get("status_code", 301)),
+            allow_external=bool(data.get("allow_external", False)),
+            reason=data.get("reason", ""),
+        )
+
+
+@dataclass
+class RedirectHop:
+    """A single hop along a redirect chain."""
+    source: str
+    target: str
+    status_code: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "source": self.source,
+            "target": self.target,
+            "status_code": self.status_code,
+        }
+
+
+@dataclass
+class RedirectChain:
+    """A chain or loop of redirects."""
+    start_url: str
+    final_target: str
+    hops: list[RedirectHop] = field(default_factory=list)
+    hop_count: int = 0
+    is_loop: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "start_url": self.start_url,
+            "final_target": self.final_target,
+            "hops": [h.to_dict() for h in self.hops],
+            "hop_count": self.hop_count,
+            "is_loop": self.is_loop,
+        }
+
+
+@dataclass
+class RedirectAnalysisResult:
+    """Result of static redirect taxonomy analysis."""
+    total_rules: int = 0
+    valid_count: int = 0
+    loop_count: int = 0
+    chain_count: int = 0
+    chains: list[RedirectChain] = field(default_factory=list)
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "total_rules": self.total_rules,
+            "valid_count": self.valid_count,
+            "loop_count": self.loop_count,
+            "chain_count": self.chain_count,
+            "chains": [c.to_dict() for c in self.chains],
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+
+@dataclass
+class PaginationSignals:
+    """Pagination link and canonical signals for a paginated collection page."""
+    page: int = 1
+    total_pages: int | None = None
+    current_url: str = ""
+    canonical_url: str | None = None
+    prev_url: str | None = None
+    next_url: str | None = None
+    strategy: str = "self"  # "self" or "root"
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "page": self.page,
+            "current_url": self.current_url,
+            "strategy": self.strategy,
+        }
+        if self.total_pages is not None:
+            data["total_pages"] = self.total_pages
+        if self.canonical_url is not None:
+            data["canonical_url"] = self.canonical_url
+        if self.prev_url is not None:
+            data["prev_url"] = self.prev_url
+        if self.next_url is not None:
+            data["next_url"] = self.next_url
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> PaginationSignals:
+        return cls(
+            page=int(data.get("page", 1)),
+            total_pages=data.get("total_pages"),
+            current_url=data.get("current_url", ""),
+            canonical_url=data.get("canonical_url"),
+            prev_url=data.get("prev_url"),
+            next_url=data.get("next_url"),
+            strategy=data.get("strategy", "self"),
+        )
+
+
+@dataclass
+class PaginationAnalysisResult:
+    """Result of paginated collection canonicalization analysis."""
+    signals: PaginationSignals
+    is_valid: bool = True
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "signals": self.signals.to_dict(),
+            "is_valid": self.is_valid,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+
+
 
 
