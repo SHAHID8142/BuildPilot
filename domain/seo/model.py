@@ -899,6 +899,128 @@ class PaginationAnalysisResult:
         }
 
 
+@dataclass
+class CWVMetricResult:
+    """Evaluation result for an individual Web Vitals metric."""
+    metric_name: str
+    status: str  # "PASS", "NEEDS_IMPROVEMENT", "FAIL", "NOT_APPLICABLE"
+    observed_value: float | None = None
+    threshold_description: str | None = None
+    na_rationale: str | None = None
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "metric_name": self.metric_name,
+            "status": self.status,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+        if self.observed_value is not None:
+            data["observed_value"] = self.observed_value
+        if self.threshold_description is not None:
+            data["threshold_description"] = self.threshold_description
+        if self.na_rationale is not None:
+            data["na_rationale"] = self.na_rationale
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> CWVMetricResult:
+        return cls(
+            metric_name=data.get("metric_name", ""),
+            status=data.get("status", "NOT_APPLICABLE"),
+            observed_value=data.get("observed_value"),
+            threshold_description=data.get("threshold_description"),
+            na_rationale=data.get("na_rationale"),
+            issues=[
+                ValidationIssue(
+                    code=i["code"],
+                    message=i["message"],
+                    severity=ValidationSeverity(i["severity"]),
+                    field=i.get("field"),
+                )
+                for i in data.get("issues", [])
+            ],
+        )
+
+
+@dataclass
+class StaticShiftPreventionResult:
+    """Result of static HTML layout-shift prevention analysis."""
+    total_images_analyzed: int = 0
+    images_lacking_dimensions: int = 0
+    font_issues_count: int = 0
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "total_images_analyzed": self.total_images_analyzed,
+            "images_lacking_dimensions": self.images_lacking_dimensions,
+            "font_issues_count": self.font_issues_count,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> StaticShiftPreventionResult:
+        return cls(
+            total_images_analyzed=int(data.get("total_images_analyzed", 0)),
+            images_lacking_dimensions=int(data.get("images_lacking_dimensions", 0)),
+            font_issues_count=int(data.get("font_issues_count", 0)),
+            issues=[
+                ValidationIssue(
+                    code=i["code"],
+                    message=i["message"],
+                    severity=ValidationSeverity(i["severity"]),
+                    field=i.get("field"),
+                )
+                for i in data.get("issues", [])
+            ],
+        )
+
+
+@dataclass
+class CWVAnalysisResult:
+    """Aggregate result of Core Web Vitals and layout stability analysis."""
+    cls: CWVMetricResult
+    lcp: CWVMetricResult
+    inp: CWVMetricResult
+    static_prevention: StaticShiftPreventionResult
+    is_valid: bool = True
+    conf_001_status: str = "UNRESOLVED"
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "cls": self.cls.to_dict(),
+            "lcp": self.lcp.to_dict(),
+            "inp": self.inp.to_dict(),
+            "static_prevention": self.static_prevention.to_dict(),
+            "is_valid": self.is_valid,
+            "conf_001_status": self.conf_001_status,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+    @classmethod
+    def from_dict(cls_type, data: dict[str, Any]) -> CWVAnalysisResult:
+        return cls_type(
+            cls=CWVMetricResult.from_dict(data.get("cls", {})),
+            lcp=CWVMetricResult.from_dict(data.get("lcp", {})),
+            inp=CWVMetricResult.from_dict(data.get("inp", {})),
+            static_prevention=StaticShiftPreventionResult.from_dict(data.get("static_prevention", {})),
+            is_valid=bool(data.get("is_valid", True)),
+            conf_001_status=data.get("conf_001_status", "UNRESOLVED"),
+            issues=[
+                ValidationIssue(
+                    code=i["code"],
+                    message=i["message"],
+                    severity=ValidationSeverity(i["severity"]),
+                    field=i.get("field"),
+                )
+                for i in data.get("issues", [])
+            ],
+        )
+
+
+
 
 
 
