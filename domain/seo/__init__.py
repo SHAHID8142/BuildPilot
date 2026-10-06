@@ -31,6 +31,11 @@ from domain.seo.model import (
     BreadcrumbItem,
     BreadcrumbListSchema,
     CanonicalValidationResult,
+    HeadingAnalysisResult,
+    HeadingItem,
+    LinkGraphResult,
+    LinkItem,
+    OnPageAnalysisResult,
     OpenGraph,
     OrganizationSchema,
     PublisherInfo,
@@ -45,6 +50,12 @@ from domain.seo.model import (
     ValidationSeverity,
     WebPageSchema,
     WebSiteSchema,
+)
+from domain.seo.onpage import (
+    OnPageHTMLParser,
+    analyze_headings,
+    analyze_links,
+    analyze_onpage,
 )
 from domain.seo.structured_data import (
     StructuredDataError,
@@ -73,7 +84,13 @@ __all__ = [
     "BreadcrumbItem",
     "BreadcrumbListSchema",
     "CanonicalValidationResult",
+    "HeadingAnalysisResult",
+    "HeadingItem",
     "IndexingError",
+    "LinkGraphResult",
+    "LinkItem",
+    "OnPageAnalysisResult",
+    "OnPageHTMLParser",
     "OpenGraph",
     "OrganizationSchema",
     "PublisherInfo",
@@ -93,6 +110,9 @@ __all__ = [
     "ValidationSeverity",
     "WebPageSchema",
     "WebSiteSchema",
+    "analyze_headings",
+    "analyze_links",
+    "analyze_onpage",
     "build_article_schema",
     "build_breadcrumb_list_schema",
     "build_organization_schema",
@@ -122,4 +142,5 @@ __all__ = [
     "validate_structured_data",
     "validate_structured_data_strict",
 ]
+
 

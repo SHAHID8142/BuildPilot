@@ -615,3 +615,96 @@ class WebPageSchema:
         )
 
 
+@dataclass
+class HeadingItem:
+    """A heading element extracted from HTML."""
+    level: int  # 1 to 6
+    text: str
+    order: int = 1
+    id: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "level": self.level,
+            "text": self.text,
+            "order": self.order,
+        }
+        if self.id:
+            data["id"] = self.id
+        return data
+
+
+@dataclass
+class LinkItem:
+    """A hyperlink element extracted from HTML."""
+    href: str
+    anchor_text: str
+    is_internal: bool = True
+    normalized_url: str = ""
+    target: str | None = None
+    rel: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "href": self.href,
+            "anchor_text": self.anchor_text,
+            "is_internal": self.is_internal,
+            "normalized_url": self.normalized_url,
+        }
+        if self.target:
+            data["target"] = self.target
+        if self.rel:
+            data["rel"] = self.rel
+        return data
+
+
+@dataclass
+class HeadingAnalysisResult:
+    """Result of document heading hierarchy analysis."""
+    headings: list[HeadingItem] = field(default_factory=list)
+    h1_count: int = 0
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "headings": [h.to_dict() for h in self.headings],
+            "h1_count": self.h1_count,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+
+@dataclass
+class LinkGraphResult:
+    """Result of page link extraction and graph analysis."""
+    internal_links: list[LinkItem] = field(default_factory=list)
+    external_links: list[LinkItem] = field(default_factory=list)
+    broken_links: list[LinkItem] = field(default_factory=list)
+    unique_internal_targets: list[str] = field(default_factory=list)
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "internal_links": [l.to_dict() for l in self.internal_links],
+            "external_links": [l.to_dict() for l in self.external_links],
+            "broken_links": [l.to_dict() for l in self.broken_links],
+            "unique_internal_targets": list(self.unique_internal_targets),
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+
+@dataclass
+class OnPageAnalysisResult:
+    """Combined on-page structural hierarchy and link analysis result."""
+    headings: HeadingAnalysisResult = field(default_factory=HeadingAnalysisResult)
+    links: LinkGraphResult = field(default_factory=LinkGraphResult)
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "headings": self.headings.to_dict(),
+            "links": self.links.to_dict(),
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+
+
