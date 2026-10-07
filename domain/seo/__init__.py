@@ -147,6 +147,16 @@ from domain.seo.audit import (
     run_seo_audit,
     validate_audit_report_schema,
 )
+from domain.seo.isolation import (
+    P9_ALLOWLIST_RELATIVE_PATHS,
+    STDLIB_MODULES,
+    scan_for_conf_001_invariants,
+    scan_for_orphan_imports,
+    scan_python_imports,
+    verify_legacy_diff_zero,
+    verify_p7_isolation_intact,
+    verify_stdlib_isolation,
+)
 
 __all__ = [
     "ArticleSchema",
@@ -181,6 +191,7 @@ __all__ = [
     "OnPageHTMLParser",
     "OpenGraph",
     "OrganizationSchema",
+    "P9_ALLOWLIST_RELATIVE_PATHS",
     "PaginationAnalysisResult",
     "PaginationHTMLParser",
     "PaginationSignals",
@@ -201,6 +212,7 @@ __all__ = [
     "SpecializedAnalysisResult",
     "SpecializedDimensionResult",
     "StaticShiftPreventionResult",
+    "STDLIB_MODULES",
     "StructuredDataError",
     "StructuredDataValidationError",
     "TwitterCard",
@@ -257,6 +269,9 @@ __all__ = [
     "render_image_tag",
     "render_json_ld_script_tag",
     "run_seo_audit",
+    "scan_for_conf_001_invariants",
+    "scan_for_orphan_imports",
+    "scan_python_imports",
     "serialize_json_ld",
     "validate_against_schema_file",
     "validate_asset_seo",
@@ -271,6 +286,9 @@ __all__ = [
     "validate_structured_data",
     "validate_structured_data_strict",
     "validate_url_taxonomy",
+    "verify_legacy_diff_zero",
+    "verify_p7_isolation_intact",
+    "verify_stdlib_isolation",
 ]
 
 
