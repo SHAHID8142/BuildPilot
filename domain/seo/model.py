@@ -1020,6 +1020,109 @@ class CWVAnalysisResult:
         )
 
 
+@dataclass
+class HreflangItem:
+    """An alternate hreflang language/region association for a URL."""
+    lang: str
+    url: str
+    is_self_reference: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "lang": self.lang,
+            "url": self.url,
+            "is_self_reference": self.is_self_reference,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> HreflangItem:
+        return cls(
+            lang=data.get("lang", ""),
+            url=data.get("url", ""),
+            is_self_reference=bool(data.get("is_self_reference", False)),
+        )
+
+
+@dataclass
+class SpecializedDimensionResult:
+    """Evaluation result for an individual specialized SEO dimension."""
+    dimension_id: str
+    dimension_name: str
+    status: str  # "PASS", "WARNING", "FAIL", "NOT_APPLICABLE"
+    na_rationale: str | None = None
+    data_summary: dict[str, Any] = field(default_factory=dict)
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "dimension_id": self.dimension_id,
+            "dimension_name": self.dimension_name,
+            "status": self.status,
+            "data_summary": self.data_summary,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+        if self.na_rationale is not None:
+            data["na_rationale"] = self.na_rationale
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> SpecializedDimensionResult:
+        return cls(
+            dimension_id=data.get("dimension_id", ""),
+            dimension_name=data.get("dimension_name", ""),
+            status=data.get("status", "NOT_APPLICABLE"),
+            na_rationale=data.get("na_rationale"),
+            data_summary=data.get("data_summary", {}),
+            issues=[
+                ValidationIssue(
+                    code=i["code"],
+                    message=i["message"],
+                    severity=ValidationSeverity(i["severity"]),
+                    field=i.get("field"),
+                )
+                for i in data.get("issues", [])
+            ],
+        )
+
+
+@dataclass
+class SpecializedAnalysisResult:
+    """Aggregate result of specialized modular dimension evaluations (REQ-P9-08)."""
+    multilingual: SpecializedDimensionResult
+    local_business: SpecializedDimensionResult
+    ecommerce: SpecializedDimensionResult
+    is_valid: bool = True
+    issues: list[ValidationIssue] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "multilingual": self.multilingual.to_dict(),
+            "local_business": self.local_business.to_dict(),
+            "ecommerce": self.ecommerce.to_dict(),
+            "is_valid": self.is_valid,
+            "issues": [i.to_dict() for i in self.issues],
+        }
+
+    @classmethod
+    def from_dict(cls_type, data: dict[str, Any]) -> SpecializedAnalysisResult:
+        return cls_type(
+            multilingual=SpecializedDimensionResult.from_dict(data.get("multilingual", {})),
+            local_business=SpecializedDimensionResult.from_dict(data.get("local_business", {})),
+            ecommerce=SpecializedDimensionResult.from_dict(data.get("ecommerce", {})),
+            is_valid=bool(data.get("is_valid", True)),
+            issues=[
+                ValidationIssue(
+                    code=i["code"],
+                    message=i["message"],
+                    severity=ValidationSeverity(i["severity"]),
+                    field=i.get("field"),
+                )
+                for i in data.get("issues", [])
+            ],
+        )
+
+
+
 
 
 
