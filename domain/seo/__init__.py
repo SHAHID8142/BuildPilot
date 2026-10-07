@@ -35,6 +35,10 @@ from domain.seo.metadata import (
 )
 from domain.seo.model import (
     ArticleSchema,
+    AuditCheck,
+    AuditDimension,
+    AuditReport,
+    AuditSummary,
     AuthorInfo,
     BreadcrumbItem,
     BreadcrumbListSchema,
@@ -136,9 +140,20 @@ from domain.seo.specialized import (
     validate_local_business,
     validate_product_offer,
 )
+from domain.seo.audit import (
+    audit_directory,
+    build_evidence_record,
+    render_audit_markdown,
+    run_seo_audit,
+    validate_audit_report_schema,
+)
 
 __all__ = [
     "ArticleSchema",
+    "AuditCheck",
+    "AuditDimension",
+    "AuditReport",
+    "AuditSummary",
     "AuthorInfo",
     "BreadcrumbItem",
     "BreadcrumbListSchema",
@@ -207,8 +222,10 @@ __all__ = [
     "analyze_specialized_dimensions",
     "analyze_static_shift_prevention",
     "assert_no_invented_thresholds",
+    "audit_directory",
     "build_article_schema",
     "build_breadcrumb_list_schema",
+    "build_evidence_record",
     "build_organization_schema",
     "build_sitemap_model",
     "build_webpage_schema",
@@ -235,12 +252,15 @@ __all__ = [
     "parse_robots_txt",
     "parse_sitemap_index_xml",
     "parse_sitemap_xml",
+    "render_audit_markdown",
     "render_html_meta_tags",
     "render_image_tag",
     "render_json_ld_script_tag",
+    "run_seo_audit",
     "serialize_json_ld",
     "validate_against_schema_file",
     "validate_asset_seo",
+    "validate_audit_report_schema",
     "validate_canonical_url",
     "validate_cwv_config",
     "validate_hreflang",
@@ -252,6 +272,7 @@ __all__ = [
     "validate_structured_data_strict",
     "validate_url_taxonomy",
 ]
+
 
 
 

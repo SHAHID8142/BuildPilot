@@ -1122,6 +1122,142 @@ class SpecializedAnalysisResult:
         )
 
 
+@dataclass
+class AuditCheck:
+    """A single atomic validation check evaluated during an audit."""
+    check_id: str
+    name: str
+    result: str  # "PASS", "FAIL", "NA"
+    severity: str  # "INFO", "WARNING", "CRITICAL"
+    message: str | None = None
+    target_url: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "check_id": self.check_id,
+            "name": self.name,
+            "result": self.result,
+            "severity": self.severity,
+        }
+        if self.message is not None:
+            data["message"] = self.message
+        if self.target_url is not None:
+            data["target_url"] = self.target_url
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AuditCheck:
+        return cls(
+            check_id=data.get("check_id", ""),
+            name=data.get("name", ""),
+            result=data.get("result", "PASS"),
+            severity=data.get("severity", "INFO"),
+            message=data.get("message"),
+            target_url=data.get("target_url"),
+        )
+
+
+@dataclass
+class AuditDimension:
+    """An audit evaluation result for one of the 16+ SEO dimensions."""
+    dimension_id: str
+    dimension_name: str
+    status: str  # "PASS", "WARNING", "FAIL", "NOT_APPLICABLE"
+    na_rationale: str | None = None
+    checks: list[AuditCheck] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "dimension_id": self.dimension_id,
+            "dimension_name": self.dimension_name,
+            "status": self.status,
+            "checks": [c.to_dict() for c in self.checks],
+        }
+        if self.na_rationale is not None:
+            data["na_rationale"] = self.na_rationale
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AuditDimension:
+        return cls(
+            dimension_id=data.get("dimension_id", ""),
+            dimension_name=data.get("dimension_name", ""),
+            status=data.get("status", "NOT_APPLICABLE"),
+            na_rationale=data.get("na_rationale"),
+            checks=[AuditCheck.from_dict(c) for c in data.get("checks", [])],
+        )
+
+
+@dataclass
+class AuditSummary:
+    """Aggregated metrics across all checks in an audit."""
+    total_checks: int = 0
+    passed: int = 0
+    warnings: int = 0
+    critical: int = 0
+    not_applicable: int = 0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "total_checks": self.total_checks,
+            "passed": self.passed,
+            "warnings": self.warnings,
+            "critical": self.critical,
+            "not_applicable": self.not_applicable,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AuditSummary:
+        return cls(
+            total_checks=int(data.get("total_checks", 0)),
+            passed=int(data.get("passed", 0)),
+            warnings=int(data.get("warnings", 0)),
+            critical=int(data.get("critical", 0)),
+            not_applicable=int(data.get("not_applicable", 0)),
+        )
+
+
+@dataclass
+class AuditReport:
+    """Pre-deployment SEO audit report conforming to sps2/schemas/p9-audit.schema.json."""
+    audit_id: str
+    timestamp: str
+    mode: str  # "advisory" or "deployment"
+    exit_code: int  # 0, 1, or 2
+    summary: AuditSummary
+    dimensions: list[AuditDimension] = field(default_factory=list)
+    evidence_ref: str = "EV-SEO-001"
+    audited_artifacts_digest: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "audit_id": self.audit_id,
+            "timestamp": self.timestamp,
+            "mode": self.mode,
+            "exit_code": self.exit_code,
+            "summary": self.summary.to_dict(),
+            "dimensions": [d.to_dict() for d in self.dimensions],
+            "evidence_ref": self.evidence_ref,
+        }
+        if self.audited_artifacts_digest:
+            data["audited_artifacts_digest"] = self.audited_artifacts_digest
+        return data
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> AuditReport:
+        return cls(
+            audit_id=data.get("audit_id", ""),
+            timestamp=data.get("timestamp", ""),
+            mode=data.get("mode", "advisory"),
+            exit_code=int(data.get("exit_code", 0)),
+            summary=AuditSummary.from_dict(data.get("summary", {})),
+            dimensions=[AuditDimension.from_dict(d) for d in data.get("dimensions", [])],
+            evidence_ref=data.get("evidence_ref", "EV-SEO-001"),
+            audited_artifacts_digest=data.get("audited_artifacts_digest", ""),
+        )
+
+
+
 
 
 
