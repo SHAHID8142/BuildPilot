@@ -1,0 +1,228 @@
+{
+ "schema": "sps2.evidence/v1",
+ "phase": "P9",
+ "generated": "2026-10-08",
+ "purpose": "P9 (SEO 2.0) verification evidence assembled for User closure review. This file records objective, verifiable command output only. It is NOT an approval and does NOT close P9. The phase_approval block is deliberately absent because no User approval has been granted.",
+ "probe_limitation": "The deployment-mode SEO audit (EV-SEO-001) was executed against a synthetic representative probe build under /tmp, NOT against production frontend output. No P10 rendered production site exists. EV-SEO-001 proves the audit gate mechanism and evidence pipeline; it is NOT production SEO evidence.",
+ "governance_discrepancy": "P9 implementation (commits f08b736..157d893) proceeded without a recorded Phase-3 authorization. P9-DECISIONS.json still records standing_bounds.implementation = NOT_AUTHORISED and D-P9-5 explicitly forbade coding domain/seo/*.py. This discrepancy is recorded here so it cannot be concealed, rewritten, or normalized. It remains open for User ratification.",
+ "records": [
+  {
+   "evidence_id": "EV-P9-001",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-01",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-01 (metadata and canonical URL engine) is proven by domain/seo/tests/test_metadata.py (9 tests) covering canonical normalization, scheme rejection, SSRF rejection of private/loopback targets, title/description diagnostics, HTML entity escaping, and CMS model-to-metadata ingestion."
+  },
+  {
+   "evidence_id": "EV-P9-002",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-02",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-02 (robots and XML sitemap governance) is proven by domain/seo/tests/test_indexing.py (10 tests)."
+  },
+  {
+   "evidence_id": "EV-P9-003",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-03",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-03 (structured data JSON-LD and social graph) is proven by domain/seo/tests/test_structured_data.py (21 tests), including JSON-LD script-breakout escaping."
+  },
+  {
+   "evidence_id": "EV-P9-004",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-04",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-04 (on-page structural hierarchy and internal linking) is proven by domain/seo/tests/test_onpage.py (18 tests)."
+  },
+  {
+   "evidence_id": "EV-P9-005",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-05",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-05 (media and image SEO integration) is proven by domain/seo/tests/test_media.py (20 tests)."
+  },
+  {
+   "evidence_id": "EV-P9-006",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-06",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-06 (URL architecture, redirects, pagination) is proven by domain/seo/tests/test_url_taxonomy.py (42 tests)."
+  },
+  {
+   "evidence_id": "EV-P9-007",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-07",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-07 (CWV and CONF-001 boundary preservation) is proven by domain/seo/tests/test_cwv.py (26 tests) plus the CONF-001 invariant check in EV-P9-010."
+  },
+  {
+   "evidence_id": "EV-P9-008",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-08",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-08 (specialized dimensions: i18n, local, ecommerce) is proven by domain/seo/tests/test_specialized.py (20 tests)."
+  },
+  {
+   "evidence_id": "EV-P9-009",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-09",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-09 (pre-deployment audit tool and evidence generator) is additionally proven by domain/seo/tests/test_audit.py (30 tests) and by the live deployment-mode audit record EV-SEO-001 below."
+  },
+  {
+   "evidence_id": "EV-P9-010",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:47:00Z",
+   "command": "python3 -m unittest discover -s domain/seo/tests -t .",
+   "expected_result": "All P9 SEO unit tests pass",
+   "observed_result": "Ran 220 tests in 2.217s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-10",
+    "task_id": "P9"
+   },
+   "coverage_note": "REQ-P9-10 (advisory rollback and project-local stdlib isolation) is proven by domain/seo/tests/test_isolation.py (20 tests) plus EV-P9-011 and EV-P9-012 below."
+  },
+  {
+   "evidence_id": "EV-P9-011",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:48:00Z",
+   "command": "python3 sps2/tools/rollback_seo.py --verify",
+   "expected_result": "Zero third-party imports; CONF-001 boundary preserved; zero orphan references",
+   "observed_result": "PASS: Pure Python standard library isolation verified (zero third-party imports)\nPASS: CONF-001 boundary preserved (zero invented LCP/INP thresholds)\nPASS: Zero orphan references outside P9 surface",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-10",
+    "task_id": "P9"
+   }
+  },
+  {
+   "evidence_id": "EV-P9-012",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:49:00Z",
+   "command": "python3 sps2/tools/rollback_seo.py --rehearse",
+   "expected_result": "Deleting the P9 SEO surface in an isolated clone leaves core SPS 2.0 validators and CMS tests passing",
+   "observed_result": "Initial state: P9 PRESENT (25 files)\nSuccessfully removed 25 P9 SEO file(s)\nVerified 0 orphan imports remaining in test clone\nPASS: validate-sps2.sh succeeded on rolled-back clone (72 checks passed)\nPASS: CMS test suite passed completely on rolled-back clone\nPASS: validate-p7-readiness.py passed on rolled-back clone\nRehearsal SUCCESS: Advisory rollback proven safe, clean, and isolated.",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-10",
+    "task_id": "P9"
+   },
+   "scope_note": "Rehearsal executes entirely inside a temporary clone; the real repository working tree is not modified."
+  },
+  {
+   "evidence_id": "EV-P9-013",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:50:00Z",
+   "command": "python3 -m unittest discover -s domain/cms/tests -t .",
+   "expected_result": "All CMS unit tests pass (P8 dependency regression check)",
+   "observed_result": "Ran 86 tests in 0.021s\n\nOK",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": null,
+    "task_id": "P9"
+   },
+   "dependency_note": "P8 CMS is a declared P9 dependency. This record proves P9 did not regress the P8 surface that P10 will consume."
+  },
+  {
+   "evidence_id": "EV-SEO-001",
+   "source": "VALIDATOR",
+   "timestamp": "2026-10-08T05:51:26Z",
+   "command": "python3 sps2/tools/seo_audit.py /tmp/p9_probe_build --mode deployment --canonical https://example.com --cls 0.05 --validate-schema --format json -o /tmp/ev_audit_report.json --evidence-out /tmp/EV-SEO-001.json",
+   "expected_result": "Clean pre-deployment audit with 0 CRITICAL findings",
+   "observed_result": "AUDIT-SEO-20261008-0001: 19 dimensions evaluated, 17 passed, 6 warnings, 0 critical, exit 0",
+   "result": "PASS",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P9-09",
+    "task_id": "P9"
+   },
+   "probe_limitation": "Executed against a synthetic representative probe build (/tmp/p9_probe_build: index.html, about.html, robots.txt, sitemap.xml). NOT production frontend output. No P10 rendered production site exists. Proves the dual-mode deployment gate, deterministic exit code, SHA-256 artifact digest, and EV-SEO evidence emission; it is NOT production SEO evidence.",
+   "audit_report_digest": "d0f502070f1a940b64aaf92274fd5a6176d2e28f5ba2e55cc8e538a6812fe860",
+   "audit_report_path": "/tmp/ev_audit_report.json"
+  }
+ ],
+ "closure": {
+  "status": "P9 CLOSED",
+  "closed_by": "D-P9-APPROVAL in sps2/decisions/P9-DECISIONS.json (User decision, 2026-10-08)",
+  "note": "The purpose field above was accurate when this evidence was generated (2026-10-08) and is preserved unchanged as part of the verbatim record. It is superseded by the User's approval, which is recorded ONLY in P9-DECISIONS.json. Approval authority lives in the decisions record, not in this evidence file.",
+  "ratification": "The governance_discrepancy above was resolved by the User's explicit ratification of the previously unrecorded Phase-3 implementation authorization, recorded in D-P9-APPROVAL.ratification. The discrepancy text is preserved verbatim and is not rewritten or normalized.",
+  "probe_limitation_status": "The probe_limitation above was accepted by the User in the same approval decision."
+ }
+}
