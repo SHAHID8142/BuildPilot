@@ -67,6 +67,18 @@ criteria · verification · approval gate · rollback.
 - **Dependencies:** P4. **Forbidden:** auto-accepting `INSUFFICIENT` readiness.
 - **Deliverables:** workflow; cache schema; readiness evaluator.
 - **Acceptance:** selection for a technology with `readiness != SUFFICIENT` is rejected.
+- **Verification:** negative test. **Approval:** user.
+- **Rollback:** disable gate; advisory only.
+
+## P7 — Project-Local State & Memory
+
+- **Objective:** Consolidate project memory; retire global memory.
+- **Dependencies:** P2, P3. **Forbidden:** writing state outside the project.
+- **Deliverables:** memory layout; team bootstrap; isolation validator.
+- **Acceptance:** two projects remain isolated; a new teammate understands the project from the repo alone.
+- **Verification:** isolation tests + onboarding dry run. **Approval:** user.
+- **Rollback:** revert memory layout.
+
 ## P8 — CMS 2.0
 
 - **Objective:** CMS with Super Admin / Admin separation and a unified asset picker.
@@ -96,6 +108,13 @@ criteria · verification · approval gate · rollback.
 
 - **Objective:** Every completed section is functional, editable, connected, tested, SEO-aware.
 - **Dependencies:** P8, P9. **Scope:** `domain/frontend/`, `domain/backend/`, `domain/shared/`.
+- **Forbidden:** "frontend now, CMS later" sequencing.
+- **Deliverables:** slice schema; per-slice DoD; integration harness.
+- **Acceptance:** a section is not done until frontend + CMS + backend + data + validation + assets +
+  SEO + tests pass together.
+- **Verification:** slice conformance suite. **Approval:** user per slice.
+- **Rollback:** per-slice revert.
+
 ## P11 — Security Controls
 
 - **Objective:** Machine-checkable security controls against agent drift.
@@ -177,20 +196,3 @@ P1..P13 -> P14 migration -> P15 compatibility -> P16 hardening
 
 **P1–P2 are the critical path.** Nothing later can be validated before the governance core exists and is
 proven portable.
-- **Forbidden:** "frontend now, CMS later" sequencing.
-- **Deliverables:** slice schema; per-slice DoD; integration harness.
-- **Acceptance:** a section is not done until frontend + CMS + backend + data + validation + assets +
-  SEO + tests pass together.
-- **Verification:** slice conformance suite. **Approval:** user per slice.
-- **Rollback:** per-slice revert.
-- **Verification:** negative test. **Approval:** user.
-- **Rollback:** disable gate; advisory only.
-
-## P7 — Project-Local State & Memory
-
-- **Objective:** Consolidate project memory; retire global memory.
-- **Dependencies:** P2, P3. **Forbidden:** writing state outside the project.
-- **Deliverables:** memory layout; team bootstrap; isolation validator.
-- **Acceptance:** two projects remain isolated; a new teammate understands the project from the repo alone.
-- **Verification:** isolation tests + onboarding dry run. **Approval:** user.
-- **Rollback:** revert memory layout.
