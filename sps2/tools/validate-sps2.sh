@@ -212,7 +212,106 @@ else
   while IFS= read -r l; do [ -n "$l" ] && fail "P10 inventory: $l"; done <<< "$P10_OUT"
   [ "$FAIL" -eq 0 ] && fail "P10 inventory validation failed (exit $P10_RC)"
 fi
-fi  # end structural (sections 1-11)
+sect "12. P17 (test doubles only; real-agent execution disabled)"
+# Test doubles only. No real agent CLI is probed or invoked: the P17 suites
+# use repository-local test doubles and an isolated test allowlist, and the
+# implementation refuses the production allowlist while GATE-P17-4 is OPEN.
+# Exit-status propagation, NOT assert_clean: these suites print by design.
+P17_SEC_OUT="$(python3 "$SPS2/tests/test_p17_security.py" 2>&1)"; P17_SEC_RC=$?
+P17_SEC_RAN="$(printf '%s\n' "$P17_SEC_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
+if [ "$P17_SEC_RC" -eq 0 ]; then
+  pass "P17 security suite: ${P17_SEC_RAN:-?} tests, 0 failed (SEC-P17-01..11)"
+else
+  while IFS= read -r l; do [ -n "$l" ] && fail "P17 security: $l"; done <<< \
+    "$(printf '%s\n' "$P17_SEC_OUT" | grep -E '^(FAIL|ERROR): ')"
+  [ "$FAIL" -eq 0 ] && fail "P17 security suite failed (exit $P17_SEC_RC)"
+fi
+
+# Lifecycle integrity and recovery hardening. Same isolation contract as the
+# security suite: every case builds its own temporary project root and test
+# allowlist, and the suite itself fails if the real repository's P17 task or
+# evidence tree, or its usage log, changed. It therefore runs in place and
+# writes nothing into this repository.
+P17_LIFE_OUT=""; P17_LIFE_RC=0; P17_LIFE_RAN=""
+if [ -f "$SPS2/tests/test_p17_lifecycle.py" ] && [ -d "$SPS2/p17" ]; then
+  P17_LIFE_OUT="$(python3 "$SPS2/tests/test_p17_lifecycle.py" 2>&1)"; P17_LIFE_RC=$?
+  P17_LIFE_RAN="$(printf '%s\n' "$P17_LIFE_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
+  P17_LIFE_SKIP="$(printf '%s\n' "$P17_LIFE_OUT" | sed -n 's/^OK (skipped=\([0-9][0-9]*\).*/\1/p' | tail -1)"
+  if [ "$P17_LIFE_RC" -eq 0 ]; then
+    if [ -n "${P17_LIFE_SKIP:-}" ] && [ "$P17_LIFE_SKIP" != "0" ]; then
+      pass "P17 lifecycle suite: ${P17_LIFE_RAN:-?} tests OK, ${P17_LIFE_SKIP} skipped"
+    else
+      pass "P17 lifecycle suite: ${P17_LIFE_RAN:-?} tests OK (isolated roots)"
+    fi
+  else
+    while IFS= read -r l; do [ -n "$l" ] && fail "P17 lifecycle: $l"; done <<< \
+      "$(printf '%s\n' "$P17_LIFE_OUT" | grep -E '^(FAIL|ERROR): ')"
+    [ "$FAIL" -eq 0 ] && fail "P17 lifecycle suite failed (exit $P17_LIFE_RC)"
+  fi
+else
+  warn "P17 lifecycle suite not present; nothing was run"
+fi
+
+# The end-to-end suite writes project-local task state by design, so it runs
+# from an isolated copy of exactly what it needs: this validator never
+# modifies a real file.
+P17_E2E="$TMP/p17-e2e"
+if [ -f "$SPS2/tests/test_p17_endtoend.py" ] && [ -d "$SPS2/p17" ]; then
+  mkdir -p "$P17_E2E/sps2/tests/fixtures" "$P17_E2E/sps2/schemas"
+  cp -R "$SPS2/p17" "$P17_E2E/sps2/p17" 2>/dev/null
+  cp "$SPS2/schemas/p17-task-record.schema.json" "$P17_E2E/sps2/schemas/" 2>/dev/null
+  cp "$SPS2/tests/test_p17_endtoend.py" "$P17_E2E/sps2/tests/" 2>/dev/null
+  cp -R "$SPS2/tests/fixtures/p17" "$P17_E2E/sps2/tests/fixtures/p17" 2>/dev/null
+  # Ajv discovery is opt-in via the environment: no machine-global path is
+  # hardcoded here (project-local boundary rule). When it is not supplied the
+  # conformance case SKIPs inside the test with a stated reason, which is a
+  # pass for the suite, not a weakened check.
+  if [ -n "${P17_AJV_ROOT:-}" ] && [ -d "${P17_AJV_ROOT:-}" ]; then
+    P17_E2E_OUT="$(P17_AJV_ROOT="$P17_AJV_ROOT" python3 "$P17_E2E/sps2/tests/test_p17_endtoend.py" 2>&1)"; P17_E2E_RC=$?
+    P17_E2E_NOTE="schema conformance checked with the supplied ajv"
+  else
+    P17_E2E_OUT="$(python3 "$P17_E2E/sps2/tests/test_p17_endtoend.py" 2>&1)"; P17_E2E_RC=$?
+    P17_E2E_NOTE="no ajv supplied: conformance case SKIPs by design"
+  fi
+  P17_E2E_RAN="$(printf '%s\n' "$P17_E2E_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
+  P17_E2E_SKIP="$(printf '%s\n' "$P17_E2E_OUT" | sed -n 's/^OK (skipped=\([0-9][0-9]*\).*/\1/p' | tail -1)"
+  if [ "$P17_E2E_RC" -eq 0 ]; then
+    if [ -n "${P17_E2E_SKIP:-}" ] && [ "$P17_E2E_SKIP" != "0" ]; then
+      pass "P17 end-to-end: ${P17_E2E_RAN:-?} tests OK, ${P17_E2E_SKIP} skipped ($P17_E2E_NOTE)"
+    else
+      pass "P17 end-to-end: ${P17_E2E_RAN:-?} tests OK ($P17_E2E_NOTE)"
+    fi
+  else
+    while IFS= read -r l; do [ -n "$l" ] && fail "P17 end-to-end: $l"; done <<< \
+      "$(printf '%s\n' "$P17_E2E_OUT" | grep -E '^(FAIL|ERROR): ')"
+    [ "$FAIL" -eq 0 ] && fail "P17 end-to-end suite failed (exit $P17_E2E_RC)"
+  fi
+else
+  warn "P17 end-to-end suite not present; nothing was run"
+fi
+
+# Executable-pinning suite (fail-closed resolution). Same isolation
+# contract as the security and lifecycle suites: every case builds its
+# own temporary project root and trusted-root configuration, so it runs
+# in place and writes nothing into this repository. It verifies that an
+# allowlisted name is never resolved against the ambient PATH, that a
+# missing or invalid pin fails closed, and that a substituted executable
+# is detected by digest before it is spawned.
+P17_PIN_OUT=""; P17_PIN_RC=0; P17_PIN_RAN=""
+if [ -f "$SPS2/tests/test_p17_pinning.py" ] && [ -d "$SPS2/p17" ]; then
+  P17_PIN_OUT="$(python3 "$SPS2/tests/test_p17_pinning.py" 2>&1)"; P17_PIN_RC=$?
+  P17_PIN_RAN="$(printf '%s\n' "$P17_PIN_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
+  if [ "$P17_PIN_RC" -eq 0 ]; then
+    pass "P17 pinning suite: ${P17_PIN_RAN:-?} tests OK (fail-closed resolution)"
+  else
+    while IFS= read -r l; do [ -n "$l" ] && fail "P17 pinning: $l"; done <<< \
+      "$(printf '%s\n' "$P17_PIN_OUT" | grep -E '^(FAIL|ERROR): ')"
+    [ "$FAIL" -eq 0 ] && fail "P17 pinning suite failed (exit $P17_PIN_RC)"
+  fi
+else
+  warn "P17 pinning suite not present; nothing was run"
+fi
+fi  # end structural (sections 1-12)
 
 # ══ NEGATIVE SUITE ═══════════════════════════════════════════════════════════
 # Runs in BOTH modes: --negative executes this suite alone, skipping sections 1-10.
@@ -375,6 +474,33 @@ if python3 "$HERE/check_p10_inventory.py" --inventory "$TMP/p10-bad.json" >/dev/
 else
   info "REJECTED -> CASE P invalid P10 inventory"
   NEG_PASS=$((NEG_PASS+1)); pass "CASE P  invalid P10 inventory rejected"
+fi
+
+# --- P17 task intake: a malformed task must be rejected safely ---
+# Isolated project root plus a test-double allowlist, so the rejection is
+# attributable to the task input rather than to a missing allowlist. No real
+# agent CLI is involved: the fixture allowlist lists only the repository-local
+# test doubles. The unsafe acceptance command is never reached: intake rejects
+# the blank goal first, and no task record may be written.
+P17ROOT="$TMP/p17-reject"; mkdir -p "$P17ROOT/sps2/p17"
+cp "$SPS2/tests/fixtures/p17/test-allowlist.json" "$P17ROOT/sps2/p17/allowlist.json"
+printf '{"goal":"","required_capabilities":["test-double"],"acceptance":{"command":["/bin/echo","unsafe"]},"timeout_seconds":5}' \
+  > "$TMP/p17-bad-task.json"
+P17_ERR="$(PYTHONPATH="$REPO" python3 -m sps2.p17 --root "$P17ROOT" plan \
+  --task-file "$TMP/p17-bad-task.json" 2>&1 >/dev/null)"; P17_RC=$?
+P17_MADE="$(ls -A "$P17ROOT/.sps/tasks/p17" 2>/dev/null | grep -c '^TASK-P17-' || true)"
+if [ "$P17_RC" -eq 0 ]; then
+  info "NOT REJECTED (validator defect!) -> CASE Q"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "CASE Q  unsafe P17 task NOT rejected"
+elif ! printf '%s' "$P17_ERR" | grep -q "goal is missing or blank"; then
+  info "REJECTED FOR THE WRONG REASON (validator defect!) -> CASE Q"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "CASE Q  P17 task rejected without an intake reason: ${P17_ERR:0:120}"
+elif [ "${P17_MADE:-0}" -ne 0 ]; then
+  info "PARTIAL STATE WRITTEN (validator defect!) -> CASE Q"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "CASE Q  rejected P17 task still wrote a record"
+else
+  info "REJECTED -> CASE Q unsafe P17 task (blank goal, shell-unsafe acceptance command)"
+  NEG_PASS=$((NEG_PASS+1)); pass "CASE Q  unsafe P17 task rejected, no record written"
 fi
 
 echo ""
