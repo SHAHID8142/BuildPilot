@@ -187,12 +187,45 @@ def real_adapter_ids(root=None, entries=None):
     enforcement point derives from here. Such an entry is still rejected by
     `adapter_registry.validate_adapter`, which reports the missing field.
     """
+    return real_adapter_report(entries=entries, root=root)[0]
+
+
+def real_adapter_report(entries=None, root=None):
+    """Deterministic, exception-free evaluation of the real-adapter set.
+
+    Returns `(real_ids, malformed)`. `real_ids` is the sorted list of usable
+    string ids whose maturity is EXPERIMENTAL or VERIFIED. `malformed` is a
+    list of human-readable descriptions of entries that carry a real maturity
+    but cannot be counted: not an object, or an `agent_id` that is missing or
+    not a non-empty string.
+
+    A malformed entry is never counted as real, so it can never silently
+    satisfy the "exactly two" bound, and it never raises: a validator must
+    report a violation rather than crash on the data it was handed. Such an
+    entry is still rejected by `adapter_registry.validate_adapter` with the
+    stable codes `ADAPTER_NOT_AN_OBJECT` / `MISSING_FIELD` /
+    `INVALID_AGENT_ID`; this report is what lets an enforcement point turn
+    that rejection into its own deterministic failure line instead of an
+    unhandled exception.
+    """
     source = entry_list(entries) if entries is not None \
         else registry_entries(root)
-    return sorted(a.get("agent_id") for a in source
-                  if isinstance(a, dict)
-                  and a.get("maturity") in REAL_MATURITIES
-                  and isinstance(a.get("agent_id"), str) and a.get("agent_id"))
+    real_ids, malformed = [], []
+    for index, a in enumerate(source):
+        if not isinstance(a, dict):
+            malformed.append("entry %d is not an object (%s)"
+                             % (index, type(a).__name__))
+            continue
+        if a.get("maturity") not in REAL_MATURITIES:
+            continue
+        aid = a.get("agent_id")
+        if isinstance(aid, str) and aid:
+            real_ids.append(aid)
+        else:
+            malformed.append(
+                "entry %d declares maturity %s but agent_id is missing or not "
+                "a non-empty string (%r)" % (index, a.get("maturity"), aid))
+    return sorted(real_ids), malformed
 
 
 def surface_digest(root=None):
