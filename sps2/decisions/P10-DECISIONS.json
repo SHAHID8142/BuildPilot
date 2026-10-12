@@ -1,0 +1,283 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P10-DECISIONS",
+  "phase": "Roadmap P10 (Vertical-Slice Frontend/Backend)",
+  "generated": "2026-10-08",
+  "author": "implementation agent (recording User decisions)",
+  "note": "Records the governance decisions the User made on 2026-10-08 to unblock P10 Phase 1, the frontend technology research authorization that accompanied them, and the frontend technology selection that followed the research. This is a User decision record, not a self-approval. P10 itself remains NOT AUTHORED: no P10 requirements, architecture, threat model, schemas, implementation, evidence or commit exists or is created by this record. D-P10-1 and D-P10-2 settle boundaries; D-P10-3 authorized research only; D-P10-4 retires the legacy definition-of-done; D-P10-5 selects a rendering technology and authorizes nothing further. The frontend technology research recorded under D-P10-3 is preserved unchanged in sps2/research/cache.json and MUST NOT be read as selecting a technology on its own — selection was a separate User decision, recorded as D-P10-5, and even that selection does not authorize implementation.",
+  "standing_bounds": {
+    "P5": "PARTIALLY_SATISFIED — tracked partial dependency; no runtime capability installation",
+    "CONF-001": "UNRESOLVED — strictly no LCP or INP thresholds invented; CWV verified via CLS <= 0.1 good / > 0.25 poor only",
+    "P9": "APPROVED and CLOSED by D-P9-APPROVAL (commit 9a16a9e); P9 must not be modified by P10 work",
+    "P8": "APPROVED and headless; P10 must not duplicate CMS ownership inside P10 (see D-P10-2)"
+  },
+  "decisions": [
+    {
+      "decision_id": "D-P10-1",
+      "title": "P10 / P11 Security Sequencing",
+      "decision": "P10 backend development may proceed later as a project-local, non-network-exposed application/service boundary. P10 MUST NOT expose a production/public/network-facing API or backend surface until the required authentication, CSRF protection, rate limiting, and other applicable security controls have been implemented and authorized through the appropriate security phase. P10 requirements and architecture MUST explicitly preserve this boundary. No assumption is authorized that P10 may expose an insecure public backend merely because P10 is independently listed from P11 in the roadmap. If the exact boundary between 'local/non-network-exposed' and 'network-exposed' needs machine enforcement, that requirement must be made explicit during P10 requirements/architecture. The security controls themselves are NOT implemented now.",
+      "scope": [
+        "Establishes a binding sequencing constraint on P10 backend work",
+        "Requires P10 requirements and architecture to preserve the boundary in writing",
+        "Defers all authentication, CSRF, rate limiting and related control implementation to the security phase"
+      ],
+      "strict_constraints": [
+        "No production, public or network-facing API or backend surface from P10 before security controls are implemented AND authorized through the appropriate security phase",
+        "No implementation of security controls under this decision",
+        "No assumption that independent listing of P10 from P11 implies any network exposure is permitted"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session: 'P10 backend development may proceed later as a project-local, non-network-exposed application/service boundary. P10 MUST NOT expose a production/public/network-facing API or backend surface until the required authentication, CSRF protection, rate limiting, and other applicable security controls have been implemented and authorized through the appropriate security phase. P10 requirements and architecture MUST explicitly preserve this boundary. No assumption is authorized that P10 may expose an insecure public backend merely because P10 is independently listed from P11 in the roadmap. If the exact boundary between \"local/non-network-exposed\" and \"network-exposed\" needs machine enforcement, that requirement must be made explicit during P10 requirements/architecture. Do not implement the security controls now.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-2",
+      "title": "P8 / P10 Presentation Ownership",
+      "decision": "P8 owns CMS/domain content semantics; the Content / Section / ContentType models; content persistence; authorization semantics; publishing workflow; asset semantics; and the CMS output-safety boundary. P8 remains headless and does not own the actual frontend rendering/presentation implementation. P10 owns domain/frontend/, actual presentation/rendering, frontend composition, rendered HTML output, the serving/presentation surface, domain/backend/ within the security boundary defined by D-P10-1, and domain/shared/ for shared vertical-slice contracts. P10 also owns the interpretation and registry of Section.layout values. P8 may continue storing Section.layout as CMS data, but P8 does not define the presentation meaning of those values. CMS ownership must not be duplicated inside P10.",
+      "scope": [
+        "Splits ownership: P8 owns content semantics and remains headless; P10 owns presentation and rendering",
+        "Assigns the Section.layout interpretation registry to P10 while leaving storage of the field with P8",
+        "Places domain/backend/ under P10 but confined by the D-P10-1 security boundary",
+        "Places domain/shared/ under P10 for shared vertical-slice contracts"
+      ],
+      "strict_constraints": [
+        "P8 remains headless: no frontend rendering implementation is added to P8",
+        "No duplication of CMS ownership (models, persistence, authorization, publishing, assets, output safety) inside P10",
+        "P8 does not define the presentation meaning of Section.layout values"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session, quoted in full in the decision field above: 'P8 owns: CMS/domain content semantics; Content / Section / ContentType models; content persistence; authorization semantics; publishing workflow; asset semantics; CMS output-safety boundary. P8 remains headless and does not own the actual frontend rendering/presentation implementation. P10 owns: domain/frontend/; actual presentation/rendering; frontend composition; rendered HTML output; the serving/presentation surface; domain/backend/ within the security boundary defined by D1; domain/shared/ for shared vertical-slice contracts. P10 also owns the interpretation and registry of Section.layout values. P8 may continue storing Section.layout as CMS data, but P8 does not define the presentation meaning of those values. Do not duplicate CMS ownership inside P10.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-3",
+      "title": "Frontend Technology — No Selection; Research Authorized",
+      "decision": "No frontend technology is selected. Frontend technology research is authorized, limited to a single question: 'Which rendering technology should P10 use to produce static/server-rendered HTML from P8 CMS content, under the Python-standard-library-only, project-local, no-third-party policy, such that the rendered output is consumable by the P9 deployment audit?' The research has been performed and recorded as research entries in sps2/research/cache.json. The research result MUST NOT itself authorize technology selection; technology selection remains a separate User decision.",
+      "scope": [
+        "Records that no frontend technology is selected",
+        "Authorizes and records the completed frontend technology research",
+        "Fixes the research question verbatim"
+      ],
+      "research_question": "Which rendering technology should P10 use to produce static/server-rendered HTML from P8 CMS content, under the Python-standard-library-only, project-local, no-third-party policy, such that the rendered output is consumable by the P9 deployment audit?",
+      "research_completed": {
+        "status": "PERFORMED",
+        "performed_on": "2026-10-08",
+        "research_entries": "sps2/research/cache.json (schema sps2.research/v1), entries TECH-FE-STRING-COMPOSITION, TECH-FE-STRING-TEMPLATE, TECH-FE-ELEMENTTREE-HTML, TECH-FE-3RD-PARTY-TEMPLATE-ENGINE",
+        "readiness_computed_by": "sps2/core/technology_readiness.py (readiness is computed, never stored as a label)",
+        "computed_readiness": {
+          "TECH-FE-STRING-COMPOSITION": "SUFFICIENT (all 10 coverage areas COVERED; strongest source rank 1)",
+          "TECH-FE-STRING-TEMPLATE": "PARTIAL (recommended_practices and security_considerations UNKNOWN)",
+          "TECH-FE-ELEMENTTREE-HTML": "PARTIAL (security_considerations UNKNOWN)",
+          "TECH-FE-3RD-PARTY-TEMPLATE-ENGINE": "INSUFFICIENT (STACK-CONSTRAINT and NOT-RESEARCHED blocking conflicts)"
+        },
+        "gate_selectable": "Only TECH-FE-STRING-COMPOSITION satisfies the P6 gate (readiness SUFFICIENT). Gate-satisfiable is NOT selected: selection remains a separate User decision.",
+        "recommendation": "RESEARCH RECOMMENDATION ONLY — adopt plain string composition with per-sink HTML escaping as the P10 rendering technology, implemented as a project-local static renderer that emits the build directory layout the P9 audit consumes (glob('**/*.html') plus robots.txt and sitemap.xml), reusing the already-approved P8 output-safety boundary (html.escape at the sink) and P9's per-sink escapers. string.Template is not recommended because it is a substitution layer with no escaping mechanism and no observed recommendation for HTML generation. xml.etree.ElementTree method='html' is not recommended now because it has no escaping hook for raw-text script elements, which is a live script-breakout path, and its documented None-attribute form raises TypeError on CPython 3.14.7. Third-party template engines are excluded by the standing stack constraint. This recommendation authorizes nothing; it is submitted for a separate User selection decision."
+      },
+      "strict_constraints": [
+        "Python standard library only; project-local; no dependency installation",
+        "No capability installation or activation",
+        "No framework selection before research completion",
+        "No implementation and no frontend code",
+        "No domain/frontend or domain/backend creation",
+        "No changes to P8 or P9",
+        "No production deployment and no network exposure",
+        "The existing stack constraint is not weakened or reinterpreted",
+        "No invented performance thresholds; CONF-001 preserved exactly",
+        "A technology is not treated as selectable unless the P6 research gate is satisfied"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session: 'No frontend technology is selected yet. Frontend technology research is explicitly authorized now. Research ONLY the following question: \"Which rendering technology should P10 use to produce static/server-rendered HTML from P8 CMS content, under the Python-standard-library-only, project-local, no-third-party policy, such that the rendered output is consumable by the P9 deployment audit?\" ... The research result MUST NOT itself authorize technology selection. Technology selection remains a separate User decision.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-4",
+      "title": "Legacy Section Definition-of-Done Not Carried Into SPS2",
+      "decision": "The legacy Lighthouse numeric gates are NOT authoritative for P10: Performance >= 90, SEO = 100, Accessibility = 100 and Best Practices = 100 are not carried into SPS2. The legacy mobile 320-1440px requirement and the legacy Accessibility AA requirement are not automatically promoted into P10 without explicit requirements analysis. Useful underlying principles are preserved only where they can be expressed as objective, machine-checkable requirements. P10 must use P9 for SEO verification, avoid invented performance thresholds, preserve CONF-001, express accessibility requirements through explicit testable criteria where justified, express responsive requirements through concrete design/behaviour requirements if needed rather than obsolete Lighthouse scores, and avoid importing the legacy 29-item checklist wholesale. The surviving requirements are to be decided during P10 Phase-1 requirements work.",
+      "scope": [
+        "Retires the four legacy Lighthouse numeric gates as non-authoritative for P10",
+        "Defers the legacy mobile viewport range and Accessibility AA level to separate requirements analysis rather than automatic promotion",
+        "Directs that any surviving principle be expressed as an objective, machine-checkable requirement",
+        "Binds P10 to P9 for SEO verification and to CONF-001 for Core Web Vitals"
+      ],
+      "strict_constraints": [
+        "No Lighthouse score thresholds in P10 requirements",
+        "No invented LCP or INP thresholds; CONF-001 remains UNRESOLVED",
+        "No wholesale import of the legacy 29-item checklist",
+        "No automatic promotion of the legacy mobile range or accessibility level without explicit requirements analysis"
+      ],
+      "not_authoritative_for_p10": [
+        "Legacy gate: Performance >= 90",
+        "Legacy gate: SEO = 100",
+        "Legacy gate: Accessibility = 100",
+        "Legacy gate: Best Practices = 100",
+        "Legacy mobile range: 320-1440px (not promoted without explicit requirements analysis)",
+        "Legacy accessibility level: AA (not promoted without explicit requirements analysis)"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session, quoted in full in the decision field above: 'Do NOT carry the legacy Lighthouse numeric gates into SPS2. The following legacy numeric gates are NOT authoritative for P10: Performance >= 90; SEO = 100; Accessibility = 100; Best Practices = 100. Also do not automatically promote the legacy mobile 320-1440px requirement or Accessibility AA requirement into P10 without explicit requirements analysis. Preserve useful underlying principles where they can be expressed as objective, machine-checkable requirements. P10 must: use P9 for SEO verification; avoid invented performance thresholds; preserve CONF-001; express accessibility requirements through explicit testable criteria where justified; express responsive requirements through concrete design/behavior requirements if needed, rather than obsolete Lighthouse scores; avoid importing the legacy 29-item checklist wholesale. The surviving requirements must be decided during P10 Phase-1 requirements work.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-5",
+      "title": "Frontend Technology Selection",
+      "decision": "TECH-FE-STRING-COMPOSITION is SELECTED as the P10 rendering technology. P10 will use project-local plain string composition to generate static/server-rendered HTML, with mandatory per-sink output encoding. The implementation must reuse the already-approved security boundaries established by P8 and P9, including P8's html.escape(text, quote=True), P9's _safe_attr(), and P9's escape_json_ld_for_html(). The renderer must produce the build-directory shape consumed by the P9 audit: **/*.html, robots.txt and sitemap.xml. The technology selection does NOT authorize implementation.",
+      "selected_technology": {
+        "technology_id": "TECH-FE-STRING-COMPOSITION",
+        "name": "Plain string composition with per-sink HTML escaping",
+        "research_entry": "sps2/research/cache.json (schema sps2.research/v1)",
+        "readiness": "SUFFICIENT — computed by sps2/core/technology_readiness.py, not read from a stored label",
+        "gate_selectable": true,
+        "basis_of_selection": "This candidate was the only one of the four researched to compute SUFFICIENT: all ten coverage areas COVERED and strongest source rank 1 (official documentation), with direct repository observation of the already-approved P8 and P9 output-safety implementations. The three alternatives remain unselected: TECH-FE-STRING-TEMPLATE and TECH-FE-ELEMENTTREE-HTML compute PARTIAL, and TECH-FE-3RD-PARTY-TEMPLATE-ENGINE computes INSUFFICIENT on the STACK-CONSTRAINT and NOT-RESEARCHED blocking conflicts."
+      },
+      "interpretation": [
+        "P10 rendering is project-local plain string composition with mandatory per-sink output encoding",
+        "Static/server-rendered HTML output, not a client-side framework",
+        "The P8 and P9 output-safety boundaries are reused, not reinvented: html.escape(text, quote=True) at text and attribute sinks, _safe_attr() for header metadata, escape_json_ld_for_html() for script sinks",
+        "The renderer's output contract is the P9 audit input: a build directory of **/*.html plus robots.txt and sitemap.xml"
+      ],
+      "conditions": [
+        "1. No third-party rendering or template dependency.",
+        "2. Project-local only.",
+        "3. Python standard library only, consistent with the standing stack constraint.",
+        "4. No network exposure is authorized by this decision.",
+        "5. P10 backend remains subject to D-P10-1.",
+        "6. Raw CMS content must never be placed directly into HTML sinks.",
+        "7. Per-sink encoding must be machine-enforced wherever practical.",
+        "8. Rendered HTML must be reparsed/validated using the project's approved stdlib HTMLParser approach.",
+        "9. Structural HTML correctness must be tested because string composition has no native DOM/tree model.",
+        "10. JSON-LD/script sinks must preserve the existing P9 </script> and <!-- safety boundary.",
+        "11. CONF-001 remains unchanged.",
+        "12. No LCP/INP numeric thresholds may be introduced.",
+        "13. This decision does not authorize production deployment.",
+        "14. This decision does not authorize network-facing backend exposure.",
+        "15. This decision does not authorize P10 implementation."
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User selection in session: 'The User now explicitly selects: TECH-FE-STRING-COMPOSITION' — recorded as decision D-P10-5 'Frontend Technology Selection' with the 15 mandatory technology constraints quoted verbatim in the conditions array above. Selection basis is the completed research recorded in sps2/research/cache.json, in which TECH-FE-STRING-COMPOSITION is the only candidate computing readiness SUFFICIENT and the only candidate the P6 gate finds selectable."
+      }
+    },
+    {
+      "decision_id": "D-P10-APPROVAL",
+      "title": "P10 Phase 1 Requirements Approval",
+      "decision": "The User approves SPS2 P10 Phase 1 — Requirements Definition Only. The two Phase-1 artifacts are approved: sps2/requirements/P10-REQUIREMENTS.json and sps2/schemas/p10-slice.schema.json. This approval accepts the 20 P10 requirements, the eight-axis vertical-slice contract and its slice schema, the per-slice Definition of Done together with its explicitly excluded gates, the reconciliation of the 29-item legacy Section Definition of Done, and the documented security and P8/P9 ownership boundaries. It accepts TECH-FE-STRING-COMPOSITION as the selected frontend approach under the constraints already recorded under D-P10-5. This approval is of requirements definition only and authorizes no implementation.",
+      "approved_scope": [
+        "sps2/requirements/P10-REQUIREMENTS.json — approved as a requirements-definition artifact, byte-identical to the reviewed version",
+        "sps2/schemas/p10-slice.schema.json — approved as the machine-validatable slice contract, byte-identical to the reviewed version",
+        "the 20 P10 requirements REQ-P10-01 through REQ-P10-20, all in status REQUIREMENTS_ONLY with implementation and verification NOT_STARTED",
+        "the eight-axis vertical-slice contract (frontend, cms, backend, data, validation, assets, seo, tests) and the rule that no slice is complete unless all eight are verified together under the applicable runtime checks",
+        "the per-slice Definition of Done and its explicitly excluded gates: the four legacy Lighthouse numeric gates, the legacy 320-1440px viewport range pending UQ-P10-02, an Accessibility conformance level pending UQ-P10-03, any LCP or INP numeric threshold, and any public preview or deploy URL requirement held by D-P10-1",
+        "the reconciliation of the 29 legacy Section Definition of Done items: 8 RETAIN, 11 REFACTOR, 6 REJECT, 2 RESEARCH REQUIRED, 2 USER DECISION REQUIRED",
+        "the documented security boundary and the P8/P9 ownership boundaries: P8 remains headless and owns CMS and content semantics, P9 remains the SEO engine and pre-deployment audit owner, and P10 owns presentation, rendering, layout interpretation and the backend/shared boundaries within the D-P10-1 limit",
+        "TECH-FE-STRING-COMPOSITION as the selected frontend rendering approach, under the binding conditions already recorded under D-P10-5: standard library only, project-local, no third-party rendering dependency, per-sink output encoding, HTMLParser reparse validation, structural HTML testing, the P9 output contract, no network exposure, CONF-001 unchanged, and no invented LCP or INP thresholds"
+      ],
+      "conditions": [
+        "All six unresolved questions UQ-P10-01 through UQ-P10-06 remain OPEN and unresolved. This approval does not answer any of them.",
+        "CONF-001 remains UNRESOLVED. This approval invents no LCP or INP numeric threshold and does not resolve the Core Web Vitals threshold question.",
+        "The P8 content-status vocabulary conflict remains unresolved and out of scope: sps2/schemas/p8-content.schema.json and domain/cms/model.py declare (draft, published, archived) while domain/cms/validation.py additionally declares 'preview'. This approval does not resolve that conflict, and no P8 file is modified by this record.",
+        "The sps2/tools/check_sps2.py decision-ID discrepancy remains out of scope and unmodified: the validator's DEC-0000 numeric rule does not match the repository-dominant D-P<N>-<X> identifier format used by the P3, P6, P7, P8, P9 and P10 decision records.",
+        "Approving the schema does not make any runtime control operational. Structural schema validation establishes document structure and applicable field constraints only; it does not prove evidence authenticity, content authenticity, integration behaviour, test execution, P9 audit results, all-eight-axes completion, security control effectiveness, or approval authenticity.",
+        "The two approved artifacts remain byte-identical to the versions reviewed. This approval is recorded in the decision record rather than inside the artifacts, following the established P8 and P9 precedent, so that an artifact never records its own approval.",
+        "REQ-P10-17 continues to block any slice from entering implementation until an authoritative section inventory exists and has been approved by the User."
+      ],
+      "explicitly_not_approved": [
+        "P10 implementation of any kind, including renderer, backend, CMS, rendering, routes, serving, persistence or authentication code",
+        "implementation of the mandatory fail-closed runtime validation gate specified under REQ-P10-09",
+        "implementation of the state-changing operation declaration check specified under REQ-P10-07",
+        "any claim that the declared security controls are implemented, operational or effective; this approval must not be read as evidence that runtime verification is in place",
+        "population of the section inventory or the selection of a first section",
+        "any production, public or network-facing API or backend surface, held by D-P10-1 pending the security phase",
+        "implementation of authentication, authorisation beyond P8's actor-role semantics, CSRF protection or rate limiting",
+        "P10 architecture beyond what is required to express a requirement",
+        "any modification to P8 or P9",
+        "P11 implementation, and P12 or any later phase",
+        "production deployment, production-readiness or any runtime activation",
+        "resolving CONF-001, or inventing any LCP or INP threshold",
+        "any installation of a dependency, skill, MCP, CLI or package"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-09",
+        "basis": "Explicit User approval in session, quoted verbatim: 'I explicitly approve SPS2 P10 Phase 1 — Requirements Definition Only. Approved artifacts: sps2/requirements/P10-REQUIREMENTS.json, sps2/schemas/p10-slice.schema.json. Approval scope: Accept the 20 requirements, eight-axis contract, per-slice Definition of Done, legacy DoD reconciliation, and the documented security and P8/P9 ownership boundaries. Accept TECH-FE-STRING-COMPOSITION as the selected frontend approach under the already documented constraints. Keep all six UQ-P10 questions open until explicitly resolved. Keep CONF-001 unresolved. Keep the P8 preview-status conflict and check_sps2.py decision-ID issue outside this approval's scope. This approval applies ONLY to P10 Phase 1 requirements and schema. It does NOT authorize P10 implementation, runtime-gate implementation, section creation, backend exposure, deployment, or production use. No implementation work is authorized by this message. Do not interpret this approval as evidence that security controls or runtime verification are operational. Record the approval through the established governance process.'"
+      }
+    }
+  ],
+  "frontend_technology_research_authorization": {
+    "status": "EXERCISED",
+    "exercised_on": "2026-10-08",
+    "what_was_authorized": "Research only, on the single question fixed by D-P10-3, following the existing P6 research methodology and repository conventions.",
+    "where_the_research_is_recorded": "sps2/research/cache.json — four research entries appended to the existing research cache used by the P6 gate. This is the research store, not the capability registry: no capability registry entry was created and no lifecycle transition occurred. Readiness is computed by sps2/core/technology_readiness.py at read time and is never stored as a label, so a research entry cannot self-approve anything.",
+    "evidence_basis": "Official Python documentation retrieved on 2026-10-08 (docs.python.org: html, string.Template, xml.etree.ElementTree, http.server), direct repository observation of the approved P8 and P9 output-safety implementations, and direct empirical execution under the project interpreter CPython 3.14.7. No evidence was invented; areas not observed are recorded UNKNOWN and depress readiness accordingly.",
+    "explicitly_not_authorized_by_this_research": [
+      "frontend technology selection",
+      "any implementation, including any domain/frontend or domain/backend code",
+      "any weakening or reinterpretation of the stack constraint",
+      "any capability registry entry, capability installation or capability activation"
+    ]
+  },
+  "frontend_technology_selection": {
+    "status": "SELECTED",
+    "selected_on": "2026-10-08",
+    "selected_by": "User",
+    "decision_id": "D-P10-5",
+    "selected_technology": "TECH-FE-STRING-COMPOSITION",
+    "unselected_candidates": [
+      "TECH-FE-STRING-TEMPLATE (readiness PARTIAL, not selectable)",
+      "TECH-FE-ELEMENTTREE-HTML (readiness PARTIAL, not selectable)",
+      "TECH-FE-3RD-PARTY-TEMPLATE-ENGINE (readiness INSUFFICIENT, blocked by STACK-CONSTRAINT and NOT-RESEARCHED)"
+    ],
+    "research_preservation": "The four research entries in sps2/research/cache.json are unchanged by this selection. No readiness label was rewritten, no entry was added or removed, and readiness continues to be computed by sps2/core/technology_readiness.py at read time. Selection is recorded here, in the decision record, not in the research store.",
+    "registry_impact": "None. No capability registry entry was created and no capability was promoted, installed or activated. A technology selection is not a capability lifecycle transition.",
+    "still_not_authorized_by_selection": [
+      "P10 implementation of any kind",
+      "P10 Phase-1 requirements",
+      "P10 architecture, threat model, schemas, integration harness or evidence",
+      "production deployment and any network-facing backend exposure (held by D-P10-1)"
+    ]
+  },
+  "explicitly_not_approved_by_this_record": [
+    "P10 implementation of any kind",
+    "P10 Phase-1 requirements (surviving requirements under D-P10-4 are decided there, not here)",
+    "P10 architecture",
+    "P10 threat model",
+    "P10 schemas",
+    "P10 domain/frontend, domain/backend or domain/shared implementation",
+    "P10 integration harness",
+    "P10 evidence",
+    "P10 phase completion or closure",
+    "frontend technology selection is now recorded under D-P10-5, but that selection authorizes no implementation; no P10 code may be written on the strength of it",
+    "any production, public or network-facing API or backend surface (held by D-P10-1 pending the security phase)",
+    "implementation of authentication, CSRF protection, rate limiting or any other security control",
+    "any modification to P8 or P9",
+    "P11 implementation, and P12 or any later phase",
+    "production deployment or production-readiness",
+    "runtime activation of any kind",
+    "promoting any capability, including CAP-P03-005",
+    "modifying the production capability registry",
+    "resolving CONF-001",
+    "inventing any LCP or INP threshold",
+    "any git commit or push of P10 work",
+    "any installation of a dependency, skill, MCP, CLI or package"
+  ]
+}

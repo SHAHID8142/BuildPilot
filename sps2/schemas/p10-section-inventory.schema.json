@@ -1,0 +1,466 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p10-section-inventory/v1",
+  "title": "P10 Authoritative Section Inventory Contract",
+  "description": "Machine-verifiable contract for the P10 authoritative section inventory required by REQ-P10-17. SCOPE OF THIS SCHEMA - JSON Schema can enforce STRUCTURE and APPLICABLE FIELD CONSTRAINTS ONLY: which of the nine REQ-P10-17 fields are present, their provenance class, that an unresolved field is represented as unresolved rather than as an established empty value, that a section declared COMPLETE carries no unresolved field, and that an inventory declared complete carries no incomplete section. It CANNOT and DOES NOT establish: that a referenced P8 Section, ContentType or Asset actually exists; that a layout identifier exists in the P10 layout registry; that a route is collision-free or consistent with P9 behaviour; that any backend or data dependency matches a real slice contract; that any acceptance or test evidence exists or passed; that the inventory is derived from real CMS state; or that the recorded User approval is genuine. Those are runtime verification obligations of the mandatory fail-closed validation gate (REQ-P10-09 / REQ-P10-17), which is specified but NOT implemented. A document satisfying this schema is STRUCTURALLY VALID ONLY. Presence of this schema authorises no section, no slice, no implementation and no approval.",
+  "type": "object",
+  "required": [
+    "inventory_id",
+    "inventory_state",
+    "complete",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$comment": {
+      "type": "string",
+      "description": "Annotation permitted on the document root for humans and tooling. Carries no verification weight and must never substitute for a field."
+    },
+    "inventory_id": {
+      "type": "string",
+      "pattern": "^P10-SECTION-INVENTORY-v[0-9]+$",
+      "description": "Stable identifier for this inventory revision."
+    },
+    "inventory_state": {
+      "enum": [
+        "INCOMPLETE_PLANNING",
+        "COMPLETE_AWAITING_USER_APPROVAL",
+        "COMPLETE_VERIFIED_USER_APPROVED"
+      ],
+      "description": "Explicit lifecycle state. INCOMPLETE_PLANNING is planning data and may contain zero sections or unresolved fields. COMPLETE_AWAITING_USER_APPROVAL asserts that every section is declared complete and that the enumeration is finished, but that the User has NOT yet approved it. COMPLETE_VERIFIED_USER_APPROVAL asserts that runtime verification passed AND authentic User approval is recorded. Schema transition rules below make the two COMPLETE states unreachable while any section is incomplete or any field is unresolved. Whether verification actually passed and whether the approval is genuine are RUNTIME questions, not schema questions."
+    },
+    "complete": {
+      "type": "boolean",
+      "description": "Declaration that the enumeration of sections is finished. This is a DECLARATION, not a result. The schema constrains it against inventory_state and against per-section completeness, so it cannot be set true while a section is incomplete or a field is unresolved. It does NOT establish that the section set is correct, complete in reality, or approved."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional non-authoritative commentary. Carries no verification weight and must never be used as a substitute for a field."
+    },
+    "provenance": {
+      "type": "object",
+      "description": "How this inventory revision was produced. Required before any COMPLETE state so that a stale or hand-written inventory cannot pass as derived.",
+      "additionalProperties": false,
+      "properties": {
+        "generated_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Date this revision was generated."
+        },
+        "generator": {
+          "$ref": "#/$defs/non_blank_string",
+          "description": "Name and version of the process that produced this revision. Required to carry at least one non-whitespace character so an unattributed, empty or whitespace-only inventory cannot be presented as derived. Whether the named generator actually produced this revision is a RUNTIME check."
+        },
+        "cms_state_digest": {
+          "type": ["string", "null"],
+          "description": "Digest of the CMS state this revision was derived from. Optional. When present, the runtime gate recomputes it and fails closed on mismatch; that recomputation is a RUNTIME check and is not performed by this schema. Null when no CMS state was consulted."
+        },
+        "p8_contract_digest": {
+          "type": ["string", "null"],
+          "description": "Digest of the P8 content contract set consulted during derivation. Same optional runtime-recomputation semantics as cms_state_digest."
+        }
+      }
+    },
+    "user_approval": {
+      "type": ["object", "null"],
+      "description": "Authentic User approval of the complete inventory. Present only after the User has approved it. Structurally, its presence cannot be verified and its decided_by cannot be authenticated by JSON Schema; authenticity is a RUNTIME obligation. Consistency with inventory_state is enforced below.",
+      "required": ["decided_by", "decided_by_role", "decided_at", "basis"],
+      "additionalProperties": false,
+      "properties": {
+        "decided_by": {
+          "$ref": "#/$defs/non_blank_string",
+          "description": "Identity of the approving User. Must carry at least one non-whitespace character. An agent may never approve this inventory. Whether this identity is genuinely the User is a RUNTIME check and is not established here."
+        },
+        "decided_by_role": {
+          "enum": ["USER"],
+          "description": "Provenance marker. The only permitted value is USER, so approval can never be structurally attributed to an agent. A well-formed record can still be a fabrication; the runtime gate rejects fabricated approval."
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date"
+        },
+        "basis": {
+          "$ref": "#/$defs/non_blank_string",
+          "description": "Basis of the User decision. Must carry at least one non-whitespace character so an empty, whitespace-only or unexplained approval cannot pass silently. The substance of the basis is not machine-verifiable."
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "description": "The enumerated sections. Empty is valid only in INCOMPLETE_PLANNING state; the conditional below rejects an empty array once complete is true. MANDATORY RUNTIME UNIQUENESS OBLIGATIONS, NOT ENFORCED BY THIS SCHEMA: section_id values MUST be unique across the entire inventory, and route values MUST be unique across the entire inventory. JSON Schema cannot express cross-item uniqueness portably for two properties inside an array of objects, so no constraint here enforces either rule, and NO attempt is made to fake one. The future fail-closed runtime validation gate (REQ-P10-09, REQ-P10-17) MUST check both: any duplicate section_id or duplicate route MUST cause the gate to FAIL CLOSED, not warn. That gate DOES NOT CURRENTLY EXIST and has never been executed; nothing in this schema performs, simulates or records either check. Until it exists, an inventory containing duplicate section ids or routes can satisfy this schema.",
+      "items": { "$ref": "#/$defs/section" }
+    }
+  },
+  "$defs": {
+    "non_blank_string": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S",
+      "description": "A string containing at least one non-whitespace character. Rejects empty and whitespace-only placeholders, which minLength alone would admit."
+    },
+    "route_string": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/-]*$",
+      "description": "A resolved route value. Mirrors the authoritative route pattern in sps2.p10-slice/v1 (^/[a-z0-9/-]*$), so the inventory and the slice contract cannot disagree on route form. This constrains FORMAT ONLY. It does not establish that a route exists, that it is unique across the inventory, that it is collision-free against other slices, or that it is consistent with P9 route derivation in domain/seo/audit.py; all of those are RUNTIME verification obligations and are not enforced by this schema."
+    },
+    "provenance_class": {
+      "enum": [
+        "USER_DECISION",
+        "DERIVED",
+        "P9_OWNED_REFERENCE",
+        "UNDECLARED_PENDING"
+      ],
+      "description": "How a field value was obtained. USER_DECISION: fixed by explicit User decision and never regenerated. DERIVED: computed from an authoritative repository or CMS source, which must be named in source_ref. P9_OWNED_REFERENCE: a reference to a P9-owned contract; P9 owns the logic and P10 must not restate it. UNDECLARED_PENDING: not yet decided or not yet resolvable. UNDECLARED_PENDING is deliberately distinct from an empty value so that unknown information is never represented as an established empty result."
+    },
+    "user_decision_field": {
+      "type": "object",
+      "description": "A scalar field fixed by explicit User decision.",
+      "required": ["provenance", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "USER_DECISION" },
+        "value": { "$ref": "#/$defs/non_blank_string" },
+        "user_decision_ref": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/non_blank_string" }
+          ],
+          "description": "Reference to the recorded decision that fixed this value. Null when no reference exists. When a reference IS supplied it must carry at least one non-whitespace character, so an empty or whitespace-only placeholder is rejected. Whether the reference resolves to a real recorded decision is a RUNTIME check."
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "derived_scalar_field": {
+      "type": "object",
+      "description": "A scalar field computed from a named authoritative source.",
+      "required": ["provenance", "source_ref", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "DERIVED" },
+        "source_ref": {
+          "$ref": "#/$defs/non_blank_string",
+          "description": "Name of the authoritative source this value was derived from. Required and non-blank so a derived value can never appear without an attributable origin; whether that origin actually yields this value is a RUNTIME check."
+        },
+        "value": { "$ref": "#/$defs/non_blank_string" },
+        "note": { "type": "string" }
+      }
+    },
+    "unresolved_scalar_field": {
+      "type": "object",
+      "description": "A scalar field not yet decided. value MUST be null: an unresolved field may never carry a placeholder, and may never be represented as a resolved value.",
+      "required": ["provenance", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "UNDECLARED_PENDING" },
+        "value": { "type": "null" },
+        "reason_unresolved": {
+          "$ref": "#/$defs/non_blank_string",
+          "description": "Why this field is unresolved and what is required to resolve it."
+        }
+      }
+    },
+    "user_decision_list_field": {
+      "type": "object",
+      "description": "A list field fixed by explicit User decision. An empty array means the User decided there are none; that is a different statement from UNDECLARED_PENDING.",
+      "required": ["provenance", "values"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "USER_DECISION" },
+        "values": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/non_blank_string" }
+        },
+        "user_decision_ref": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/non_blank_string" }
+          ],
+          "description": "Reference to the recorded decision that fixed these values. Null when no reference exists. When a reference IS supplied it must carry at least one non-whitespace character. Whether it resolves to a real recorded decision is a RUNTIME check."
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "derived_list_field": {
+      "type": "object",
+      "description": "A list field computed from a named authoritative source. An empty array here asserts that derivation ran and found nothing, which is distinct from UNDECLARED_PENDING.",
+      "required": ["provenance", "source_ref", "values"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "DERIVED" },
+        "source_ref": { "$ref": "#/$defs/non_blank_string" },
+        "values": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/non_blank_string" }
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "unresolved_list_field": {
+      "type": "object",
+      "description": "A list field not yet decided. values MUST be null: an unresolved list may never be represented as an empty array, which would falsely read as a completed derivation that found nothing.",
+      "required": ["provenance", "values"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "UNDECLARED_PENDING" },
+        "values": { "type": "null" },
+        "reason_unresolved": { "$ref": "#/$defs/non_blank_string" }
+      }
+    },
+    "p9_reference_field": {
+      "type": "object",
+      "description": "A reference to a P9-owned contract. P10 references it; P10 does not restate or duplicate the SEO logic.",
+      "required": ["provenance", "references"],
+      "additionalProperties": false,
+      "properties": {
+        "provenance": { "const": "P9_OWNED_REFERENCE" },
+        "references": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/non_blank_string" },
+          "description": "Identifiers of P9-owned contracts. At least one required. Whether each reference resolves to a real P9 contract is a RUNTIME check."
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "section": {
+      "type": "object",
+      "description": "One section of the authoritative inventory. Carries all nine fields required by REQ-P10-17 criterion 2: section id, purpose, route, CMS content types, layout id, assets, backend/data dependencies, SEO requirements, and acceptance/test requirements.",
+      "required": [
+        "section_completeness",
+        "section_id",
+        "purpose",
+        "route",
+        "cms_content_types",
+        "layout_id",
+        "assets",
+        "backend_data_dependencies",
+        "seo_requirements",
+        "acceptance_test_requirements"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "section_completeness": {
+          "enum": ["INCOMPLETE", "COMPLETE"],
+          "description": "Declaration that all nine fields of this section are resolved. A section may be COMPLETE only when no field carries UNDECLARED_PENDING; the allOf rules below enforce that mechanically."
+        },
+        "section_id": {
+          "description": "REQ-P10-17 field 1: section id. Resolves to a P8 Section. Existence is a RUNTIME check.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_field" },
+            { "$ref": "#/$defs/derived_scalar_field" },
+            { "$ref": "#/$defs/unresolved_scalar_field" }
+          ]
+        },
+        "purpose": {
+          "description": "REQ-P10-17 field 2: purpose. No repository artifact defines a purpose value, so this is expected to be a User decision. Free text cannot be machine-verified for correctness.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_field" },
+            { "$ref": "#/$defs/derived_scalar_field" },
+            { "$ref": "#/$defs/unresolved_scalar_field" }
+          ]
+        },
+        "route": {
+          "description": "REQ-P10-17 field 3: route. P10 owns the serving surface and P8 Section has no route field, so this cannot be derived from CMS state. When RESOLVED, the value must match the route format ^/[a-z0-9/-]*$ (see $defs/route_string); when UNDECLARED_PENDING it must be null. Route uniqueness across the inventory, collision-freedom against other slices, and consistency with P9 route derivation in domain/seo/audit.py are RUNTIME checks and are NOT enforced by this schema.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_field" },
+            { "$ref": "#/$defs/derived_scalar_field" },
+            { "$ref": "#/$defs/unresolved_scalar_field" }
+          ],
+          "allOf": [
+            {
+              "$comment": "Format constraint applied only to a RESOLVED route. An UNDECLARED_PENDING route carries value null and is therefore unaffected. This narrows nothing that was previously valid: it rejects route strings the approved slice schema would also reject.",
+              "if": {
+                "type": "object",
+                "properties": { "provenance": { "const": "UNDECLARED_PENDING" } },
+                "required": ["provenance"]
+              },
+              "then": {
+                "type": "object",
+                "properties": { "value": { "type": "null" } }
+              },
+              "else": {
+                "type": "object",
+                "properties": { "value": { "$ref": "#/$defs/route_string" } }
+              }
+            }
+          ]
+        },
+        "cms_content_types": {
+          "description": "REQ-P10-17 field 4: CMS content types. Must reference P8-owned ContentType records and must not redefine their semantics.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_list_field" },
+            { "$ref": "#/$defs/derived_list_field" },
+            { "$ref": "#/$defs/unresolved_list_field" }
+          ]
+        },
+        "layout_id": {
+          "description": "REQ-P10-17 field 5: layout id. Must exist in the P10 layout registry required by REQ-P10-02. That registry does not exist yet, so layout existence is a RUNTIME check and is currently unsatisfiable.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_field" },
+            { "$ref": "#/$defs/derived_scalar_field" },
+            { "$ref": "#/$defs/unresolved_scalar_field" }
+          ]
+        },
+        "assets": {
+          "description": "REQ-P10-17 field 6: assets. Must reference P8-owned asset records; P10 must not duplicate P8 asset semantics.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_list_field" },
+            { "$ref": "#/$defs/derived_list_field" },
+            { "$ref": "#/$defs/unresolved_list_field" }
+          ]
+        },
+        "backend_data_dependencies": {
+          "description": "REQ-P10-17 field 7: backend/data dependencies. Must be reconciled against the actual slice backend contract and its state_changing_operations declaration (REQ-P10-07). That reconciliation is a RUNTIME check.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_list_field" },
+            { "$ref": "#/$defs/derived_list_field" },
+            { "$ref": "#/$defs/unresolved_list_field" }
+          ]
+        },
+        "seo_requirements": {
+          "description": "REQ-P10-17 field 8: SEO requirements. P9 owns all SEO validation and its existing contracts; P10 records references only and must not restate or reimplement any SEO check.",
+          "oneOf": [
+            { "$ref": "#/$defs/p9_reference_field" },
+            { "$ref": "#/$defs/unresolved_list_field" }
+          ]
+        },
+        "acceptance_test_requirements": {
+          "description": "REQ-P10-17 field 9: acceptance and test requirements. References the per-slice Definition of Done. Existence of the corresponding acceptance and negative-test evidence is a RUNTIME check.",
+          "oneOf": [
+            { "$ref": "#/$defs/user_decision_list_field" },
+            { "$ref": "#/$defs/derived_list_field" },
+            { "$ref": "#/$defs/unresolved_list_field" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "$comment": "A section declared COMPLETE may carry no UNDECLARED_PENDING field in any of the nine REQ-P10-17 fields. This is the mechanical expression of completeness.",
+          "if": {
+            "properties": { "section_completeness": { "const": "COMPLETE" } },
+            "required": ["section_completeness"]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "properties": { "section_id": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "purpose": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "route": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "cms_content_types": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "layout_id": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "assets": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "backend_data_dependencies": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "seo_requirements": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } },
+                { "properties": { "acceptance_test_requirements": { "type": "object", "properties": { "provenance": { "const": "UNDECLARED_PENDING" } } } } }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "$comment": "COMPLETE states require a section. An empty array cannot claim completion.",
+      "if": {
+        "properties": { "complete": { "const": true } },
+        "required": ["complete"]
+      },
+      "then": {
+        "properties": {
+          "sections": { "type": "array", "minItems": 1 },
+          "provenance": {
+            "type": "object",
+            "properties": { "generator": { "$ref": "#/$defs/non_blank_string" } },
+            "required": ["generator"]
+          }
+        },
+        "required": ["provenance"]
+      }
+    },
+    {
+      "$comment": "COMPLETE states require every section to be COMPLETE. This is what stops complete:true from being reachable while any section still carries unresolved data.",
+      "if": {
+        "properties": { "complete": { "const": true } },
+        "required": ["complete"]
+      },
+      "then": {
+        "properties": {
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": { "section_completeness": { "const": "COMPLETE" } },
+              "required": ["section_completeness"]
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "COMPLETE_AWAITING_USER_APPROVAL asserts that the enumeration is finished and every section is complete, so complete MUST be true; and it must not carry an approval record, since this state exists precisely because the User has not yet approved. The states are mutually exclusive by construction: an inventory cannot claim to await approval while already carrying approval, nor claim the enumeration is finished while declaring it incomplete. When this rule sets complete to true, the existing complete:true rules apply unchanged and require at least one section, a generator attribution, and every section marked COMPLETE with no unresolved field.",
+      "if": {
+        "properties": { "inventory_state": { "const": "COMPLETE_AWAITING_USER_APPROVAL" } },
+        "required": ["inventory_state"]
+      },
+      "then": {
+        "properties": {
+          "user_approval": { "type": "null" },
+          "complete": { "const": true }
+        },
+        "required": ["user_approval"]
+      }
+    },
+    {
+      "$comment": "COMPLETE_VERIFIED_USER_APPROVED requires an approval record, complete:true, and a generator attribution. The PRESENCE of the record is structural only; its authenticity is a runtime obligation.",
+      "if": {
+        "properties": { "inventory_state": { "const": "COMPLETE_VERIFIED_USER_APPROVED" } },
+        "required": ["inventory_state"]
+      },
+      "then": {
+        "properties": { "user_approval": { "type": "object" } },
+        "required": ["user_approval", "provenance"],
+        "allOf": [
+          {
+            "properties": {
+              "provenance": {
+                "type": "object",
+                "properties": { "generator": { "$ref": "#/$defs/non_blank_string" } },
+                "required": ["generator"]
+              }
+            }
+          },
+          {
+            "properties": { "complete": { "const": true } }
+          },
+          {
+            "properties": {
+              "sections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": { "section_completeness": { "const": "COMPLETE" } },
+                  "required": ["section_completeness"]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "$comment": "An approval record may only accompany COMPLETE_VERIFIED_USER_APPROVED. Recording approval against planning or incomplete data is rejected structurally.",
+      "if": {
+        "properties": { "inventory_state": { "const": "INCOMPLETE_PLANNING" } },
+        "required": ["inventory_state"]
+      },
+      "then": {
+        "properties": { "user_approval": { "type": "null" } },
+        "required": ["user_approval"]
+      }
+    }
+  ]
+}

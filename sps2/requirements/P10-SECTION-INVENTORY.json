@@ -1,0 +1,15 @@
+{
+  "$comment": "STRUCTURAL VALIDITY IS NOT AUTHORITY. A separate document was verified to validate against this schema while every one of its section_id, purpose, route, content-type, layout, asset, dependency, P9-reference and test references was invented and unresolvable, and while its user_approval.decided_by named an agent. The schema therefore cannot detect fabrication, and this file is not authoritative merely because it validates. Authenticity of every reference, existence of the P8 Section, ContentType and Asset records, existence of the layout in the P10 layout registry, P9 route and SEO contract consistency, reconciliation of backend/data dependencies against real slice contracts, existence of acceptance and test evidence, derivation from genuine CMS state, and genuineness of the User approval are ALL runtime verification obligations of the mandatory fail-closed gate (REQ-P10-09, REQ-P10-17). That gate is specified but NOT implemented and has NOT been executed. No runtime check, CMS integration or approval verification has been performed.",
+  "inventory_id": "P10-SECTION-INVENTORY-v1",
+  "inventory_state": "INCOMPLETE_PLANNING",
+  "complete": false,
+  "provenance": {
+    "generated_at": "2026-10-09",
+    "generator": "sps2 contract scaffolding: format established by the governance directive; no CMS state or P8 content contract was consulted",
+    "cms_state_digest": null,
+    "p8_contract_digest": null
+  },
+  "user_approval": null,
+  "sections": [],
+  "notes": "PLANNING STATE ONLY. Zero sections enumerated, by design and by prohibition: no authoritative section set exists in the repository, and naming a section is an explicit User decision under REQ-P10-17 criterion 4. KNOWN UNRESOLVED DEPENDENCIES, recorded so they are not silently forgotten: (1) the P10 layout registry required by REQ-P10-02 does not exist, so layout_id cannot yet be validated for any section; (2) P8 Section has no route field (p8-content.schema.json Section definition is id, name, layout, content_ids, order), so route cannot be derived from CMS state and is a User decision; (3) no populated P8 CMS state is present in the repository, so content types, assets and content references cannot be derived; (4) no slice contracts exist, so backend/data dependencies and acceptance/test requirements cannot be reconciled; (5) P9 owns all SEO validation, so seo_requirements will hold P9 contract references only and will never restate P9 logic. CONFLICT RECORDED, NOT RESOLVED AND NOT AMENDED: REQ-P10-17 criterion 2 requires these nine fields per section while criterion 3 requires the inventory be produced from CMS state and slice contracts. Six of the nine fields have no CMS or slice-contract source. This file resolves that tension structurally through per-field provenance, where a field lacking a derivable source is marked USER_DECISION rather than being invented. REQ-P10-17 has NOT been amended; if the User prefers an explicit amendment to criterion 3, that is a separate decision recorded separately."
+}

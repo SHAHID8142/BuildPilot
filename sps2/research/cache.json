@@ -195,6 +195,218 @@
       ],
       "blocking_conflicts": [],
       "notes": "Provenance rests on User attestation and is explicitly NOT independently verified. This entry records that limitation rather than upgrading it. Readiness is PARTIAL because most coverage areas were not researched in P6; that is an honest gap, not a judgement on the technology."
+    },
+    {
+      "technology_id": "TECH-FE-STRING-COMPOSITION",
+      "name": "Plain string composition with per-sink HTML escaping",
+      "purpose": "Candidate rendering technology for Roadmap P10: produce static HTML from P8 CMS content that the P9 deployment audit can consume, under the Python-standard-library-only, project-local, no-third-party policy.",
+      "researched_on": "2026-10-08",
+      "researched_by": "implementation agent (User review pending)",
+      "observation_basis": "Official Python documentation retrieved on 2026-10-08, direct repository observation of the already-approved P8 output-safety boundary and the P9 HTML-emitting modules, and direct empirical execution under the project interpreter CPython 3.14.7. No third-party retrieval and no claim that is not traceable to one of those three.",
+      "coverage": {
+        "official_documentation": "COVERED",
+        "current_version": "COVERED",
+        "compatibility": "COVERED",
+        "ecosystem": "COVERED",
+        "recommended_practices": "COVERED",
+        "security_considerations": "COVERED",
+        "relevant_tooling": "COVERED",
+        "mcp_tool_availability": "COVERED",
+        "testing_approach": "COVERED",
+        "deployment_implications": "COVERED"
+      },
+      "coverage_basis": {
+        "official_documentation": "Retrieved https://docs.python.org/3/library/html.html on 2026-10-08: html.escape(s, quote=True) escapes &, <, > and, when quote, \" and '.",
+        "current_version": "Observed directly: html.escape executed under CPython 3.14.7; the docs page records escape as added in 3.2 and html.unescape in 3.4.",
+        "compatibility": "Observed directly: domain/cms and domain/seo already import html and run unmodified under the project's stdlib-only isolation validator.",
+        "ecosystem": "Observed directly: no ecosystem exists or is required; zero third-party dependencies is the standing policy, not a limitation worked around.",
+        "recommended_practices": "Observed directly in repository: domain/cms/output_safety.py states 'any future browser/UI rendering must HTML-encode the value at the output/sink boundary and must never inject it as trusted HTML', and P9's Threat Model section 5.1 mandates the same sink discipline.",
+        "security_considerations": "Observed directly: escaping is applied per sink rather than trusted to a single global pass. html.escape(quote=True) for text and attribute sinks; P9's escape_json_ld_for_html rewrites '</' to '<\\/' and '<!--' to '\\u003c!--' for script sinks, which is the control that plain composition makes explicit and a tree serializer does not.",
+        "relevant_tooling": "Observed directly: html.parser.HTMLParser (already used by six domain/seo modules) reparses emitted HTML, so output can be asserted against the same parser the P9 audit uses.",
+        "mcp_tool_availability": "Observed directly: not applicable; no MCP server is part of this choice.",
+        "testing_approach": "Observed directly: domain/cms/tests and domain/seo/tests run under stdlib unittest with negative suites; emitted HTML can be fed back through html.parser in the same style.",
+        "deployment_implications": "Observed directly: output is static .html files written with pathlib, exactly the layout domain/seo/audit.py:1290 consumes via glob('**/*.html') plus robots.txt and sitemap.xml; no runtime dependency is introduced."
+      },
+      "sources": [
+        {
+          "rank": 1,
+          "reference": "https://docs.python.org/3/library/html.html",
+          "observed": "html.escape(s, quote=True) escapes & < > and, when quote, \" and '; the module also provides html.unescape and the submodules html.parser and html.entities."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: domain/cms/output_safety.py",
+          "observed": "P8's approved output-safety boundary is exactly html.escape(text, quote=True) at the sink; the module locks the contract for 'any future browser/UI rendering'."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: domain/seo/metadata.py, domain/seo/structured_data.py",
+          "observed": "P9 already emits <title>, <meta>, <link rel=canonical> and <script type=application/ld+json> by string composition with per-sink escapers: _safe_attr strips CR/LF then html.escape(quote=True); escape_json_ld_for_html rewrites '</' and '<!--' before embedding JSON in a script."
+        }
+      ],
+      "blocking_conflicts": [],
+      "notes": "Strongest evidence for this candidate is that the repository already contains a User-approved, threat-model-backed implementation of exactly this pattern in P8 and P9, so P10 would extend an approved boundary rather than introduce a new one. Two honest limits are recorded: string composition has no structural model of HTML, so correctness of void elements, nesting and attribute placement must be asserted by tests and by feeding output back through html.parser; and escaping discipline is a convention that a future author can break, so it must be enforced by a validator rather than by goodwill. This entry is a RESEARCH record only. It records observed facts and lets sps2/core/technology_readiness.py compute readiness; it does not select this technology and does not authorize its use. Technology selection remains a separate User decision."
+    },
+    {
+      "technology_id": "TECH-FE-STRING-TEMPLATE",
+      "name": "string.Template ($ placeholder substitution)",
+      "purpose": "Candidate rendering technology for Roadmap P10, same question and policy as TECH-FE-STRING-COMPOSITION.",
+      "researched_on": "2026-10-08",
+      "researched_by": "implementation agent (User review pending)",
+      "observation_basis": "Official Python documentation retrieved on 2026-10-08 plus direct repository observation. No empirical template-based rendering was performed because the documented security gap (below) made further investment unjustified; that is recorded rather than papered over.",
+      "coverage": {
+        "official_documentation": "COVERED",
+        "current_version": "COVERED",
+        "compatibility": "COVERED",
+        "ecosystem": "COVERED",
+        "recommended_practices": "UNKNOWN",
+        "security_considerations": "UNKNOWN",
+        "relevant_tooling": "COVERED",
+        "mcp_tool_availability": "COVERED",
+        "testing_approach": "COVERED",
+        "deployment_implications": "COVERED"
+      },
+      "coverage_basis": {
+        "official_documentation": "Retrieved https://docs.python.org/3/library/string.html#template-strings on 2026-10-08: Template supports $identifier and ${identifier}; substitute, safe_substitute, is_valid and get_identifiers; customization via delimiter, idpattern, braceidpattern and pattern.",
+        "current_version": "Observed directly: string.Template executed under CPython 3.14.7.",
+        "compatibility": "Observed directly: string is a stdlib module and imports cleanly under the project's isolation validator.",
+        "ecosystem": "Observed directly: stdlib, no ecosystem dependency.",
+        "recommended_practices": "NOT OBSERVED as suitable for HTML generation. The docs state 'A primary use case for template strings is for internationalization (i18n)'. No source observed recommends string.Template for emitting HTML, so this area is UNKNOWN rather than assumed.",
+        "security_considerations": "NOT OBSERVED. substitute performs no escaping at all; it performs literal text replacement, so any HTML-special characters in a substituted value reach the output verbatim unless the caller escapes every value first. No mechanism in the module documents or enforces that, so this area is UNKNOWN.",
+        "relevant_tooling": "Observed directly: html.parser remains available for reparsing output, as in P9.",
+        "mcp_tool_availability": "Observed directly: not applicable; no MCP server is part of this choice.",
+        "testing_approach": "Observed directly: get_identifiers and is_valid make a template's placeholder set machine-checkable, which is testable under stdlib unittest.",
+        "deployment_implications": "Observed directly: stdlib, no runtime dependency, same static-file output path as the other candidates."
+      },
+      "sources": [
+        {
+          "rank": 1,
+          "reference": "https://docs.python.org/3/library/string.html#template-strings",
+          "observed": "'A primary use case for template strings is for internationalization (i18n)'. substitute raises KeyError for a missing identifier and ValueError for any other stray $ in the template."
+        },
+        {
+          "rank": 1,
+          "reference": "https://docs.python.org/3/library/string.html#template-strings",
+          "observed": "The class performs substitution only; nothing on the page describes escaping of substituted values."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: domain/cms/*.py, domain/seo/*.py",
+          "observed": "No P8 or P9 module uses string.Template. All repository HTML generation is string composition plus per-sink escaping, or html.parser for consumption."
+        }
+      ],
+      "blocking_conflicts": [],
+      "notes": "string.Template is a substitution mechanism, not an HTML renderer: it adds a placeholder layer over the same string composition and removes the one thing that makes C1 safe-by-convention, because escaping would have to be remembered at every substitution site instead of applied at every sink. Recorded as PARTIAL, not as rejected: no source was observed that recommends it for HTML, and no source was observed that documents an escaping mechanism, so two coverage areas are UNKNOWN. This entry is a RESEARCH record only. It records observed facts and lets sps2/core/technology_readiness.py compute readiness; it does not select this technology and does not authorize its use. Technology selection remains a separate User decision."
+    },
+    {
+      "technology_id": "TECH-FE-ELEMENTTREE-HTML",
+      "name": "xml.etree.ElementTree with method='html' serialization",
+      "purpose": "Candidate rendering technology for Roadmap P10, same question and policy as TECH-FE-STRING-COMPOSITION.",
+      "researched_on": "2026-10-08",
+      "researched_by": "implementation agent (User review pending)",
+      "observation_basis": "Official Python documentation retrieved on 2026-10-08 plus direct empirical execution under the project interpreter CPython 3.14.7 on 2026-10-08. The two negative findings below are reproduced by running the serializer, not inferred from prose.",
+      "coverage": {
+        "official_documentation": "COVERED",
+        "current_version": "COVERED",
+        "compatibility": "COVERED",
+        "ecosystem": "COVERED",
+        "recommended_practices": "COVERED",
+        "security_considerations": "UNKNOWN",
+        "relevant_tooling": "COVERED",
+        "mcp_tool_availability": "COVERED",
+        "testing_approach": "COVERED",
+        "deployment_implications": "COVERED"
+      },
+      "coverage_basis": {
+        "official_documentation": "Retrieved https://docs.python.org/3/library/xml.etree.elementtree.html on 2026-10-08: method is 'xml', 'html' or 'text' (default 'xml'); an element whose tag is None is not serialized and only its text and children are written; the page states that with method='html' an attribute value of None 'produces an empty attribute (such as checked)'.",
+        "current_version": "Observed directly: xml.etree.ElementTree executed under CPython 3.14.7; the docs page documents flush() and XInclude depth limits current to that release.",
+        "compatibility": "Observed directly: domain/seo/indexing.py already imports xml.etree.ElementTree, so the module is already inside the stdlib-only boundary.",
+        "ecosystem": "Observed directly: stdlib, no ecosystem dependency.",
+        "recommended_practices": "Observed directly: the page directs 'If you need to parse untrusted or unauthenticated data, see XML security', i.e. the documented practice is to treat this module's parsing as unsafe for untrusted input.",
+        "security_considerations": "NOT OBSERVED as adequate. Empirically, ET.tostring(root, method='html') emits a literal '</script>' contained in a script element's text verbatim, so the serialized output breaks out of its own script element on reparse and injects trailing markup; the module supplies no CDATA or escaping hook for raw-text elements. Also empirically, an attribute value of None raises TypeError ('cannot serialize None') on 3.14.7, contradicting the documented empty-attribute behaviour. No source was observed that documents a safe path for either case, so this area is UNKNOWN.",
+        "relevant_tooling": "Observed directly: html.parser reparses the output; P9 already uses both this serializer family and that parser.",
+        "mcp_tool_availability": "Observed directly: not applicable; no MCP server is part of this choice.",
+        "testing_approach": "Observed directly: output can be fed back through html.parser under stdlib unittest; the breakout above was found exactly that way.",
+        "deployment_implications": "Observed directly: output is the same static-file layout the P9 audit consumes; no runtime dependency."
+      },
+      "sources": [
+        {
+          "rank": 1,
+          "reference": "https://docs.python.org/3/library/xml.etree.elementtree.html",
+          "observed": "'If you need to parse untrusted or unauthenticated data, see XML security.'"
+        },
+        {
+          "rank": 1,
+          "reference": "https://docs.python.org/3/library/xml.etree.elementtree.html",
+          "observed": "With method='html' the attribute value can also be None, which 'produces an empty attribute (such as checked)'."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: empirical execution under the project interpreter (CPython 3.14.7), reproducible",
+          "observed": "ET.tostring(root, method='html') serializes void elements without a trailing slash (<br>, <img ...>) while method='xml' emits <br />; '&' in element text is escaped to &amp;; class='section layout-hero' round-trips intact, which matters for the Section.layout registry D-P10-2 assigns to P10."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: empirical execution under the project interpreter (CPython 3.14.7), reproducible",
+          "observed": "Negative: an attribute value of None raises TypeError ('cannot serialize None') under method='html' on 3.14.7, so the documented empty-attribute form is not actually available in this interpreter."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: empirical execution under the project interpreter (CPython 3.14.7), reproducible",
+          "observed": "Negative: the text 'var x = \"</script><img src=x onerror=alert(1)>\";' placed in a script element is emitted verbatim, and html.parser then reads '</script>' as the element end and the remainder as markup, i.e. script breakout. The serializer has no escaping hook for raw-text elements."
+        },
+        {
+          "rank": 2,
+          "reference": "repository: domain/seo/indexing.py",
+          "observed": "P9 already uses xml.etree.ElementTree, but only to generate sitemap.xml; no repository module uses it to serialize HTML documents."
+        }
+      ],
+      "blocking_conflicts": [],
+      "notes": "The tree model is genuinely attractive for P10: it makes nesting and attribute placement structural instead of conventional, it serializes void elements correctly, and the class attribute round-trips intact which is exactly what a Section.layout registry needs. It is recorded PARTIAL, not selectable, because the script-sink hazard is a real injection path and the module offers no hook to close it: the escaping would have to live in caller code, which is precisely the discipline C1 already encodes as approved repository practice. The documented versus actual behaviour of the None attribute is recorded separately because a decision made on the prose alone would be wrong. This entry is a RESEARCH record only. It records observed facts and lets sps2/core/technology_readiness.py compute readiness; it does not select this technology and does not authorize its use. Technology selection remains a separate User decision."
+    },
+    {
+      "technology_id": "TECH-FE-3RD-PARTY-TEMPLATE-ENGINE",
+      "name": "Third-party HTML template engine (e.g. Jinja2, Mako, Django templates)",
+      "purpose": "Control candidate for Roadmap P10: recorded so that exclusion of third-party template engines is an evaluated, evidenced decision rather than an omission from the research.",
+      "researched_on": "2026-10-08",
+      "researched_by": "implementation agent (User review pending)",
+      "observation_basis": "No external retrieval was performed and none is claimed. The standing stack constraint removes this family before any research investment is justified, and that reasoning is recorded instead of a citation being invented to support it.",
+      "coverage": {
+        "official_documentation": "UNKNOWN",
+        "current_version": "UNKNOWN",
+        "compatibility": "UNKNOWN",
+        "ecosystem": "UNKNOWN",
+        "recommended_practices": "UNKNOWN",
+        "security_considerations": "UNKNOWN",
+        "relevant_tooling": "UNKNOWN",
+        "mcp_tool_availability": "UNKNOWN",
+        "testing_approach": "UNKNOWN",
+        "deployment_implications": "UNKNOWN"
+      },
+      "coverage_basis": {
+        "official_documentation": "NOT OBSERVED. Not researched; see notes.",
+        "current_version": "NOT OBSERVED. Not researched.",
+        "compatibility": "NOT OBSERVED as compatible. The standing SPS 2.0 stack constraint permits the Python standard library only, with no third-party dependencies; an engine that must be pip-installed cannot be imported under that constraint.",
+        "ecosystem": "NOT OBSERVED. Not researched.",
+        "recommended_practices": "NOT OBSERVED. Not researched.",
+        "security_considerations": "NOT OBSERVED. Not researched.",
+        "relevant_tooling": "NOT OBSERVED. Not researched.",
+        "mcp_tool_availability": "NOT OBSERVED. Not researched.",
+        "testing_approach": "NOT OBSERVED. Not researched.",
+        "deployment_implications": "NOT OBSERVED as compatible. Project-local isolation forbids introducing a dependency that must be installed into the execution environment."
+      },
+      "sources": [
+        {
+          "rank": 2,
+          "reference": "repository: .sps/architecture/SPS2-ROADMAP.md, sps2 research and governance records",
+          "observed": "The standing stack constraint is Python standard library only, project-local, no third-party dependencies, no installation; domain/seo/isolation.py enforces zero third-party imports at machine-checkable level."
+        }
+      ],
+      "blocking_conflicts": [
+        "STACK-CONSTRAINT: the SPS 2.0 policy is Python standard library only, project-local, with no third-party dependencies and no installation; a pip-installable template engine cannot satisfy it.",
+        "NOT-RESEARCHED: no external source was retrieved for this entry. It is recorded as a blocking conflict deliberately, so the exclusion can never later be read as an endorsement by omission."
+      ],
+      "notes": "This entry exists to make the exclusion explicit and machine-visible rather than to assess an engine. If the stack constraint were ever relaxed by a future User decision, this entry would have to be replaced by real research before any such engine became selectable; as recorded it computes INSUFFICIENT and blocks. This entry is a RESEARCH record only. It records observed facts and lets sps2/core/technology_readiness.py compute readiness; it does not select this technology and does not authorize its use. Technology selection remains a separate User decision."
     }
   ],
   "counts": {
