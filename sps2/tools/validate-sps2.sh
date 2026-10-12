@@ -203,7 +203,16 @@ sect "10. Git provenance"
 cd "$REPO" || exit 2
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 && pass "git repository present" || fail "not a git repository"
 BR=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); [ -n "$BR" ] && pass "branch: $BR" || warn "no branch"
-fi  # end structural (sections 1-10 only)
+
+sect "11. P10 inventory contract"
+P10_OUT="$(python3 "$HERE/check_p10_inventory.py" 2>&1)"; P10_RC=$?
+if [ "$P10_RC" -eq 0 ]; then
+  pass "P10 section inventory conforms (structural subset)"
+else
+  while IFS= read -r l; do [ -n "$l" ] && fail "P10 inventory: $l"; done <<< "$P10_OUT"
+  [ "$FAIL" -eq 0 ] && fail "P10 inventory validation failed (exit $P10_RC)"
+fi
+fi  # end structural (sections 1-11)
 
 # ══ NEGATIVE SUITE ═══════════════════════════════════════════════════════════
 # Runs in BOTH modes: --negative executes this suite alone, skipping sections 1-10.
@@ -355,6 +364,17 @@ print('HIT' if re.search('[\U0001F300-\U0001FAFF]', open(sys.argv[1],encoding='u
   NEG_PASS=$((NEG_PASS+1)); pass "CASE O  emoji violation detected"
 else
   NEG_FAIL=$((NEG_FAIL+1)); fail "CASE O  emoji violation NOT detected"
+fi
+
+# --- P10 inventory contract: invalid inventory must be rejected ---
+printf '{"inventory_id":"P10-SECTION-INVENTORY-v1","inventory_state":"BOGUS","complete":false,"sections":[]}' \
+  > "$TMP/p10-bad.json"
+if python3 "$HERE/check_p10_inventory.py" --inventory "$TMP/p10-bad.json" >/dev/null 2>&1; then
+  info "NOT REJECTED (validator defect!) -> CASE P"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "CASE P  invalid P10 inventory NOT rejected"
+else
+  info "REJECTED -> CASE P invalid P10 inventory"
+  NEG_PASS=$((NEG_PASS+1)); pass "CASE P  invalid P10 inventory rejected"
 fi
 
 echo ""
