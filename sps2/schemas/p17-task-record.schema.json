@@ -1,0 +1,851 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p17-task-record/v1",
+  "title": "P17 Master Agent task record",
+  "description": "Machine-verifiable contract for one P17 Master Agent task record: task identifiers, ordered plan, runtime agent discovery and deterministic selection with recorded rationale, controlled local execution, independent objective verification, governance-aligned status, timestamps, and integrity digests. SCOPE OF THIS SCHEMA - JSON Schema can enforce STRUCTURE and APPLICABLE FIELD CONSTRAINTS ONLY: which properties are present, enumerated values, string patterns, types, array constraints, and lifecycle-state coherence. It CANNOT and DOES NOT establish: that a runtime probe actually ran or that an agent is genuinely available; that any command was actually executed or that transcript files exist at their referenced paths; that verification was genuinely independent of the executor; that secrets are absent from any field (secret detection is a semantic check, not a structural one); that digests match their referenced artefacts; or that a recorded approval is a genuine User act. Those are runtime verification obligations of the P17 execution security contract (SEC-P17-01 through SEC-P17-11) and its gates (GATE-P17-2, GATE-P17-3), which are specified but NOT implemented. A document satisfying this schema is STRUCTURALLY VALID ONLY. Satisfying it authorizes no execution, no implementation, and no approval.",
+  "$comment": "SCOPE BOUNDARY. STRUCTURALLY ENFORCED HERE: required-property presence (including plan minItems and the lifecycle-state conditionals below); enumerated values (status, step status, outcome, verification result, verifier, decided_by_role, state, environment_policy, probe_method); string patterns (task_id, step_id, depends_on, SHA-256 digests); types, array minItems and uniqueItems, integer minimum; additionalProperties:false at every level; and lifecycle-state coherence (PLANNED and AWAITING_USER_APPROVAL carry no execution, verification, or approval; IN_PROGRESS and FAILED require a present execution; VERIFIED requires a present verification whose result is PASS; REJECTED requires a present approval whose state is REJECTED; BLOCKED requires a non-blank blocked_reason; a COMPLETED execution requires ended_at and exit_status). NOT ENFORCED HERE, REQUIRING THE P17 RUNTIME GATE: probe authenticity, execution authenticity, transcript existence and digest match, verifier independence, secret absence, and approval authenticity. IMPLEMENTED != VERIFIED != APPROVED (sps2/core/SPEC.md).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "status",
+    "goal",
+    "plan",
+    "agent_selection",
+    "created_at",
+    "updated_at",
+    "digests"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^TASK-P17-[0-9]{4}$",
+      "description": "Unique task identifier, assigned at intake before any work begins (REQ-P17-01)."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PLANNED",
+        "AWAITING_USER_APPROVAL",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "FAILED",
+        "VERIFIED",
+        "REJECTED"
+      ],
+      "description": "Governance-aligned lifecycle state (.sps/GOVERNANCE.md §2). Execution-specific outcomes (COMPLETED, FAILED, TIMEOUT, KILLED) live in execution.outcome; verification outcomes (PASS, FAIL, BLOCKED) live in verification.result. Status never collapses the three axes: IMPLEMENTED != VERIFIED != APPROVED."
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The task goal as accepted at intake."
+    },
+    "required_capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "description": "Agent capabilities the task requires; deterministic selection (REQ-P17-04) matches these against the discovery snapshot."
+    },
+    "plan": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/plan_step"
+      },
+      "description": "Ordered plan of steps (REQ-P17-02). Execution does not begin until the plan is approved."
+    },
+    "agent_selection": {
+      "$ref": "#/$defs/agent_selection",
+      "description": "Runtime discovery snapshot and deterministic selection with recorded rationale (REQ-P17-03, REQ-P17-04)."
+    },
+    "execution": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/execution"
+        },
+        {
+          "enum": [
+            null
+          ]
+        }
+      ],
+      "description": "Controlled local execution record (REQ-P17-05, REQ-P17-06). Absent or null until execution has begun. Its presence is never, by itself, evidence of success."
+    },
+    "verification": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/verification"
+        },
+        {
+          "enum": [
+            null
+          ]
+        }
+      ],
+      "description": "Independent objective verification record (REQ-P17-08). An agent exit code of 0 is not proof of passing; acceptance is judged here."
+    },
+    "approval": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/approval"
+        },
+        {
+          "enum": [
+            null
+          ]
+        }
+      ],
+      "description": "Explicit User approval of the plan or task (GATE-P17-2, GATE-P17-3). Approval is an explicit act by the User, never an agent assertion."
+    },
+    "blocked_reason": {
+      "anyOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        {
+          "enum": [
+            null
+          ]
+        }
+      ],
+      "description": "Required, non-blank, when status is BLOCKED; otherwise optional or null."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of task record creation."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of the most recent state transition."
+    },
+    "digests": {
+      "$ref": "#/$defs/digests",
+      "description": "SHA-256 integrity digests of the plan and of execution transcripts (SEC-P17-11). Never secrets."
+    }
+  },
+  "allOf": [
+    {
+      "$comment": "PLANNED and AWAITING_USER_APPROVAL are pre-execution states: no execution, no verification, and no approval may be recorded yet. Each property may be absent or explicitly null; the properties keyword constrains only present properties, so an absent property is vacuously allowed and a present non-null object is rejected.",
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "PLANNED",
+              "AWAITING_USER_APPROVAL"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "execution": {
+            "enum": [
+              null
+            ]
+          },
+          "verification": {
+            "enum": [
+              null
+            ]
+          },
+          "approval": {
+            "enum": [
+              null
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$comment": "IN_PROGRESS requires a present, non-null execution record.",
+      "if": {
+        "properties": {
+          "status": {
+            "const": "IN_PROGRESS"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "execution"
+        ],
+        "properties": {
+          "execution": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "FAILED requires a present, non-null execution record (the failure being recorded).",
+      "if": {
+        "properties": {
+          "status": {
+            "const": "FAILED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "execution"
+        ],
+        "properties": {
+          "execution": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "BLOCKED requires a present, non-blank blocked_reason.",
+      "if": {
+        "properties": {
+          "status": {
+            "const": "BLOCKED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "blocked_reason"
+        ],
+        "properties": {
+          "blocked_reason": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    {
+      "$comment": "VERIFIED requires a present verification whose result is PASS. A FAIL or BLOCKED verification can never coexist with VERIFIED status.",
+      "if": {
+        "properties": {
+          "status": {
+            "const": "VERIFIED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "verification"
+        ],
+        "properties": {
+          "verification": {
+            "type": "object",
+            "required": [
+              "result"
+            ],
+            "properties": {
+              "result": {
+                "const": "PASS"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "REJECTED requires a present approval whose state is REJECTED.",
+      "if": {
+        "properties": {
+          "status": {
+            "const": "REJECTED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "approval"
+        ],
+        "properties": {
+          "approval": {
+            "type": "object",
+            "required": [
+              "state"
+            ],
+            "properties": {
+              "state": {
+                "const": "REJECTED"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "$comment": "A COMPLETED execution requires ended_at and a recorded exit_status.",
+      "if": {
+        "properties": {
+          "execution": {
+            "type": "object",
+            "required": [
+              "outcome"
+            ],
+            "properties": {
+              "outcome": {
+                "const": "COMPLETED"
+              }
+            }
+          }
+        },
+        "required": [
+          "execution"
+        ]
+      },
+      "then": {
+        "properties": {
+          "execution": {
+            "type": "object",
+            "required": [
+              "ended_at",
+              "exit_status"
+            ],
+            "properties": {
+              "ended_at": {
+                "type": "string"
+              },
+              "exit_status": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "plan_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "step_id",
+        "description",
+        "required_capabilities",
+        "status"
+      ],
+      "properties": {
+        "step_id": {
+          "type": "string",
+          "pattern": "^STEP-[0-9]{1,4}$",
+          "description": "Ordered step identifier, unique within the plan."
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What this step does. Human-readable and persisted to project-local state."
+        },
+        "required_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "description": "Agent capabilities this step requires; feeds deterministic selection."
+        },
+        "agent_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Agent assigned to this step, or null when the task's selected agent runs it."
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "IN_PROGRESS",
+            "COMPLETED",
+            "FAILED",
+            "SKIPPED"
+          ],
+          "description": "Step-level status within the ordered plan."
+        },
+        "depends_on": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^STEP-[0-9]{1,4}$"
+          },
+          "uniqueItems": true,
+          "description": "Step identifiers this step depends on; defines the ordering."
+        },
+        "output_summary": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Non-secret summary of the step's output, or null."
+        }
+      }
+    },
+    "agent_selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "discovered_at",
+        "available_agents"
+      ],
+      "properties": {
+        "discovered_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of the runtime discovery probe (REQ-P17-03)."
+        },
+        "available_agents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/agent_availability"
+          },
+          "description": "The discovery snapshot: one entry per allowlisted agent, whether or not it was available. Availability is probed at runtime, never assumed from documentation."
+        },
+        "selected_agent": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "The deterministically selected agent, or null when selection has not occurred or failed."
+        },
+        "selection_rationale": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Why the selected agent was chosen and why the alternatives were not (REQ-P17-04)."
+        },
+        "selection_fingerprint": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Deterministic fingerprint of the selection inputs; the same requirement and snapshot always yield the same fingerprint."
+        },
+        "selected_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "ISO-8601 timestamp of selection, or null."
+        }
+      }
+    },
+    "agent_availability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "available",
+        "probed_at"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Agent identifier as named in the authorized allowlist."
+        },
+        "available": {
+          "type": "boolean",
+          "description": "Runtime probe result. False means the agent was probed and found unavailable - never assumed."
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Version reported by the probe, or null when unavailable."
+        },
+        "probe_method": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "VERSION_FLAG",
+                "HELP_FLAG",
+                "RUNTIME_PROBE"
+              ]
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "How availability was determined at runtime."
+        },
+        "probed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of the probe."
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_id",
+        "command",
+        "timeout_seconds",
+        "working_directory",
+        "started_at",
+        "outcome"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "The allowlisted agent that was executed."
+        },
+        "command": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "The exact argument vector executed. An argv array, never a shell string, so no shell interpretation is implied."
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The bounded timeout applied to this execution (SEC-P17-04)."
+        },
+        "working_directory": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "The confined working directory. Confinement is enforced by a tested mechanism, not by this setting alone (SEC-P17-05)."
+        },
+        "started_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of execution start."
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "ISO-8601 timestamp of execution end; required when outcome is COMPLETED."
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "COMPLETED",
+            "FAILED",
+            "TIMEOUT",
+            "KILLED"
+          ],
+          "description": "Execution outcome. TIMEOUT and KILLED are explicit auditable outcomes, never silent successes."
+        },
+        "exit_status": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Verbatim exit status of the agent process; required when outcome is COMPLETED. A non-zero status is an explicit outcome, never silently treated as success."
+        },
+        "stdout_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Path to the captured stdout transcript, digested in digests.stdout_sha256."
+        },
+        "stderr_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "Path to the captured stderr transcript, digested in digests.stderr_sha256."
+        },
+        "environment_policy": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "MINIMAL_INHERIT",
+                "EXPLICIT_ALLOWLIST"
+              ]
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "How the execution environment was constructed (SEC-P17-06): minimal inheritance or an explicit allowlist of environment entries. Secrets are never passed through by default."
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verifier",
+        "acceptance_command",
+        "result",
+        "independence_statement",
+        "evidence_ref",
+        "verified_at"
+      ],
+      "properties": {
+        "verifier": {
+          "type": "string",
+          "enum": [
+            "OBJECTIVE_COMMAND",
+            "INDEPENDENT_AGENT",
+            "USER"
+          ],
+          "description": "What performed acceptance verification. Whether an INDEPENDENT_AGENT may verify HIGH/CRITICAL work is UQ-P17-02 (OPEN)."
+        },
+        "acceptance_command": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          },
+          "description": "The objective acceptance command(s) that judged the task. An agent exit code of 0 is not acceptance."
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED"
+          ],
+          "description": "Verification result. FAIL or BLOCKED here forces a non-VERIFIED task status even when the agent exited 0."
+        },
+        "independence_statement": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Why this verification is independent of the executing agent (REQ-P17-08)."
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Reference to the verification evidence record (.sps/GOVERNANCE.md §4)."
+        },
+        "verified_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of verification."
+        }
+      }
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decided_by",
+        "decided_by_role",
+        "decided_at",
+        "basis",
+        "state"
+      ],
+      "properties": {
+        "decided_by": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Name of the decider. Approval is an explicit act by the User, never an agent assertion; authenticity is a runtime obligation."
+        },
+        "decided_by_role": {
+          "type": "string",
+          "enum": [
+            "USER"
+          ],
+          "description": "Only the User may approve a plan or task."
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of the decision."
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Why the plan or task was approved or rejected."
+        },
+        "state": {
+          "type": "string",
+          "enum": [
+            "APPROVED",
+            "REJECTED"
+          ],
+          "description": "APPROVED permits the gated action; REJECTED drives task status REJECTED."
+        }
+      }
+    },
+    "digests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_sha256"
+      ],
+      "properties": {
+        "plan_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "SHA-256 of the serialized ordered plan."
+        },
+        "stdout_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "SHA-256 of the stdout transcript, or null when no transcript exists."
+        },
+        "stderr_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "SHA-256 of the stderr transcript, or null when no transcript exists."
+        },
+        "evidence_sha256": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "enum": [
+                null
+              ]
+            }
+          ],
+          "description": "SHA-256 of the verification evidence artefact, or null when none exists."
+        }
+      }
+    }
+  }
+}

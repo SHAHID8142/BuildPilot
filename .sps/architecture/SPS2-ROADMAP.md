@@ -178,6 +178,16 @@ criteria · verification · approval gate · rollback.
 - **Verification:** full CI + final security review + final audit. **Approval:** user; Level 4.
 - **Rollback:** release rollback procedure.
 
+## P17 — Master Agent Execution Backbone
+
+- **Objective:** Accept a task, prepare an ordered plan, discover authorized agents at runtime, select one deterministically with recorded rationale, execute locally under a controlled security contract, verify the result independently, and preserve auditable evidence.
+- **Dependencies:** P2, P3, P4, P5, P7. **Scope:** task intake; ordered plan generation; runtime discovery of authorized CLI agents; deterministic agent selection with recorded rationale; controlled local subprocess execution; independent objective verification; auditable task status and evidence; failure handling and recovery.
+- **Forbidden:** public deployment; public network exposure; unrestricted autonomous execution; invoking any CLI outside the explicit authorized allowlist; circumventing provider limits, account restrictions, or terms; automatic account rotation intended to bypass quotas; exposing credentials in plans, logs, transcripts, or evidence; bypassing existing approval gates; installing dependencies.
+- **Deliverables:** task-record schema (`sps2/schemas/p17-task-record.schema.json`); execution security contract; Task Runner implementation (only after GATE-P17-2); negative security suite; per-task evidence records.
+- **Acceptance:** a real task executes end-to-end with a recorded ordered plan, runtime agent discovery, deterministic selection with rationale, bounded and captured execution, independent objective verification, and a complete evidence record; every failure mode (missing authorization, invalid task input, unavailable agent, timeout, execution failure, failed acceptance) produces an explicit auditable outcome.
+- **Verification:** end-to-end demonstration with captured evidence plus the negative security suite (timeout kill, confinement violation attempt, secret-scrubbing, fail-closed paths, allowlist enforcement). **Approval:** user, per gate (GATE-P17-1, GATE-P17-2, GATE-P17-3).
+- **Rollback:** remove the Task Runner; the governance foundation, schemas, and decision records remain additive and inert.
+
 ---
 
 ## Sequencing
@@ -192,6 +202,7 @@ P2+P4+P8 -> P11 security
 P2+P10+P11 -> P12 testing
 P9..P12 -> P13 deployment
 P1..P13 -> P14 migration -> P15 compatibility -> P16 hardening
+P2+P3+P4+P5+P7 -> P17 master agent execution backbone
 ```
 
 **P1–P2 are the critical path.** Nothing later can be validated before the governance core exists and is
