@@ -82,6 +82,24 @@ class PinningTestCase(unittest.TestCase):
         os.makedirs(self.stubs)
         self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
 
+    def pin_path_entry(self, directory):
+        """Prepend *directory* to PATH and restore it, verified as an OUTCOME.
+
+        The restore is registered through the mapping protocol, because
+        ``setattr(os.environ, "PATH", ...)`` writes a plain instance attribute
+        and never touches the process environment -- a silent no-op that leaks
+        the injected directory for the rest of the run.
+
+        Cleanups run LIFO, so the assertion is registered FIRST and the restore
+        SECOND: the restore therefore executes before the assertion, which then
+        checks the real, post-restore PATH. Registering them in the other order
+        makes the assertion fire while the directory is still present.
+        """
+        previous = os.environ.get("PATH", "")
+        self.addCleanup(self.assertNotIn, directory, os.environ.get("PATH", ""))
+        os.environ["PATH"] = directory + os.pathsep + previous
+        self.addCleanup(os.environ.__setitem__, "PATH", previous)
+
     def allowlist_file(self, purpose="test", agents=None,
                        trusted_roots=None, name="allowlist.json"):
         path = os.path.join(self.root, "sps2", "p17", name)
@@ -172,10 +190,10 @@ class TestAmbientPathOrderIsIrrelevant(PinningTestCase):
         os.makedirs(hostile_dir)
         hostile = make_executable(hostile_dir, STUB_AGENT,
                                   "HOSTILE-SHADOW")
-        # The hostile copy is placed FIRST on the ambient PATH.
-        previous = os.environ.get("PATH", "")
-        os.environ["PATH"] = hostile_dir + os.pathsep + previous
-        self.addCleanup(setattr, os.environ, "PATH", previous)
+        # The hostile copy is placed FIRST on the ambient PATH. The helper
+        # restores PATH through the mapping protocol AND asserts the outcome,
+        # so a regression to a setattr-based no-op fails here.
+        self.pin_path_entry(hostile_dir)
 
         entry = self.agent(STUB_AGENT)
         allowlist = {"schema": "sps2.p17-allowlist/v1", "purpose": "test",
@@ -202,9 +220,8 @@ class TestAmbientPathOrderIsIrrelevant(PinningTestCase):
         only_on_path = os.path.join(self.tmp, "onlyonpath")
         os.makedirs(only_on_path)
         make_executable(only_on_path, "path-only.py", "PATH-ONLY")
-        previous = os.environ.get("PATH", "")
-        os.environ["PATH"] = only_on_path + os.pathsep + previous
-        self.addCleanup(setattr, os.environ, "PATH", previous)
+        # as above: mapping-protocol restore plus an outcome assertion
+        self.pin_path_entry(only_on_path)
 
         entry = self.agent("path-only.py")
         allowlist = {"schema": "sps2.p17-allowlist/v1", "purpose": "test",
@@ -220,6 +237,59 @@ class TestAmbientPathOrderIsIrrelevant(PinningTestCase):
         self.assertFalse(record["available"])
         self.assertIn("resolution refused", record["note"] or "")
         self.assertIn("ambient PATH", record["note"])
+
+    def test_pin_path_entry_restores_path_when_cleanups_run(self):
+        """The PATH restore must be an OUTCOME, not merely a registered call.
+
+        A previous form used ``addCleanup(setattr, os.environ, "PATH", prev)``.
+        That is a silent no-op -- setattr writes an instance attribute and
+        never changes the process environment -- so the injected directory
+        leaked for the rest of the run while the cleanup looked correct.
+
+        This drives the helper that both ambient-PATH tests use, then runs the
+        cleanups the way unittest does (LIFO) and asserts the observable
+        result: PATH is byte-identical to its pre-injection value. A test that
+        merely asserted "a cleanup was registered" passes against the broken
+        setattr form, which is exactly the regression this pins.
+        """
+        injected = os.path.join(self.tmp, "injected-path-dir")
+        os.makedirs(injected)
+        before = os.environ.get("PATH", "")
+
+        registered = []
+        original_addCleanup = self.addCleanup
+        self.addCleanup = lambda func, *a, **k: registered.append(
+            lambda: func(*a, **k))
+        try:
+            self.pin_path_entry(injected)
+        finally:
+            self.addCleanup = original_addCleanup
+
+        self.assertIn(injected, os.environ.get("PATH", ""))
+        self.assertEqual(len(registered), 2,
+                         "pin_path_entry must register a restore and an "
+                         "outcome assertion")
+
+        # Cleanups run LIFO, exactly as unittest runs them.
+        for cleanup in reversed(registered):
+            cleanup()
+
+        self.assertEqual(os.environ.get("PATH", ""), before)
+        self.assertNotIn(injected, os.environ.get("PATH", ""))
+
+    def test_setattr_on_environ_does_not_change_the_environment(self):
+        """Documents why setattr is the wrong restore mechanism.
+
+        Guards the premise of the helper: if setattr ever became a valid way
+        to write the process environment, the helper's rationale would be
+        obsolete and this test signals that.
+        """
+        name = "P17_SETATTR_PROBE"
+        os.environ.pop(name, None)
+        self.addCleanup(os.environ.pop, name, None)
+        os.environ[name] = "MUTATED"
+        setattr(os.environ, name, "RESTORED")
+        self.assertEqual(os.environ[name], "MUTATED")
 
 
 # ---------------------------------------------------------------------------

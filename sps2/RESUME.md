@@ -33,7 +33,7 @@ SOURCE: .sps/STATE.md
 Note: `.sps/STATE.md` is the legacy phase pointer; it records PHASE-05 and is
 NOT authoritative for the newest state. The newest state is in `sps2/`.
 
-COMPLETION: PENDING_USER_APPROVAL
+COMPLETION: APPROVED
 
 ## What P3 is
 
@@ -93,7 +93,7 @@ agent-convention file. The mechanics and the invariants are documented in
 ## Current phase
 
 Roadmap P3 (Agent Interoperability) is implemented and verified under
-`D-P3-F`. User approval of the delivered state is PENDING (the `completion`
+`D-P3-F`. The User APPROVED the delivered state on 2026-10-05 (the `completion`
 block in `ROADMAP-P3-DECISIONS.json`). P7 has NOT started and is NOT
 authorised.
 

@@ -490,6 +490,19 @@ class TestConfinement(P17TestCase):
 class TestCredentials(P17TestCase):
     """SEC-P17-06: no secret ever reaches a stored artefact."""
 
+    @staticmethod
+    def _restore_env_var(name, previous, absent):
+        """Undo a temporary os.environ mutation, including after a failure.
+
+        Registered via addCleanup so it runs whether the test passes, fails or
+        raises. A variable that did not exist before is REMOVED rather than set
+        to an empty string, so the environment is restored exactly.
+        """
+        if previous is absent:
+            os.environ.pop(name, None)
+        else:
+            os.environ[name] = previous
+
     def test_credential_like_task_input_is_rejected_not_stored(self):
         task = self.default_task(
             goal="deploy with api key sk-test-FAKEfakeFAKEfakeFAKE1234567890")
@@ -535,7 +548,11 @@ class TestCredentials(P17TestCase):
         self.assertIn(digest, cleaned)
 
     def test_environment_is_explicit_and_minimal(self):
-        os.environ["P17_FAKE_PARENT_SECRET"] = "must-not-be-inherited"
+        _sentinel = "P17_FAKE_PARENT_SECRET"
+        _absent = object()
+        _previous = os.environ.get(_sentinel, _absent)
+        self.addCleanup(self._restore_env_var, _sentinel, _previous, _absent)
+        os.environ[_sentinel] = "must-not-be-inherited"
         env = execution.build_environment("/tmp/workspace")
         self.assertNotIn("P17_FAKE_PARENT_SECRET", env)
         self.assertIn("P17_WORKSPACE", env)
@@ -549,6 +566,36 @@ class TestCredentials(P17TestCase):
         with self.assertRaises(scrub.SecretLeak):
             scrub.assert_clean({"goal": "api key sk-test-FAKE1234567890abc"},
                                "unit")
+
+    def test_environment_restoration_helper_restores_both_states(self):
+        """The cleanup removes a newly added var and restores a prior value.
+
+        This pins the restore semantics directly, so the guard cannot silently
+        degrade into an empty-string assignment.
+        """
+        name = "P17_RESTORE_PROBE"
+        absent = object()
+        os.environ.pop(name, None)
+
+        # Newly-added variable is removed, not blanked.
+        os.environ[name] = "temp"
+        self._restore_env_var(name, absent, absent)
+        self.assertNotIn(name, os.environ)
+
+        # Pre-existing variable is restored to its exact previous value.
+        os.environ[name] = "original"
+        self._restore_env_var(name, "original", absent)
+        self.assertEqual(os.environ[name], "original")
+        os.environ.pop(name, None)
+
+    def test_sentinel_secret_does_not_survive_the_test(self):
+        """Negative control for the leak: the sentinel must be absent here.
+
+        test_environment_is_explicit_and_minimal sets P17_FAKE_PARENT_SECRET.
+        unittest runs methods in sorted order, so that test executes before this
+        one; if its cleanup regressed, the variable would still be present.
+        """
+        self.assertNotIn("P17_FAKE_PARENT_SECRET", os.environ)
 
 
 # ---------------------------------------------------------------------------

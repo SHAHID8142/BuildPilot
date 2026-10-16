@@ -164,7 +164,14 @@ def p3_delivery_state():
         errors.append("ADAPTER_REGISTRY_INVALID: %s" % "; ".join(errs))
     adapters = json.load(open(os.path.join(
         SPS2, "core", "adapters", "registry.json"))).get("adapters") or []
-    generic = PT.FALLBACK_ADAPTER_ID in PT.entry_ids(adapters)
+    # D-P3-D: "An empty adapter registry [] is valid and must be accepted by the
+    # portability test." Deleting every per-agent adapter removes the DECLARED
+    # generic fallback along with the two real adapters, so the empty state
+    # necessarily has no `generic` entry either. Requiring `generic` here would
+    # make the delete-all state unsatisfiable, which is precisely what D-P3-D
+    # forbids. `generic` is therefore asserted only for a NON-EMPTY registry,
+    # matching the exemption `count_ok` below already applies.
+    generic = (not adapters) or PT.FALLBACK_ADAPTER_ID in PT.entry_ids(adapters)
     real = PT.real_adapter_ids(entries=adapters)
     # D-P3-A authorises EXACTLY two real adapters, and names them. The DECLARED
     # generic fallback is never counted as a real adapter. An empty registry is
