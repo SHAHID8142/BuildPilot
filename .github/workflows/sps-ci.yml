@@ -79,3 +79,101 @@ jobs:
         shell: pwsh
         run: |
           pwsh -NoProfile -File scripts/check-powershell.ps1
+
+  python-unittest:
+    name: Python unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # fetch-depth: 0 is MANDATORY, not an optimisation.
+      # sps2/tests/test_attribution_policy.py:49 pins BASELINE_REV to
+      # 788bf8a2892ee72705276c9d846626ca0470400d and reads that commit's blob
+      # content. A shallow clone cannot resolve it, and 19 tests across 5
+      # methods then fail for reasons unrelated to the change under test.
+      - name: Checkout (full history required for pinned BASELINE_REV)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python unit tests (deterministic module list)
+        working-directory: ${{ github.workspace }}
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+          # Pins the repo root on sys.path so the dotted module names below
+          # resolve regardless of the invoking CWD. Without this the same
+          # command succeeds from the repo root but raises ImportError
+          # elsewhere (reproduced: `python3 -m unittest sps2.tests.test_p5`
+          # is 48 OK from the repo root, ImportError from /tmp).
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+
+          # Deliberately NOT `unittest discover`. In this repository
+          # `python3 -m unittest discover -s . -t .` locates ZERO tests and
+          # exits 5 ("NO TESTS RAN") because sps2/, sps2/tests/ and domain/
+          # carry no __init__.py, so the stdlib loader will not recurse into
+          # them. Discovery is unusable as a gate: it cannot demonstrate the
+          # suite ran.
+          #
+          # The module list is derived from TRACKED files so the gate is
+          # deterministic and cannot silently absorb or drop modules.
+          MODULES=()
+          while IFS= read -r MODULE; do
+            MODULES+=("$MODULE")
+          done < <(
+            git ls-files 'test_*.py' '**/test_*.py' \
+              | sed -e 's/\.py$//' -e 's|/|.|g' \
+              | sort -u
+          )
+
+          if [ "${#MODULES[@]}" -eq 0 ]; then
+            echo "::error::No test modules found; refusing to report success."
+            exit 1
+          fi
+
+          printf 'Test modules (%d):\n' "${#MODULES[@]}"
+          printf '  %s\n' "${MODULES[@]}"
+
+          # --- zero-test guard -------------------------------------------------
+          # unittest exits 5 on "NO TESTS RAN", which `set -e` already catches,
+          # but a partially-empty run exits 0. Capture output and assert the
+          # parsed test count against MIN_TESTS so a green build cannot mean
+          # zero executed tests. Raise MIN_TESTS as the suite grows.
+          MIN_TESTS=500
+
+          set +e
+          OUTPUT="$(python3 -m unittest "${MODULES[@]}" 2>&1)"
+          STATUS=$?
+          set -e
+
+          printf '%s\n' "$OUTPUT"
+
+          RAN="$(printf '%s\n' "$OUTPUT" | sed -n 's/^Ran \([0-9][0-9]*\) test.*/\1/p' | tail -1)"
+          RAN="${RAN:-0}"
+          echo "Executed test count: ${RAN} (minimum required: ${MIN_TESTS})"
+
+          if [ "${RAN}" -eq 0 ]; then
+            echo "::error::Zero tests executed. A zero-test run is a FAILURE, never a success."
+            exit 1
+          fi
+
+          if [ "${RAN}" -lt "${MIN_TESTS}" ]; then
+            echo "::error::Only ${RAN} tests executed, below the required minimum of ${MIN_TESTS}. Either tests were lost or the module list is incomplete."
+            exit 1
+          fi
+
+          if [ "${STATUS}" -ne 0 ]; then
+            echo "::error::unittest exited ${STATUS} with ${RAN} tests executed."
+            exit "${STATUS}"
+          fi
+
+      # OPTIONAL, OFF BY DEFAULT. sps2/tools/test-portability.py is RED at HEAD
+      # (33 passed, 6 failed, 14 controls) and is NOT part of the supported
+      # suite. Do not enable until it is green and explicitly approved.
+      # - name: Portability exercise (excluded: red at HEAD)
+      #   run: python3 sps2/tools/test-portability.py
