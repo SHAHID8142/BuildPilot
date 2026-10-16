@@ -43,13 +43,13 @@ jobs:
           V="$(tr -d '[:space:]' < skills/sps/VERSION)"
           echo "VERSION=$V"
           [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "VERSION malformed: $V"; exit 1; }
-          grep -q "SPS version: $V" skills/sps/templates/audit-report.md \
+          grep -qF "SPS version: $V" skills/sps/templates/audit-report.md \
             || { echo "templates/audit-report.md not stamped with $V"; exit 1; }
-          grep -q "Skill version: $V" skills/sps/templates/agent.md \
+          grep -qF "Skill version: $V" skills/sps/templates/agent.md \
             || { echo "templates/agent.md not stamped with $V"; exit 1; }
-          grep -q "**Version:** $V" README.md \
+          grep -qF "**Version:** $V" README.md \
             || { echo "README.md version mismatch ($V)"; exit 1; }
-          grep -q "## $V" CHANGELOG.md \
+          grep -qF "## $V" CHANGELOG.md \
             || { echo "CHANGELOG.md missing $V entry"; exit 1; }
 
       - name: Script mirrors in sync
