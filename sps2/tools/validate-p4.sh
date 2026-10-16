@@ -117,7 +117,17 @@ else
   info "POSCTRL-C unexpected: $OUT"; fail "POSCTRL-C  H did not block as the sole blocker"
 fi
 # A declared licence alone must never enable promotion.
-if python3 "$CHECK" "$TMP/c_noappr.json" --promote 2>&1 | grep -q '^PROMOTED'; then
+# NEGATIVE control. The polarity here is already correct (absent PROMOTED => fail
+# branch => pass), but absence of PROMOTED is only meaningful if the checker RAN
+# and emitted a verdict. A crash, a missing checker, or a verdict-less run all
+# produce empty stdout and previously satisfied this control. Require rc==0 AND
+# an emitted verdict before any PASS.
+OUT_D="$(python3 "$CHECK" "$TMP/c_noappr.json" --promote 2>&1)"; RC_D=$?
+if [ "$RC_D" -ne 0 ]; then
+  fail "POSCTRL-D  checker exited $RC_D - negative control could not run"
+elif ! printf '%s\n' "$OUT_D" | grep -qE '^(PROMOTED|NOT_PROMOTED)([[:space:]]|$)'; then
+  fail "POSCTRL-D  no promotion verdict emitted - negative control could not run"
+elif printf '%s\n' "$OUT_D" | grep -q '^PROMOTED'; then
   fail "POSCTRL-D  promotion became possible on a licence alone"
 else
   CTR=$((CTR+1)); pass "POSCTRL-D  a declared licence alone does not enable promotion (correct)"
@@ -128,7 +138,12 @@ import json
 d=json.load(open('$TMP/c.json'))
 d['approval']={'state':'APPROVED','decided_by':'Agent'}
 json.dump(d,open('$TMP/c_agent.json','w'))"
-if python3 "$CHECK" "$TMP/c_agent.json" --promote 2>&1 | grep -q '^PROMOTED'; then
+OUT_E="$(python3 "$CHECK" "$TMP/c_agent.json" --promote 2>&1)"; RC_E=$?
+if [ "$RC_E" -ne 0 ]; then
+  fail "POSCTRL-E  checker exited $RC_E - negative control could not run"
+elif ! printf '%s\n' "$OUT_E" | grep -qE '^(PROMOTED|NOT_PROMOTED)([[:space:]]|$)'; then
+  fail "POSCTRL-E  no promotion verdict emitted - negative control could not run"
+elif printf '%s\n' "$OUT_E" | grep -q '^PROMOTED'; then
   fail "POSCTRL-E  an agent-attributed approval enabled promotion"
 else
   CTR=$((CTR+1)); pass "POSCTRL-E  an agent-attributed approval does NOT enable promotion"

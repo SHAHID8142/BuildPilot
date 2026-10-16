@@ -35,9 +35,19 @@ echo -e "${DIM}structured-state validation; no network, no installs, no global w
 
 run_check() { python3 "$CHECK" "$1" "$2" 2>/dev/null; }
 
+# Fail-CLOSED clean assertion. Empty stdout is NOT a verdict: a checker that
+# crashed, is missing, or exited non-zero silently also prints nothing.
+# rc is captured on the SAME line as the command substitution so it is assigned
+# in THIS shell; routing it through a helper invoked via $( ) would run that
+# helper in a subshell and silently discard the status.
 assert_clean() {  # kind file label
-  local out; out="$(run_check "$1" "$2")"
-  if [ -z "$out" ]; then pass "$3"; else
+  local out rc
+  out="$(python3 "$CHECK" "$1" "$2" 2>&1)"; rc=$?
+  if [ "$rc" -ne 0 ]; then
+    fail "$3: checker exited $rc - control could not run"
+  elif [ -z "$out" ]; then
+    pass "$3"
+  else
     while IFS= read -r l; do [ -n "$l" ] && fail "$3: $l"; done <<< "$out"
   fi
 }
@@ -374,7 +384,7 @@ print(json.dumps({"requirements": [{"requirement_id": "REQ-P1-01", "title": "Val
   "verification": {"state": "UNVERIFIED", "method": "AUTOMATED"},
   "approval": {"state": "NOT_REQUIRED"}}]}))
 PY
-POS="$(run_check requirement "$TMP/pos.json")"
+POS="$(python3 "$CHECK" requirement "$TMP/pos.json" 2>&1)"; POS_RC=$?
 # --- requirement integrity ---
 neg requirement "A  requirement has no acceptance criteria" "acceptance_criteria empty" \
     "d['requirements'][0]['acceptance_criteria']=[]"
@@ -408,7 +418,10 @@ neg capability "   lifecycle VERIFIED without evidence" "lifecycle VERIFIED with
     "c=d['capabilities'][0];c['lifecycle_state']='VERIFIED'"
 neg capability "   duplicate capability IDs" "duplicate capability IDs" \
     "d['capabilities'].append(dict(d['capabilities'][0]))"
-if [ -z "$POS" ]; then
+if [ "$POS_RC" -ne 0 ]; then
+  info "WRONGLY REJECTED (over-blocking!) -> CASE 0 (checker exited $POS_RC)"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "CASE 0  positive control could not run: $POS"
+elif [ -z "$POS" ]; then
   info "ACCEPTED -> CASE 0 positive control (valid fixture)"
   NEG_PASS=$((NEG_PASS+1)); pass "CASE 0  valid fixture accepted"
 else

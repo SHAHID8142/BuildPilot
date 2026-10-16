@@ -33,9 +33,19 @@ echo -e "${DIM}research-record validation; no network, no installs, no global wr
 
 run_check() { python3 "$CHECK" "$1" "$2" 2>/dev/null; }
 
+# Fail-CLOSED clean assertion. Empty stdout is NOT a verdict: a checker that
+# crashed, is missing, or exited non-zero silently also prints nothing.
+# rc is captured on the SAME line as the command substitution so it is assigned
+# in THIS shell; routing it through a helper invoked via $( ) would run that
+# helper in a subshell and silently discard the status.
 assert_clean() {
-  local out; out="$(run_check "$1" "$2")"
-  if [ -z "$out" ]; then pass "$3"; else
+  local out rc
+  out="$(python3 "$CHECK" "$1" "$2" 2>&1)"; rc=$?
+  if [ "$rc" -ne 0 ]; then
+    fail "$3: checker exited $rc - control could not run"
+  elif [ -z "$out" ]; then
+    pass "$3"
+  else
     while IFS= read -r l; do [ -n "$l" ] && fail "$3: $l"; done <<< "$out"
   fi
 }
@@ -316,8 +326,11 @@ json.dump({'known_source_ids':['SRC-001'],'capabilities':[{'capability_id':'CAP-
  'capability':'fixture','source':'X','status':'IMPLEMENTED','evidence':['SRC-001'],
  'confidence':'HIGH','harness_scope':['Claude Code'],'sps_recommendation':'KEEP',
  'in_production_registry':False}]}, open('$TMP/pos.json','w'))"
-P0="$(run_check capability "$TMP/pos.json")"
-if [ -z "$P0" ]; then
+P0="$(python3 "$CHECK" capability "$TMP/pos.json" 2>&1)"; P0_RC=$?
+if [ "$P0_RC" -ne 0 ]; then
+  info "WRONGLY REJECTED (over-blocking) -> CASE P0 (checker exited $P0_RC)"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "CASE P0  positive control could not run: $P0"
+elif [ -z "$P0" ]; then
   info "ACCEPTED -> CASE P0 positive control"
   NEG_PASS=$((NEG_PASS+1)); pass "CASE P0  valid capability record accepted"
 else

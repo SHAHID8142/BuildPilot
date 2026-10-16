@@ -87,26 +87,48 @@ done
   && pass "present AUDIT-PHASE-07 report" || fail "missing AUDIT-PHASE-07 report"
 
 sect "2. Production registry and selection record validate"
-OUT=$(python3 "$CHECK" registry "$SPS2/capability/registry.json" 2>&1)
-[ -z "$OUT" ] && pass "registry passes promotion gate and integrity checks" \
-  || while IFS= read -r l; do [ -n "$l" ] && fail "registry: $l"; done <<< "$OUT"
+OUT=$(python3 "$CHECK" registry "$SPS2/capability/registry.json" 2>&1); RC=$?
+if [ "$RC" -ne 0 ]; then
+  fail "registry: checker exited $RC - control could not run"
+elif [ -z "$OUT" ]; then
+  pass "registry passes promotion gate and integrity checks"
+else
+  while IFS= read -r l; do [ -n "$l" ] && fail "registry: $l"; done <<< "$OUT"
+fi
 OUT=$(python3 "$CHECK" selection "$SPS2/capability/registry.json" \
-      "$SPS2/project/SELECTION-P3-0001.json" 2>&1)
-[ -z "$OUT" ] && pass "selection record is traceable and explained" \
-  || while IFS= read -r l; do [ -n "$l" ] && fail "selection: $l"; done <<< "$OUT"
+      "$SPS2/project/SELECTION-P3-0001.json" 2>&1); RC=$?
+if [ "$RC" -ne 0 ]; then
+  fail "selection: checker exited $RC - control could not run"
+elif [ -z "$OUT" ]; then
+  pass "selection record is traceable and explained"
+else
+  while IFS= read -r l; do [ -n "$l" ] && fail "selection: $l"; done <<< "$OUT"
+fi
 for k in requirements evidence decisions; do
   case $k in
     requirements) p="$SPS2/requirements/P3-REQUIREMENTS.json" ;;
     evidence) p="$SPS2/evidence/P3-EVIDENCE.json" ;;
     decisions) p="$SPS2/decisions/P3-DECISIONS.json" ;;
   esac
-  OUT=$(python3 "$CHECK" records "$k" "$p" 2>&1)
-  [ -z "$OUT" ] && pass "P3 $k validate" \
-    || while IFS= read -r l; do [ -n "$l" ] && fail "$k: $l"; done <<< "$OUT"
+  # Fail-CLOSED: OUT is empty both when the document is clean AND when the
+  # checker crashed or exited non-zero silently. Check the exit status first.
+  OUT=$(python3 "$CHECK" records "$k" "$p" 2>&1); RC=$?
+  if [ "$RC" -ne 0 ]; then
+    fail "$k: checker exited $RC - control could not run"
+  elif [ -z "$OUT" ]; then
+    pass "P3 $k validate"
+  else
+    while IFS= read -r l; do [ -n "$l" ] && fail "$k: $l"; done <<< "$OUT"
+  fi
 done
-OUT=$(python3 "$CHECK" records handoff "$SPS2/handoff/HANDOFF-P3.json" 2>&1)
-[ -z "$OUT" ] && pass "P3 handoff validates" \
-  || while IFS= read -r l; do [ -n "$l" ] && fail "handoff: $l"; done <<< "$OUT"
+OUT=$(python3 "$CHECK" records handoff "$SPS2/handoff/HANDOFF-P3.json" 2>&1); RC=$?
+if [ "$RC" -ne 0 ]; then
+  fail "handoff: checker exited $RC - control could not run"
+elif [ -z "$OUT" ]; then
+  pass "P3 handoff validates"
+else
+  while IFS= read -r l; do [ -n "$l" ] && fail "handoff: $l"; done <<< "$OUT"
+fi
 
 sect "3. Approval is genuine, user-attributed and bounded"
 # Approval may only ever be attributed to the user, never to an agent.
@@ -517,8 +539,12 @@ else
 fi
 
 # POSCTRL-2: a valid selection record is accepted
-if [ -z "$(python3 "$CHECK" selection "$SPS2/capability/registry.json" \
-             "$SPS2/project/SELECTION-P3-0001.json" 2>&1)" ]; then
+POS2=$(python3 "$CHECK" selection "$SPS2/capability/registry.json" \
+         "$SPS2/project/SELECTION-P3-0001.json" 2>&1); POS2_RC=$?
+if [ "$POS2_RC" -ne 0 ]; then
+  info "WRONGLY REJECTED -> POSCTRL-2 (checker exited $POS2_RC)"
+  NEG_FAIL=$((NEG_FAIL+1)); fail "POSCTRL-2  positive control could not run: $POS2"
+elif [ -z "$POS2" ]; then
   info "ACCEPTED -> POSCTRL-2 valid selection record"
   NEG_PASS=$((NEG_PASS+1)); pass "POSCTRL-2  valid selection record accepted"
 else
