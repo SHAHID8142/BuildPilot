@@ -377,7 +377,8 @@ def _run_locked(args, root, task_id):
     stage = "authorisation"
     approval = _approval_sidecar(task_id, root)
     if not approval or approval.get("state") != "APPROVED" \
-            or approval.get("decided_by_role") != "USER":
+            or approval.get("decided_by_role") != "USER" \
+            or approval.get("decided_by") != "User":
         _error(stage, "no recorded User approval for %s; execution requires "
                       "approval.state=APPROVED with decided_by_role=USER "
                       "(GATE-P17-3). Nothing was executed." % task_id)
