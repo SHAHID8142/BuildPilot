@@ -1,0 +1,27 @@
+---
+import { AdminLayout } from '../../components/cms/AdminLayout';
+import { SettingsPage } from '../../components/cms/SettingsPage';
+import { getGlobalSettings } from '../../lib/db';
+import { cmsConfig } from '../../config/cms.config';
+
+const session = Astro.cookies.get('sps_admin_session');
+if (!session || !session.value) {
+  return Astro.redirect('/admin/login');
+}
+
+const globalSettings = getGlobalSettings();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Settings - {cmsConfig.siteTitle} CMS</title>
+  </head>
+  <body class="bg-slate-900">
+    <AdminLayout client:load currentTab="settings">
+      <SettingsPage client:load initialSettings={globalSettings} />
+    </AdminLayout>
+  </body>
+</html>

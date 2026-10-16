@@ -1,0 +1,78 @@
+{
+  "schema": "sps2.handoff-set/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "handoffs": [
+    {
+      "handoff_id": "HANDOFF-P2-CAPABILITY-INTELLIGENCE",
+      "from_phase": "P2",
+      "current_task": "P2 capability intelligence and comparative audit",
+      "current_state": "COMPLETE / VERIFIED / APPROVED",
+      "completed": [
+        "Gate check passed: P1 APPROVED, tree clean, all validators passing, legacy diff empty",
+        "Collected 20 ranked primary sources across 9 projects, accessed 2026-10-03",
+        "Researched ECC, agency-agents, five harnesses, AGENTS.md, MCP, orchestration",
+        "Extracted 36 atomic capabilities with evidence, status, confidence and recommendation",
+        "Built a 10-record interoperability matrix across 8 harnesses without assuming parity",
+        "Produced five audit documents: ecosystem, comparative, CMS/SEO, security, memory, verification",
+        "Recorded CONF-001: LCP and INP thresholds were not retrieved and remain unresolved",
+        "Left the production capability registry empty; no capability was installed",
+        "Executed no external code and copied no external files",
+        "Created DEC-0011 to DEC-0015 for future user approval",
+        "Added validate-p2.sh with a negative suite and a positive control",
+        "P2 approved by User on 2026-10-03 (explicit instruction; never inferred)"
+      ],
+      "not_completed": [
+        "P3 has NOT started and is NOT approved. The production capability registry remains empty and was NOT populated by this approval. All documented research gaps are preserved unchanged, including CONF-001 (LCP and INP thresholds UNRESOLVED) and CAP-028 held at RESEARCH_FURTHER",
+        "DEC-0011 to DEC-0015 await separate user approval",
+        "P3 and later phases have NOT started",
+        "LCP and INP numeric thresholds remain unverified and must not be encoded in a verifier",
+        "CMS content-modelling depth was not researched to primary depth",
+        "SEO areas beyond technical fundamentals (hreflang, international, local, entity) were not researched",
+        "ECC verification-loop internals were not source-audited",
+        "Gemini CLI native configuration docs were not retrieved (both URLs returned 404)",
+        "No capability, skill or MCP was installed, evaluated for security or added to any registry"
+      ],
+      "blockers": [
+        "No remote may be created or used until separately authorised",
+        "The standalone SPS 2.0 repository destination still requires a user-specified name and location (DEC-0009)",
+        "SEO threshold verification requires a source that exposes the numeric tables"
+      ],
+      "requirements": [
+        "REQ-P2-01",
+        "REQ-P2-02",
+        "REQ-P2-03",
+        "REQ-P2-04",
+        "REQ-P2-05",
+        "REQ-P2-06",
+        "REQ-P2-07",
+        "REQ-P2-08"
+      ],
+      "evidence": [
+        "EV-P2-001",
+        "EV-P2-002",
+        "EV-P2-003",
+        "EV-P2-004",
+        "EV-P2-005",
+        "EV-P2-006",
+        "EV-P2-007",
+        "EV-P2-008",
+        "EV-P2-009"
+      ],
+      "user_approval": "APPROVED",
+      "next_allowed_action": "Wait for an explicit user instruction authorising P3. Do not begin P3 without it.",
+      "forbidden_next_action": "Do NOT start P3, do NOT install any capability, skill or MCP, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, and do NOT perform Phase 01 remediation."
+    }
+  ],
+  "approval_record": {
+    "decided_by": "User",
+    "decided_at": "2026-10-03",
+    "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
+  },
+  "approval_scope": {
+    "phase": "P2",
+    "type": "RESEARCH_AND_AUDIT",
+    "production_capability_registry": "NOT_APPROVED_REMAINS_EMPTY",
+    "p3": "NOT_APPROVED"
+  }
+}

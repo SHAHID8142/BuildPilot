@@ -1,0 +1,27 @@
+---
+import { AdminLayout } from '../../components/cms/AdminLayout';
+import { InquiriesInbox } from '../../components/cms/InquiriesInbox';
+import { getInquiries } from '../../lib/db';
+import { cmsConfig } from '../../config/cms.config';
+
+const session = Astro.cookies.get('sps_admin_session');
+if (!session || !session.value) {
+  return Astro.redirect('/admin/login');
+}
+
+const inquiries = getInquiries();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inquiries Inbox - {cmsConfig.siteTitle} CMS</title>
+  </head>
+  <body class="bg-slate-900">
+    <AdminLayout client:load currentTab="inquiries">
+      <InquiriesInbox client:load initialInquiries={inquiries} />
+    </AdminLayout>
+  </body>
+</html>

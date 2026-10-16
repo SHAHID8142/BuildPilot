@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2/adapter/v1",
+  "title": "SPS 2.0 Agent Adapter Contract",
+  "description": "An adapter translates agent-neutral core rules into one agent's conventions. Adapters are thin, replaceable and deletable. The core MUST NOT depend on any adapter.",
+  "type": "object",
+  "required": ["agent_id", "maturity", "writes_global_state", "capabilities",
+               "supports", "fallbacks", "maintainer"],
+  "additionalProperties": false,
+  "properties": {
+    "agent_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+    "display_name": {"type": "string"},
+    "maturity": {"enum": ["VERIFIED", "EXPERIMENTAL", "DECLARED"]},
+    "writes_global_state": {
+      "type": "boolean",
+      "const": false,
+      "description": "Always false. An adapter that writes machine-global state violates the architecture."
+    },
+    "detection": {
+      "type": "object",
+      "required": ["read_only"],
+      "additionalProperties": false,
+      "properties": {
+        "paths": {"type": "array", "items": {"type": "string"}},
+        "cli": {"type": "array", "items": {"type": "string"}},
+        "read_only": {"const": true}
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": {"type": "boolean"},
+      "description": "Capability flags, e.g. skills, mcp, shell, subagents, browser, structured_questions."
+    },
+    "supports": {"type": "array", "items": {"type": "string"}},
+    "fallbacks": {"type": "object", "additionalProperties": {"type": "string"}},
+    "maintainer": {"type": "string"},
+    "verified_by": {"type": "array", "items": {"type": "string"}}
+  }
+}

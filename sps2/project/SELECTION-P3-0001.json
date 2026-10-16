@@ -1,0 +1,288 @@
+{
+  "schema": "sps2.selection-record/v1",
+  "selection_id": "SEL-P3-0001",
+  "generated": "2026-10-03",
+  "project": {
+    "name": "sps2",
+    "root": "sps2",
+    "scope": "PROJECT_LOCAL",
+    "note": "Selection is recorded in the repository. Nothing was installed on the machine."
+  },
+  "requirement": {
+    "requirement_id": "REQ-P3-01",
+    "title": "Verify technical SEO for a deployable website",
+    "objective": "A project needs automated technical SEO verification, selected from a project-local registry with no global installation.",
+    "domains": [
+      "seo"
+    ],
+    "required_capabilities": [],
+    "acceptance_criteria": [
+      "Capabilities are selected from a project-local registry",
+      "Every selection carries provenance and a user approval state",
+      "No machine-global state is written"
+    ],
+    "risk": "HIGH"
+  },
+  "registry_version": "0.1.0-p3",
+  "ranking": [
+    {
+      "capability_id": "CAP-P03-005",
+      "name": "seo-cls-threshold-verifier",
+      "score": 77.8,
+      "breakdown": {
+        "requirement_fit": 0.3,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 0.4
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-SPS-005 scored 77.80: fit=0.30 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "rank": 1,
+      "tie_breaker_used": false
+    },
+    {
+      "capability_id": "CAP-P03-001",
+      "name": "promotion-gate",
+      "score": 68.8,
+      "breakdown": {
+        "requirement_fit": 0.0,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 0.4
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-SPS-001 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "rank": 2,
+      "tie_breaker_used": false
+    },
+    {
+      "capability_id": "CAP-P03-002",
+      "name": "deterministic-ranking",
+      "score": 68.8,
+      "breakdown": {
+        "requirement_fit": 0.0,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 0.4
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-SPS-002 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "rank": 3,
+      "tie_breaker_used": true,
+      "tie_breaker_basis": "popularity_then_recency"
+    },
+    {
+      "capability_id": "CAP-P03-003",
+      "name": "forced-user-choice",
+      "score": 68.8,
+      "breakdown": {
+        "requirement_fit": 0.0,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 0.4
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-SPS-003 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "rank": 4,
+      "tie_breaker_used": true,
+      "tie_breaker_basis": "popularity_then_recency"
+    },
+    {
+      "capability_id": "CAP-P03-004",
+      "name": "staleness-model",
+      "score": 68.8,
+      "breakdown": {
+        "requirement_fit": 0.0,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 0.4
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-SPS-004 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "rank": 5,
+      "tie_breaker_used": true,
+      "tie_breaker_basis": "popularity_then_recency"
+    }
+  ],
+  "ranking_fingerprint": "1eaedde118d67ce1",
+  "weights": {
+    "requirement_fit": 30,
+    "compatibility": 20,
+    "security": 20,
+    "licence": 10,
+    "freshness": 8,
+    "maintenance": 5,
+    "provenance_confidence": 5,
+    "verification": 2
+  },
+  "popularity_role": "TIE_BREAKER_ONLY",
+  "recency_role": "TIE_BREAKER_ONLY",
+  "selected": [
+    {
+      "capability_id": "CAP-P03-005",
+      "name": "seo-cls-threshold-verifier",
+      "version": "0.1.0",
+      "domain": "seo",
+      "rank": 1,
+      "score": 77.8,
+      "selection_reason": "CAP-SPS-005 scored 77.80: fit=0.30 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/research/P2-CMS-SEO-AUDIT.md",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "security_status": "VERIFIED_SAFE",
+      "licence": "KNOWN_PERMISSIVE",
+      "verification_state": "UNVERIFIED",
+      "lifecycle_state": "CANDIDATE",
+      "adoption": "PROPOSED_NOT_ADOPTED"
+    },
+    {
+      "capability_id": "CAP-P03-001",
+      "name": "promotion-gate",
+      "version": "0.1.0",
+      "domain": "governance",
+      "rank": 2,
+      "score": 68.8,
+      "selection_reason": "CAP-SPS-001 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "sps2/capability/engine.py",
+        "commit": "9cc67a7a5beb",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ]
+      },
+      "security_status": "VERIFIED_SAFE",
+      "licence": "KNOWN_PERMISSIVE",
+      "verification_state": "UNVERIFIED",
+      "lifecycle_state": "CANDIDATE",
+      "adoption": "PROPOSED_NOT_ADOPTED"
+    }
+  ],
+  "alternatives_considered": [
+    {
+      "capability_id": "CAP-P03-002",
+      "rank": 3,
+      "score": 68.8,
+      "not_selected_because": "CAP-SPS-002 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40"
+    },
+    {
+      "capability_id": "CAP-P03-003",
+      "rank": 4,
+      "score": 68.8,
+      "not_selected_because": "CAP-SPS-003 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40"
+    },
+    {
+      "capability_id": "CAP-P03-004",
+      "rank": 5,
+      "score": 68.8,
+      "not_selected_because": "CAP-SPS-004 scored 68.80: fit=0.00 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=0.40"
+    }
+  ],
+  "forced_choice": {
+    "forced": false,
+    "reason": "no forced choice supplied"
+  },
+  "provenance": {
+    "method": "static",
+    "runtime_tracing": false,
+    "note": "Provenance is static and detection-based: each record carries a commit, repository path, evidence references and research references. This is NOT runtime provenance tracing and is not claimed to be.",
+    "repository_commit": "9cc67a7a5beb"
+  },
+  "approval": {
+    "state": "PENDING_USER_APPROVAL",
+    "decided_by": null,
+    "basis": "P3 implements the mechanism. No capability has been adopted and no selection has been approved. Only the user may approve."
+  },
+  "verification": {
+    "state": "UNVERIFIED",
+    "evidence": [],
+    "note": "No capability is installed or active in P3."
+  },
+  "rollback": {
+    "method": "Delete this record and revert the referencing commit.",
+    "machine_state_touched": false,
+    "verified": true
+  },
+  "staleness": {
+    "policy": "A selection becomes STALE when any selected capability becomes STALE, when a registry version changes, or when review_due passes.",
+    "effect_of_stale": "A stale selection may not be treated as an active, verified selection. It must be re-evaluated before further work relies on it.",
+    "review_due": "2027-01-03"
+  },
+  "note": "Regenerated in P4 after the capability id migration to the CAP-P03 scheme."
+}

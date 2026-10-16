@@ -1,0 +1,74 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P10-GATE-SEMANTICS-ADOPTION",
+  "phase": "Roadmap P10 (Vertical-Slice Frontend/Backend)",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes the User's 'SEMANTICS: ADOPT' decision from the Round 12 message and records the adopted designs; it implements nothing)",
+  "note": "Records the User's Round 12 decision 'SEMANTICS: ADOPT' (verbatim source: sps2/decisions/P10-ROUND12-USER-DECISIONS.json, DEC-7111) and the six runtime-gate semantics designs it adopts. The designs are exactly as presented to the User in reports/SPS2-ROUND12-P10-DECISION-PACKAGE-20261016-154756.md Part 2; nothing is added, weakened or reinterpreted here beyond restating them in decision-record form. ADOPTION IS NOT IMPLEMENTATION: sps2/tools/p10_runtime_gate.py is NOT edited by this record, and the six controls continue to report UNIMPLEMENTED until implementation is separately authorized (see unresolved_question UQ-R12-1 in the transcription record). Each decision entry conforms to sps2/decision/v1. Validate with: python3 sps2/tools/check_sps2.py decision sps2/decisions/P10-GATE-SEMANTICS-ADOPTION.json - that command always exits 0, so inspect stdout for ERR lines.",
+
+  "standing_bounds": {
+    "authenticity_limit": "The adopted semantics establish CONTENT INTEGRITY and PROVENANCE RECORDING only. They do not establish cryptographic authenticity (no signatures, no trust root exists in the repository) and they do not establish human authorization (a digest or a decided_by field is not a human). This limitation was stated to the User in the Round 12 decision interface and the User adopted the semantics WITH that understanding.",
+    "fail_closed": "Every adopted semantics fails closed: a missing timestamp, missing gate record, null digest, absent manifest, or undefined approval interaction is a failure or an UNIMPLEMENTED report, never a pass.",
+    "gate_stays_read_only": "The gate never writes approval state, never transitions the inventory, and never creates evidence. All adopted semantics are observational checks computed at gate-run time."
+  },
+
+  "decisions": [
+    {
+      "decision_id": "DEC-7112",
+      "title": "Adopt the six runtime-gate semantics designs (evidence-freshness, evidence-authenticity, cms-state-digest, p8-contract-digest, req-p10-07-reconciliation, approval-state-interaction)",
+      "decision": "The six semantics designs presented in the Round 12 decision package (Part 2) are adopted as the repository's chosen semantics for the six currently-UNIMPLEMENTED runtime-gate controls. (1) evidence-freshness: evidence records carry generated_at (RFC 3339) and optional freshness_window_days; the gate compares against gate-run time; a missing timestamp FAILS; the window length itself is deferred to the first implementation grant. (2) evidence-authenticity: a gate-record JSON format (producing command, input digests, output digests, UTC timestamp, emitting tool version) whose claims the gate cross-checks by recomputing digests; contradiction FAILS; this is content-integrity plus provenance recording, NOT cryptographic authenticity. (3) cms-state-digest: canonical JSON (sorted keys, UTF-8, no insignificant whitespace) of the CMS state files, SHA-256, rendered sha256:<hex>; the gate recomputes and fails closed on mismatch or null. (4) p8-contract-digest: the same scheme over the P8 ContentType contract inputs, deliberately separate from (3) so a content edit does not invalidate the type contract and vice versa. (5) req-p10-07-reconciliation: a backend operation manifest to be created with the first backend code; the gate set-compares declared state_changing_operations against the manifest; a missing manifest FAILS (fail-closed); for the Home slice the empty-vs-empty case passes only when the manifest exists and is also empty. (6) approval-state-interaction: two distinct acts - contents approval (D-P10-8, in the decision ledger) and inventory approval (user_approval, set only by an authorized act, never by the gate); the transition COMPLETE_AWAITING_USER_APPROVAL to COMPLETE_VERIFIED_USER_APPROVED requires BOTH a full gate pass AND a set user_approval; per the User's APPROVAL-MECHANISM: OPTION A decision, a fresh explicit User approval act is required when the gate passes - D-P10-8's contents-approval does not carry over.",
+      "reason": "The User adopted the semantics by the Round 12 decision line 'SEMANTICS: ADOPT', having been presented each design's purpose, I/O, algorithm, failure mode, positive/negative/tamper tests, migration path and limitations. The designs use only repository-verifiable primitives (stdlib hashlib/json), preserve fail-closed behavior, and keep the existence/integrity/provenance/authenticity/human-authorization distinctions explicit rather than collapsing them.",
+      "evidence": [
+        "sps2/decisions/P10-ROUND12-USER-DECISIONS.json: DEC-7111 evidence array, verbatim line 'SEMANTICS: ADOPT'",
+        "reports/SPS2-ROUND12-P10-DECISION-PACKAGE-20261016-154756.md Part 2 - the six designs as presented to and adopted by the User (UNTRACKED)",
+        "sps2/tools/p10_runtime_gate.py:102-119 - REQUIRED_CONTROL_IDS, the sixteen controls six of which are UNIMPLEMENTED",
+        "sps2/tools/p10_runtime_gate.py:1969-2057 - the six UNIMPLEMENTED stub controls this adoption defines semantics for",
+        "sps2/requirements/P10-SECTION-INVENTORY.json - provenance.cms_state_digest and provenance.p8_contract_digest are null ('No digest values are invented')",
+        "sps2/schemas/p10-slice.schema.json - evidence_references, user_approval and acceptance_state structure"
+      ],
+      "alternatives": [
+        {
+          "option": "Implement the semantics in the gate tool in the same act",
+          "why_not_chosen": "ADOPT answers a design question; no line of the Round 12 message names sps2/tools/p10_runtime_gate.py or grants an edit to it. Implementation is batch B2 of the Round 12 roadmap and requires its own authorization (recorded as unresolved question UQ-R12-1 in the transcription record)."
+        },
+        {
+          "option": "Adopt only the digest semantics and defer the approval-state machine",
+          "why_not_chosen": "The User's APPROVAL-MECHANISM: OPTION A line in the same message resolves the approval-state interaction's central question (fresh act required), so deferring it would discard an already-given decision."
+        }
+      ],
+      "status": "ACTIVE",
+      "supersedes": null,
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "The User's Round 12 decision line 'SEMANTICS: ADOPT', transcribed verbatim in sps2/decisions/P10-ROUND12-USER-DECISIONS.json (DEC-7111). The User adopted the six designs as presented, including their stated limitations (content-integrity/provenance, not cryptographic authenticity or human authentication). This record transcribes that adoption; it is not a new decision and grants no implementation authority."
+      }
+    }
+  ],
+
+  "non_goals": [
+    "Not an implementation. No line of code changes; the six controls remain UNIMPLEMENTED in sps2/tools/p10_runtime_gate.py until a separate grant.",
+    "Not an approval of any gate run, build, or slice. No P10 runtime verification has occurred.",
+    "Not a digest value. No cms_state_digest or p8_contract_digest value is computed or written into the inventory by this record; values are written only by an authorized inventory regeneration.",
+    "Not a change to the gate's control list, exit semantics, or read-only guarantee.",
+    "Not a resolution of CONF-001, UQ-ATT-2, or any open item outside the six semantics."
+  ],
+
+  "explicitly_not_approved_by_this_record": [
+    "Implementation of any adopted semantics in sps2/tools/p10_runtime_gate.py or any other file",
+    "Writing digest values into sps2/requirements/P10-SECTION-INVENTORY.json",
+    "Creating the backend operation manifest (it arrives with the first backend code, which is unauthorized)",
+    "Any transition of inventory_state or acceptance_state",
+    "Any git stage, commit, push, publish or deploy"
+  ],
+
+  "related": [
+    "sps2/decisions/P10-ROUND12-USER-DECISIONS.json (DEC-7111; verbatim source of the SEMANTICS: ADOPT line)",
+    "reports/SPS2-ROUND12-P10-DECISION-PACKAGE-20261016-154756.md (UNTRACKED - the designs as presented)",
+    "sps2/tools/p10_runtime_gate.py (UNTRACKED - the gate whose six stub controls these semantics define)",
+    "sps2/requirements/P10-SECTION-INVENTORY.json (provenance digests currently null)",
+    "sps2/governance/SCHEMAS/decision.schema.json (sps2/decision/v1)"
+  ]
+}

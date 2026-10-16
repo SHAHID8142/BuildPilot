@@ -1,0 +1,359 @@
+{
+  "schema": "sps2.requirement-set/v1",
+  "phase": "P4",
+  "generated": "2026-10-03",
+  "note": "P4 approval is NOT recorded here. Authorising P4 is not approval of P4 completion, and no production promotion is approved by this phase.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P4-01",
+      "title": "Hardened production promotion gate A-K exists",
+      "objective": "A capability may reach production only when eleven independent gates pass",
+      "description": "A single failed gate blocks promotion.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "Every gate result is computed from the record, never asserted",
+        "A conforming fixture is promoted (positive control POSCTRL-A)",
+        "Twenty negative cases each fail a named gate"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/promotion_gates.py",
+          "sps2/capability/promotion-assessments.json"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-012",
+          "EV-P4-013",
+          "EV-P4-014",
+          "EV-P4-015",
+          "EV-P4-016",
+          "EV-P4-017"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-012",
+          "EV-P4-013",
+          "EV-P4-014",
+          "EV-P4-015",
+          "EV-P4-016",
+          "EV-P4-017"
+        ],
+        "observed_result": "sps2/capability/promotion_gates.py evaluates eleven gates A to K per capability. All five candidates were evaluated. validate-p4.sh reports 52 structural checks passed with 0 failed and 25 negative cases correctly rejected with 0 missed. Every gate result is computed from the record at run time; none is asserted."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-02",
+      "title": "Promotion gate is enforced, not advisory",
+      "objective": "Each candidate is evaluated independently and stored results match a fresh run",
+      "description": "Stored assessments must never drift from computed ones.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "validate-p4.sh recomputes every assessment and compares",
+        "A stale stored assessment is detected as STALE_ASSESSMENT"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/tools/check_p4.py",
+          "sps2/tools/validate-p4.sh"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-018",
+          "EV-P4-026",
+          "EV-P4-027",
+          "EV-P4-028",
+          "EV-P4-029",
+          "EV-P4-031"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-018",
+          "EV-P4-026",
+          "EV-P4-027",
+          "EV-P4-028",
+          "EV-P4-029",
+          "EV-P4-031"
+        ],
+        "observed_result": "The gate is enforced, not advisory. A capability cannot reach ACTIVE while any gate blocks it: check_p3.py and validate-p4.sh both recompute the gate and fail on any mismatch between a stored assessment and a fresh run. Tampering with a stored assessment was demonstrated to produce a STALE_ASSESSMENT failure rather than a silent pass."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-03",
+      "title": "Deterministic ranking preserved",
+      "objective": "Permutation invariance holds and popularity cannot win",
+      "description": "P3 ranking properties must survive P4.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "40 permutations produce one fingerprint",
+        "the most popular candidate is deliberately the weakest on evidence and loses"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/engine.py"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-020"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-020"
+        ],
+        "observed_result": "Deterministic ranking is preserved. CAP-P03-002 was evaluated and its ranking was identical across repeated runs, with no tie resolved by wall-clock time or random input. The capability is implemented in the project-local engine rather than asserted."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-04",
+      "title": "Forced user choice preserved and bounded",
+      "objective": "A forced choice wins but cannot bypass a security rejection",
+      "description": "Respect and protection must both hold.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "forced choice moves to rank 1",
+        "VULNERABLE candidate is refused"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/engine.py"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-021"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-021"
+        ],
+        "observed_result": "Forced user choice is preserved and bounded. CAP-P03-003 was evaluated and the User decision boundary is implemented in the engine, so no ambiguous default is applied without an explicit User decision."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-05",
+      "title": "Staleness cannot silently persist",
+      "objective": "Stale-as-active and stale-without-review are rejected",
+      "description": "Freshness is enforced, not documented.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "STALE_AS_ACTIVE rejected",
+        "STALE_WITHOUT_REVIEW rejected",
+        "a STALE record carrying review_due is permissible"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/engine.py"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-019",
+          "EV-P4-022"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-019",
+          "EV-P4-022"
+        ],
+        "observed_result": "Staleness cannot silently persist. CAP-P03-004 was evaluated. Staleness is computed rather than assumed, and no stale capability reached an ACTIVE lifecycle state during P4."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-06",
+      "title": "SEO capability semantics stay precise",
+      "objective": "Only the retrieved CLS claim may be represented; no LCP or INP may be invented",
+      "description": "The legacy phantom-SEO failure must not recur.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "registry security evidence contains no LCP or INP threshold",
+        "CONF-001 remains UNRESOLVED",
+        "CAP-028 remains UNVERIFIED"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/registry.json",
+          "sps2/research/P2-CAPABILITY-EXTRACTION.json"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-023",
+          "EV-P4-030"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-023",
+          "EV-P4-030"
+        ],
+        "observed_result": "SEO capability semantics stay precise. The registry records a retrieved CLS threshold and contains no LCP or INP threshold because none was retrieved. CONF-001 remains UNRESOLVED and CAP-028 remains UNVERIFIED, so no threshold was fabricated to close the gap."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-07",
+      "title": "No-emoji rule is machine-enforced with a positive control",
+      "objective": "Real emoji are rejected while rule documentation is not falsely flagged",
+      "description": "Documentation about the rule must not trip the rule.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "sps2 scans clean",
+        "a planted emoji is detected (POSCTRL-B)"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/tools/check_emoji.py"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-024"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-024"
+        ],
+        "observed_result": "The no-emoji rule is machine-enforced with a positive control. check_emoji.py reported scanned=81 violations=0 across sps2, and a positive control containing a genuine emoji code point was confirmed to be detected, so the zero result is not vacuous."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "requirement_id": "REQ-P4-08",
+      "title": "P3 incident boundary carried forward unchanged",
+      "objective": "Revocation stays USER_ATTESTED and checkpoint a7767cf stays preserved",
+      "description": "P4 must not reopen or remediate the incident.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "classification string unchanged",
+        "checkpoint object still resolves"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/handoff/HANDOFF-P3.json",
+          "sps2/security/INCIDENT-P3-001-CREDENTIAL-EXPOSURE.md"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P4-025"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p4.sh",
+        "evidence": [
+          "EV-P4-025"
+        ],
+        "observed_result": "The P3 incident boundary is carried forward unchanged. Commit a7767cf remains reachable and was not purged, credential_revocation remains USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED, and the checkpoint remains recorded PRESERVED. P4 changed neither value. A credential was found re-present in .claude/settings.json during P4 and re-contained; see EV-P4-019."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    }
+  ]
+}

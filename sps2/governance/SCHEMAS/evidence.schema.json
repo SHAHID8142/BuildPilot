@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2/evidence/v1",
+  "title": "SPS 2.0 Evidence Contract",
+  "description": "Objective record of an executed command. Append-only; never edited to change a result.",
+  "type": "object",
+  "required": [
+    "evidence_id",
+    "source",
+    "timestamp",
+    "command",
+    "observed_result",
+    "result",
+    "relates_to"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "evidence_id": {
+      "type": "string",
+      "pattern": "^EV-[A-Z0-9]+-[0-9]{3,}$"
+    },
+    "source": {
+      "enum": [
+        "VALIDATOR",
+        "CI",
+        "AGENT",
+        "USER",
+        "EXTERNAL",
+        "MANUAL"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "minLength": 10
+    },
+    "command": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected_result": {
+      "type": "string"
+    },
+    "observed_result": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Verbatim output. A PASS with empty output is invalid."
+    },
+    "result": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "SKIP",
+        "BLOCKED"
+      ]
+    },
+    "exit_code": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "relates_to": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "capability_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "action_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "supersedes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "agent_selection": {
+    "available_agents": [
+      {
+        "agent_id": "stub-agent.py",
+        "available": true,
+        "probe_method": "VERSION_FLAG",
+        "probed_at": "2026-10-10T12:23:11Z",
+        "version": "p17-stub-agent 1.0.0 (repository-local test double, not an agent)"
+      },
+      {
+        "agent_id": "stub-slow.py",
+        "available": true,
+        "probe_method": "VERSION_FLAG",
+        "probed_at": "2026-10-10T12:23:12Z",
+        "version": "p17-stub-slow 1.0.0 (repository-local test double, not an agent)"
+      }
+    ],
+    "discovered_at": "2026-10-10T12:23:12Z",
+    "selected_agent": "stub-agent.py",
+    "selected_at": "2026-10-10T12:23:12Z",
+    "selection_fingerprint": "726c4e9b557b57bdad6b2ddee3361cd6e784bcbe24e68118b444bf543f725e88",
+    "selection_rationale": "Selected stub-agent.py (score 1, satisfying all 1 required capabilities: test-double). It was probed available at runtime at 2026-10-10T12:23:11Z. No other eligible alternative."
+  },
+  "approval": {
+    "basis": "User explicitly approved TASK-P17-0002 for the Slice 1 test-double demonstration.",
+    "decided_at": "2026-10-10",
+    "decided_by": "User",
+    "decided_by_role": "USER",
+    "state": "APPROVED"
+  },
+  "created_at": "2026-10-10T12:23:05Z",
+  "digests": {
+    "evidence_sha256": "7e0c9a48edfba045d89b4f851588b0a75dcb0bf6dac6eea8535ea5ea0763b3d6",
+    "plan_sha256": "2433f06e4b84c84fe56be5ff7b258db8696649f25a21b98234870c4bf5f2aa28",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "3a404efe85c7a7e82b8f9b8b89c35a0fe8051a02282910c28aa132099e91f8f2"
+  },
+  "execution": {
+    "agent_id": "stub-agent.py",
+    "command": [
+      "/Users/maryamahad/Desktop/Shahid-Personal-SkillSet-main/sps2/tests/fixtures/p17/stub-agent.py",
+      "--task",
+      "TASK-P17-0002",
+      "--goal",
+      "stub-mode:write=output.txt"
+    ],
+    "ended_at": "2026-10-10T12:23:12Z",
+    "environment_policy": "EXPLICIT_ALLOWLIST",
+    "exit_status": 0,
+    "outcome": "COMPLETED",
+    "started_at": "2026-10-10T12:23:12Z",
+    "stderr_ref": "stderr.log",
+    "stdout_ref": "stdout.log",
+    "timeout_seconds": 300,
+    "working_directory": ".sps/tasks/p17/TASK-P17-0002/workspace"
+  },
+  "goal": "stub-mode:write=output.txt",
+  "plan": [
+    {
+      "agent_id": null,
+      "depends_on": [],
+      "description": "Execute task goal under the selected agent: stub-mode:write=output.txt (acceptance: python3 -c print('acceptance satisfied'))",
+      "output_summary": null,
+      "required_capabilities": [
+        "test-double"
+      ],
+      "status": "PENDING",
+      "step_id": "STEP-1"
+    }
+  ],
+  "required_capabilities": [
+    "test-double"
+  ],
+  "status": "VERIFIED",
+  "task_id": "TASK-P17-0002",
+  "updated_at": "2026-10-10T12:23:12Z",
+  "verification": {
+    "acceptance_command": [
+      "python3",
+      "-c",
+      "print('acceptance satisfied')"
+    ],
+    "evidence_ref": "EV-P17-001",
+    "independence_statement": "Acceptance was judged by the objective acceptance command supplied by the task definition and executed by sps2/p17/verification.py, which is a structurally separate code path from sps2/p17/execution.py. The verifying executable is not an allowlisted agent executable (enforced at intake). The executing agent's exit code and output are recorded in the execution record and are not inputs to this result.",
+    "result": "PASS",
+    "verified_at": "2026-10-10T12:23:12Z",
+    "verifier": "OBJECTIVE_COMMAND"
+  }
+}

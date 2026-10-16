@@ -1,0 +1,704 @@
+{
+  "schema": "sps2.capability-extraction/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "note": "Research findings only. NOTHING here is in the production capability registry. No capability was installed or verified as SPS-installable. P2 records what exists in other systems, not what SPS can use.",
+  "taxonomy": [
+    "KEEP",
+    "ADAPT",
+    "REWRITE",
+    "REPLACE",
+    "RESEARCH_FURTHER",
+    "REJECT",
+    "DEFER"
+  ],
+  "statuses": [
+    "IMPLEMENTED",
+    "NOT_IMPLEMENTED",
+    "UNVERIFIED"
+  ],
+  "capabilities": [
+    {
+      "capability_id": "CAP-001",
+      "capability": "cross-harness-portable-project-instructions",
+      "source": "AGENTS.md",
+      "source_component": "AGENTS.md root convention",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-014"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code",
+        "Codex",
+        "Cline",
+        "OpenCode",
+        "Cursor",
+        "Gemini",
+        "Copilot",
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Adopt AGENTS.md as the SPS project-local instruction surface rather than inventing a competing file.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-002",
+      "capability": "nested-scoped-project-instructions",
+      "source": "Cursor",
+      "source_component": ".cursor/rules with globs and description",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-010",
+        "SRC-011"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Cursor",
+        "Cline"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Globs and description give path-scoped context. Emit an equivalent conditional rule per adapter.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-003",
+      "capability": "progressive-disclosure-skill-loading",
+      "source": "Agent Skills",
+      "source_component": "SKILL.md three-level model",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-005"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Level 1 metadata always loaded, level 2 on trigger, level 3 on need. Directly reusable.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-004",
+      "capability": "settings-precedence-chain",
+      "source": "Claude Code",
+      "source_component": "Four settings files plus managed settings",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-004"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Explicit user, project, project-local and managed precedence. Model SPS scope resolution on this.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-005",
+      "capability": "config-merge-not-replace",
+      "source": "OpenCode",
+      "source_component": "Layered config merge",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-007"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "OpenCode"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Non-conflicting keys preserved across layers. Prefer merge over replace for project-local defaults.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-006",
+      "capability": "permission-mode-tiers",
+      "source": "Claude Code",
+      "source_component": "Auto and Manual permission modes",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-006"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Model-based classifier plus explicit allow, ask and deny. SPS needs a user-attributable equivalent.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-007",
+      "capability": "bash-sandboxing",
+      "source": "Claude Code",
+      "source_component": "Sandboxed bash tool",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-006"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Filesystem and network isolation reduces prompts. Capability-gated rather than always on.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-008",
+      "capability": "working-directory-boundary",
+      "source": "Claude Code",
+      "source_component": "File tool boundary",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-006"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Constrains reads and writes to the project tree. Aligns exactly with the project-local boundary.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-009",
+      "capability": "config-change-audit-hooks",
+      "source": "Claude Code",
+      "source_component": "ConfigChange hooks",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-006"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Audit or block settings changes during a session. Strong model for SPS governance events.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-010",
+      "capability": "lifecycle-hook-events",
+      "source": "ECC",
+      "source_component": "hooks.json PreToolUse PostToolUse Stop",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-002"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code",
+        "OpenCode"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Trigger-based automation. Map to SPS gates, but keep governance independent of hook availability.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-013",
+      "capability": "specialist-reviewer-agents",
+      "source": "ECC",
+      "source_component": "agents/ reviewer and resolver set",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-001",
+        "SRC-002"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code",
+        "OpenCode"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Language-specific reviewers exist as concrete files. Recreate as selectable capabilities, not a fixed bundled list.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-014",
+      "capability": "domain-skill-library",
+      "source": "ECC",
+      "source_component": "skills/ pattern and security families",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-002"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code",
+        "OpenCode"
+      ],
+      "sps_recommendation": "RESEARCH_FURTHER",
+      "rationale": "Rich domain skills exist, but per-harness behavioural parity was not established. Do not bulk-adopt.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-015",
+      "capability": "multi-harness-directory-layout",
+      "source": "ECC",
+      "source_component": ".claude .codex .cursor .gemini .opencode .zed and others",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-001"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code",
+        "Codex",
+        "Cursor",
+        "Gemini",
+        "OpenCode",
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Per-harness directories exist. Support level differs per harness and must be measured, never assumed.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-016",
+      "capability": "mcp-server-configuration-set",
+      "source": "ECC",
+      "source_component": "mcp-configs/mcp-servers.json",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-002"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Curated MCP config set. SPS must govern selection and provenance, never auto-install.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-017",
+      "capability": "agent-specialist-persona-catalog",
+      "source": "agency-agents",
+      "source_component": "Division and agent markdown corpus",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-003"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "REWRITE",
+      "rationale": "A persona catalogue with no runtime, scheduler or gate. This is not orchestration; treat as requirement vocabulary only.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-018",
+      "capability": "lead-plus-parallel-subagent-orchestration",
+      "source": "Anthropic",
+      "source_component": "Research system orchestration",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-015"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Lead agent plans then spawns parallel subagents. The 90.2 percent uplift was measured internally by the vendor, not independently.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-019",
+      "capability": "subagent-filesystem-artefact-pattern",
+      "source": "Anthropic",
+      "source_component": "Subagent output written to filesystem",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-015"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Avoids the game of telephone and cuts token overhead. Directly matches the SPS evidence model.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-020",
+      "capability": "checkpoint-based-evaluation",
+      "source": "Anthropic",
+      "source_component": "Discrete state-change checkpoints",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-015"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Verify required final state rather than every intermediate step. Maps onto SPS acceptance criteria.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-021",
+      "capability": "security-scanning-cli-with-sarif",
+      "source": "Codex",
+      "source_component": "Codex Security CLI and SDK",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-009"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Codex"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Emits SARIF for CI severity policy. The machine-readable output is the model, not the vendor tool.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-022",
+      "capability": "managed-hooks-only-policy",
+      "source": "Codex",
+      "source_component": "requirements.toml allow_managed_hooks_only",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-008"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Codex"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Admins can ignore user, project and session hook configs. A genuine enforcement-level primitive.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-023",
+      "capability": "mcp-namespace-provenance",
+      "source": "MCP Registry",
+      "source_component": "Reverse-DNS verified namespaces",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-012"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "DNS or GitHub verification binds the publisher to the namespace. SPS provenance should adopt this pattern.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-024",
+      "capability": "mcp-registry-security-scanning",
+      "source": "MCP Registry",
+      "source_component": "Explicitly delegated to package registries and aggregators",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": [
+        "SRC-012"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "REJECT",
+      "rationale": "The registry documents that it does not scan server code. SPS must evaluate MCP security independently.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-011",
+      "capability": "session-memory-persistence",
+      "source": "ECC",
+      "source_component": "memory-persistence hooks",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-002"
+      ],
+      "confidence": "MEDIUM",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Session start and end hooks load and save state. Port as project-local state, not agent memory.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-012",
+      "capability": "instinct-based-continuous-learning",
+      "source": "ECC",
+      "source_component": "continuous-learning-v2",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-002"
+      ],
+      "confidence": "MEDIUM",
+      "harness_scope": [
+        "Claude Code"
+      ],
+      "sps_recommendation": "REWRITE",
+      "rationale": "Auto-extracted instincts are unverifiable by default. Require evidence and user approval before any learned rule becomes policy.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-025",
+      "capability": "mcp-attack-vector-taxonomy",
+      "source": "MCP",
+      "source_component": "Security best practices specification",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-013"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Confused deputy, token passthrough, SSRF, session hijack, prompt injection and scope minimisation.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-026",
+      "capability": "mcp-progressive-scope-minimisation",
+      "source": "MCP",
+      "source_component": "Scope minimisation guidance",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-013"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Minimal initial scopes with incremental elevation. A direct model for SPS capability permissions.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-027",
+      "capability": "core-web-vitals-cls-thresholds",
+      "source": "web.dev",
+      "source_component": "CLS good 0.1 and poor 0.25",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-017"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "KEEP",
+      "rationale": "Numeric thresholds confirmed verbatim with stated derivation. Suitable for an SPS SEO verifier.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-028",
+      "capability": "core-web-vitals-lcp-inp-thresholds",
+      "source": "web.dev",
+      "source_component": "LCP and INP threshold tables",
+      "status": "UNVERIFIED",
+      "evidence": [
+        "SRC-018"
+      ],
+      "confidence": "LOW",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "RESEARCH_FURTHER",
+      "rationale": "Thresholds were not retrieved from any source. Must not be encoded in a verifier until directly observed.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-029",
+      "capability": "seo-technical-foundation",
+      "source": "Google Search Central",
+      "source_component": "SEO starter guide",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-016"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Sitemaps, robots.txt, canonicalisation, structured data and Search Console. Becomes SPS verifier and policy.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-030",
+      "capability": "isr-cache-observability-header",
+      "source": "Next.js",
+      "source_component": "x-nextjs-cache response header",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-019"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "HIT, STALE, MISS and REVALIDATED. A concrete pattern for surfacing cache state as verifiable evidence.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-031",
+      "capability": "cms-draft-mode-and-preview",
+      "source": "Next.js",
+      "source_component": "Draft mode",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-019"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Draft and published separation is a CMS-first requirement, not a later retrofit.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-032",
+      "capability": "cms-content-model-first",
+      "source": "Google Search Central",
+      "source_component": "Content architecture and structured data",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-016"
+      ],
+      "confidence": "MEDIUM",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "RESEARCH_FURTHER",
+      "rationale": "CMS-first modelling is required by user policy, but the concrete schema-first pattern needs dedicated research.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-033",
+      "capability": "agentic-app-risk-taxonomy",
+      "source": "OWASP GenAI",
+      "source_component": "OWASP GenAI Security Project",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-020"
+      ],
+      "confidence": "MEDIUM",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "ADAPT",
+      "rationale": "Use as a checklist input for the SPS security audit. Referenced at project level; entries were not enumerated in P2.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-034",
+      "capability": "remote-config-organisation-defaults",
+      "source": "OpenCode",
+      "source_component": ".well-known/opencode",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-007"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "OpenCode"
+      ],
+      "sps_recommendation": "DEFER",
+      "rationale": "Useful for organisations, but SPS is repository-local and single-user at this stage.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-035",
+      "capability": "remote-managed-settings-precedence",
+      "source": "OpenCode",
+      "source_component": "MDM managed configuration",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-007"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "OpenCode"
+      ],
+      "sps_recommendation": "DEFER",
+      "rationale": "Highest-precedence managed configuration is a later enterprise concern.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    },
+    {
+      "capability_id": "CAP-036",
+      "capability": "desktop-dashboard-gui",
+      "source": "ECC",
+      "source_component": "ecc_dashboard.py Tkinter GUI",
+      "status": "IMPLEMENTED",
+      "evidence": [
+        "SRC-002"
+      ],
+      "confidence": "HIGH",
+      "harness_scope": [
+        "Other"
+      ],
+      "sps_recommendation": "REJECT",
+      "rationale": "A Tkinter desktop GUI is incompatible with an agent-neutral, CLI-first framework.",
+      "accessed": "2026-10-03",
+      "in_production_registry": false
+    }
+  ],
+  "counts": {
+    "total": 36,
+    "by_recommendation": {
+      "ADAPT": 19,
+      "DEFER": 2,
+      "KEEP": 8,
+      "REJECT": 2,
+      "RESEARCH_FURTHER": 3,
+      "REWRITE": 2
+    },
+    "by_status": {
+      "IMPLEMENTED": 34,
+      "NOT_IMPLEMENTED": 1,
+      "UNVERIFIED": 1
+    }
+  }
+}

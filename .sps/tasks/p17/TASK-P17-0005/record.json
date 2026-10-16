@@ -1,0 +1,90 @@
+{
+  "agent_selection": {
+    "available_agents": [
+      {
+        "agent_id": "stub-agent.py",
+        "available": true,
+        "probe_method": "VERSION_FLAG",
+        "probed_at": "2026-10-10T12:45:35Z",
+        "version": "p17-stub-agent 1.0.0 (repository-local test double, not an agent)"
+      },
+      {
+        "agent_id": "stub-slow.py",
+        "available": true,
+        "probe_method": "VERSION_FLAG",
+        "probed_at": "2026-10-10T12:45:35Z",
+        "version": "p17-stub-slow 1.0.0 (repository-local test double, not an agent)"
+      }
+    ],
+    "discovered_at": "2026-10-10T12:45:35Z",
+    "selected_agent": "stub-agent.py",
+    "selected_at": "2026-10-10T12:45:35Z",
+    "selection_fingerprint": "726c4e9b557b57bdad6b2ddee3361cd6e784bcbe24e68118b444bf543f725e88",
+    "selection_rationale": "Selected stub-agent.py (score 1, satisfying all 1 required capabilities: test-double). It was probed available at runtime at 2026-10-10T12:45:35Z. No other eligible alternative."
+  },
+  "approval": {
+    "basis": "Schema conformance demonstration (User-approved test-double task).",
+    "decided_at": "2026-10-10",
+    "decided_by": "User",
+    "decided_by_role": "USER",
+    "state": "APPROVED"
+  },
+  "created_at": "2026-10-10T12:45:35Z",
+  "digests": {
+    "evidence_sha256": "0fafc29ed54c4044f53a3631db31174aa05e0886cfa5f88aef06ab177cfac34d",
+    "plan_sha256": "fc3f0f64376a844538982759b8654697cffda3d1d7c04741850d4ab1f5a97f54",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "7dab05b46f2c19ce4fe2277554cc05b1f6613ac14a087559de1472b0401e621e"
+  },
+  "execution": {
+    "agent_id": "stub-agent.py",
+    "command": [
+      "/Users/maryamahad/Desktop/Shahid-Personal-SkillSet-main/sps2/tests/fixtures/p17/stub-agent.py",
+      "--task",
+      "TASK-P17-0005",
+      "--goal",
+      "stub-mode:write=demonstration-output.txt"
+    ],
+    "ended_at": "2026-10-10T12:45:35Z",
+    "environment_policy": "EXPLICIT_ALLOWLIST",
+    "exit_status": 0,
+    "outcome": "COMPLETED",
+    "started_at": "2026-10-10T12:45:35Z",
+    "stderr_ref": "stderr.log",
+    "stdout_ref": "stdout.log",
+    "timeout_seconds": 60,
+    "working_directory": ".sps/tasks/p17/TASK-P17-0005/workspace"
+  },
+  "goal": "stub-mode:write=demonstration-output.txt",
+  "plan": [
+    {
+      "agent_id": null,
+      "depends_on": [],
+      "description": "Execute task goal under the selected agent: stub-mode:write=demonstration-output.txt (acceptance: /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -c print('acceptance: objective command satisfied'))",
+      "output_summary": null,
+      "required_capabilities": [
+        "test-double"
+      ],
+      "status": "PENDING",
+      "step_id": "STEP-1"
+    }
+  ],
+  "required_capabilities": [
+    "test-double"
+  ],
+  "status": "VERIFIED",
+  "task_id": "TASK-P17-0005",
+  "updated_at": "2026-10-10T12:45:35Z",
+  "verification": {
+    "acceptance_command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-c",
+      "print('acceptance: objective command satisfied')"
+    ],
+    "evidence_ref": "EV-P17-002",
+    "independence_statement": "Acceptance was judged by the objective acceptance command supplied by the task definition and executed by sps2/p17/verification.py, which is a structurally separate code path from sps2/p17/execution.py. The verifying executable is not an allowlisted agent executable (enforced at intake). The executing agent's exit code and output are recorded in the execution record and are not inputs to this result.",
+    "result": "PASS",
+    "verified_at": "2026-10-10T12:45:35Z",
+    "verifier": "OBJECTIVE_COMMAND"
+  }
+}

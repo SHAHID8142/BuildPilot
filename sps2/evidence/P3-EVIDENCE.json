@@ -1,0 +1,137 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "phase": "P3",
+  "generated": "2026-10-03",
+  "records": [
+    {
+      "evidence_id": "EV-P3-001",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh cases A-O plus POSCTRL-1",
+      "expected_result": "Invalid capability records rejected; a valid one accepted",
+      "observed_result": "Rejected: A duplicate ID, B missing evidence, C fabricated provenance, D unknown security marked safe, E agent-attributed approval, F approval without user, G stale without review, H unsupported compatibility, I global without authorization, J malformed record, M invalid lifecycle, O research-only promotion. POSCTRL-1 confirmed a valid capability IS promoted",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-002",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh section 6; engine determinism harness",
+      "expected_result": "One fingerprint across permutations; evidence beats stars",
+      "observed_result": "24 input permutations produced exactly 1 distinct ranking fingerprint; a candidate scored 46.50 with ten million stars ranked below a candidate scored 77.80 with zero stars",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-003",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh section 7 and case L",
+      "expected_result": "Forced choice moves to rank 1; unsafe choice refused",
+      "observed_result": "A forced choice moved the last-ranked capability to rank 1 and recorded its original automatic rank; the mechanism refused a forced choice on a VULNERABLE capability with MANDATORY_SAFECY_CONSTRAINT",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-004",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh cases G and G2; engine staleness rules",
+      "expected_result": "STALE_AS_ACTIVE and STALE_WITHOUT_REVIEW rejected",
+      "observed_result": "Both staleness cases rejected by named rules; the selection record defines staleness as blocking reliance without re-evaluation",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-005",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "engine.select() over the production registry for REQ-P3-01",
+      "expected_result": "A traceable, explained, unadopted selection record",
+      "observed_result": "Five capabilities ranked; CAP-SPS-005 seo-cls-threshold-verifier ranked 1 at 77.80 on domain fit, four governance capabilities at 68.80; fingerprint 1eaedde118d67ce1; adoption PROPOSED_NOT_ADOPTED",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-006",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh section 5; registry deferred list",
+      "expected_result": "No research record promoted; gaps still open",
+      "observed_result": "CONF-001 still UNRESOLVED; CAP-028 still UNVERIFIED; nine candidates recorded DEFERRED or REJECTED with reasons, including CMS content modelling, LCP and INP thresholds, the ECC skill library, the Gemini CLI adapter, and the MCP registry as a security control",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-007",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh section 8; filesystem scan",
+      "expected_result": "No dependency and no global write",
+      "observed_result": "No node_modules, package-lock.json or wheel under sps2; no machine-global path written; every registered capability is PROJECT_LOCAL; legacy diff against c11da27 is empty; legacy .sps/ untouched",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p3.sh section 6; registry provenance fields",
+      "expected_result": "Traceable origin, commit and fact class",
+      "observed_result": "Every registered capability carries provenance.origin, a hex commit and fact_class; the selection record sets runtime_tracing to false and labels the method static",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "All seven validators",
+      "expected_result": "Every validator green; P3 approval pending",
+      "observed_result": "P3 53 checks 0 failed with 18 controls; P2 69 checks 0 failed with 22 negatives; P1 73 checks 0 failed with 25 negatives; governance 53; control 49 with 8 negatives; capability 55 with 16 negatives; lint PASSED; P3 requirements and decisions remain PENDING_USER_APPROVAL",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-010",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "git status --porcelain during pre-commit review",
+      "expected_result": "No secret committed",
+      "observed_result": "The agent harness wrote a live ANTHROPIC_AUTH_TOKEN value into the git-tracked file .claude/settings.json at 2026-10-03 21:29:33, unprompted and outside any SPS 2.0 change. It was NOT staged for the P3 commit; git reset was used to exclude it. The staged diff was scanned and contains zero occurrences of the token prefix. The file remains modified in the working tree because reverting it would break the running harness; this is reported to the user for manual revocation.",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P3"
+      }
+    }
+  ]
+}

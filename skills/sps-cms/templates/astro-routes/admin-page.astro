@@ -1,0 +1,33 @@
+---
+import { AdminLayout } from '../../components/cms/AdminLayout';
+import { DataTable } from '../../components/cms/DataTable';
+import { cmsConfig } from '../../config/cms.config';
+import { getCollectionItems } from '../../lib/db';
+
+const session = Astro.cookies.get('sps_admin_session');
+if (!session || !session.value) {
+  return Astro.redirect('/admin/login');
+}
+
+const currentTab = Astro.url.searchParams.get('tab') || 'packages';
+const collection = cmsConfig.collections.find((c) => c.name === currentTab) || cmsConfig.collections[0];
+const items = await getCollectionItems(collection.name);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{cmsConfig.siteTitle} - Admin Portal</title>
+  </head>
+  <body class="bg-slate-900">
+    <AdminLayout client:load currentTab={collection.name}>
+      <DataTable
+        client:load
+        collection={collection}
+        items={items}
+      />
+    </AdminLayout>
+  </body>
+</html>

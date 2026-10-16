@@ -1,0 +1,105 @@
+{
+  "schema": "sps2.decision-set/v1",
+  "phase": "P3",
+  "generated": "2026-10-03",
+  "note": "DEC-0016 to DEC-0019 approved by User on 2026-10-03 as part of the P3 approval.",
+  "decisions": [
+    {
+      "decision_id": "DEC-0016",
+      "title": "Production registry is populated only through the promotion gate",
+      "decision": "Capabilities enter sps2/capability/registry.json only if engine.promote() returns ok; every rejection reason is recorded.",
+      "reason": "Emptiness was a valid P1 and P2 state, but the real invariant is that a registered capability is evidenced, not that the registry is empty.",
+      "evidence": [
+        "REQ-P3-01",
+        "EV-P3-001"
+      ],
+      "alternatives": [
+        {
+          "option": "Keep the registry permanently empty until a later phase",
+          "rejected_because": "P3 exists to establish the mechanism; an empty registry would prove nothing."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
+      }
+    },
+    {
+      "decision_id": "DEC-0017",
+      "title": "Ranking factors are evidence-weighted; popularity is a tie-breaker only",
+      "decision": "Requirement fit 30, compatibility 20, security 20, licence 10, freshness 8, maintenance 5, provenance confidence 5, verification 2. Popularity and recency never contribute points.",
+      "reason": "A weight that admits stars would let reputation outrank evidence, which the P1 and P2 principles forbid.",
+      "evidence": [
+        "EV-P3-002"
+      ],
+      "alternatives": [
+        {
+          "option": "Include popularity as a ranking factor",
+          "rejected_because": "Popularity is contextual evidence only, per the P2 source hierarchy."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
+      }
+    },
+    {
+      "decision_id": "DEC-0018",
+      "title": "A forced user choice is honoured but cannot override mandatory safety",
+      "decision": "apply_forced_choice promotes the chosen capability to rank 1 unless its security status is VULNERABLE or SUSPECTED_RISK, its scope is unauthorised GLOBAL, or its lifecycle is REJECTED or REMOVED.",
+      "reason": "Respecting the user and protecting the user are both required: a silent substitution would be a lie, and blind obedience would be unsafe.",
+      "evidence": [
+        "EV-P3-003"
+      ],
+      "alternatives": [
+        {
+          "option": "Always let automatic ranking win",
+          "rejected_because": "That would silently override an explicit user decision."
+        },
+        {
+          "option": "Obey any forced choice unconditionally",
+          "rejected_because": "That would let a forced choice bypass a safety constraint."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
+      }
+    },
+    {
+      "decision_id": "DEC-0019",
+      "title": "Provenance is declared static, never runtime",
+      "decision": "The selection record sets provenance.method to static and runtime_tracing to false, and the gate requires an origin, a hex commit and a fact class.",
+      "reason": "P3 does not implement runtime provenance tracing and must not imply that it does.",
+      "evidence": [
+        "EV-P3-008"
+      ],
+      "alternatives": [
+        {
+          "option": "Claim runtime provenance tracing",
+          "rejected_because": "No runtime tracing exists, so the claim would be false."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
+      }
+    }
+  ]
+}

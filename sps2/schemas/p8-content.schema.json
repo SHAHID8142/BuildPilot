@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p8-content/v1",
+  "title": "P8 CMS Content Schema",
+  "description": "Schema for P8 CMS content, sections, and content types. Super Admin controls structure; Admin controls content.",
+  "definitions": {
+    "ContentType": {
+      "type": "object",
+      "required": ["id", "name", "fields", "created_at", "updated_at"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "required"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "type": {"enum": ["string", "text", "number", "boolean", "date", "asset"]},
+              "required": {"type": "boolean"}
+            }
+          }
+        },
+        "created_at": {"type": "string", "format": "date-time"},
+        "updated_at": {"type": "string", "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "Content": {
+      "type": "object",
+      "required": ["id", "type_id", "title", "body", "status", "author_id", "created_at", "updated_at"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "type_id": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "body": {"type": "string"},
+        "status": {"enum": ["draft", "published", "archived"]},
+        "author_id": {"type": "string", "minLength": 1},
+        "created_at": {"type": "string", "format": "date-time"},
+        "updated_at": {"type": "string", "format": "date-time"},
+        "published_at": {"type": ["string", "null"], "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "Section": {
+      "type": "object",
+      "required": ["id", "name", "layout", "content_ids", "order"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "layout": {"type": "string", "minLength": 1},
+        "content_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "order": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "Revision": {
+      "type": "object",
+      "required": ["id", "content_id", "version", "body", "author_id", "created_at"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "content_id": {"type": "string", "minLength": 1},
+        "version": {"type": "integer", "minimum": 1},
+        "body": {"type": "string"},
+        "author_id": {"type": "string", "minLength": 1},
+        "created_at": {"type": "string", "format": "date-time"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,436 @@
+{
+  "schema": "sps.requirements/v1",
+  "phase": "PHASE-04",
+  "title": "Discovery & Capability Architecture",
+  "generated": "2026-10-03",
+  "note": "Every requirement is a real Phase 04 obligation. All were APPROVED by the User on 2026-10-03; the agent implemented them but did not approve them.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P04-01",
+      "title": "Capability discovery and lifecycle model",
+      "description": "Phase 04 obligation: Capability discovery and lifecycle model",
+      "source": "Phase 04 brief s1,s2,s6,s9",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "A 14-state capability lifecycle is documented in .sps/capability/CAPABILITY-MODEL.md",
+        "Each state records who may set it; APPROVED is user-only",
+        "The lifecycle maps onto the Phase 03 model rather than duplicating it"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/CAPABILITY-MODEL.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-02",
+      "title": "Separate FACT, EVIDENCE, INFERENCE, UNKNOWN claim classes",
+      "description": "Phase 04 obligation: Separate FACT, EVIDENCE, INFERENCE, UNKNOWN claim classes",
+      "source": "Phase 04 brief s6; Phase 01 F-9",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "All four claim classes are defined in .sps/capability/CAPABILITY-MODEL.md",
+        "validate-capability.sh rejects UNKNOWN rendered as known",
+        "A positive control proves a valid record is still accepted"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/CAPABILITY-MODEL.md",
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-003"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T02"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-03",
+      "title": "Capability and research contracts",
+      "description": "Phase 04 obligation: Capability and research contracts",
+      "source": "Phase 04 brief s6,s13",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "SCHEMA.md defines a capability contract and a research contract",
+        "Registry and research cache are valid JSON with enforced field rules",
+        "The registry is empty - no capability is fabricated"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/SCHEMA.md s12-s13",
+        ".sps/capability/registry/PHASE-04-CAPABILITIES.json",
+        ".sps/research/PHASE-04-RESEARCH.json"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-002"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T02"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-04",
+      "title": "Security gate where UNKNOWN is never safe",
+      "description": "Phase 04 obligation: Security gate where UNKNOWN is never safe",
+      "source": "Phase 04 brief s13",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "SECURITY.md defines a security enum where UNKNOWN blocks install",
+        "validate-capability.sh rejects UNKNOWN security rendered as safe",
+        "The threat model covers malicious, abandoned, compromised and typosquatted sources"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/SECURITY.md",
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-004"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T03"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-05",
+      "title": "Project-local activation is the default",
+      "description": "Phase 04 obligation: Project-local activation is the default",
+      "source": "Phase 04 brief s4",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "PROJECT_LOCAL is the default install scope",
+        "A GLOBAL scope without authorization is rejected",
+        "A GLOBAL scope authorized by an agent is rejected"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/SECURITY.md",
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-005"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T03"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-06",
+      "title": "MCP capabilities evaluated, never assumed safe",
+      "description": "Phase 04 obligation: MCP capabilities evaluated, never assumed safe",
+      "source": "Phase 04 brief s14",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "An MCP contract with trust_level and rollback is defined",
+        "Installing an untrusted MCP is rejected",
+        "No MCP is installed during Phase 04"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/SCHEMA.md s14",
+        ".sps/capability/SECURITY.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-006"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T03"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-07",
+      "title": "Technology research gate before selection",
+      "description": "Phase 04 obligation: Technology research gate before selection",
+      "source": "Phase 04 brief s5",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "A research contract covers ten areas and demands a rank<=4 source",
+        "A selection whose research is not SUFFICIENT is rejected",
+        "The research cache is project-local, never agent or machine memory"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/PROVENANCE.md",
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-007"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T04"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-08",
+      "title": "Provenance chain with honest enforcement levels",
+      "description": "Phase 04 obligation: Provenance chain with honest enforcement levels",
+      "source": "Phase 04 brief s12",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "A provenance chain links requirement through to usage",
+        "Enforcement is reported as ENFORCED, VALIDATED, DOCUMENTED or DECLARED",
+        "Runtime provenance tracking is explicitly NOT claimed"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/PROVENANCE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T04"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-09",
+      "title": "Staleness and source-priority rules",
+      "description": "Phase 04 obligation: Staleness and source-priority rules",
+      "source": "Phase 04 brief s16,s17",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Six source ranks are defined; community popularity never establishes correctness",
+        "Staleness fields and re-evaluation triggers are documented",
+        "A STALE capability presented as current is rejected"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/CAPABILITY-MODEL.md",
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-008"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-10",
+      "title": "Agent-neutral architecture",
+      "description": "Phase 04 obligation: Agent-neutral architecture",
+      "source": "Phase 04 brief s3,s15",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Only Markdown, JSON and plain shell are used - no agent runtime required",
+        "Slash commands are not a mandatory dependency",
+        "An AGENT_NEUTRAL claim carrying an agent-specific dependency is rejected"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/PROVENANCE.md",
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-009"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T05"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-11",
+      "title": "Audit of the existing hardcoded skill routing",
+      "description": "Phase 04 obligation: Audit of the existing hardcoded skill routing",
+      "source": "Phase 04 brief s8",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Hardcoded routing is measured from the repository, not assumed",
+        "The specific points preventing dynamic selection are enumerated",
+        "A staged migration plan exists; the legacy router is not removed"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/CAPABILITY-MODEL.md",
+        ".sps/capability/PROVENANCE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-010"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-12",
+      "title": "No-emoji rule",
+      "description": "Phase 04 obligation: No-emoji rule",
+      "source": "Phase 04 brief s18",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "A no-emoji rule is stated in .sps/capability/CAPABILITY-MODEL.md",
+        "Icon libraries are selectable capabilities, not a fixed default",
+        "The repository's own emoji usage is recorded as a known issue"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/capability/CAPABILITY-MODEL.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P04-13",
+      "title": "Validation rejects invalid capability states",
+      "description": "Phase 04 obligation: Validation rejects invalid capability states",
+      "source": "Phase 04 brief s20",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Cases A through N are each constructed and each must be rejected",
+        "A positive control proves a valid capability is still accepted",
+        "validate-capability.sh exits 0 with 0 failures and 0 missed cases"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/tools/validate-capability.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P04-003"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-04-T06"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 04 implementation and verification were independently reviewed and accepted."
+    }
+  ],
+  "verifications": []
+}

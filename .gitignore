@@ -1,0 +1,132 @@
+.DS_Store
+*.log
+.idea/
+.vscode/
+.agents/
+skills-lock.json
+node_modules/
+.tmp.step.out
+.tmp-smoke*/
+.tmp-smoke-sps/
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase 02 governance additions (see AUDIT-PHASE-02-GOVERNANCE-IMPLEMENTATION.md)
+# Each block below was reviewed individually; nothing is ignored speculatively.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# --- 1. Secrets and credentials -------------------------------------------------
+# Category review: NO real .env/.pem/.key file currently exists in the repo
+# (verified by find + entropy scan on 2026-10-03). These rules are preventive so
+# that a future Phase CANNOT accidentally commit secrets.
+# NOTE: templates/*.example files are deliberately NOT ignored - sanitised
+# templates are required documentation for sps-cms consumers.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_rsa.*
+id_ecdsa
+id_ecdsa.*
+id_ed25519
+id_ed25519.*
+*.ppk
+secrets/
+.secrets/
+credentials/
+*.credentials
+.netrc
+.npmrc
+.docker/config.json
+
+# --- 2. Generated build output ---------------------------------------------------
+# Category review: this repo ships Markdown + shell scripts and has NO build step
+# for itself. These cover the target projects that SPS orchestrates, and any
+# future tooling, without ignoring any file this repo actually needs.
+dist/
+build/
+out/
+.output/
+.next/
+.nuxt/
+.svelte-kit/
+.astro/
+.vercel/
+.netlify/
+.turbo/
+.cache/
+
+# --- 3. Dependency / package manager state --------------------------------------
+# node_modules/ already covered above. These are lockfile-adjacent caches.
+.pnpm-store/
+.yarn/cache/
+.yarn/install-state.gz
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+# --- 4. Test / coverage output ---------------------------------------------------
+coverage/
+.nyc_output/
+*.lcov
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+
+# --- 5. Temporary files from this repo's own scripts ----------------------------
+# Category review: install.sh writes $LOG_DIR/.step.out and smoke-sps.sh creates
+# .tmp-smoke*/. Both are machine-local run artefacts, not source.
+.tmp.test_file
+.sps_step.log
+
+# --- 6. OS files -----------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# --- 7. IDE / editor -------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# --- 8. Agent-specific machine-local state --------------------------------------
+# Category review: .agents/ was already ignored pre-Phase-02. The rest are
+# machine-local caches. Project governance under .sps/ is explicitly NOT ignored
+# - the repository is the canonical source of truth for project state.
+.agent/
+.codeium/
+.cursor/
+.cline/
+.roo/
+.continue/
+.aider*
+# Kilo agent worktrees: generated tooling state (nested checkout of this repo,
+# created by the agent harness). Narrow on purpose: only .kilo/worktrees/ is
+# excluded by this rule, so any other .kilo content stays trackable. Mirrors
+# the tool's own local .git/info/exclude entry. (Note: .kilo/.gitignore is
+# ignored by the tool's OWN rule, not by this one.)
+.kilo/worktrees/
+
+# --- 9. Python bytecode ----------------------------------------------------------
+# Category review: this repo is Python standard library only, but the test
+# suites import sps2/ and domain/ in place, so the interpreter writes
+# __pycache__/ bytecode next to the sources. sps2/.gitignore already covered
+# its own tree; these root rules cover domain/ and any future package, so
+# machine- and Python-version-specific .pyc files cannot enter a commit.
+__pycache__/
+*.py[cod]

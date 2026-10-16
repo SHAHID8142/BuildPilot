@@ -1,0 +1,232 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "incident": "INCIDENT-P3-001",
+  "generated": "2026-10-03",
+  "note": "Incident evidence. No credential value appears in this file. classification distinguishes FACT, INFERENCE and UNRESOLVED. An observed absence is reported as an absence, never as proof of safety. Revocation is USER-ATTESTED and was not independently verified by this agent; see EV-SEC-011 and EV-SEC-012.",
+  "records": [
+    {
+      "evidence_id": "EV-SEC-001",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Secret-safe inventory of the affected file before remediation",
+      "expected_result": "python3 key-name walk over .claude/settings.json",
+      "observed_result": "A credential class is present",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-002",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Credential fingerprint recorded without disclosing the value",
+      "expected_result": "sha256 of the credential value, computed in process",
+      "observed_result": "A stable fingerprint exists for comparison",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-003",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The credential is absent from the Git index and from HEAD",
+      "expected_result": "git show :.claude/settings.json and git show HEAD:.claude/settings.json",
+      "observed_result": "No credential in index or HEAD",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-004",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "No reachable commit contains the credential",
+      "expected_result": "git rev-list --all (25 commits) tested individually; git log --all -S sk-or-v1",
+      "observed_result": "No reachable commit is affected",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-005",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Exactly one dangling checkpoint commit contains the credential",
+      "expected_result": "git fsck dangling commits, then per-commit test of .claude/settings.json",
+      "observed_result": "One unreachable object is affected",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-006",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The credential was contained in the working tree",
+      "expected_result": "selective removal of the single key env.ANTHROPIC_AUTH_TOKEN",
+      "observed_result": "Credential gone, unrelated settings preserved",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-007",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The harness, not the SPS 2.0 implementation, wrote the credential",
+      "expected_result": "content search for any instruction to write this value",
+      "observed_result": "No SPS 2.0 or legacy artefact instructs the write",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "INFERENCE",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Credential revocation status cannot be established from this environment",
+      "expected_result": "no credential-management interface available",
+      "observed_result": "Revocation requires an external action",
+      "result": "BLOCKED",
+      "exit_code": null,
+      "classification": "UNRESOLVED",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "No credential pattern found anywhere in the repository after remediation",
+      "expected_result": "python3 sps2/security/scan_secrets.py .",
+      "observed_result": "Repository is clean",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-010",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "The exposed credential remains valid until revoked",
+      "expected_result": "logical consequence of removal without revocation",
+      "observed_result": "Removal is not revocation",
+      "result": "BLOCKED",
+      "exit_code": null,
+      "classification": "UNRESOLVED",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-011",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "User reports the credential was revoked externally",
+      "expected_result": "user instruction, 2026-10-03",
+      "observed_result": "Revocation is user-attested",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-012",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Independent verification of revocation was not possible from this environment",
+      "expected_result": "capability assessment of the executing environment",
+      "observed_result": "Why no independent probe was attempted",
+      "result": "BLOCKED",
+      "exit_code": null,
+      "classification": "UNRESOLVED",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-013",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Post-revocation exposure re-check: working tree, index and HEAD are clean",
+      "expected_result": "python3 shape-based scan of the working tree, git index and HEAD",
+      "observed_result": "No credential in the live or committed state",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-014",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Post-revocation re-check: no mainline commit contains the credential",
+      "expected_result": "git rev-list main, every commit scanned across all files",
+      "observed_result": "Published history is unaffected",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-015",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Post-revocation re-check: the harness checkpoint object is retained, not modified",
+      "expected_result": "git rev-list --all filtered to commits not reachable from main",
+      "observed_result": "Exposure surface unchanged; no destructive action taken",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-016",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Effective risk is materially reduced now that the credential is revoked",
+      "expected_result": "combination of user-attested revocation and verified containment",
+      "observed_result": "Residual risk assessment",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "INFERENCE",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    }
+  ]
+}

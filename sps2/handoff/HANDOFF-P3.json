@@ -1,0 +1,86 @@
+{
+  "schema": "sps2.handoff-set/v1",
+  "phase": "P3",
+  "generated": "2026-10-03",
+  "handoffs": [
+    {
+      "handoff_id": "HANDOFF-P3-PRODUCTION-CAPABILITY",
+      "from_phase": "P3",
+      "current_task": "P3 production capability registry and selection engine",
+      "current_state": "COMPLETE / VERIFIED / APPROVED",
+      "completed": [
+        "Gate check passed: P1 APPROVED, P2 APPROVED as RESEARCH_AND_AUDIT, P3 not started, tree clean, all validators green",
+        "Implemented engine.promote(), a deterministic promotion gate with 30+ named rejection rules",
+        "Implemented evidence-weighted ranking; proved determinism across 24 input permutations",
+        "Proved a candidate with ten million stars cannot outrank a higher evidence score",
+        "Implemented forced user choice that is honoured but cannot override VULNERABLE or SUSPECTED_RISK",
+        "Implemented the staleness model; a stale capability cannot remain ACTIVE",
+        "Promoted 5 evidenced capabilities into the production registry through the real gate",
+        "Recorded 9 deferred or rejected candidates, each with a stated reason",
+        "Created a project-local selection record produced by the engine, with adoption PROPOSED_NOT_ADOPTED",
+        "Built check_p3.py and validate-p3.sh with cases A-O plus two positive controls",
+        "Confirmed no dependency installed and no machine-global state written",
+        "Fixed six real validator defects rather than working around them",
+        "P3 approved by User on 2026-10-03, including the documented security incident closure (explicit instruction; never inferred)",
+        "P3 approved by User on 2026-10-03, including the documented security incident closure (explicit instruction; never inferred)"
+      ],
+      "not_completed": [
+        "P4 has NOT started and is NOT approved. No capability was installed, promoted beyond CANDIDATE, or adopted. The credential revocation remains USER-ATTESTED and was never independently verified; forensic checkpoint a7767cf remains preserved and was NOT purged.",
+        "P4 has NOT started and is NOT approved. No capability was installed, promoted beyond CANDIDATE, or adopted. The credential revocation remains USER-ATTESTED and was never independently verified; forensic checkpoint a7767cf remains preserved and was NOT purged.",
+        "DEC-0016 to DEC-0019 await separate user approval",
+        "No capability is APPROVED, INSTALLED, VERIFIED or ACTIVE; all remain CANDIDATE",
+        "P4 and later phases have NOT started",
+        "LCP and INP thresholds remain UNVERIFIED; no verifier may encode them",
+        "CMS content modelling remains RESEARCH_FURTHER",
+        "No agent adapter was built; Gemini CLI documentation is still a known gap",
+        "Provenance is static and detection-based; runtime tracing is NOT implemented and is not claimed",
+        "No skill, MCP or third-party software was installed or selected for adoption"
+      ],
+      "blockers": [
+        "No remote may be created or used until separately authorised",
+        "The standalone SPS 2.0 repository destination still requires a user-specified name and location (DEC-0009)",
+        "Credential revocation is USER-ATTESTED and not independently verified; provider-side state cannot be checked from this environment",
+        "Forensic checkpoint a7767cf is preserved by user decision and must not be purged without a further explicit instruction",
+        "Credential revocation is USER-ATTESTED and not independently verified; provider-side state cannot be checked from this environment",
+        "Forensic checkpoint a7767cf is preserved by user decision and must not be purged without a further explicit instruction"
+      ],
+      "requirements": [
+        "REQ-P3-01",
+        "REQ-P3-02",
+        "REQ-P3-03",
+        "REQ-P3-04",
+        "REQ-P3-05",
+        "REQ-P3-06",
+        "REQ-P3-07",
+        "REQ-P3-08"
+      ],
+      "evidence": [
+        "EV-P3-001",
+        "EV-P3-002",
+        "EV-P3-003",
+        "EV-P3-004",
+        "EV-P3-005",
+        "EV-P3-006",
+        "EV-P3-007",
+        "EV-P3-008",
+        "EV-P3-009"
+      ],
+      "user_approval": "APPROVED",
+      "next_allowed_action": "Wait for an explicit user instruction authorising P4. Do not begin P4 without it.",
+      "forbidden_next_action": "Do NOT start P4, do NOT install any capability, skill or MCP, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, and do NOT perform Phase 01 remediation."
+    }
+  ],
+  "approval_record": {
+    "decided_by": "User",
+    "decided_at": "2026-10-03",
+    "basis": "Explicit user approval of P3, including the documented security incident closure, 2026-10-03"
+  },
+  "approval_scope": {
+    "phase": "P3",
+    "scope": "CAPABILITY_ENGINE_AND_PROJECT_SELECTION",
+    "security_incident_closure": "APPROVED_INCIDENT_P3_001",
+    "credential_revocation": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "forensic_checkpoint_a7767cf": "PRESERVED_BY_USER_DECISION",
+    "p4": "NOT_APPROVED"
+  }
+}

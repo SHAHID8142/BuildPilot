@@ -1,0 +1,130 @@
+{
+  "schema": "sps2.decision-set/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "note": "DEC-0011 to DEC-0015 approved by User on 2026-10-03 as part of the P2 research approval.",
+  "decisions": [
+    {
+      "decision_id": "DEC-0011",
+      "title": "Adopt AGENTS.md as the SPS project-local instruction surface",
+      "decision": "SPS emits AGENTS.md plus adapter translation rather than defining a new instruction file.",
+      "reason": "Five competing harness-specific instruction files exist; AGENTS.md is the convergent standard and is now stewarded under the Linux Foundation.",
+      "evidence": [
+        "SRC-014",
+        "SRC-011",
+        "SRC-004"
+      ],
+      "alternatives": [
+        {
+          "option": "Define an SPS-specific instruction format",
+          "rejected_because": "It would add a sixth competing format and reduce portability."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
+      }
+    },
+    {
+      "decision_id": "DEC-0012",
+      "title": "Hooks are an optimisation, never the enforcement layer",
+      "decision": "Governance gates are validators that refuse transitions; hooks may accelerate them but are never load-bearing.",
+      "reason": "Hook support is partial or unknown across harnesses, so load-bearing enforcement would fail silently wherever hooks are unavailable.",
+      "evidence": [
+        "SRC-002",
+        "SRC-004",
+        "SRC-006",
+        "SRC-010"
+      ],
+      "alternatives": [
+        {
+          "option": "Enforce governance through lifecycle hooks",
+          "rejected_because": "Would make correctness depend on uneven harness hook support."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
+      }
+    },
+    {
+      "decision_id": "DEC-0013",
+      "title": "MCP registry provenance adopted, security role rejected",
+      "decision": "SPS mirrors reverse-DNS namespace provenance for capability records and performs its own security evaluation.",
+      "reason": "The registry explicitly delegates security scanning and does not scan server code.",
+      "evidence": [
+        "SRC-012",
+        "SRC-013"
+      ],
+      "alternatives": [
+        {
+          "option": "Treat registry listing as a security signal",
+          "rejected_because": "The registry documents that it performs no code scanning."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
+      }
+    },
+    {
+      "decision_id": "DEC-0014",
+      "title": "Do not encode unverified numeric thresholds in any verifier",
+      "decision": "LCP and INP thresholds remain RESEARCH_FURTHER until observed from an official source.",
+      "reason": "The thresholds could not be retrieved during P2; encoding an assumed value would repeat the legacy documentation-as-proof failure.",
+      "evidence": [
+        "SRC-018",
+        "SRC-017"
+      ],
+      "alternatives": [
+        {
+          "option": "Encode commonly cited threshold values from memory",
+          "rejected_because": "Unverifiable from the consulted sources; prohibited by the no-assumption requirement."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
+      }
+    },
+    {
+      "decision_id": "DEC-0015",
+      "title": "Continuous learning becomes evidence-gated proposal only",
+      "decision": "Automatically extracted patterns may be recorded as proposals but never become binding policy without explicit user approval.",
+      "reason": "Self-reported confidence is not independent evidence, and self-modifying governance would violate the no-silent-inference requirement.",
+      "evidence": [
+        "SRC-002"
+      ],
+      "alternatives": [
+        {
+          "option": "Adopt instinct-based learning with confidence scoring",
+          "rejected_because": "Self-scored rules bypass user approval and generalise poorly across projects."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only."
+      }
+    }
+  ]
+}

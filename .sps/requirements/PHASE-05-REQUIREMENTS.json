@@ -1,0 +1,585 @@
+{
+  "schema": "sps.requirements/v1",
+  "phase": "PHASE-05",
+  "title": "SPS 2.0 Repository Architecture & Migration Planning",
+  "generated": "2026-10-03",
+  "note": "Phase 05 was PLANNING ONLY; no SPS 2.0 implementation was performed. All requirements were APPROVED by the User on 2026-10-03; the agent produced the plan and did not approve it.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P05-01",
+      "title": "Forensic analysis from the repository",
+      "description": "Phase 05 planning obligation: Forensic analysis from the repository",
+      "source": "Phase 05 brief s2",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Each subsystem model is traced to files and measured counts",
+        "Absence claims are verified by explicit search, not inferred",
+        "Every measured figure is reproducible"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md",
+        ".sps/architecture/SPS2-DATA-FLOW.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T01"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-02",
+      "title": "Legacy preserved as immutable reference",
+      "description": "Phase 05 planning obligation: Legacy preserved as immutable reference",
+      "source": "Phase 05 brief s3",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Migration matrix classifies every legacy component with a rationale",
+        "All eight disposition classes are used",
+        "The legacy repository is not modified by this phase"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-MIGRATION-MATRIX.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T02"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-03",
+      "title": "Complete proposed repository architecture",
+      "description": "Phase 05 planning obligation: Complete proposed repository architecture",
+      "source": "Phase 05 brief s4",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "All 22 concerns map to a named directory with a stated responsibility",
+        "core/ and governance/ one-way dependency is stated",
+        "The project-local layout is defined separately from the framework repo"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T03"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-04",
+      "title": "Global vs project-local boundary",
+      "description": "Phase 05 planning obligation: Global vs project-local boundary",
+      "source": "Phase 05 brief s5",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Every artefact is classified global / project-local / cacheable / never-global",
+        "Project isolation guarantees are specified",
+        "Team reproducibility comes from repository state, not machine mutation"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-GLOBAL-VS-LOCAL.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T04"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-05",
+      "title": "Dynamic capability selection replaces hardcoded routing",
+      "description": "Phase 05 planning obligation: Dynamic capability selection replaces hardcoded routing",
+      "source": "Phase 05 brief s6",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "The full selection pipeline is specified from requirement to verification",
+        "Forced user choices override automatic selection",
+        "Popularity is a tie-breaker only, never a primary criterion"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-DATA-FLOW.md",
+        ".sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T03"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-06",
+      "title": "Technology research gate",
+      "description": "Phase 05 planning obligation: Technology research gate",
+      "source": "Phase 05 brief s7",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Covers docs, version, compatibility, runtime, ecosystem, build, package manager, testing, deployment, limits, MCP/skills, security",
+        "Insufficient readiness blocks selection"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-DATA-FLOW.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T03"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-07",
+      "title": "Vertical-slice development methodology",
+      "description": "Phase 05 planning obligation: Vertical-slice development methodology",
+      "source": "Phase 05 brief s8",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "A slice equals frontend + CMS + backend + data + validation + assets + SEO + tests",
+        "A slice is not done while any required layer is missing",
+        "Sequencing forbids deferring CMS to a later phase"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-DATA-FLOW.md",
+        ".sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T03"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-08",
+      "title": "CMS 2.0 Super Admin / Admin separation",
+      "description": "Phase 05 planning obligation: CMS 2.0 Super Admin / Admin separation",
+      "source": "Phase 05 brief s9",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Super Admin retains structural control; Admin is content-only",
+        "Roles, content/section model, media, preview, publishing, audit history specified",
+        "The legacy hardcoded-secret auth helper is marked NEVER COPY"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-MIGRATION-MATRIX.md",
+        ".sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T02"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-09",
+      "title": "Unified asset workflow",
+      "description": "Phase 05 planning obligation: Unified asset workflow",
+      "source": "Phase 05 brief s10",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Direct upload, existing-media selection and external URL are all supported",
+        "External URLs are validated, fetched, optimised and stored locally with attribution",
+        "A reusable asset picker is specified"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-ROADMAP.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T03"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-11",
+      "title": "SEO 2.0 designed from scratch",
+      "description": "Phase 05 planning obligation: SEO 2.0 designed from scratch",
+      "source": "Phase 05 brief s12",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "All 27 listed SEO dimensions are in scope for the future subsystem",
+        "The legacy absence is documented as a verified finding",
+        "A pre-deployment audit is mandatory before shipping"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-MIGRATION-MATRIX.md",
+        ".sps/architecture/SPS2-ROADMAP.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T01"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-12",
+      "title": "Approval never inferred",
+      "description": "Phase 05 planning obligation: Approval never inferred",
+      "source": "Phase 05 brief s13",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "INSTRUCTION / REQUIREMENT / PLAN / IMPLEMENTATION / VERIFICATION / APPROVAL / RELEASE are distinguished",
+        "'do it' is explicitly not equivalent to 'approve the previous phase'"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-DATA-FLOW.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T03"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-13",
+      "title": "Agent interoperability via core/adapter split",
+      "description": "Phase 05 planning obligation: Agent interoperability via core/adapter split",
+      "source": "Phase 05 brief s14,s15",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "The one-way core/adapter dependency is specified",
+        "Portability is testable: the core passes with all adapters deleted",
+        "Non-compliant agents are handled by machine-checkable rejection, not stronger instructions"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-AGENT-INTEROPERABILITY.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T05"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-14",
+      "title": "Project-local memory architecture",
+      "description": "Phase 05 planning obligation: Project-local memory architecture",
+      "source": "Phase 05 brief s16,s17",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Memory, decisions, tasks, technologies, capabilities, provenance, research, issues and constraints are project-local",
+        "A new agent can continue the project from repository state alone"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-GLOBAL-VS-LOCAL.md",
+        ".sps/architecture/SPS2-REPOSITORY-ARCHITECTURE.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T04"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-15",
+      "title": "Team collaboration model",
+      "description": "Phase 05 planning obligation: Team collaboration model",
+      "source": "Phase 05 brief s17",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Shared rules, memory, decisions, registry, reproducible setup, handoff, conflict detection and audit trail are specified"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-GLOBAL-VS-LOCAL.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T04"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-16",
+      "title": "Git and repository strategy",
+      "description": "Phase 05 planning obligation: Git and repository strategy",
+      "source": "Phase 05 brief s18",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Preservation, new repo, branching, tagging, release, CI, remote and push policy are specified",
+        "No remote was created and nothing was pushed"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-ROADMAP.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T06"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-17",
+      "title": "Isolated phase roadmap",
+      "description": "Phase 05 planning obligation: Isolated phase roadmap",
+      "source": "Phase 05 brief s20",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "16 phases, each with objective, dependencies, scope, forbidden scope, deliverables, acceptance, verification, approval and rollback",
+        "P1 and P2 are identified as the critical path"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/architecture/SPS2-ROADMAP.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T07"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    },
+    {
+      "requirement_id": "REQ-P05-18",
+      "title": "No implementation performed",
+      "description": "Phase 05 planning obligation: No implementation performed",
+      "source": "Phase 05 brief s21",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "No file outside .sps/ and the Phase 05 report is modified",
+        "No skill, MCP, package or dependency is installed",
+        "No Git remote is created and nothing is pushed"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P05-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [],
+      "related_tasks": [
+        "PHASE-05-T08"
+      ],
+      "related_decisions": [
+        "DEC-0007"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "User reviewed the Phase 05 planning report, architecture, migration strategy, repository separation strategy, global-vs-project-local model, and discrepancies, and approved Phase 05."
+    }
+  ],
+  "verifications": []
+}

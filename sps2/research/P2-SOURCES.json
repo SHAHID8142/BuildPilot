@@ -1,0 +1,234 @@
+{
+  "schema": "sps2.research-sources/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "note": "Public documentation or official repositories inspected statically. No external code was executed. source_rank 1 is strongest. Conflicts are recorded, never silently reconciled.",
+  "source_rank": {
+    "1": "official repository or specification",
+    "2": "official product documentation",
+    "3": "maintainer technical material",
+    "4": "independent technical analysis",
+    "5": "community discussion",
+    "6": "search snippets"
+  },
+  "sources": [
+    {
+      "source_id": "SRC-001",
+      "url": "https://github.com/affaan-m/ECC",
+      "project": "ECC",
+      "source_type": "OFFICIAL_REPO",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "Repo tree, harness directories, agents/skills/hooks layout, licence, commit count",
+      "claims_supported": "Repo tree, harness directories, agents/skills/hooks layout, licence, commit count"
+    },
+    {
+      "source_id": "SRC-002",
+      "url": "https://raw.githubusercontent.com/affaan-m/ECC/main/README.md",
+      "project": "ECC",
+      "source_type": "OFFICIAL_REPO",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "skills/ inventory, continuous-learning-v2 instinct approach, hooks.json events, contexts/, mcp-configs/",
+      "claims_supported": "skills/ inventory, continuous-learning-v2 instinct approach, hooks.json events, contexts/, mcp-configs/"
+    },
+    {
+      "source_id": "SRC-003",
+      "url": "https://github.com/msitarzewski/agency-agents",
+      "project": "agency-agents",
+      "source_type": "OFFICIAL_REPO",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "Division-based persona collection, tools.json and divisions.json, licence, commit count",
+      "claims_supported": "Division-based persona collection, tools.json and divisions.json, licence, commit count"
+    },
+    {
+      "source_id": "SRC-004",
+      "url": "https://docs.claude.com/en/docs/claude-code/settings",
+      "project": "Claude Code",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "Settings file scopes and precedence, user vs project-local, skills location",
+      "claims_supported": "Settings file scopes and precedence, user vs project-local, skills location"
+    },
+    {
+      "source_id": "SRC-005",
+      "url": "https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview",
+      "project": "Agent Skills",
+      "source_type": "OFFICIAL_SPEC",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "SKILL.md progressive disclosure levels, sharing scopes per surface, runtime constraints",
+      "claims_supported": "SKILL.md progressive disclosure levels, sharing scopes per surface, runtime constraints"
+    },
+    {
+      "source_id": "SRC-006",
+      "url": "https://docs.claude.com/en/docs/claude-code/security",
+      "project": "Claude Code",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "Permission modes, sandboxing, working-directory boundary, audit logging, ConfigChange hooks",
+      "claims_supported": "Permission modes, sandboxing, working-directory boundary, audit logging, ConfigChange hooks"
+    },
+    {
+      "source_id": "SRC-007",
+      "url": "https://opencode.ai/docs/config/",
+      "project": "OpenCode",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "Config merge semantics, precedence chain, global vs project paths, .opencode subdirectories",
+      "claims_supported": "Config merge semantics, precedence chain, global vs project paths, .opencode subdirectories"
+    },
+    {
+      "source_id": "SRC-008",
+      "url": "https://github.com/openai/codex/blob/main/docs/config.md",
+      "project": "Codex",
+      "source_type": "OFFICIAL_REPO",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "docs/config.md is a 15-line pointer; lifecycle hooks and allow_managed_hooks_only in requirements.toml",
+      "claims_supported": "docs/config.md is a 15-line pointer; lifecycle hooks and allow_managed_hooks_only in requirements.toml"
+    },
+    {
+      "source_id": "SRC-009",
+      "url": "https://developers.openai.com/codex/security",
+      "project": "Codex",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "Codex Security CLI and SDK, SARIF output, CI severity policy, isolated-environment validation",
+      "claims_supported": "Codex Security CLI and SDK, SARIF output, CI severity policy, isolated-environment validation"
+    },
+    {
+      "source_id": "SRC-010",
+      "url": "https://cursor.com/docs/context/rules",
+      "project": "Cursor",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": ".cursor/rules .mdc frontmatter, four rule types, precedence, nested AGENTS.md, scope limits",
+      "claims_supported": ".cursor/rules .mdc frontmatter, four rule types, precedence, nested AGENTS.md, scope limits"
+    },
+    {
+      "source_id": "SRC-011",
+      "url": "https://docs.cline.bot/features/cline-rules",
+      "project": "Cline",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": ".clinerules and .cline/rules, cross-tool rule autodetection, conditional path rules, AGENTS.md",
+      "claims_supported": ".clinerules and .cline/rules, cross-tool rule autodetection, conditional path rules, AGENTS.md"
+    },
+    {
+      "source_id": "SRC-012",
+      "url": "https://modelcontextprotocol.io/registry/about",
+      "project": "MCP Registry",
+      "source_type": "OFFICIAL_SPEC",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "server.json schema, DNS-verified namespaces, delegated security scanning, aggregator-only consumption",
+      "claims_supported": "server.json schema, DNS-verified namespaces, delegated security scanning, aggregator-only consumption"
+    },
+    {
+      "source_id": "SRC-013",
+      "url": "https://modelcontextprotocol.io/specification/2025-06-18/basic/security_best_practices",
+      "project": "MCP",
+      "source_type": "OFFICIAL_SPEC",
+      "source_rank": 1,
+      "accessed": "2026-10-03",
+      "relevance": "Confused deputy, token passthrough, SSRF, session hijack, prompt injection, scope minimisation",
+      "claims_supported": "Confused deputy, token passthrough, SSRF, session hijack, prompt injection, scope minimisation"
+    },
+    {
+      "source_id": "SRC-014",
+      "url": "https://agents.md/",
+      "project": "AGENTS.md",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "Cross-tool standard, LF stewardship, supported-agent list, nesting rules",
+      "claims_supported": "Cross-tool standard, LF stewardship, supported-agent list, nesting rules"
+    },
+    {
+      "source_id": "SRC-015",
+      "url": "https://www.anthropic.com/engineering/built-multi-agent-research-system",
+      "project": "Anthropic",
+      "source_type": "MAINTAINER_DOCS",
+      "source_rank": 3,
+      "accessed": "2026-10-03",
+      "relevance": "Lead plus parallel subagents, measured uplift, filesystem artefact pattern, checkpoint evaluation",
+      "claims_supported": "Lead plus parallel subagents, measured uplift, filesystem artefact pattern, checkpoint evaluation"
+    },
+    {
+      "source_id": "SRC-016",
+      "url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+      "project": "Google Search Central",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "SEO fundamentals: sitemaps, robots.txt, canonicalisation, structured data, Search Console",
+      "claims_supported": "SEO fundamentals: sitemaps, robots.txt, canonicalisation, structured data, Search Console"
+    },
+    {
+      "source_id": "SRC-017",
+      "url": "https://web.dev/articles/defining-core-web-vitals-thresholds",
+      "project": "web.dev",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "CLS good threshold 0.1 and poor threshold 0.25 with stated derivation",
+      "claims_supported": "CLS good threshold 0.1 and poor threshold 0.25 with stated derivation"
+    },
+    {
+      "source_id": "SRC-018",
+      "url": "https://web.dev/articles/vitals",
+      "project": "web.dev",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "Core Web Vitals set LCP, CLS, INP; numeric LCP/INP tables not retrieved, see CONF-001",
+      "claims_supported": "Core Web Vitals set LCP, CLS, INP; numeric LCP/INP tables not retrieved, see CONF-001"
+    },
+    {
+      "source_id": "SRC-019",
+      "url": "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration",
+      "project": "Next.js",
+      "source_type": "OFFICIAL_DOCS",
+      "source_rank": 2,
+      "accessed": "2026-10-03",
+      "relevance": "ISR, x-nextjs-cache header values, draft mode, sitemap and robots conventions",
+      "claims_supported": "ISR, x-nextjs-cache header values, draft mode, sitemap and robots conventions"
+    },
+    {
+      "source_id": "SRC-020",
+      "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
+      "project": "OWASP GenAI",
+      "source_type": "INDEPENDENT_TECHNICAL",
+      "source_rank": 4,
+      "accessed": "2026-10-03",
+      "relevance": "LLM application risk taxonomy, project scope and version context",
+      "claims_supported": "LLM application risk taxonomy, project scope and version context"
+    }
+  ],
+  "counts": {
+    "total": 20
+  },
+  "conflicts": [
+    {
+      "id": "CONF-001",
+      "topic": "LCP and INP numeric thresholds",
+      "source_a": "web.dev/articles/vitals (SRC-018)",
+      "source_a_says": "Confirms LCP, CLS and INP are the Core Web Vitals set, but the numeric threshold table was absent from the retrieved content across three separate fetch attempts.",
+      "source_b_says": "No second official source retrieved the LCP or INP numbers either; web.dev/articles/lcp and /inp were consulted and also did not expose the numeric table.",
+      "likely_reason": "The numeric tables sit below the retrieved excerpt, or render client-side and are absent from static HTML.",
+      "confidence": "HIGH that stable official thresholds exist; LOW on the exact figures because they were not directly observed.",
+      "resolution": "UNRESOLVED - recorded as RESEARCH_FURTHER. SPS 2.0 must not encode unverified numeric SEO thresholds into a verifier.",
+      "what_is_verified": "CLS good at or below 0.1 and CLS poor above 0.25, confirmed verbatim in SRC-017 with stated derivation.",
+      "affected_capability": "CAP-028",
+      "action_required": "Re-verify from an official web.dev source that exposes the numeric tables before any SEO verifier uses them."
+    }
+  ]
+}

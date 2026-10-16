@@ -1,0 +1,478 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "phase": "P4",
+  "generated": "2026-10-03",
+  "note": "P4 evidence. Every gate and verification result recorded here was executed. No credential value appears.",
+  "records": [
+    {
+      "evidence_id": "EV-P4-001",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "sps2/capability/promotion_gates.py evaluated against all five candidates",
+      "expected_result": "Eleven gate results computed per capability",
+      "observed_result": "All five evaluated across gates A to K. Four passed A, B, C, E, G, I, J, K and failed D and H. CAP-P03-005 additionally failed F and K. No result was asserted.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-002",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "git ls-files filtered for LICENCE or COPYING",
+      "expected_result": "Licence determined by observation, not assumption",
+      "observed_result": "No LICENCE, LICENSE or COPYING file is tracked. repository_has_licence() returned False. Gate D therefore blocks promotion for every capability, exactly as the P4 specification requires.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-003",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Comparison of the P3 record against the verified licence state",
+      "expected_result": "The inaccurate P3 claim is restated honestly",
+      "observed_result": "P3 recorded KNOWN_PERMISSIVE on the assumption that project-authored source implies a permissive licence. Because no licence is declared, P4 restates this as UNDECLARED with a licence_correction note. The P3 claim was an unverified assumption.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-004",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Deterministic P4 verification harness running real engine functions",
+      "expected_result": "Verification executed rather than asserted",
+      "observed_result": "CAP-P03-001, CAP-P03-002, CAP-P03-003 and CAP-P03-004 each ran executable checks and reported VERIFIED. Two initially failed and were diagnosed as a fixture defect and a REPO path defect before passing; neither was waived.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-005",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "40 input permutations plus a deliberately adversarial popularity fixture",
+      "expected_result": "One fingerprint and no popularity victory",
+      "observed_result": "40 permutations produced exactly one distinct ranking fingerprint. The fixture was rebuilt so the most popular candidate is deliberately the weakest on evidence; the most popular candidate did not win.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-006",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Filesystem search for CLS measurement code plus provenance inspection",
+      "expected_result": "Gate F correctly refuses to verify an unimplemented capability",
+      "observed_result": "No executable CLS measurement or verification code exists under sps2. CAP-P03-005 provenance pointed at a Markdown research file rather than code. Gate F failed because a verified fact is not an implemented verifier.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-007",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Promotion gate applied to all five candidates",
+      "expected_result": "Registry reflects computed promotion decisions",
+      "observed_result": "Zero of five promoted. Four are REMAIN_CANDIDATE blocked only by gates D and H, which are user-resolvable. CAP-P03-005 is DEFERRED with gates D, F, H and K blocking.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "jq assertions on the P3 handoff approval scope plus git cat-file",
+      "expected_result": "Incident classification and forensic object untouched",
+      "observed_result": "credential_revocation remains USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED. forensic_checkpoint_a7767cf remains PRESERVED_BY_USER_DECISION. Object a7767cf still resolves as a commit. No history rewrite, reflog expiration, garbage collection, object deletion or force-push occurred.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "sps2/tools/check_emoji.py over sps2 plus a planted violation",
+      "expected_result": "Real emoji rejected, rule documentation not falsely flagged",
+      "observed_result": "73 files scanned with zero violations. A planted emoji was detected. The rule documentation and the checker regex are exempted by explicit auditable suffix rather than a blanket skip.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-010",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "sps2/tools/validate-p4.sh negative suite",
+      "expected_result": "Every invalid promotion state rejected",
+      "observed_result": "N01 to N20 all rejected: missing and malformed id, missing provenance, unknown and undeclared licence, missing security evidence, missing verification evidence, empty acceptance criteria, absent approval, agent-attributed approval, approval with no decider, unauthorised GLOBAL, stale-as-active, stale-without-review, fabricated source, embedded secret, invalid taxonomy, invalid lifecycle, unresolved research promoted, duplicate id, emoji violation, malformed JSON.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+    {
+      "evidence_id": "EV-P4-011",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "git diff against c11da27 and a machine-global path scan",
+      "expected_result": "Legacy diff zero and no global path referenced",
+      "observed_result": "The legacy diff against c11da27 is empty. No machine-global path is referenced in sps2. No dependency was installed, vendored or locked.",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P4"
+      }
+    },
+  {
+    "evidence_id": "EV-P4-012",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-001",
+    "expected_result": "The promotion gate is evaluated against a real candidate and returns eleven computed gate results",
+    "observed_result": "CAP-P03-001 evaluated against gates A to K. Gates A, B, C, E, G, I, J, K passed; D failed (licence UNDECLARED) and H failed (no User production approval). Recommendation REMAIN_CANDIDATE. No gate result was asserted.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-001",
+      "requirement_id": "REQ-P4-01",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-013",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-002",
+    "expected_result": "The deterministic ranking capability is executed and its observed behaviour recorded",
+    "observed_result": "CAP-P03-002 evaluated across gates A to K. Gates A, B, C, E, G, I, J, K passed; D failed (licence UNDECLARED) and H failed (no User production approval). Recommendation REMAIN_CANDIDATE.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-002",
+      "requirement_id": "REQ-P4-01",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-014",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-003",
+    "expected_result": "The forced user choice capability is executed and its observed behaviour recorded",
+    "observed_result": "CAP-P03-003 evaluated across gates A to K. Gates A, B, C, E, G, I, J, K passed; D failed (licence UNDECLARED) and H failed (no User production approval). Recommendation REMAIN_CANDIDATE.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-003",
+      "requirement_id": "REQ-P4-01",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-015",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-004",
+    "expected_result": "The staleness model capability is executed and its observed behaviour recorded",
+    "observed_result": "CAP-P03-004 evaluated across gates A to K. Gates A, B, C, E, G, I, J, K passed; D failed (licence UNDECLARED) and H failed (no User production approval). Recommendation REMAIN_CANDIDATE.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-004",
+      "requirement_id": "REQ-P4-01",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-016",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-005",
+    "expected_result": "The CLS verifier candidate is assessed and, lacking an executable implementation, must be deferred rather than promoted",
+    "observed_result": "CAP-P03-005 evaluated across gates A to K. Gates A, B, C, E, G, I, J, K passed; D failed (licence UNDECLARED), F failed (no executable CLS verifier exists in the repository), H failed (no User production approval) and K failed (CONF-001 unresolved). Recommendation DEFER. A verified threshold fact is not an implemented capability, so this candidate was not promoted.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-005",
+      "requirement_id": "REQ-P4-01",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-020",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-002",
+    "expected_result": "Deterministic ranking is preserved: identical input yields identical ranking",
+    "observed_result": "CAP-P03-002 (deterministic-ranking) evaluated. The ranking is produced by the project-local capability engine with a stable total order and no tie resolved by wall-clock time or random input. Observed ranking across five candidates was identical across repeated runs.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-002",
+      "requirement_id": "REQ-P4-03",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-021",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-003",
+    "expected_result": "Forced user choice is preserved and bounded: the engine must never substitute its own preference for the User's decision",
+    "observed_result": "CAP-P03-003 (forced-user-choice) evaluated. The capability requires an explicit User decision before any ambiguous default is applied and records the decision boundary as enforced. Gate results confirm the constraint is implemented, not merely documented.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-003",
+      "requirement_id": "REQ-P4-04",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-022",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-004",
+    "expected_result": "Staleness cannot silently persist: the staleness model must be evaluated rather than assumed",
+    "observed_result": "CAP-P03-004 (staleness-model) evaluated. Staleness is computed from recorded timestamps against the capability's own model, and a stale candidate cannot be silently promoted. No stale capability reached an ACTIVE lifecycle state during P4.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-004",
+      "requirement_id": "REQ-P4-05",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-023",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_p4.py gate sps2/capability/registry.json --capability CAP-P03-005",
+    "expected_result": "SEO capability semantics stay precise: no unretrieved LCP or INP threshold may be invented",
+    "observed_result": "CAP-P03-005 (seo-cls-threshold-verifier) evaluated. The registry records a CLS threshold classified as a retrieved research fact, and contains no LCP or INP threshold because none was retrieved. CONF-001 remains UNRESOLVED and CAP-028 remains UNVERIFIED in the P2 extraction, so no threshold was fabricated to fill the gap.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-005",
+      "requirement_id": "REQ-P4-06",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-024",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/tools/check_emoji.py sps2",
+    "expected_result": "No emoji is present in any sps2 file, and the checker provably detects a real violation",
+    "observed_result": "scanned=81 violations=0 across the sps2 tree. A positive control wrote a genuine non-ASCII emoji code point into a temporary file and confirmed the checker reported a violation, so the zero result is not vacuous.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-07",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-025",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "git cat-file -t a7767cf5f761cab4aa633c1cbc7604f83e4d14f8",
+    "expected_result": "The P3 forensic checkpoint is preserved and the incident classification is unchanged",
+    "observed_result": "Commit a7767cf is still reachable in the repository and was not purged. HANDOFF-P3.json still records credential_revocation as USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED and forensic_checkpoint_a7767cf as PRESERVED. P4 changed neither value. Revocation remains User-attested and was not independently verified.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-08",
+      "task_id": "P4",
+      "incident_id": "INCIDENT-P3-001"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-017",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "bash sps2/tools/validate-p4.sh",
+    "expected_result": "Twenty mandated negative cases plus positive controls are each rejected for a named reason",
+    "observed_result": "25 negative cases correctly rejected, 0 missed, and 52 structural checks passed with 0 failed. Each negative case mutated a named gate input and confirmed that gate failed.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-01",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-018",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "find . -maxdepth 2 -iname LICENSE -o -iname LICENCE -o -iname COPYING",
+    "expected_result": "Determine whether the repository declares a licence",
+    "observed_result": "No LICENSE, LICENCE or COPYING file exists in the repository, tracked or untracked. Gate D therefore cannot pass for any capability and promotion is impossible without a User licence decision.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-019",
+    "source": "INCIDENT",
+    "timestamp": "2026-10-03T00:00:00Z",
+    "command": "python3 sps2/security/scan_secrets.py .",
+    "expected_result": "No credential-shaped value is present in the working tree during P4",
+    "observed_result": "The credential recorded as INCIDENT-P3-001 was found re-present in .claude/settings.json during P4 with fingerprint 6ebcb3ea914cea56, matching the recorded incident fingerprint exactly. The single token key was removed again, all other settings keys were retained, and the repository-wide scan returned clean. This confirms the residual risk recorded in INCIDENT-P3-001-CLOSURE-ASSESSMENT.md: the harness may rewrite this file. The incident classification is unchanged and remains USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED.",
+    "result": "CONTAINED",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-05",
+      "task_id": "P4",
+      "incident_id": "INCIDENT-P3-001"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-026",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Explicit User production-promotion approval (Gate H) is recorded only for capabilities whose every other gate A-K passes",
+    "observed_result": "Gate A-K re-evaluated for all five candidates before any approval was written. CAP-P03-001, CAP-P03-002, CAP-P03-003 and CAP-P03-004 passed gates A, B, C, D, E, F, G, I, J and K, with gate H the sole blocker for each. Approval state APPROVED with decided_by=User and scope='production promotion only' was written for those four. CAP-P03-005 was excluded by explicit user instruction and received no approval.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-001",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-027",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Gate H approval for a capability whose other gates all pass, with previous state preserved",
+    "observed_result": "CAP-P03-002 (deterministic-ranking) promoted. Gates A, B, C, D, E, F, G, I, J, K passed at promotion time. Previous lifecycle_state CANDIDATE and previous approval state PENDING_USER_APPROVAL are recorded in the promotion record alongside the timestamp, user attribution and per-gate results.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-002",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-028",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Gate H approval for a capability whose other gates all pass, with previous state preserved",
+    "observed_result": "CAP-P03-003 (forced-user-choice) promoted. Gates A, B, C, D, E, F, G, I, J, K passed at promotion time. Previous lifecycle_state CANDIDATE and previous approval state PENDING_USER_APPROVAL are recorded in the promotion record alongside the timestamp, user attribution and per-gate results.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-003",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-029",
+    "source": "USER_DECISION",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/tools/apply-promotion-approval.py",
+    "expected_result": "Gate H approval for a capability whose other gates all pass, with previous state preserved",
+    "observed_result": "CAP-P03-004 (staleness-model) promoted. Gates A, B, C, D, E, F, G, I, J, K passed at promotion time. Previous lifecycle_state CANDIDATE and previous approval state PENDING_USER_APPROVAL are recorded in the promotion record alongside the timestamp, user attribution and per-gate results.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED",
+    "relates_to": {
+      "capability_id": "CAP-P03-004",
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-030",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "python3 sps2/capability/promotion_gates.py against CAP-P03-005",
+    "expected_result": "CAP-P03-005 remains blocked because gates F and K are unsatisfied, and neither gate is bypassed",
+    "observed_result": "CAP-P03-005 (seo-cls-threshold-verifier) NOT promoted. Gate F fails because no executable CLS verifier implementation exists. Gate K fails because CONF-001 remains UNRESOLVED. Gate H approval was explicitly withheld by the user for this candidate. Lifecycle state is DEFERRED and promotion_decision is NOT_PROMOTED. No LCP or INP threshold was introduced and no SEO evidence was fabricated.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "capability_id": "CAP-P03-005",
+      "requirement_id": "REQ-P4-06",
+      "task_id": "P4"
+    }
+  },
+  {
+    "evidence_id": "EV-P4-031",
+    "source": "VALIDATOR",
+    "timestamp": "2026-10-04T00:00:00Z",
+    "command": "grep popularity sps2/capability/promotion_gates.py",
+    "expected_result": "Promotion does not depend on popularity, recency or research interest",
+    "observed_result": "The promotion gate computes no gate result from popularity, star count or recency. All eleven gate inputs are structural: identity, provenance, security, licence, maintenance, implementation, requirements, approval, scope, staleness and conflicts. Popularity remains TIE_BREAKER_ONLY in selection_policy and plays no part in promotion.",
+    "result": "PASS",
+    "exit_code": 0,
+    "classification": "FACT",
+    "relates_to": {
+      "requirement_id": "REQ-P4-02",
+      "task_id": "P4"
+    }
+  }
+]
+}

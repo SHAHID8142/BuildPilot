@@ -1,0 +1,58 @@
+{
+  "schema": "sps2.provenance-finding/v1",
+  "subject": "skills/sps-cms",
+  "recorded_on": "2026-10-04",
+  "finding": "VERIFIED_PROJECT_AUTHORED",
+  "finding_detail": "The user has explicitly attested that SHAHID8142 is their account and that skills/sps-cms is their own work, or comes from a repository they control under the MIT licence the component already declares.",
+  "evidence_class": "USER_ATTESTATION",
+  "independently_verified": false,
+  "confirmed_by": "User attestation on 2026-10-04. NOT independently verified.",
+  "attestation_statement": "I confirm that SHAHID8142 is my account and that skills/sps-cms is my own work / comes from a repository I control under its declared MIT licence.",
+  "scope_limit": "This finding is recorded on the basis of user attestation only. The underlying circumstantial evidence gathered earlier remains recorded below and was NOT independently verified. No external repository, URL or account was contacted at any point.",
+  "what_this_does_not_mean": [
+    "It does not mean the licence was independently verified as legally valid.",
+    "It does not mean any third-party code was relicensed.",
+    "It does not mean the agent verified the upstream repository contents.",
+    "It does not authorise promoting any production capability."
+  ],
+  "method": "Local repository evidence only: git history, package manifests, file headers, upstream references, and existing P2 research records. No network access and no external repository was contacted, so upstream content could not be compared.",
+  "evidence_for_project_authorship": [
+    "package.json declares author SHAHID8142, licence MIT, repository https://github.com/SHAHID8142/sps-cms.git",
+    "README.md licence footer reads: MIT (c) SHAHID8142, linking to github.com/SHAHID8142",
+    "The parent repository self-identifies as github.com/SHAHID8142/Shahid-Personal-SkillSet in get-sps.sh, scripts/sps-update.sh, scripts/update-sps.ps1 and skills/sps copies, so the owner account is the same one.",
+    "INSTALL.md and README.md install commands fetch from raw.githubusercontent.com/SHAHID8142/sps-cms/main/scripts/, a self-referential path under the same account.",
+    "No 'forked from', 'based on', 'adapted from', 'vendored' or 'derived from' statement appears anywhere in the 56 files.",
+    "No @license, @preserve or SPDX-License header appears anywhere in the component.",
+    "No vendored or minified third-party library was found. The earlier 'React from' matches were prose fragments in template files, not third-party headers.",
+    "Third-party product names (WordPress, Sanity, Contentful) appear only as supported CMS targets and comparison tables in CMS-ENGINES.md and PROJECT-ROOT-MIRRORS.md, not as sources of code.",
+    "AUTO-SYNC-PROTOCOL.md describes database record synchronisation inside the CMS, not source-code synchronisation from an upstream project."
+  ],
+  "evidence_limits": [
+    "Git history for this path is a single atomic import in the baseline commit 10ab67a (56 files, 3939 insertions, all additions). There is no authoring history to inspect.",
+    "All provenance evidence is self-declared by the same party that would benefit from a permissive licence. Self-declaration cannot independently establish ownership.",
+    "It could not be confirmed that SHAHID8142 is the user's account, because that requires external verification which was deliberately not performed.",
+    "It could not be confirmed that the local content matches the upstream sps-cms repository, so it is unknown whether this copy was taken from upstream, from a different licence state, or written independently."
+  ],
+  "why_not_verified_project_authored": "The finding would require at least one independently verifiable fact tying the code to the user. None is available from local evidence alone.",
+  "why_not_verified_third_party": "No marker of third-party derivation exists anywhere: no attribution, no foreign licence header, no upstream copy, no vendored dependency.",
+  "licensing_impact": {
+    "permits_permissive_licence": "not yet established",
+    "conflict_detected": false,
+    "note": "No conflict was found, but absence of a conflict is not proof of clean provenance. The licence decision therefore remains blocked pending one confirmation from the user, and no licence file was created."
+  },
+  "resolution_requires": [],
+  "resolved": {
+    "resolved_on": "2026-10-04",
+    "resolved_by": "USER_ATTESTATION",
+    "prerequisite_for_licence": "SATISFIED_BY_USER_ATTESTATION"
+  },
+  "if_confirmed": "Satisfied on 2026-10-04 by user attestation. The repository licence decision became available as a result.",
+  "if_not_confirmed": "Not applicable; the prerequisite was satisfied.",
+  "third_party_licensing_status": "No third-party code was identified and none was relicensed. The repository licence covers work the user attests is their own.",
+  "not_done": [
+    "No external repository, URL or account was contacted.",
+    "No provenance information was fabricated or inferred.",
+    "No independent verification of the attestation was claimed or attempted.",
+    "No third-party code was relicensed."
+  ]
+}

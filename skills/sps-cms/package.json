@@ -1,0 +1,33 @@
+{
+  "name": "sps-cms",
+  "version": "1.4.0",
+  "description": "Master Universal Self-Contained Visual & Collection CMS Architect for Modern Web Stacks (Astro & Next.js)",
+  "keywords": [
+    "agent-skill",
+    "skills",
+    "skills-sh",
+    "antigravity",
+    "claude-code",
+    "cursor",
+    "windsurf",
+    "astro",
+    "nextjs",
+    "cms",
+    "visual-editor",
+    "self-hosted",
+    "mysql",
+    "sqlite"
+  ],
+  "author": "SHAHID8142",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SHAHID8142/sps-cms.git"
+  },
+  "main": "SKILL.md",
+  "scripts": {
+    "install:mac": "bash scripts/install.sh",
+    "install:win": "powershell -ExecutionPolicy Bypass -File scripts/install.ps1",
+    "doctor": "bash scripts/doctor.sh"
+  }
+}

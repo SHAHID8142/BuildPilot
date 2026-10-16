@@ -1,0 +1,13 @@
+{
+  "schema": "sps.research/v1",
+  "phase": "PHASE-04",
+  "title": "Technology Research Cache",
+  "generated": "2026-10-03",
+  "note": "Project-local research cache (PROVENANCE.md section 2). Intentionally EMPTY: Phase 04 records the mechanism, not research findings. Nothing is fabricated. Entries require readiness SUFFICIENT with all ten covered areas COVERED and at least one source of rank <= 4 before they may satisfy the research gate (CASE F).",
+  "entries": [],
+  "counts": {
+    "total": 0,
+    "sufficient": 0,
+    "insufficient": 0
+  }
+}

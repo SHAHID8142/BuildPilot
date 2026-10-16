@@ -1,0 +1,117 @@
+{
+  "schema": "sps2.promotion-assessments/v1",
+  "phase": "P4",
+  "generated": "2026-10-03",
+  "note": "Each candidate was evaluated independently by the hardened gate. Gate results are computed, never asserted. A failed gate was not worked around.",
+  "recommendations": [
+    "PROMOTE",
+    "REMAIN_CANDIDATE",
+    "DEFER",
+    "REJECT"
+  ],
+  "assessments": [
+    {
+      "capability_id": "CAP-P03-001",
+      "name": "promotion-gate",
+      "blocking_gates": [],
+      "recommendation": "PROMOTE",
+      "gate_results": {
+        "A": true,
+        "B": true,
+        "C": true,
+        "D": true,
+        "E": true,
+        "F": true,
+        "G": true,
+        "H": true,
+        "I": true,
+        "J": true,
+        "K": true
+      }
+    },
+    {
+      "capability_id": "CAP-P03-002",
+      "name": "deterministic-ranking",
+      "blocking_gates": [],
+      "recommendation": "PROMOTE",
+      "gate_results": {
+        "A": true,
+        "B": true,
+        "C": true,
+        "D": true,
+        "E": true,
+        "F": true,
+        "G": true,
+        "H": true,
+        "I": true,
+        "J": true,
+        "K": true
+      }
+    },
+    {
+      "capability_id": "CAP-P03-003",
+      "name": "forced-user-choice",
+      "blocking_gates": [],
+      "recommendation": "PROMOTE",
+      "gate_results": {
+        "A": true,
+        "B": true,
+        "C": true,
+        "D": true,
+        "E": true,
+        "F": true,
+        "G": true,
+        "H": true,
+        "I": true,
+        "J": true,
+        "K": true
+      }
+    },
+    {
+      "capability_id": "CAP-P03-004",
+      "name": "staleness-model",
+      "blocking_gates": [],
+      "recommendation": "PROMOTE",
+      "gate_results": {
+        "A": true,
+        "B": true,
+        "C": true,
+        "D": true,
+        "E": true,
+        "F": true,
+        "G": true,
+        "H": true,
+        "I": true,
+        "J": true,
+        "K": true
+      }
+    },
+    {
+      "capability_id": "CAP-P03-005",
+      "name": "seo-cls-threshold-verifier",
+      "blocking_gates": [
+        "F",
+        "H",
+        "K"
+      ],
+      "recommendation": "DEFER",
+      "gate_results": {
+        "A": true,
+        "B": true,
+        "C": true,
+        "D": true,
+        "E": true,
+        "F": false,
+        "G": true,
+        "H": false,
+        "I": true,
+        "J": true,
+        "K": false
+      }
+    }
+  ],
+  "counts": {
+    "total": 5,
+    "promoted": 4
+  }
+}

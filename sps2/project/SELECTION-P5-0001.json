@@ -1,0 +1,168 @@
+{
+  "schema": "sps2.selection/v1",
+  "selection_id": "SELECTION-P5-0001",
+  "generated_by": "sps2/core/selection.py",
+  "agent_neutral": true,
+  "scope": "PROJECT_LOCAL",
+  "requirement": {
+    "id": "REQ-P5-SELECTION",
+    "description": "Project-local selection among production-promoted governance capabilities.",
+    "required_capabilities": [
+      "CAP-P03-001",
+      "CAP-P03-002",
+      "CAP-P03-003",
+      "CAP-P03-004"
+    ],
+    "domains": [
+      "governance"
+    ]
+  },
+  "popularity_role": "TIE_BREAKER_ONLY",
+  "recency_role": "TIE_BREAKER_ONLY",
+  "ranking": [
+    {
+      "capability_id": "CAP-P03-001",
+      "name": "promotion-gate",
+      "score": 88.0,
+      "breakdown": {
+        "requirement_fit": 0.6,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 1.0
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-P03-001 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00",
+      "rank": 1,
+      "tie_breaker_used": false,
+      "eligibility": "PROMOTED",
+      "selection_reason": "CAP-P03-001 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00"
+    },
+    {
+      "capability_id": "CAP-P03-002",
+      "name": "deterministic-ranking",
+      "score": 88.0,
+      "breakdown": {
+        "requirement_fit": 0.6,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 1.0
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-P03-002 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00",
+      "rank": 2,
+      "tie_breaker_used": true,
+      "tie_breaker_basis": "popularity_then_recency",
+      "eligibility": "PROMOTED",
+      "selection_reason": "CAP-P03-002 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00"
+    },
+    {
+      "capability_id": "CAP-P03-003",
+      "name": "forced-user-choice",
+      "score": 88.0,
+      "breakdown": {
+        "requirement_fit": 0.6,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 1.0
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-P03-003 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00",
+      "rank": 3,
+      "tie_breaker_used": true,
+      "tie_breaker_basis": "popularity_then_recency",
+      "eligibility": "PROMOTED",
+      "selection_reason": "CAP-P03-003 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00"
+    },
+    {
+      "capability_id": "CAP-P03-004",
+      "name": "staleness-model",
+      "score": 88.0,
+      "breakdown": {
+        "requirement_fit": 0.6,
+        "compatibility": 1.0,
+        "security": 1.0,
+        "licence": 1.0,
+        "freshness": 1.0,
+        "maintenance": 1.0,
+        "provenance_confidence": 1.0,
+        "verification": 1.0
+      },
+      "contributing_weights": {
+        "requirement_fit": 30,
+        "compatibility": 20,
+        "security": 20,
+        "licence": 10,
+        "freshness": 8,
+        "maintenance": 5,
+        "provenance_confidence": 5,
+        "verification": 2
+      },
+      "explanation": "CAP-P03-004 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00",
+      "rank": 4,
+      "tie_breaker_used": true,
+      "tie_breaker_basis": "popularity_then_recency",
+      "eligibility": "PROMOTED",
+      "selection_reason": "CAP-P03-004 scored 88.00: fit=0.60 compat=1.00 security=1.00 licence=1.00 freshness=1.00 maintenance=1.00 provenance=1.00 verification=1.00"
+    }
+  ],
+  "ranking_fingerprint": "9c32a5482a67496a",
+  "excluded_from_selection": [
+    {
+      "capability_id": "CAP-P03-005",
+      "name": "seo-cls-threshold-verifier",
+      "lifecycle_state": "DEFERRED",
+      "recommendation": "DEFER",
+      "blocking_gates": [
+        "F",
+        "H",
+        "K"
+      ],
+      "promotion_decision": "NOT_PROMOTED",
+      "exclusion_reason": "not promoted: blocked by gate(s) F,H,K"
+    }
+  ],
+  "approval": {
+    "state": "PENDING_USER_APPROVAL",
+    "note": "Selection is computed, not approved. No capability was promoted by this record."
+  },
+  "note": "P5 project-local selection over the four capabilities carrying explicit User production-promotion approval. CAP-P03-005 is excluded because it was never promoted."
+}

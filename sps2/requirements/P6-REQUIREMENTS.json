@@ -1,0 +1,228 @@
+{
+  "schema": "sps2.requirements/v1",
+  "phase": "P6",
+  "phase_definition": "Technology Research (authoritative roadmap, per D-P6-1)",
+  "generated": "2026-10-04",
+  "note": "P6 is research only. Nothing here is self-approved. IMPLEMENTED, VERIFIED and APPROVED remain three independent axes; approval is PENDING for every requirement.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P6-01",
+      "title": "Research scope and terminology are separated",
+      "objective": "Distinguish roadmap P6 research, prior P2 research, unresolved gaps, readiness evaluation, future production implementation and future runtime activation, and record roadmap-versus-executed discrepancies explicitly rather than reconciling them silently.",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "All six layers are separately documented",
+        "Roadmap-versus-executed discrepancies are recorded, not reconciled",
+        "P2 research is not presented as P6 research"
+      ],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/P6-SCOPE-AND-TERMINOLOGY.md"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "sps2/tools/validate-p6.py",
+        "observed_result": "Section 2 confirms the scope document exists as a roadmap deliverable; its six sections and the discrepancy table were read back during validation."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "TECHNOLOGY_RESEARCH_ONLY"
+      }
+    },
+    {
+      "requirement_id": "REQ-P6-02",
+      "title": "Readiness evaluator gates technology use",
+      "objective": "Compute readiness from evidence and refuse to select any technology that is not SUFFICIENT, which is the roadmap P6 acceptance criterion.",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "All ten coverage areas and a source of rank <= 4 are required",
+        "An unresolved conflict hard-blocks a technology",
+        "Readiness is computed, never read from a stored label",
+        "An unresearched technology is UNRESEARCHED and not selectable"
+      ],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/core/technology_readiness.py"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "sps2/tools/validate-p6.py",
+        "observed_result": "Sections 4 and 5 confirm readiness is computed per entry, POSCTRL-P6 proves the evaluator refuses a weak-source entry, and the gate blocked TECH-WEB-VITALS, TECH-SPS-CMS and a nonexistent technology while allowing only TECH-PYTHON-STDLIB."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "TECHNOLOGY_RESEARCH_ONLY"
+      }
+    },
+    {
+      "requirement_id": "REQ-P6-03",
+      "title": "Research entries are evidence-based and attributed",
+      "objective": "Every recorded fact must come from an attributed source; anything not observed is recorded UNKNOWN rather than supplied from model knowledge.",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "Every entry carries an observation basis and a research date",
+        "Every source carries a reference and what was observed in it",
+        "No entry stores a readiness label"
+      ],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/cache.json"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "sps2/tools/validate-p6.py",
+        "observed_result": "Section 3 confirmed all three entries carry an observation basis, a date, attributed sources with references and observations, and all ten coverage areas."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "TECHNOLOGY_RESEARCH_ONLY"
+      }
+    },
+    {
+      "title": "CONF-001 re-attempted and still honestly unresolved",
+      "objective": "Re-attempt the retrieval P2 could not complete, record what was observed, and do not supply any figure that was not observed.",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "CLS figures are recorded only with verbatim rank-1 quotes",
+        "LCP and INP thresholds remain NOT_OBSERVED",
+        "CONF-001 remains UNRESOLVED",
+        "No LCP or INP numeric value appears anywhere in the cache"
+      ],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/cache.json"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "sps2/tools/validate-p6.py",
+        "observed_result": "Section 6 confirmed CONF-001 is still recorded UNRESOLVED and that six independent regex probes find no LCP or INP numeric value in the cache. Negative case N13 independently re-checks this."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "TECHNOLOGY_RESEARCH_ONLY"
+      },
+      "requirement_id": "REQ-P6-04"
+    },
+    {
+      "requirement_id": "REQ-P6-05",
+      "title": "D-P6-2 runtime boundaries enforced",
+      "objective": "Ensure no ACTIVE or INSTALLED lifecycle, resident runtime, supervisor, background process, global binding, automatic activation or machine-global installation was created.",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "No capability is ACTIVE or INSTALLED",
+        "Production capability count remains exactly 4",
+        "CAP-P03-005 remains DEFERRED",
+        "The evaluator performs no IO",
+        "P7 is not started"
+      ],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/tools/validate-p6.py",
+          "sps2/decisions/P6-DECISIONS.json"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "sps2/tools/validate-p6.py",
+        "observed_result": "Section 7 confirmed no runtime state, exactly four production capabilities, CAP-P03-005 DEFERRED, and a pure offline evaluator. Section 9 confirmed no machine-global path and no P7 artefact."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "TECHNOLOGY_RESEARCH_ONLY"
+      }
+    },
+    {
+      "requirement_id": "REQ-P6-06",
+      "title": "Phase-aware boundary replaces the obsolete no-P6 invariant",
+      "objective": "Replace the obsolete 'no P6 artefact may exist' invariant with a stronger phase-aware one rather than deleting it.",
+      "status": "VERIFIED",
+      "acceptance_criteria": [
+        "P6 artefacts are permitted only under a User-attributed decision",
+        "Runtime, promotion, deferral and P7 boundaries are asserted unconditionally",
+        "The replacement is mutation-tested"
+      ],
+      "dependencies": [
+        "REQ-P6-05"
+      ],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/tools/validate-p5.py"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "MUTATION_TESTED",
+        "verifier": "sps2/tools/test-phase-boundary.sh",
+        "observed_result": "Section 14 of validate-p5.py now derives P6 authorisation from D-P6-1 and D-P6-2 and additionally asserts runtime, promotion count, CAP-005 deferral and P7 absence. Mutation tests confirm each condition fires."
+      },
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "TECHNOLOGY_RESEARCH_ONLY"
+      }
+    }
+  ],
+  "phase_completion_approval": {
+    "state": "APPROVED",
+    "decided_by": "User",
+    "decided_on": "2026-10-04",
+    "scope": "TECHNOLOGY_RESEARCH_ONLY",
+    "approved_scope": [
+      "The completed P6 Technology Research work and its six P6 requirements",
+      "The roadmap deliverables: research workflow, cache schema, readiness evaluator",
+      "The recorded User decisions D-P6-1 and D-P6-2"
+    ],
+    "explicitly_not_approved": [
+      "inventing LCP or INP thresholds",
+      "resolving CONF-001 by inference or observation alone",
+      "promoting any capability, including CAP-P03-005",
+      "runtime activation of any kind",
+      "installing any dependency, skill, MCP, CLI or package",
+      "beginning P7",
+      "legacy SPS modification",
+      "machine-global state modification",
+      "purging checkpoint a7767cf",
+      "rewriting Git history",
+      "force-pushing"
+    ],
+    "preserved_state": {
+      "CONF-001": "UNRESOLVED",
+      "TECH-PYTHON-STDLIB": "SUFFICIENT",
+      "TECH-WEB-VITALS": "INSUFFICIENT",
+      "TECH-SPS-CMS": "PARTIAL",
+      "CAP-P03-005": "DEFERRED / NOT_PROMOTED",
+      "production_capability_count": 4,
+      "capability_lifecycle_state": "EVALUATED (all four)",
+      "runtime_activation": "NOT_APPROVED",
+      "P7": "NOT_APPROVED / NOT_STARTED"
+    },
+    "evidence": "User instruction: 'I approve P6 Technology Research. Approval is limited to the completed P6 research/audit work and its six P6 requirements.'",
+    "note": "This approves P6 research only. It does not approve P7, runtime activation, promotion, installation, or closing CONF-001."
+  }
+}

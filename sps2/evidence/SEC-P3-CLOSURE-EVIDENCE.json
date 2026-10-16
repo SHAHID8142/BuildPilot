@@ -1,0 +1,129 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "incident": "INCIDENT-P3-001",
+  "pass": "CLOSURE",
+  "generated": "2026-10-03",
+  "note": "Closure evidence. No credential value appears in this file. Revocation is USER_ATTESTED and was never independently verified. An observed absence is reported as an absence, never as proof of safety.",
+  "records": [
+    {
+      "evidence_id": "EV-SEC-C01",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Closure check: working tree contains no credential",
+      "expected_result": "shape scan of .claude/settings.json plus key inspection",
+      "observed_result": "Working tree is clean of the credential",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C02",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Closure check: Git index and HEAD contain no credential",
+      "expected_result": "git show :.claude/settings.json and git show HEAD:.claude/settings.json",
+      "observed_result": "Neither the index nor HEAD holds the credential",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C03",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Closure check: no mainline commit contains the real credential",
+      "expected_result": "all 20 commits reachable from main, every file hashed and compared",
+      "observed_result": "Published history is unaffected",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C04",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Synthetic fixture is provably distinct from the real credential",
+      "expected_result": "SHA-256 comparison of the fixture literal against the recorded fingerprint",
+      "observed_result": "The two are distinct values",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C05",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Forensic object a7767cf retained, not purged",
+      "expected_result": "git rev-list and ref inspection; no destructive command issued",
+      "observed_result": "Forensic evidence preserved",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C06",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Root .gitignore .claude rule is unattributed and does not protect the exposed path",
+      "expected_result": "git diff of .gitignore; git ls-files .claude",
+      "observed_result": "Rule is ineffective for the tracked file",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C07",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Revocation remains user-attested for the closure pass",
+      "expected_result": "user statement, carried forward",
+      "observed_result": "Revocation status unchanged",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "USER_ATTESTATION",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    },
+    {
+      "evidence_id": "EV-SEC-C08",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "P3 is approval-ready",
+      "expected_result": "aggregation of the verified closure facts",
+      "observed_result": "Readiness assessment",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "INFERENCE",
+      "relates_to": {
+        "task_id": "INCIDENT-P3-001"
+      }
+    }
+  ],
+  "counts": {
+    "total": 8,
+    "by_classification": {
+      "FACT": 6,
+      "INFERENCE": 1,
+      "USER_ATTESTATION": 1
+    }
+  }
+}

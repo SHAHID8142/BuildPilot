@@ -1,0 +1,11 @@
+{
+  "decision_ref": null,
+  "enabled": false,
+  "gate": "GATE-P17-4",
+  "note": "Real-agent execution is disabled. GATE-P17-4 is OPEN: no reviewed preventive isolation mechanism exists. This file records DISABLED and claims no authorization.",
+  "reviewed_at": null,
+  "schema": "sps2.p17-real-agent-enablement/v1",
+  "state": "OPEN",
+  "written_at": "2026-10-10T12:22:37Z",
+  "written_by": "sps2/p17/state.py"
+}

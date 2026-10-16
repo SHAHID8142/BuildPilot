@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2/handoff/v1",
+  "title": "SPS 2.0 Agent Handoff Contract",
+  "description": "Enough state for a fresh agent to continue without hidden model memory.",
+  "type": "object",
+  "required": [
+    "handoff_id",
+    "from_phase",
+    "current_state",
+    "completed",
+    "not_completed",
+    "blockers",
+    "next_allowed_action",
+    "forbidden_next_action",
+    "user_approval"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "handoff_id": {
+      "type": "string",
+      "pattern": "^HANDOFF-[A-Z0-9-]+$"
+    },
+    "from_phase": {
+      "type": "string"
+    },
+    "current_task": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "current_state": {
+      "type": "string"
+    },
+    "completed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "not_completed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "user_approval": {
+      "enum": [
+        "NOT_REQUIRED",
+        "PENDING_USER_APPROVAL",
+        "APPROVED",
+        "REJECTED"
+      ]
+    },
+    "next_allowed_action": {
+      "type": "string",
+      "minLength": 5
+    },
+    "forbidden_next_action": {
+      "type": "string",
+      "minLength": 5
+    }
+  }
+}

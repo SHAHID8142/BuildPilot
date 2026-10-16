@@ -1,0 +1,150 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "phase": "P1",
+  "generated": "2026-10-03",
+  "records": [
+    {
+      "evidence_id": "EV-P1-001",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "grep STATE.md and decisions",
+      "expected_result": "PHASE-05 APPROVED; decisions APPROVED",
+      "observed_result": "Phase status APPROVED, Approved by User (explicit approval), 2026-10-03; DEC-0007 and DEC-0008 Decided by: User (explicit user approval, 2026-10-03)",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-002",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "git status --porcelain; git rev-parse HEAD",
+      "expected_result": "Clean tree at baseline",
+      "observed_result": "clean=YES BASELINE=c11da2745f7057c64c8aed56c3b5956d2cf98d03",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-003",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "lint-sps.sh; validate-governance.sh; validate-control.sh; validate-capability.sh",
+      "expected_result": "All four pass",
+      "observed_result": "SPS lint PASSED; GOVERNANCE 53 passed 0 failed; CONTROL 49 passed 0 failed with 8 negative cases; CAPABILITY 55 passed 0 failed with 16 negative cases",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-004",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh sections 4 and 5",
+      "expected_result": "Both empty; policies declared",
+      "observed_result": "capability registry empty (mechanism only); research cache empty (mechanism only); registry forbids hardcoded domain mapping",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-005",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh section 2",
+      "expected_result": "Six contracts valid",
+      "observed_result": "requirement, capability, evidence, decision, action and handoff schemas all declared a valid $id and required field list",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-006",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh section 7",
+      "expected_result": "No global dirs or machine-global refs",
+      "observed_result": "no agent-specific global directory inside sps2; no machine-global state referenced; no installer scripts in sps2",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-007",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh section 8",
+      "expected_result": "No vendor references in core/",
+      "observed_result": "core/ free of vendor references outside adapters/; adapter contract and registry present",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh negative suite",
+      "expected_result": "All negative cases rejected, zero missed",
+      "observed_result": "positive control accepted; requirement, capability, evidence and decision negative cases all rejected; malformed JSON, illegal global placement and emoji violation all detected",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh section 6",
+      "expected_result": "Zero emoji found",
+      "observed_result": "no emoji in any sps2/ file; no-emoji policy declared; CASE O emoji violation detected",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-010",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-sps2.sh section 9",
+      "expected_result": "Empty diff over legacy paths",
+      "observed_result": "legacy implementation untouched by P1; git diff over skills, scripts, plugins and installers is empty",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    },
+    {
+      "evidence_id": "EV-P1-011",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "git rev-parse --abbrev-ref HEAD; git status --porcelain; git remote",
+      "expected_result": "branch main; clean tree; no remote",
+      "observed_result": "branch main recorded; no remote configured",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P1"
+      }
+    }
+  ]
+}

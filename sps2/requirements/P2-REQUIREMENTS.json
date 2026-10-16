@@ -1,0 +1,362 @@
+{
+  "schema": "sps2.requirement-set/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "title": "Capability Intelligence and Comparative Audit",
+  "note": "P2 research phase approved by User on 2026-10-03. This approval is bound to the P2 research and audit phase only. It does NOT approve or populate the production capability registry, and it confers no approval of P3.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P2-01",
+      "title": "Establish evidence-backed ecosystem understanding",
+      "objective": "Every major conclusion in P2 must cite a primary source with an access date",
+      "description": "Sources ranked 1-4 by hierarchy; popularity is never sufficient.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-002",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/P2-SOURCES.json",
+          "sps2/research/P2-ECOSYSTEM-MAP.md"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "P2-SOURCES.json lists 20 sources each with URL, type, rank and access date",
+            "Every capability record in P2-CAPABILITY-EXTRACTION.json cites at least one SRC id",
+            "Contradictory sources are recorded as unresolved rather than reconciled"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "P2-SOURCES.json lists 20 sources each with URL, type, rank and access date",
+            "Every capability record in P2-CAPABILITY-EXTRACTION.json cites at least one SRC id",
+            "Contradictory sources are recorded as unresolved rather than reconciled"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-02",
+      "title": "Extract atomic capabilities, not vendor verdicts",
+      "objective": "Each capability must be recorded individually with status, evidence and a taxonomy recommendation",
+      "description": "Avoids the failure mode of recording that a project is good rather than what it does.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-003",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/P2-CAPABILITY-EXTRACTION.json"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "Every record has a unique CAP id, an evidence array and a recommendation from the fixed taxonomy",
+            "Recommendations are restricted to the seven permitted values",
+            "A capability with no evidence cannot be recorded as IMPLEMENTED"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "Every record has a unique CAP id, an evidence array and a recommendation from the fixed taxonomy",
+            "Recommendations are restricted to the seven permitted values",
+            "A capability with no evidence cannot be recorded as IMPLEMENTED"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-03",
+      "title": "Never assume cross-harness parity",
+      "objective": "Support must be recorded per capability per harness with explicit confidence",
+      "description": "Evidence shows packaging breadth is not behavioural parity.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-004",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/P2-INTEROPERABILITY-MATRIX.json"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "unknown is a permitted and distinct state meaning not verified in P2",
+            "No capability is labelled universal",
+            "Harnesses beyond those reviewed default to unknown rather than assumed support"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "unknown is a permitted and distinct state meaning not verified in P2",
+            "No capability is labelled universal",
+            "Harnesses beyond those reviewed default to unknown rather than assumed support"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-04",
+      "title": "Keep research findings out of the production registry",
+      "objective": "P2 findings must not populate the production capability registry",
+      "description": "Research is not evidence of SPS-installability.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-005",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/registry.json",
+          "sps2/research/P2-CAPABILITY-EXTRACTION.json"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "Every extracted capability carries in_production_registry false",
+            "The production capability registry remains empty after P2",
+            "No capability was installed or evaluated for security in P2"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "Every extracted capability carries in_production_registry false",
+            "The production capability registry remains empty after P2",
+            "No capability was installed or evaluated for security in P2"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-05",
+      "title": "Preserve user requirements as enforceable rules",
+      "objective": "Approval, no-assumption, CMS-first, SEO-first, no-emoji, project-local and legacy isolation must survive P2",
+      "description": "These are standing user requirements, not research findings.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-006",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/governance/policies/NO-EMOJI.md",
+          "sps2/legacy/MANIFEST.md"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "The no-emoji policy still passes machine validation across all research files",
+            "The legacy diff against c11da27 remains empty",
+            "No machine-global path was written"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "The no-emoji policy still passes machine validation across all research files",
+            "The legacy diff against c11da27 remains empty",
+            "No machine-global path was written"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-06",
+      "title": "Record unresolved conflicts rather than reconciling them",
+      "objective": "Where sources disagree or evidence is missing, P2 must record the conflict",
+      "description": "Silently reconciling uncertainty is prohibited by the evidence policy.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-007",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/P2-SOURCES.json"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "CONF-001 records the unretrieved LCP and INP thresholds",
+            "The affected capability is RESEARCH_FURTHER rather than given an assumed value",
+            "A negative test rejects any IMPLEMENTED claim without evidence"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "CONF-001 records the unretrieved LCP and INP thresholds",
+            "The affected capability is RESEARCH_FURTHER rather than given an assumed value",
+            "A negative test rejects any IMPLEMENTED claim without evidence"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-07",
+      "title": "Execute no external code",
+      "objective": "Research must be static; no install script, hook, MCP, plugin or binary from an external source may be executed",
+      "description": "External repositories are untrusted input.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-008",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/P2-SECURITY-AUDIT.md"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "No external code was executed during P2",
+            "No external file was copied into SPS 2.0",
+            "No installer, dependency or global configuration was created"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "No external code was executed during P2",
+            "No external file was copied into SPS 2.0",
+            "No installer, dependency or global configuration was created"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P2-08",
+      "title": "Validate P2 records with negative tests",
+      "objective": "P2 outputs must be machine-validated including a positive control",
+      "description": "A validator that only rejects bad input is insufficient.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": "EV-P2-009",
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/tools/validate-p2.sh"
+        ],
+        "verified": true,
+        "evidence": [
+          [
+            "Malformed, duplicate, evidence-free, stale and unsupported-harness records are rejected",
+            "A positive control proves valid P2 records are still accepted",
+            "Recommendation values outside the taxonomy are rejected"
+          ]
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-p2.sh",
+        "evidence": [
+          [
+            "Malformed, duplicate, evidence-free, stale and unsupported-harness records are rejected",
+            "A positive control proves valid P2 records are still accepted",
+            "Recommendation values outside the taxonomy are rejected"
+          ]
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P2 research and audit phase, 2026-10-03. Bound to P2 research only.",
+        "state": "APPROVED"
+      }
+    }
+  ],
+  "approval_scope": {
+    "phase": "P2",
+    "type": "RESEARCH_AND_AUDIT",
+    "production_capability_registry": "NOT APPROVED - remains empty",
+    "p3": "NOT APPROVED"
+  }
+}

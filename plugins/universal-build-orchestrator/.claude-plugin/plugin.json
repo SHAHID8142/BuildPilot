@@ -1,0 +1,7 @@
+{
+  "name": "universal-build-orchestrator",
+  "description": "Claude entrypoint for /sps: a project-scoped build orchestrator that runs discovery, routes to the best available specialist stack, and falls back cleanly when a host capability is missing.",
+  "version": "2.0.0",
+  "author": { "name": "Shahidul Islam" },
+  "keywords": ["orchestrator", "skills", "frontend", "design", "backend", "verification", "project-scoped"]
+}

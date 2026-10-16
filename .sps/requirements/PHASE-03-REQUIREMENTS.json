@@ -1,0 +1,471 @@
+{
+  "schema": "sps.requirements/v1",
+  "phase": "PHASE-03",
+  "title": "Enforcement & Control Foundation",
+  "generated": "2026-10-03",
+  "note": "Every requirement is a real Phase 03 obligation, not an illustrative sample. Statuses distinguish DECLARED/IMPLEMENTED/VERIFIED/USER_APPROVED per CONTROL-MODEL.md s2. All were APPROVED by the User on 2026-10-03; the agent implemented them but did not approve them.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P03-01",
+      "title": "Define a formal control model with an explicit lifecycle",
+      "description": "SPS needs one lifecycle vocabulary so 'done' cannot mean different things to different agents.",
+      "source": "Phase 03 brief s1, s4",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Lifecycle with the 11 named stages is documented in .sps/control/CONTROL-MODEL.md",
+        "Each stage maps to a Phase 02 status value so no duplicate state system is created",
+        "validate-control.sh fails if a lifecycle stage name is removed from .sps/control/CONTROL-MODEL.md"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/CONTROL-MODEL.md",
+        ".sps/control/ENFORCEMENT.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01"
+      ],
+      "related_decisions": [
+        "DEC-0003"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-02",
+      "title": "Separate DECLARED, IMPLEMENTED, VERIFIED, USER_APPROVED as distinct truths",
+      "description": "Phase 01 F-9 showed docs can assert capability no code implements. Without four truths that recurs.",
+      "source": "Phase 03 brief s5; Phase 01 F-9",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "All four truth levels named and defined in .sps/control/CONTROL-MODEL.md",
+        "A non-collapse rule states VERIFIED never implies USER_APPROVED",
+        "validate-control.sh rejects a requirement marked APPROVED without approval attribution"
+      ],
+      "dependencies": [
+        "REQ-P03-01"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/CONTROL-MODEL.md s2",
+        ".sps/tools/validate-control.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001",
+        "VER-P03-004"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001",
+        "EV-P03-004"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01",
+        "PHASE-03-T03"
+      ],
+      "related_decisions": [
+        "DEC-0003"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-03",
+      "title": "Machine-readable requirement contract with acceptance criteria",
+      "description": "Requirements must be traceable requirement->task->implementation->verification->evidence->approval.",
+      "source": "Phase 03 brief s6, s7",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "SCHEMA.md defines requirement_id, acceptance_criteria, implementation_status, verification_status, approval_status",
+        "validate-control.sh fails a requirement with empty acceptance_criteria (CASE A)",
+        "validate-control.sh fails vague, non-observable acceptance criteria (CASE A2)"
+      ],
+      "dependencies": [],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/SCHEMA.md s6",
+        ".sps/tools/validate-control.sh",
+        ".sps/requirements/PHASE-03-REQUIREMENTS.json"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-002",
+        "VER-P03-003"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-002",
+        "EV-P03-003"
+      ],
+      "related_tasks": [
+        "PHASE-03-T02",
+        "PHASE-03-T03"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-04",
+      "title": "Enforcement levels 0-4 with honest assignment rules",
+      "description": "Classify rules by the mechanism that actually enforces them, not by aspiration.",
+      "source": "Phase 03 brief s8",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Five levels INFORMATIONAL/VALIDATION/BLOCKING/APPROVAL_GATE/HARD_GATE defined in .sps/control/ENFORCEMENT.md",
+        "A rule forbids declaring a level above the strongest mechanism that exists",
+        "An inventory records the actual level of each existing control, including DECLARED-only ones"
+      ],
+      "dependencies": [
+        "REQ-P03-01"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/ENFORCEMENT.md s1"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-05",
+      "title": "No-assumption rule for material decisions",
+      "description": "Agent must ask rather than assume when missing info materially affects architecture, security, cost, UX, data, deployment or acceptance.",
+      "source": "Phase 03 brief s9",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        ".sps/control/ENFORCEMENT.md distinguishes SAFE_INFERENCE from MATERIAL_DECISION by an explicit seven-area test",
+        "Agent action contract records assumption_classification and requires approval USER for MATERIAL_DECISION",
+        "validate-control.sh rejects an APPROVED requirement carrying blockers"
+      ],
+      "dependencies": [
+        "REQ-P03-01"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/ENFORCEMENT.md s3",
+        ".sps/SCHEMA.md s8"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-005"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-005"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01",
+        "PHASE-03-T03"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-06",
+      "title": "Stop conditions and a phase gate blocking automatic progression",
+      "description": "A blocked condition must stop progression; a phase must never advance automatically.",
+      "source": "Phase 03 brief s10, s11",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "All ten named stop conditions enumerated in .sps/control/ENFORCEMENT.md with default enforcement levels",
+        "Phase gate defines six evaluation questions and holds AWAITING_USER_APPROVAL on missing approval",
+        "A rule states approval never carries forward between phases"
+      ],
+      "dependencies": [
+        "REQ-P03-01",
+        "REQ-P03-04"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/ENFORCEMENT.md s2, s4"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-07",
+      "title": "Classify agent actions by class and risk level",
+      "description": "SPS must know what kind of action is attempted and how risky, so risk can raise verification and approval.",
+      "source": "Phase 03 brief s13, s14, s15",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "Nine action classes defined with DESTRUCTIVE as an overlay",
+        "Risk levels LOW-CRITICAL defined with a rule that risk may only raise, never lower, verification",
+        "Action contract records action_class, risk_level, rollback fields and assumption_classification"
+      ],
+      "dependencies": [
+        "REQ-P03-01"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/CONTROL-MODEL.md s4, s5, s7",
+        ".sps/SCHEMA.md s8"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-08",
+      "title": "Append-only evidence and verification independence",
+      "description": "An agent must not erase a failure, and its own judgement is not independent proof of correctness.",
+      "source": "Phase 03 brief s16, s17, s18",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        ".sps/control/ENFORCEMENT.md states the append-only rule and the supersedes mechanism",
+        "Four verifier classes AUTOMATED/EXTERNAL/USER/AGENT defined, AGENT marked non-independent",
+        "validate-control.sh detects duplicate IDs, invalid result enum and a PASS whose output was erased (CASE F)"
+      ],
+      "dependencies": [
+        "REQ-P03-01"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/ENFORCEMENT.md s6",
+        ".sps/control/CONTROL-MODEL.md s6",
+        ".sps/tools/validate-control.sh"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-006"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-006"
+      ],
+      "related_tasks": [
+        "PHASE-03-T03",
+        "PHASE-03-T04"
+      ],
+      "related_decisions": [
+        "DEC-0004"
+      ],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-09",
+      "title": "Handoff extension with next_allowed_action and forbidden_next_action",
+      "description": "A receiving agent must not simply decide what it wants to do next.",
+      "source": "Phase 03 brief s20",
+      "priority": "MEDIUM",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "SCHEMA.md defines an extended handoff including current_phase, current_state, blockers and both action fields",
+        "HANDOFF-CURRENT.md records both fields for the current phase",
+        "validate-control.sh fails if either field is removed from SCHEMA.md"
+      ],
+      "dependencies": [
+        "REQ-P03-01"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/SCHEMA.md s10",
+        ".sps/handoff/HANDOFF-CURRENT.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01",
+        "PHASE-03-T05"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    },
+    {
+      "requirement_id": "REQ-P03-10",
+      "title": "Document instruction vs enforcement honestly",
+      "description": "Move toward evidence-based enforcement without overstating what has been achieved.",
+      "source": "Phase 03 brief s21; Phase 01 F-1, F-9",
+      "priority": "HIGH",
+      "scope": "IN_SCOPE",
+      "acceptance_criteria": [
+        "ENFORCEMENT-VS-INSTRUCTION.md defines a five-part test for whether a rule is enforced",
+        "An inventory states actual enforcement status of every governance control, including DECLARED-only ones",
+        "The document states Phase 03 does not achieve complete enforcement"
+      ],
+      "dependencies": [
+        "REQ-P03-01",
+        "REQ-P03-04"
+      ],
+      "implementation_status": "IMPLEMENTED",
+      "implementation_refs": [
+        ".sps/control/ENFORCEMENT-VS-INSTRUCTION.md"
+      ],
+      "verification_status": "VERIFIED",
+      "verification_refs": [
+        "VER-P03-001"
+      ],
+      "approval_status": "APPROVED",
+      "approval_decided_by": "User",
+      "blockers": [],
+      "evidence": [
+        "EV-P03-001"
+      ],
+      "related_tasks": [
+        "PHASE-03-T01"
+      ],
+      "related_decisions": [],
+      "approved_at": "2026-10-03",
+      "approval_basis": "Phase 03 implementation and verification were independently reviewed and accepted."
+    }
+  ],
+  "verifications": [
+    {
+      "verification_id": "VER-P03-001",
+      "requirement_id": "REQ-P03-01",
+      "task_id": "PHASE-03-T01",
+      "method": "AUTOMATED",
+      "command_or_procedure": "bash .sps/tools/validate-control.sh (structural sections 1-3)",
+      "expected_result": "All control-model files exist and every required concept is present",
+      "actual_result": "Structural sections reported PASS for file presence and concept detection. Output captured in EV-P03-001.",
+      "status": "PASS",
+      "evidence_reference": "EV-P03-001",
+      "verifier": "validate-control.sh",
+      "timestamp": "2026-10-03T00:00:00Z"
+    },
+    {
+      "verification_id": "VER-P03-002",
+      "requirement_id": "REQ-P03-03",
+      "task_id": "PHASE-03-T03",
+      "method": "AUTOMATED",
+      "command_or_procedure": "bash .sps/tools/validate-control.sh (CASE A)",
+      "expected_result": "Empty acceptance_criteria must be rejected",
+      "actual_result": "CASE A REJECTED: acceptance_criteria is empty (MISSING_REQUIREMENT).",
+      "status": "PASS",
+      "evidence_reference": "EV-P03-003",
+      "verifier": "validate-control.sh",
+      "timestamp": "2026-10-03T00:00:00Z"
+    },
+    {
+      "verification_id": "VER-P03-003",
+      "requirement_id": "REQ-P03-03",
+      "task_id": "PHASE-03-T03",
+      "method": "AUTOMATED",
+      "command_or_procedure": "bash .sps/tools/validate-control.sh (CASE A2)",
+      "expected_result": "Vague acceptance criteria must be rejected",
+      "actual_result": "CASE A2 REJECTED: acceptance criteria are not observable.",
+      "status": "PASS",
+      "evidence_reference": "EV-P03-003",
+      "verifier": "validate-control.sh",
+      "timestamp": "2026-10-03T00:00:00Z"
+    },
+    {
+      "verification_id": "VER-P03-004",
+      "requirement_id": "REQ-P03-02",
+      "task_id": "PHASE-03-T03",
+      "method": "AUTOMATED",
+      "command_or_procedure": "bash .sps/tools/validate-control.sh (CASE E, E2)",
+      "expected_result": "Agent-attributed or decider-less approval must be rejected",
+      "actual_result": "CASE E and E2 both REJECTED.",
+      "status": "PASS",
+      "evidence_reference": "EV-P03-004",
+      "verifier": "validate-control.sh",
+      "timestamp": "2026-10-03T00:00:00Z"
+    },
+    {
+      "verification_id": "VER-P03-005",
+      "requirement_id": "REQ-P03-05",
+      "task_id": "PHASE-03-T03",
+      "method": "AUTOMATED",
+      "command_or_procedure": "bash .sps/tools/validate-control.sh (CASE D)",
+      "expected_result": "Progression must not be claimable while a blocking condition exists",
+      "actual_result": "CASE D REJECTED: blocker present yet marked APPROVED.",
+      "status": "PASS",
+      "evidence_reference": "EV-P03-005",
+      "verifier": "validate-control.sh",
+      "timestamp": "2026-10-03T00:00:00Z"
+    },
+    {
+      "verification_id": "VER-P03-006",
+      "requirement_id": "REQ-P03-08",
+      "task_id": "PHASE-03-T04",
+      "method": "AUTOMATED",
+      "command_or_procedure": "bash .sps/tools/validate-control.sh (CASE F)",
+      "expected_result": "Tampered evidence must be detected",
+      "actual_result": "CASE F DETECTED duplicate ID, invalid result enum and erased PASS output.",
+      "status": "PASS",
+      "evidence_reference": "EV-P03-006",
+      "verifier": "validate-control.sh",
+      "timestamp": "2026-10-03T00:00:00Z"
+    }
+  ]
+}

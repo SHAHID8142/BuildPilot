@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p10-slice/v1",
+  "title": "P10 Vertical-Slice Contract",
+  "description": "Machine-validatable contract for one P10 vertical slice. A slice is the unit at which the roadmap P10 acceptance criterion is judged: frontend + CMS + backend + data + validation + assets + SEO + tests passing together. SCOPE OF THIS SCHEMA - JSON Schema can enforce only STRUCTURE and APPLICABLE FIELD CONSTRAINTS: required-property presence, enumerated values, patterns, types, and additionalProperties. It CANNOT and DOES NOT establish: that the referenced evidence records exist, resolve or are genuine; that the CMS round-trip integration actually works; that the test suite actually ran or that any named negative case actually fails when its control is removed; that the P9 audit actually exited 0 over real output; that all eight axes pass together; that any declared security control is implemented, operational or effective; or that any bind configuration was actually observed. A document satisfying this schema is STRUCTURALLY VALID ONLY. Substantive completion across all eight axes is enforced by a separate, mandatory, fail-closed runtime validation gate (defined in REQ-P10-09 and the runtime_validation_gate block of sps2/requirements/P10-REQUIREMENTS.json), and acceptance requires explicit User approval that no agent may supply. Requirements definition only: existence of this schema authorises no implementation, and satisfying it authorises nothing.",
+  "$comment": "SCOPE BOUNDARY, recorded in three annotations that follow and in the per-field descriptions. STRUCTURALLY ENFORCED HERE: required-property presence (including every cms_content_references[].required_status and axis_contracts.backend.state_changing_operations); enumerated/constant values (exposure_class, required_status, acceptance_state, decided_by_role, audit_mode, produces, consumption_boundary); string patterns (slice_id, route, layout_id); types, array minItems and additionalProperties:false on every axis contract; the conditional that acceptance_state APPROVED requires a non-null user_approval; and the conditional that exposure_class NETWORK_EXPOSED_PRODUCTION requires an explicit security_authorization. NOT ENFORCED HERE, REQUIRING THE RUNTIME VALIDATION GATE OR EXPLICIT USER APPROVAL: that evidence_references resolve to genuine records; that the CMS round trip actually works; that the test suite actually ran and that each negative case genuinely fails when its control is removed; that the P9 audit actually exited 0 over real output; that all eight axes pass together rather than merely being declared; that declared security controls are implemented, effective and authorised; that the observed bind matches the declared exposure class; that user_approval reflects a real User decision rather than an agent assertion; and that each referenced P8 Content document exists, is published, and exposes the named field slots. ACCEPTANCE RULE: acceptance is an explicit User act and is never inferred from an agent assertion, a passing schema validation, or a passing runtime gate alone.",
+  "type": "object",
+  "required": [
+    "slice_id",
+    "section_id",
+    "route",
+    "cms_content_references",
+    "layout_id",
+    "axis_contracts",
+    "acceptance_state",
+    "evidence_references"
+  ],
+  "properties": {
+    "slice_id": {
+      "type": "string",
+      "pattern": "^SLICE-P10-[0-9]{2}$",
+      "description": "Stable unique slice identifier. Two slices may not share one, and a slice id is never reused after rollback."
+    },
+    "section_id": {
+      "type": "string",
+      "description": "Reference to the P8 Section this slice renders. P8 owns the model; P10 owns the presentation meaning of its layout."
+    },
+    "route": {
+      "type": "string",
+      "pattern": "^/[a-z0-9/-]*$",
+      "description": "Canonical absolute path the slice is served at. Must be unique across slices; the build maps it to a file path deterministically."
+    },
+    "cms_content_references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["content_id", "field_slots", "required_status"],
+        "properties": {
+          "content_id": {
+            "type": "string",
+            "description": "Reference to a persisted P8 Content document."
+          },
+          "field_slots": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "description": "Content-type field name the renderer reads. Every listed slot must exist in the P8 ContentType definition and exactly match the layout's consumed slots (set equality, order-insensitive). Duplicates are rejected. The layout registry (domain/frontend/layout_registry.py) is the authoritative source of which slots a layout consumes; a slice's declared field_slots must exactly match the layout's consumed slots via set equality (order-insensitive). Under-declared, over-declared, duplicate, and unsupported slots are rejected."
+            }
+          },
+          "required_status": {
+            "enum": ["published"],
+            "description": "REQUIRED on every CMS content reference. The single permitted value is 'published', taken from the authoritative P8 status contract (sps2/schemas/p8-content.schema.json status enum, and domain/cms/model.py VALID_STATUSES): only published content may appear in a production build, and draft, preview or archived content may not. The field is mandatory (it is listed in this item's 'required' array) and has no default; omitting it is a schema violation. NOTE ON AUTHORITY: 'published' is the only value asserted here because every P8 status source agrees that it exists. P8 sources DISAGREE on the complete status vocabulary -- p8-content.schema.json and domain/cms/model.py declare (draft, published, archived) while domain/cms/validation.py additionally declares 'preview' -- but that disagreement does not affect this constraint, which permits exactly one value and therefore neither invents a status nor weakens the publishing boundary. What is established STRUCTURALLY is only the declared value; whether the referenced Content document actually exists and is actually published is a RUNTIME resolution check, not a schema guarantee."
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "The CMS data the slice consumes. Every rendered string must trace back to an entry here; nothing final is hardcoded."
+    },
+    "layout_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Layout identifier interpreted by the P10 layout registry. P8 stores this value as CMS data; P10 defines what it renders."
+    },
+    "axis_contracts": {
+      "type": "object",
+      "required": [
+        "frontend",
+        "cms",
+        "backend",
+        "data",
+        "validation",
+        "assets",
+        "seo",
+        "tests"
+      ],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "required": ["renderer_entry_point", "produces"],
+          "properties": {
+            "renderer_entry_point": {
+              "type": "string",
+              "description": "The single renderer entry point that renders this slice from CMS data."
+            },
+            "produces": {
+              "enum": ["static_html_document"],
+              "description": "P10 renders static/server-rendered HTML; no client-side framework."
+            },
+            "encoding_contract": {
+              "enum": ["PER_SINK_HTML_ESCAPE"],
+              "description": "Every value reaching an HTML sink passes the approved per-sink encoder."
+            }
+          },
+          "additionalProperties": false
+        },
+        "cms": {
+          "type": "object",
+          "required": ["consumption_boundary"],
+          "properties": {
+            "consumption_boundary": {
+              "enum": ["P8_SAFE_OUTPUT"],
+              "description": "Content is consumed only through the approved P8 output-safety boundary; raw content never reaches an HTML sink."
+            },
+            "admin_edit_path": {
+              "type": "string",
+              "description": "The P8 admin operation the integration harness drives to prove the round trip."
+            }
+          },
+          "additionalProperties": false
+        },
+        "backend": {
+          "type": "object",
+          "required": ["exposure_class", "state_changing_operations"],
+          "properties": {
+            "exposure_class": {
+              "enum": ["LOCAL_NON_NETWORK_EXPOSED", "NETWORK_EXPOSED_PRODUCTION"],
+              "description": "D-P10-1 boundary. LOCAL_NON_NETWORK_EXPOSED is the default and is the fail-closed local case (loopback bind, project-local file socket, or no socket). NETWORK_EXPOSED_PRODUCTION additionally requires an explicit security_authorization declaration (see the backend allOf conditional) and, per D-P10-1, the required controls implemented AND authorised through the established security/governance process. The schema value alone is a DECLARATION, never proof: it does not show that controls exist, are effective, or were authorised."
+            },
+            "observed_bind_address": {
+              "type": ["string", "null"],
+              "description": "OPTIONAL, and RUNTIME-POPULATED ONLY: the bind address/host actually observed by the exposure validator when the runtime gate ran. It is null or absent in an authored document and is never a value the author may assert to satisfy validation. The runtime gate compares this observation against exposure_class and fails closed on any mismatch; until it runs, no claim about the real bind configuration exists."
+            },
+            "security_authorization": {
+              "type": "object",
+              "required": ["controls", "authorized_by_role", "authorized_at", "authorization_reference"],
+              "properties": {
+                "controls": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "enum": ["AUTHENTICATION", "AUTHORIZATION", "CSRF_PROTECTION", "RATE_LIMITING"]
+                  },
+                  "description": "The D-P10-1 required security controls that are claimed implemented for this surface."
+                },
+                "authorized_by_role": {
+                  "enum": ["USER"],
+                  "description": "Provenance marker. Only the User may authorise network exposure; an agent may never assert it."
+                },
+                "authorized_at": {"type": "string", "format": "date"},
+                "authorization_reference": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Reference to the recorded governance decision or security-phase authorisation that permits this network exposure."
+                }
+              },
+              "additionalProperties": false,
+              "description": "REQUIRED whenever exposure_class is NETWORK_EXPOSED_PRODUCTION. This is a structural completeness requirement so that a network-exposed slice cannot be represented without declaring controls and an explicit User authorisation. It is NOT proof of any of it: only the runtime validation gate and the established security/governance process can establish that the controls are implemented, effective and authorised. Under D-P10-1 no such authorisation exists yet, so any network-exposed slice remains blocked at the runtime gate regardless of what this document declares."
+            },
+            "state_changing_operations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["operation", "required_controls"],
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Identifier of the state-changing operation as named in the backend contract. Must be a non-empty string; a placeholder, empty or whitespace-only entry is rejected as malformed."
+                  },
+                  "required_controls": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                      "enum": ["AUTHENTICATION", "AUTHORIZATION", "CSRF_PROTECTION", "RATE_LIMITING"]
+                    },
+                    "description": "The controls this operation requires before it may be exposed. At least one control is required for every enumerated state-changing operation; an empty control list on a declared operation is structurally malformed. To express that a surface has NO state-changing operations, the enclosing state_changing_operations array itself must be an explicit empty array -- not an operation with no controls."
+                  }
+                },
+                "additionalProperties": false
+              },
+              "description": "REQUIRED explicit declaration of every state-changing operation and the controls each requires before it may be exposed. Must be present on every slice/backend contract, including when there are no state-changing operations, in which case its value is an explicit empty array ([]); a missing declaration is a schema violation and is NEVER treated as equivalent to an empty list. An omission is not proof that the backend has no state-changing operations. A mandatory, fail-closed runtime check (REQ-P10-07) compares this declaration against the actual backend contract/operations and rejects any omission or mismatch. NOTE ON THE EMPTY CASE: this schema accepts [] as the intended representation of 'no state-changing operations' because the two authorized files already define that representation explicitly (REQ-P10-07 and state_changing_operations_contract). A richer discriminated form (for example an explicit {\"kind\": \"none\"} marker) would be an alternative representation, not a correction to a gap, and is not introduced here because it would change the contract without a User decision."
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "$comment": "Structural rule: a network-exposed surface must carry an explicit User security_authorization declaration. Completeness of the declaration only; D-P10-1 and the runtime gate remain the authority on whether it is real.",
+              "if": {
+                "properties": {
+                  "exposure_class": { "const": "NETWORK_EXPOSED_PRODUCTION" }
+                },
+                "required": ["exposure_class"]
+              },
+              "then": {
+                "required": ["security_authorization"],
+                "properties": {
+                  "security_authorization": {
+                    "$ref": "#/properties/axis_contracts/properties/backend/properties/security_authorization"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "data": {
+          "type": "object",
+          "required": ["data_dependencies"],
+          "properties": {
+            "data_dependencies": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Persisted stores the slice reads. All must be project-local."
+            },
+            "project_local": {
+              "enum": [true],
+              "description": "No state is written outside the project repository."
+            }
+          },
+          "additionalProperties": false
+        },
+        "validation": {
+          "type": "object",
+          "required": ["schema_validation", "reparse_validation"],
+          "properties": {
+            "schema_validation": {
+              "type": "boolean",
+              "description": "DECLARES that the slice document validates against this schema. This is a STRUCTURAL check only: it confirms document structure and applicable field constraints, and does NOT by itself establish that the slice is complete, approved, or safe to expose. Setting this true is an assertion, not a result: the runtime gate performs the validation itself and is the only authority on its outcome. Substantive completion is established only by the mandatory, fail-closed runtime validation gate (REQ-P10-09)."
+            },
+            "reparse_validation": {
+              "type": "boolean",
+              "description": "DECLARES that rendered HTML was reparsed with the approved stdlib HTMLParser and structural assertions run. This records a claimed outcome; it does not evidence one. The runtime gate must actually reparse the built output and is the only authority on the result."
+            }
+          },
+          "additionalProperties": false
+        },
+        "assets": {
+          "type": "object",
+          "required": ["asset_references"],
+          "properties": {
+            "asset_references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["asset_id"],
+                "properties": {
+                  "asset_id": {"type": "string"},
+                  "alt_text_source": {
+                    "enum": ["CMS_FIELD", "DECORATIVE_MARKED"],
+                    "description": "Every image either carries CMS-authored alt text or is explicitly marked decorative."
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "no_duplicate_assets": {
+              "type": "boolean",
+              "description": "No duplicate asset content is left behind in the workspace."
+            }
+          },
+          "additionalProperties": false
+        },
+        "seo": {
+          "type": "object",
+          "required": ["audit_mode"],
+          "properties": {
+            "audit_mode": {
+              "enum": ["P9_DEPLOYMENT_AUDIT"],
+              "description": "SEO is verified by the existing P9 audit, never by a P10-local reimplementation. Naming the audit here does not mean it ran: the runtime gate must execute the P9 deployment audit over the built output and confirm its real exit code and digest."
+            },
+            "expected_exit_code": {
+              "enum": [0],
+              "description": "The EXPECTED result of the P9 audit, not a recorded one. This constrains what the runtime gate requires; it does not report what the audit actually returned. The slice is not complete unless the actual P9 audit run really exited 0."
+            }
+          },
+          "additionalProperties": false
+        },
+        "tests": {
+          "type": "object",
+          "required": ["test_entry_point"],
+          "properties": {
+            "test_entry_point": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The suite that exercises this slice end to end. Declaring an entry point does not mean it was executed or passed; the runtime gate must actually run it."
+            },
+            "negative_cases": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "description": "Named negative cases the suite must reject, per the repository convention that a control is not claimed without a negative test. Naming cases here records a CLAIM: the runtime gate must run each named case and confirm it fails when its control is removed. A listed case that passes vacuously fails the slice."
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptance_state": {
+      "enum": ["DRAFT", "IN_PROGRESS", "AWAITING_USER_APPROVAL", "APPROVED", "REJECTED", "ROLLED_BACK"],
+      "description": "Mirrors the SPS2 data-flow states. APPROVED is reachable only through explicit User approval; DELIVERED is reachable only via APPROVED. Declaring APPROVED requires an accompanying non-null user_approval record (see the allOf conditional below), but that record is a DECLARATION of User approval, not proof of it: the runtime gate verifies the approval is genuine and User-attributed, and no agent may supply it."
+    },
+    "evidence_references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string"},
+      "description": "Evidence records demonstrating each axis passed."
+    },
+    "rollback_reference": {
+      "type": ["string", "null"],
+      "description": "Reference to the recorded rollback method for this slice, per the roadmap per-slice revert."
+    },
+    "user_approval": {
+      "type": ["object", "null"],
+      "required": ["decided_by", "decided_by_role", "decided_at"],
+      "properties": {
+        "decided_by": {"type": "string", "description": "Identity of the approving User."},
+        "decided_by_role": {
+          "enum": ["USER"],
+          "description": "REQUIRED provenance marker. The only permitted value is USER, so approval can never be STRUCTURALLY attributed to an agent. The runtime validation gate additionally rejects any approval whose decided_by is missing, null, malformed, or names an agent-associated word. [SPEC-2 CORRECTION 2026-10-15: the previous wording stated that the gate 'rejects any approval that is missing, null, fabricated, or whose decided_by does not correspond to the User'. That was a false description of the gate: no mechanism anywhere in this repository can establish that a non-agent decided_by corresponds to a real User, because decided_by is self-asserted free text. The clause is restated to what the gate actually does. Whether the gate SHOULD establish correspondence remains an open requirement question and is not settled by this correction.]"
+        },
+        "decided_at": {"type": "string", "format": "date"}
+      },
+      "additionalProperties": false,
+      "description": "Present only after the User has approved the slice. Approval must represent explicit approval by the User, never an agent's assertion. A null value is structurally valid only while the slice is NOT in APPROVED state; the conditional below makes user_approval mandatory and non-null whenever acceptance_state is APPROVED, so a slice cannot declare itself approved with no approval record. That is a STRUCTURAL requirement only: the runtime validation gate independently rejects missing, null, fabricated, or agent-attributed approval at the approval gate, because a well-formed record can still be a fabrication."
+    }
+  },
+  "allOf": [
+    {
+      "$comment": "Structural rule: APPROVED cannot be claimed without an approval record. Runtime authority for approval authenticity remains with the User and the runtime gate.",
+      "if": {
+        "properties": {
+          "acceptance_state": { "const": "APPROVED" }
+        },
+        "required": ["acceptance_state"]
+      },
+      "then": {
+        "required": ["user_approval"],
+        "properties": {
+          "user_approval": { "type": "object" }
+        }
+      }
+    }
+  ],
+  "additionalProperties": false
+}

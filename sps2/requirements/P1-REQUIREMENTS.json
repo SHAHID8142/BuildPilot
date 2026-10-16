@@ -1,0 +1,324 @@
+{
+  "schema": "sps2.requirement-set/v1",
+  "phase": "P1",
+  "title": "SPS 2.0 Repository Foundation",
+  "generated": "2026-10-03",
+  "note": "P1 approved by User on 2026-10-03. This approval is bound to P1 only and confers no approval of P2.",
+  "requirements": [
+    {
+      "requirement_id": "REQ-P1-01",
+      "title": "Agent-neutral core with adapter boundary",
+      "objective": "The core must contain no vendor-specific references outside adapters/",
+      "description": "Enforced by validate-sps2.sh section 8 and the portability contract.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "validate-sps2.sh section 8 reports no vendor reference in core/ outside adapters/",
+        "An adapter contract schema and registry exist",
+        "The core validator passes with no concrete agent adapter installed"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/core/SPEC.md",
+          "sps2/core/adapters/contract.schema.json"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-007"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-007"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-02",
+      "title": "Machine-readable contracts for every governed record",
+      "objective": "Requirements, capabilities, evidence, decisions, actions and handoffs are schema-defined",
+      "description": "Contract-first foundation; six JSON Schemas under governance/SCHEMAS.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "Six schema files exist and declare an $id and required fields",
+        "validate-sps2.sh section 2 confirms each contract is valid",
+        "Malformed structured data is rejected by CASE L"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/governance/SCHEMAS/"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-005"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-005"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-03",
+      "title": "Structured-state validation with negative tests",
+      "objective": "Validators must reject invalid states, not only accept valid ones",
+      "description": "validate-sps2.sh plus check_sps2.py; positive control plus per-mechanism negatives.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "Every enforcement mechanism has an invalid fixture that fails",
+        "A positive control proves valid fixtures are still accepted",
+        "The negative suite reports zero missed cases"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/tools/validate-sps2.sh",
+          "sps2/tools/check_sps2.py"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-008"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-008"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-04",
+      "title": "Project-local by default; no machine-global installer",
+      "objective": "sps2 must never install anything globally or write machine-global state",
+      "description": "Default install scope is PROJECT_LOCAL; GLOBAL requires an explicit user authorizer.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "No installer scripts ship in sps2/",
+        "No machine-global path or global git config is referenced",
+        "GLOBAL install scope without user authorization is rejected"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/README.md",
+          "sps2/governance/policies/"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-006"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-006"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-05",
+      "title": "Global no-emoji rule, machine-enforced",
+      "objective": "No emoji in any sps2 artefact unless a project explicitly authorises them",
+      "description": "Declared in governance/policies/NO-EMOJI.md and enforced by a repository scan.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "A scan of every sps2/ file finds zero emoji",
+        "CASE O proves the scan detects a planted violation",
+        "Icon libraries are selectable capabilities, not a pinned global choice"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/governance/policies/NO-EMOJI.md"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-009"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-009"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-06",
+      "title": "Legacy SPS protected and untouched",
+      "objective": "The legacy implementation remains byte-identical during P1",
+      "description": "validate-sps2.sh section 9 asserts an empty diff against legacy paths.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "git diff over skills, scripts, plugins and installers is empty",
+        "A legacy protection manifest documents what must never be copied",
+        "Validation fails if any legacy path is modified"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/legacy/MANIFEST.md"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-010"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-010"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-07",
+      "title": "Dynamic capability model without hardcoded preferences",
+      "objective": "No permanent domain-to-capability binding exists in SPS 2.0",
+      "description": "Registry declares the policy; multiple candidates per domain are supported.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "Registry forbids hardcoded domain mapping and supports multiple candidates",
+        "No global installer or static allow-list exists under sps2",
+        "The registry is empty and capability records are never fabricated"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/capability/registry.json"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-004"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-004"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    },
+    {
+      "requirement_id": "REQ-P1-08",
+      "title": "Research gate mechanism exists but is unpopulated",
+      "objective": "Technology selection is blocked until research readiness is SUFFICIENT",
+      "description": "research/cache.json declares the ten coverage areas and source-rank rules.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "APPROVED",
+      "acceptance_criteria": [
+        "The cache declares all ten required coverage areas and a rank<=4 source rule",
+        "The cache is empty and research findings are never fabricated",
+        "Population is deferred to P6"
+      ],
+      "dependencies": [],
+      "implementation": {
+        "state": "COMPLETE",
+        "refs": [
+          "sps2/research/cache.json"
+        ],
+        "verified": true,
+        "evidence": [
+          "EV-P1-004"
+        ]
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "verifier": "validate-sps2.sh",
+        "evidence": [
+          "EV-P1-004"
+        ]
+      },
+      "approval": {
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03",
+        "state": "APPROVED"
+      }
+    }
+  ]
+}

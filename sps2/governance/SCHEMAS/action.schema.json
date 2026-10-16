@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2/action/v1",
+  "title": "SPS 2.0 Agent Action Contract",
+  "description": "A significant agent action, classifiable and auditable before it is performed.",
+  "type": "object",
+  "required": [
+    "action_id",
+    "actor",
+    "action_class",
+    "risk_level",
+    "intent",
+    "assumption",
+    "install_scope",
+    "validation_method"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {
+      "type": "string",
+      "pattern": "^ACT-[A-Z0-9]+-[0-9]{3,}$"
+    },
+    "actor": {
+      "type": "string",
+      "minLength": 2
+    },
+    "action_class": {
+      "enum": [
+        "READ",
+        "ANALYZE",
+        "WRITE",
+        "EXECUTE",
+        "INSTALL",
+        "DELETE",
+        "DEPLOY",
+        "PUBLISH",
+        "DESTRUCTIVE"
+      ]
+    },
+    "risk_level": {
+      "enum": [
+        "LOW",
+        "MEDIUM",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 5
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "expected_output": {
+      "type": "string"
+    },
+    "assumption": {
+      "enum": [
+        "NONE",
+        "SAFE_INFERENCE",
+        "MATERIAL_DECISION"
+      ]
+    },
+    "install_scope": {
+      "enum": [
+        "NONE",
+        "PROJECT_LOCAL",
+        "GLOBAL"
+      ]
+    },
+    "global_installation_authorized_by": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "MUST NOT name an agent, model or automation. Only the user may approve."
+    },
+    "validation_method": {
+      "type": "string",
+      "minLength": 3
+    },
+    "rollback_method": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "rollback_verified": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    }
+  }
+}

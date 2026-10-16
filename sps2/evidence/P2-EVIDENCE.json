@@ -1,0 +1,124 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "records": [
+    {
+      "evidence_id": "EV-P2-001",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "P1 approval read, git status, four legacy validators, legacy diff vs c11da27",
+      "expected_result": "P1 APPROVED, tree clean, all validators pass, legacy diff empty",
+      "observed_result": "All 8 P1 requirements APPROVED by User; handoff COMPLETE VERIFIED APPROVED; tree CLEAN at 2eef3d2; sps2 validator 73 passed 0 failed with 25 negatives; governance 53; control 49 with 8 negatives; capability 55 with 16 negatives; lint PASSED; legacy files changed 0",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-002",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Fetch of 20 official repositories, specifications and documentation pages",
+      "expected_result": "Every claim traceable to a ranked primary source",
+      "observed_result": "20 sources in P2-SOURCES.json with URL, type, rank and access date 2026-10-03; rank 1 official repo or spec, 2 official docs, 3 maintainer material, 4 independent",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-003",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Structured extraction from the researched sources",
+      "expected_result": "Each capability recorded individually with evidence and recommendation",
+      "observed_result": "36 capability records with unique CAP ids; 34 IMPLEMENTED, 1 NOT_IMPLEMENTED, 1 UNVERIFIED; ADAPT 19, KEEP 8, RESEARCH_FURTHER 3, REWRITE 2, REJECT 2, DEFER 2",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-004",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Per-capability per-harness support classification",
+      "expected_result": "unknown recorded where unverified",
+      "observed_result": "10 interoperability records across 8 harnesses; unknown used where a capability was not verified in P2; no capability labelled universal",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-005",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Inspection of sps2/capability/registry.json after P2",
+      "expected_result": "No research finding leaked into the registry",
+      "observed_result": "capability registry remains an empty array; all 36 extracted capabilities carry in_production_registry false; counts total 0",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-006",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "No-emoji validation, legacy diff, machine-global path scan",
+      "expected_result": "No-emoji, legacy isolation and project-locality intact",
+      "observed_result": "no emoji in any sps2 file; legacy diff against c11da27 empty; no machine-global path written; no installer created",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-007",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Inspection of the P2-SOURCES.json conflicts block",
+      "expected_result": "CONF-001 present with an unresolved resolution",
+      "observed_result": "CONF-001 records that LCP and INP numeric thresholds were not retrieved from any source; resolution UNRESOLVED; affected capability RESEARCH_FURTHER at LOW confidence",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-008",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Research method review",
+      "expected_result": "All external repositories inspected statically",
+      "observed_result": "No install script, package installer, shell snippet, binary, MCP server, hook or plugin from any external source was executed; no external file was copied into SPS 2.0",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    },
+    {
+      "evidence_id": "EV-P2-009",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "validate-p2.sh including its negative suite and positive control",
+      "expected_result": "Invalid P2 records rejected, valid records accepted",
+      "observed_result": "rejects malformed JSON, duplicate capability ids, IMPLEMENTED without evidence, unsupported recommendation values, unknown harness values, stale research records and missing source URLs; positive control accepted",
+      "result": "PASS",
+      "exit_code": 0,
+      "relates_to": {
+        "task_id": "P2"
+      }
+    }
+  ]
+}

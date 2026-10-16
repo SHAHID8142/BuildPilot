@@ -1,0 +1,189 @@
+{
+  "schema": "sps2.interoperability-matrix/v1",
+  "phase": "P2",
+  "generated": "2026-10-03",
+  "note": "Support is classified native, adapter, partial, external, unavailable or unknown. unknown means NOT verified in P2 - it is never a synonym for unavailable, and no capability is labelled universal without evidence.",
+  "classification": [
+    "native",
+    "adapter",
+    "partial",
+    "external",
+    "unavailable",
+    "unknown"
+  ],
+  "harnesses": [
+    "Claude Code",
+    "Codex",
+    "Cline",
+    "OpenCode",
+    "Cursor",
+    "Gemini",
+    "Copilot",
+    "Other"
+  ],
+  "records": [
+    {
+      "capability": "project-local-instructions",
+      "mechanism": "AGENTS.md convention",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "native",
+        "Cline": "native",
+        "OpenCode": "adapter",
+        "Cursor": "native",
+        "Gemini": "adapter",
+        "Copilot": "native",
+        "Other": "adapter"
+      },
+      "confidence": "HIGH",
+      "basis": "agents.md lists each tool; OpenCode and Gemini need config to read AGENTS.md."
+    },
+    {
+      "capability": "skills-markdown",
+      "mechanism": "SKILL.md with progressive disclosure",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "partial",
+        "Cline": "partial",
+        "OpenCode": "native",
+        "Cursor": "partial",
+        "Gemini": "unknown",
+        "Copilot": "unknown",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Native only where an official skills system was confirmed. Partial means related but not the same mechanism."
+    },
+    {
+      "capability": "mcp-client",
+      "mechanism": "MCP server configuration",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "native",
+        "Cline": "native",
+        "OpenCode": "native",
+        "Cursor": "native",
+        "Gemini": "native",
+        "Copilot": "native",
+        "Other": "unknown"
+      },
+      "confidence": "HIGH",
+      "basis": "MCP client support confirmed across the major harnesses in the reviewed documentation."
+    },
+    {
+      "capability": "lifecycle-hooks",
+      "mechanism": "PreToolUse PostToolUse Stop Stop hooks",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "native",
+        "Cline": "native",
+        "OpenCode": "partial",
+        "Cursor": "native",
+        "Gemini": "unknown",
+        "Copilot": "partial",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Event vocabularies differ between harnesses; SPS gates must not depend on hook availability."
+    },
+    {
+      "capability": "path-scoped-conditional-rules",
+      "mechanism": "globs and description frontmatter",
+      "support": {
+        "Claude Code": "partial",
+        "Codex": "partial",
+        "Cline": "native",
+        "OpenCode": "partial",
+        "Cursor": "native",
+        "Gemini": "unknown",
+        "Copilot": "partial",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Cline and Cursor document globs natively. Others are partial or undocumented."
+    },
+    {
+      "capability": "permission-tiers",
+      "mechanism": "allow ask deny and sandbox modes",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "native",
+        "Cline": "partial",
+        "OpenCode": "partial",
+        "Cursor": "unknown",
+        "Gemini": "unknown",
+        "Copilot": "partial",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Confirmed in detail only for Claude Code and Codex during P2."
+    },
+    {
+      "capability": "project-working-directory-boundary",
+      "mechanism": "sandbox and directory scoping",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "native",
+        "Cline": "partial",
+        "OpenCode": "partial",
+        "Cursor": "unknown",
+        "Gemini": "unknown",
+        "Copilot": "unknown",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Claude Code and Codex document sandbox and working-directory boundaries explicitly."
+    },
+    {
+      "capability": "managed-administrative-policy",
+      "mechanism": "org-enforced settings",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "native",
+        "Cline": "unknown",
+        "OpenCode": "native",
+        "Cursor": "native",
+        "Gemini": "unknown",
+        "Copilot": "partial",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Cursor Team Rules and OpenCode managed config were confirmed; others were not reviewed in depth."
+    },
+    {
+      "capability": "security-scanning-with-machine-output",
+      "mechanism": "SARIF severity policy in CI",
+      "support": {
+        "Claude Code": "partial",
+        "Codex": "native",
+        "Cline": "partial",
+        "OpenCode": "unknown",
+        "Cursor": "unknown",
+        "Gemini": "unknown",
+        "Copilot": "partial",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Codex Security was confirmed to emit SARIF. Claude Code offers a review skill but not the same pipeline."
+    },
+    {
+      "capability": "subagents-or-parallel-delegation",
+      "mechanism": "delegated execution with own context",
+      "support": {
+        "Claude Code": "native",
+        "Codex": "partial",
+        "Cline": "native",
+        "OpenCode": "native",
+        "Cursor": "native",
+        "Gemini": "unknown",
+        "Copilot": "partial",
+        "Other": "unknown"
+      },
+      "confidence": "MEDIUM",
+      "basis": "Cline documents subagents; Claude Code documents delegation. Others are partial or unreviewed."
+    }
+  ],
+  "counts": {
+    "total": 10
+  }
+}

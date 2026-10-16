@@ -1,0 +1,15 @@
+run_timeout() {
+  local secs="$1"; shift
+  local out_file="$1"; shift
+  "$@" >"$out_file" 2>&1 &
+  local cmd_pid=$!
+  ( sleep "$secs"; kill -TERM "$cmd_pid" 2>/dev/null; sleep 2; kill -KILL "$cmd_pid" 2>/dev/null ) >/dev/null 2>&1 &
+  local watch_pid=$!
+  wait "$cmd_pid" 2>/dev/null; local rc=$?
+  kill -TERM "$watch_pid" 2>/dev/null; wait "$watch_pid" 2>/dev/null
+  return $rc
+}
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+run_timeout 90 .sps_step.log claude plugin marketplace add "$REPO"
+echo "Exit code: $?"
+cat .sps_step.log

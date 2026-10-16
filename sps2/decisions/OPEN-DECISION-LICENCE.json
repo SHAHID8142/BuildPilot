@@ -1,0 +1,135 @@
+{
+  "schema": "sps2.open-decision/v1",
+  "decision_id": "DEC-0023",
+  "title": "Repository licence: options presented, awaiting an explicit user choice",
+  "state": "APPROVED",
+  "blocked_by": null,
+  "recorded_on": "2026-10-04",
+  "resolved_on": "2026-10-04",
+  "decided_by": "User",
+  "licence": "MIT",
+  "scope": "SPS 2.0 repository",
+  "licence_file": "LICENSE",
+  "provenance_prerequisite": "SATISFIED_BY_USER_ATTESTATION",
+  "provenance_evidence": "See PROVENANCE-SPS-CMS.json. finding=VERIFIED_PROJECT_AUTHORED, evidence_class=USER_ATTESTATION, independently_verified=false.",
+  "third_party_code_relicensed": false,
+  "third_party_statement": "No third-party code was identified in this repository and none was relicensed. The MIT licence covers work the user attests is their own.",
+  "independent_legal_verification_claimed": false,
+  "legal_verification_statement": "This licence was selected by the User. It was NOT independently verified as legally valid, and no legal advice was given or implied.",
+  "gate_effect": {
+    "gate_D": "SATISFIED. A declared, permissive licence now exists at the repository root.",
+    "gate_H": "STILL BLOCKED. Explicit User production approval has NOT been given.",
+    "promotion_consequence": "None. 0 of 5 capabilities are promoted. Gate D and gate H are independent, so satisfying D alone changes no promotion outcome."
+  },
+  "decision": "NO LICENCE WAS PREVIOUSLY CHOSEN. The user explicitly selected the MIT licence on 2026-10-04 for the SPS 2.0 repository, after the provenance prerequisite was satisfied by user attestation.",
+  "resolution_stage_2026_10_04": {
+    "outcome": "Investigated and STOPPED before applying a licence, as instructed.",
+    "provenance_investigation_completed": true,
+    "provenance_finding": "UNKNOWN",
+    "conflict_that_blocks_permissive_licence": false,
+    "conflict_detail": "No conflict was found. No evidence of third-party derivation exists. However, provenance rests on self-declared metadata that could not be independently verified, so it is not recorded as VERIFIED_PROJECT_AUTHORED.",
+    "why_still_pending": "The licence choice was not made on the user's behalf. It remains an explicit user decision, and it is additionally gated on one confirmation about skills/sps-cms provenance.",
+    "options_still_available": [
+      "MIT",
+      "Apache-2.0",
+      "BSD-3-Clause",
+      "MPL-2.0",
+      "GPL-3.0",
+      "AGPL-3.0",
+      "None / proprietary (all rights reserved)"
+    ],
+    "constraint_carried_forward": "Choosing a licence unblocks gate D only. Gate H, explicit production approval, is independent and remains unsatisfied, so 0 of 5 promoted would still hold immediately after any licence decision."
+  },
+  "repository_facts": {
+    "licence_file_present": false,
+    "root_manifest_licence_field": false,
+    "vendored_third_party_code": false,
+    "dependency_manifests": [
+      "skills/sps-cms/package.json"
+    ],
+    "notable": "skills/sps-cms/package.json already declares \"license\": \"MIT\", author SHAHID8142, with an upstream repository URL. Whether sps-cms is the user's own original work or a copy of another project materially affects whether the user may licence the whole repository permissively.",
+    "gate_blocked": "D",
+    "effect_of_choosing": "Choosing a licence unblocks gate D ONLY. It does NOT promote any capability. Gate H, explicit production approval, is independent and remains unsatisfied."
+  },
+  "options": [
+    {
+      "id": "MIT",
+      "summary": "Permissive, minimal, the most common choice for small tools and skills.",
+      "consequences": [
+        "Anyone may use, copy, modify, merge, publish, distribute, sublicense and sell, provided the copyright and licence notice are retained.",
+        "No patent grant and no express trademark grant.",
+        "Consistent with the existing MIT declaration on skills/sps-cms.",
+        "Anyone may privately fork and close-source their derivative."
+      ]
+    },
+    {
+      "id": "Apache-2.0",
+      "summary": "Permissive, with an explicit patent grant and a patent-retaliation clause.",
+      "consequences": [
+        "The same broad permissions as MIT, plus an express patent licence from contributors.",
+        "Requires NOTICE-preserving change-log discipline on redistribution.",
+        "Expressly terminates the patent grant for patent-initiating litigation.",
+        "Compatible with MIT-licensed sps-cms, but the NOTICE obligation is stricter."
+      ]
+    },
+    {
+      "id": "BSD-3-Clause",
+      "summary": "Permissive; like MIT plus a no-endorsement clause.",
+      "consequences": [
+        "Bars use of contributor names to promote derived products.",
+        "Otherwise similar to MIT, with no patent grant."
+      ]
+    },
+    {
+      "id": "MPL-2.0",
+      "summary": "Weak copyleft at file level.",
+      "consequences": [
+        "Modified MPL-covered files must remain MPL and be published when distributed.",
+        "Larger files may be combined with proprietary code without the copyleft spreading.",
+        "Higher ongoing compliance burden than a fully permissive licence."
+      ]
+    },
+    {
+      "id": "GPL-3.0",
+      "summary": "Strong copyleft.",
+      "consequences": [
+        "Any distributed derivative must be GPL-3.0 and its source published.",
+        "Viral for combined works and incompatible with some proprietary redistribution.",
+        "Unsuitable if SPS is intended to stay closed-source or to allow closed forks."
+      ]
+    },
+    {
+      "id": "AGPL-3.0",
+      "summary": "Strong copyleft extending to network use.",
+      "consequences": [
+        "Also requires source publication when the software is offered over a network.",
+        "The strictest option listed; usually unsuitable for internal tooling."
+      ]
+    },
+    {
+      "id": "PROPRIETARY_ALL_RIGHTS_RESERVED",
+      "summary": "Keep today's default: ship no licence file at all.",
+      "consequences": [
+        "This is the legal default now and is itself a valid, deliberate choice.",
+        "Gate D continues to block promotion; the P4 outcome does not change.",
+        "No one may legally copy, modify or redistribute the work.",
+        "Permissive reuse is impossible, which may be the intent for a personal toolset."
+      ]
+    }
+  ],
+  "blocking_questions_for_the_user": [
+    "Is skills/sps-cms your own original work, or a copy of another project? A permissive licence you do not hold the right to grant would be invalid.",
+    "Do you want this published for reuse, or kept closed to everyone else?",
+    "Do you need an express patent grant (Apache-2.0), or do you need copyleft (GPL, AGPL, MPL)?"
+  ],
+  "not_done": [
+    "No licence file was created.",
+    "No licence was inferred from skills/sps-cms/package.json.",
+    "No capability was promoted."
+  ],
+  "related": [
+    "DEC-0020",
+    "DEC-0022",
+    "EV-P4-018"
+  ]
+}

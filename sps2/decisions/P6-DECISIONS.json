@@ -1,0 +1,63 @@
+{
+  "schema": "sps2.decisions/v1",
+  "phase": "P6",
+  "generated": "2026-10-04",
+  "note": "Records the two blocking User decisions that opened P6. These decisions approve ONLY the roadmap-defined P6 (Technology Research) and only as research. Nothing here approves P6 itself, promotion, installation or runtime activation.",
+  "decisions": [
+    {
+      "decision_id": "D-P6-1",
+      "title": "P6 means the roadmap definition of Technology Research",
+      "decision": "P6 = TECHNOLOGY RESEARCH, as defined in .sps/architecture/SPS2-ROADMAP.md. P6 is NOT runtime activation, NOT production implementation, and NOT any other phase.",
+      "reason": "The executed history and the authoritative roadmap use the same phase numbers for different work, making the label P6 ambiguous. The User resolved the ambiguity in favour of the roadmap, and explicitly declined to let earlier conceptual overlap with research authorise a redefinition.",
+      "supersedes": "The ambiguity recorded in AUDIT-P6-READINESS-AND-DECISION.md section 2.",
+      "explicitly_not": [
+        "reinterpreting P6 as runtime activation",
+        "reinterpreting P6 as production implementation",
+        "changing the roadmap phase definition because earlier work overlapped conceptually with research",
+        "silently reconciling the roadmap and executed history"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-04",
+        "basis": "Explicit User decision in session: 'D-P6-1: Use the AUTHORITATIVE ROADMAP definition of P6: P6 = TECHNOLOGY RESEARCH.'"
+      }
+    },
+    {
+      "decision_id": "D-P6-2",
+      "title": "Runtime activation is not approved",
+      "decision": "Runtime activation is NOT APPROVED. No ACTIVE lifecycle, no INSTALLED lifecycle, no resident runtime, no supervisor or daemon, no background process, no global runtime binding, no automatic activation, and no machine-global installation.",
+      "reason": "Neither ACTIVE nor INSTALLED is defined in any specification, the lifecycle state machine is still a placeholder, and nothing in P1-P5 requires a persistent runtime. An ACTIVE flag with no executable observer would repeat the exact defect that blocks CAP-P03-005 at Gate F.",
+      "binding_state": "The four production capabilities remain lifecycle_state EVALUATED. CAP-P03-005 remains DEFERRED / NOT_PROMOTED. CONF-001 remains UNRESOLVED.",
+      "explicitly_not": [
+        "ACTIVE lifecycle",
+        "INSTALLED lifecycle",
+        "resident runtime",
+        "supervisor or daemon",
+        "background process",
+        "global runtime binding",
+        "automatic activation",
+        "machine-global installation"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-04",
+        "basis": "Explicit User decision in session: 'D-P6-2: Runtime activation is NOT APPROVED at this time.'"
+      }
+    }
+  ],
+  "explicitly_not_approved_by_this_record": [
+    "P6 approval itself",
+    "production promotion of any capability",
+    "runtime activation",
+    "installation of any dependency, skill, MCP, CLI or package",
+    "creation of any new capability",
+    "CAP-P03-005 promotion",
+    "P7 or any later phase",
+    "legacy SPS modification",
+    "machine-global changes"
+  ]
+}

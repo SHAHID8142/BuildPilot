@@ -1,0 +1,67 @@
+{
+  "schema": "sps2.handoff-set/v1",
+  "generated": "2026-10-03",
+  "handoffs": [
+    {
+      "handoff_id": "HANDOFF-P1-FOUNDATION",
+      "from_phase": "P1",
+      "current_task": "P1 repository foundation",
+      "current_state": "COMPLETE / VERIFIED / APPROVED",
+      "completed": [
+        "Gate check verified Phase 05 approval, DEC-0007/8 approval, clean tree at baseline c11da27",
+        "Created the sps2/ repository foundation with the Phase 05 architecture",
+        "Created six machine-readable contracts under governance/SCHEMAS",
+        "Created the validation foundation: validate-sps2.sh plus the check_sps2.py engine",
+        "Created 25 negative cases proving invalid states are rejected",
+        "Capability registry and research cache are legitimately empty",
+        "No-emoji rule is machine-enforced, not documentation-only",
+        "Legacy implementation verified byte-identical; untouched",
+        "Eight P1 requirements recorded as VERIFIED with evidence",
+        "P1 approved by User on 2026-10-03 (explicit instruction; never inferred)"
+      ],
+      "not_completed": [
+        "P2 has NOT started and is NOT approved; no capability discovery, skill research, installation, remote creation, push, legacy modification or Phase 01 remediation was performed",
+        "DEC-0009 and DEC-0010 await separate user approval",
+        "P2 and later phases have NOT started: dynamic discovery, skill selection, MCP discovery, CMS, SEO",
+        "The standalone git repository for SPS 2.0 has NOT been created (DEC-0009 deferred)",
+        "No capability was installed, discovered or fabricated",
+        "No Phase 01 remediation was performed"
+      ],
+      "blockers": [
+        "No remote may be created or used until separately authorised",
+        "The standalone SPS 2.0 repository destination requires a user-specified name and location"
+      ],
+      "requirements": [
+        "REQ-P1-01",
+        "REQ-P1-02",
+        "REQ-P1-03",
+        "REQ-P1-04",
+        "REQ-P1-05",
+        "REQ-P1-06",
+        "REQ-P1-07",
+        "REQ-P1-08"
+      ],
+      "evidence": [
+        "EV-P1-001",
+        "EV-P1-002",
+        "EV-P1-003",
+        "EV-P1-004",
+        "EV-P1-005",
+        "EV-P1-006",
+        "EV-P1-007",
+        "EV-P1-008",
+        "EV-P1-009",
+        "EV-P1-010",
+        "EV-P1-011"
+      ],
+      "user_approval": "APPROVED",
+      "next_allowed_action": "Wait for an explicit user instruction authorising P2. Do not begin P2 without it.",
+      "forbidden_next_action": "Do NOT start P2, do NOT create a remote, do NOT publish, do NOT install capabilities, and do NOT modify the legacy implementation."
+    }
+  ],
+  "approval_record": {
+    "decided_by": "User",
+    "decided_at": "2026-10-03",
+    "basis": "Explicit user approval of the P1 final report, 2026-10-03"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "actual_exit_status": 0,
+  "command": [
+    "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+    "-c",
+    "print('acceptance: objective command satisfied')"
+  ],
+  "detail": "acceptance command exited 0 as expected",
+  "evidence_id": "EV-P17-009",
+  "expected_exit_status": 0,
+  "independence_statement": "Acceptance was judged by the objective acceptance command supplied by the task definition and executed by sps2/p17/verification.py, which is a structurally separate code path from sps2/p17/execution.py. The verifying executable is not an allowlisted agent executable (enforced at intake). The executing agent's exit code and output are recorded in the execution record and are not inputs to this result.",
+  "note": "Acceptance judgement. This artefact records the verifier's output only; it is not evidence that the executing agent behaved correctly.",
+  "schema": "sps2.p17-verification-output/v1",
+  "stderr_ref": "acceptance-stderr.log",
+  "stdout_ref": "acceptance-stdout.log",
+  "task_id": "TASK-P17-0012",
+  "verdict": "PASS",
+  "verified_at": "2026-10-10T13:08:08Z",
+  "verifier": "OBJECTIVE_COMMAND"
+}

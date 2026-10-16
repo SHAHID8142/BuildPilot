@@ -1,0 +1,180 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "ROADMAP-P3-DECISIONS",
+  "phase": "Roadmap P3 (Agent Interoperability)",
+  "generated": "2026-10-04",
+  "author": "implementation agent (recording decisions given by the User)",
+  "note": "These decisions resolve the seven questions in AUDIT-ROADMAP-P3-READINESS-AND-DECISION.md section 6 and authorise a bounded Roadmap P3 implementation (D-P3-F). They approve no phase completion: User approval of the delivered state is recorded separately under 'completion' and remains PENDING.",
+  "precedent": "D-P7-B required roadmap P3 to be satisfied before P7 and withheld authorisation to start it. D-P3-F supplies that authorisation with a named scope and a named forbidden scope.",
+  "decisions": [
+    {
+      "decision_id": "D-P3-A",
+      "title": "Exactly two low-risk adapters: Codex and OpenCode",
+      "decision": "Implement real adapters for exactly two low-risk targets: Codex and OpenCode.",
+      "rationale": "The architecture's target table marks Codex and OpenCode as low risk; the other candidates are moderate or high risk and are not required for P3.",
+      "bounded_scope": "Two adapters only. Adding any further adapter requires a new decision.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-A: Implement real adapters for exactly two low-risk targets: Codex and OpenCode.'"
+      }
+    },
+    {
+      "decision_id": "D-P3-B",
+      "title": "Adapter maturity rules",
+      "decision": "VERIFIED requires a recorded exercise/evidence; EXPERIMENTAL is acceptable when the generic fallback remains available; DECLARED alone is insufficient for P3 completion.",
+      "rationale": "A self-asserted VERIFIED label is the same defect class that keeps CAP-P03-005 blocked. An adapter that cannot be exercised honestly stays EXPERIMENTAL.",
+      "bounded_scope": "Maturity labels only. No adapter may claim VERIFIED without recorded evidence of an actual exercise.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-B: Adapter maturity: VERIFIED requires a recorded exercise/evidence; EXPERIMENTAL is acceptable when the generic fallback remains available; DECLARED alone is insufficient for P3 completion.'"
+      }
+    },
+    {
+      "decision_id": "D-P3-C",
+      "title": "Declarative-only adapters, confined to the adapter surface",
+      "decision": "Use declarative-only adapters under core/adapters/<id>/. Do not create or modify agent-convention files outside the adapter surface.",
+      "rationale": "Keeps every vendor-named artefact inside the sanctioned, deletable surface and preserves the one-way dependency rule.",
+      "bounded_scope": "No agent-convention file is created or modified anywhere in the repository.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-C: Use declarative-only adapters under core/adapters/<id>/. Do not create or modify agent-convention files outside the adapter surface.'"
+      }
+    },
+    {
+      "decision_id": "D-P3-D",
+      "title": "Definition of 'delete all adapters' for the portability criterion",
+      "decision": "Delete all adapters means deletion of all per-agent adapter entries/directories. The core-owned adapter contract and registry remain. An empty adapter registry [] is valid and must be accepted by the portability test.",
+      "rationale": "The maximal reading would delete the contract and registry that validate-sps2.sh requires; this definition keeps the exercise meetable without amending an approved validator, and the empty registry is already a proven valid state (test_boundary_empty_adapter_registry).",
+      "bounded_scope": "Defines the portability exercise and rollback only.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-D: Define \"delete all adapters\" as deletion of all per-agent adapter entries/directories. The core-owned adapter contract and registry remain. An empty adapter registry [] is valid and must be accepted by the portability test.'"
+      }
+    },
+    {
+      "decision_id": "D-P3-E",
+      "title": "Fresh-agent resume targets the whole repository, mechanically",
+      "decision": "Fresh-agent resume must target the whole repository, using a mechanical checklist, because current authoritative state is distributed beyond .sps/ and the historical docs/ assumption is stale.",
+      "rationale": "The literal '.sps/ + docs/' target set is stale (PHASE-05) and the referenced root docs/ does not exist; the newest authoritative state lives in sps2/.",
+      "bounded_scope": "Defines the target set and method of the fresh-agent dry run only.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-E: Fresh-agent resume must target the whole repository, using a mechanical checklist, because current authoritative state is distributed beyond .sps/ and the historical docs/ assumption is stale.'"
+      }
+    },
+    {
+      "decision_id": "D-P3-F",
+      "title": "Bounded Roadmap P3 implementation authorisation",
+      "decision": "Roadmap P3 implementation is authorised within this bounded scope: two adapters; adapter conformance/portability test; required P3 governance/evidence; the two specifically identified guard corrections.",
+      "authorised_scope": [
+        "two declarative adapters per D-P3-A..C",
+        "the adapter conformance/portability test per D-P3-D/E",
+        "required P3 governance and evidence records",
+        "the two guard corrections per D-P3-G"
+      ],
+      "explicitly_forbidden": [
+        "P7 implementation",
+        "threat-model implementation or claim",
+        "CONF-001 closure",
+        "LCP/INP invention",
+        "CAP-P03-005 promotion",
+        "production registry changes",
+        "runtime activation",
+        "package/dependency/skill/MCP installation",
+        "machine-global changes",
+        "legacy-file changes",
+        "history rewrite",
+        "force-push",
+        "ordinary push unless separately authorised"
+      ],
+      "rationale": "D-P7-B deliberately withheld authorisation to begin roadmap P3 work; this decision supplies it with a named scope and a named forbidden scope, per the standing rule that phase work needs its own User authorisation.",
+      "bounded_scope": "Exactly the four authorised items. Everything else is explicitly forbidden until separately authorised.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-F: Explicitly authorise Roadmap P3 implementation within this bounded scope: two adapters, adapter conformance/portability test, required P3 governance/evidence, the two specifically identified guard corrections.' with the explicit forbidden list recorded verbatim in explicitly_forbidden."
+      }
+    },
+    {
+      "decision_id": "D-P3-G",
+      "title": "Exactly two guard corrections, applied at the invariant level",
+      "decision": "Authorise exactly these two guard corrections and no broader weakening: (1) update the P7-readiness one-adapter pin so a legitimate Roadmap P3 adapter does not falsely fail with ADAPTER_STATE_CHANGED; (2) update TestAgentNeutrality so it does not incorrectly treat the intended adapter surface as core agent leakage, consistent with the existing validate-sps2.sh and core_is_adapter_free boundary.",
+      "guard_corrections": [
+        {
+          "guard": "sps2/tools/validate-p7-readiness.py section 3",
+          "change": "the one-adapter DECLARED pin is replaced by a claim check derived from D-P3-A/B/D and the roadmap's 'Approval: user' rule: the registry must be contract-valid, and a SATISFIED claim additionally requires the delivered state and a User-attributable completion approval"
+        },
+        {
+          "guard": "sps2/tests/test_p5.py TestAgentNeutrality, and the copy of the same invariant in sps2/tools/validate-p5.py section 2",
+          "change": "the adapter surface (core/adapters/) is excluded from the vendor-name walk, exactly as validate-sps2.sh section 8 and core_is_adapter_free already do; negative controls keep the check non-vacuous"
+        }
+      ],
+      "rationale": "Any real adapter carries a vendor-named agent_id. Freezing the guards would make the roadmap's own deliverable unshippable; silently weakening them would remove real controls. Both corrections are recorded here, applied at the invariant level, and keep their negative controls.",
+      "bounded_scope": "Exactly two guard corrections. No other guard may be weakened, and no guard may be edited silently.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P3-G: Authorise exactly these two guard corrections and no broader weakening: 1. update the P7-readiness one-adapter pin so a legitimate Roadmap P3 adapter does not falsely fail with ADAPTER_STATE_CHANGED; 2. update TestAgentNeutrality so it does not incorrectly treat the intended adapter surface as core agent leakage, consistent with the existing validate-sps2.sh and core_is_adapter_free boundary.'"
+      }
+    }
+  ],
+  "what_these_decisions_do_not_authorise": [
+    "P7 implementation",
+    "threat-model implementation or claim",
+    "CONF-001 closure",
+    "LCP/INP invention",
+    "CAP-P03-005 promotion",
+    "production registry changes",
+    "runtime activation",
+    "package/dependency/skill/MCP installation",
+    "machine-global changes",
+    "legacy-file changes",
+    "history rewrite",
+    "force-push",
+    "ordinary push unless separately authorised"
+  ],
+  "carried_forward_unchanged": {
+    "CONF-001": "UNRESOLVED. LCP and INP thresholds remain NOT_OBSERVED. No value may be invented or inferred.",
+    "runtime_activation": "NOT_APPROVED (D-P6-2 remains binding)",
+    "CAP-P03-005": "DEFERRED / NOT_PROMOTED",
+    "production_capability_count": 4,
+    "production_registry_sha256": "5f95f62b03851748f95ac501221597f95243aae80f69cde2a8aea9105537af56",
+    "legacy_diff": "must remain 0",
+    "checkpoint_a7767cf": "must not be purged",
+    "push": "not authorised; local commits only"
+  },
+  "completion": {
+    "state": "APPROVED",
+    "approval": {
+      "state": "APPROVED",
+      "decided_by": "User",
+      "decided_on": "2026-10-05"
+    },
+    "roadmap_rule": "Roadmap P3 verification says 'Approval: user'. The reconciliation record may not report SATISFIED until this completion block is APPROVED by the User with a date.",
+    "delivered": [
+      "two declarative per-agent adapters (codex, opencode) at EXPERIMENTAL per D-P3-A/B",
+      "the generic DECLARED fallback retained",
+      "sps2/tools/test-portability.py (normal state, zero-adapter exercise, resume criterion)",
+      "sps2/RESUME.md mechanical fresh-agent checklist per D-P3-E",
+      "the two guard corrections per D-P3-G",
+      "sps2/evidence/ROADMAP-P3-EVIDENCE.json"
+    ],
+    "pending": [],
+    "explicitly_not_approved_yet": [
+      "beginning P7",
+      "every item in the D-P3-F forbidden list"
+    ]
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P8-DECISIONS",
+  "phase": "Roadmap P8 (CMS 2.0)",
+  "generated": "2026-10-06",
+  "author": "implementation agent (recording the User's explicit approval)",
+  "note": "P8 final approval. Records the User's explicit approval of the completed P8 implementation and its security remediation. This is a User approval record, not a self-approval. P8 approval is NOT production-readiness approval.",
+  "approval_scope": [
+    "P8 implementation and authorized vertical slice",
+    "SR-001 SSRF redirect remediation",
+    "SR-002 plain-text content safety remediation",
+    "P8 security boundary documentation",
+    "P8 regression and validation evidence",
+    "P8 project-local implementation"
+  ],
+  "approval_conditions": [
+    "P5 remains PARTIALLY_SATISFIED",
+    "CONF-001 remains UNRESOLVED",
+    "P7 remains approved and unchanged",
+    "SR-003, SR-004, SR-005, SR-006 and SR-007 remain documented non-blocking/open findings",
+    "Documented production prerequisites are preserved: authentication, CSRF protection, rate limiting, image optimization, virus scanning",
+    "P8 approval is not production-readiness approval",
+    "The historical credential incident is not modified or rewritten",
+    "The unrelated uncommitted sps2/tools/portability.py modification is untouched",
+    "No push unless separately authorized"
+  ],
+  "decisions": [
+    {
+      "decision_id": "D-P8-APPROVAL",
+      "title": "P8 implementation approved",
+      "decision": "The completed P8 CMS 2.0 implementation and its authorized vertical slice are APPROVED within the named approval scope and subject to the approval conditions. Approval is not production-readiness approval.",
+      "approved_scope": [
+        "P8 implementation and authorized vertical slice",
+        "SR-001 SSRF redirect remediation",
+        "SR-002 plain-text content safety remediation",
+        "P8 security boundary documentation",
+        "P8 regression and validation evidence",
+        "P8 project-local implementation"
+      ],
+      "conditions": [
+        "P5 remains PARTIALLY_SATISFIED",
+        "CONF-001 remains UNRESOLVED",
+        "P7 remains approved and unchanged",
+        "SR-003, SR-004, SR-005, SR-006 and SR-007 remain documented non-blocking/open findings",
+        "Documented production prerequisites preserved: authentication, CSRF protection, rate limiting, image optimization, virus scanning",
+        "Not production-readiness approval",
+        "Historical credential incident not modified or rewritten",
+        "Unrelated uncommitted sps2/tools/portability.py modification untouched",
+        "No push unless separately authorized"
+      ],
+      "explicitly_not_approved": [
+        "production deployment or production-readiness",
+        "runtime activation of any kind",
+        "promoting any capability, including CAP-P03-005",
+        "modifying the production capability registry",
+        "resolving CONF-001 or introducing LCP/INP values",
+        "upgrading P5 to SATISFIED",
+        "rewriting the historical credential incident (a7767cf)",
+        "modifying the unrelated sps2/tools/portability.py modification",
+        "P9 or any later phase",
+        "pushing to any remote",
+        "self-approval of any future gate"
+      ],
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-06",
+        "basis": "Explicit User decision: 'I approve P8 based on the completed evidence and final pre-approval hardening report at HEAD feb3c6e.'"
+      }
+    }
+  ],
+  "completion": {
+    "state": "APPROVED",
+    "approval": {
+      "state": "APPROVED",
+      "decided_by": "User",
+      "decided_on": "2026-10-06",
+      "basis": "Explicit User approval of the completed P8 implementation at HEAD feb3c6e, on the completed evidence and final pre-approval hardening report."
+    },
+    "transitions_from": "IMPLEMENTED / VERIFIED / NOT_APPROVED (security review complete; SR-001 and SR-002 CLOSED; READY FOR P8 APPROVAL REVIEW)",
+    "scope_rule": "The approved scope is exactly the approval_scope set and the approval_conditions. Approval does not widen, narrow or reinterpret either list.",
+    "approved_scope": [
+      "P8 implementation and authorized vertical slice",
+      "SR-001 SSRF redirect remediation",
+      "SR-002 plain-text content safety remediation",
+      "P8 security boundary documentation",
+      "P8 regression and validation evidence",
+      "P8 project-local implementation"
+    ],
+    "explicitly_not_approved": [
+      "production deployment or production-readiness",
+      "runtime activation of any kind",
+      "promoting any capability, including CAP-P03-005",
+      "modifying the production capability registry",
+      "resolving CONF-001 or introducing LCP/INP values",
+      "upgrading P5 to SATISFIED",
+      "rewriting the historical credential incident",
+      "modifying the unrelated sps2/tools/portability.py modification",
+      "P9 or any later phase",
+      "pushing to any remote",
+      "self-approval of any future gate"
+    ],
+    "delivered": [
+      "RBAC (Super Admin / Admin) with machine-testable permission matrix: domain/cms/auth.py",
+      "Typed content model (ContentType, Content, Section, Revision): domain/cms/model.py",
+      "Content service with RBAC enforced on every operation: domain/cms/service.py",
+      "API layer: domain/cms/api.py",
+      "Draft/preview/published/archived publishing workflow: domain/cms/publishing.py",
+      "Unified asset picker (upload, existing_media, external_url): domain/cms/assets.py",
+      "SSRF prevention with per-hop redirect validation: domain/cms/assets.py (_NoRedirectHandler)",
+      "Append-only HMAC-SHA256 audit log: domain/cms/audit.py",
+      "Rollback / feature-flag removal boundary: domain/cms/rollback.py",
+      "Plain-text content output safety: domain/cms/output_safety.py",
+      "P8 schemas: sps2/schemas/p8-content.schema.json, p8-permissions.schema.json, p8-asset.schema.json, p8-audit.schema.json",
+      "P8 requirements: sps2/requirements/P8-REQUIREMENTS.json",
+      "P8 architecture: sps2/governance/P8-ARCHITECTURE.json",
+      "P8 threat model (18 categories + SR-002 output boundary): sps2/governance/P8-THREAT-MODEL.md",
+      "86 regression tests: domain/cms/tests/"
+    ],
+    "security_review": {
+      "SR-001": "CLOSED — SSRF per-hop redirect validation (commit ec76249; strengthened regression tests feb3c6e)",
+      "SR-002": "CLOSED — plain-text content safety, output encoding at sink boundary (commit 9743d54; boundary documented feb3c6e)",
+      "SR-003": "OPEN / non-blocking — decompression ratio check is a stub (size-only)",
+      "SR-004": "OPEN / non-blocking — no concurrency control on the content store",
+      "SR-005": "OPEN / non-blocking — audit entry sanitization incomplete",
+      "SR-006": "OPEN / non-blocking — URL credentials not stripped",
+      "SR-007": "OPEN / non-blocking — symlink protection not enforced on asset storage"
+    },
+    "validation_evidence": {
+      "p8_test_suite": "86/86 pass",
+      "p7_readiness_validator": "30/30 pass",
+      "p7_isolation_validator": "8/8 pass",
+      "p8_schemas": "4/4 valid JSON",
+      "secret_scan": "commit feb3c6e clean; KI-01 holds (only historical checkpoint a7767cf is credential-bearing, preserved)"
+    },
+    "pending": [
+      "authentication",
+      "CSRF protection",
+      "rate limiting",
+      "image optimization",
+      "virus scanning",
+      "SR-003, SR-004, SR-005, SR-006, SR-007 remediation (non-blocking)"
+    ],
+    "explicitly_not_approved_yet": [
+      "production deployment or production-readiness",
+      "runtime activation of any kind",
+      "promoting any capability, including CAP-P03-005",
+      "P9 or any later phase",
+      "pushing to any remote"
+    ]
+  },
+  "carried_forward_unchanged": {
+    "P5": "PARTIALLY_SATISFIED — staleness monitor remains a tracked partial dependency; not silently upgraded",
+    "CONF-001": "UNRESOLVED. LCP and INP thresholds remain NOT_OBSERVED. No value may be invented or inferred.",
+    "P7": "APPROVED and unchanged (User-approved 2026-10-05)",
+    "CAP-P03-005": "DEFERRED / NOT_PROMOTED",
+    "production_capability_count": 4,
+    "legacy_diff": "must remain 0",
+    "credential_incident": "a7767cf preserved; not modified or rewritten"
+  },
+  "what_this_approval_does_not_authorise": [
+    "production deployment or production-readiness",
+    "runtime activation of any kind",
+    "promoting any capability, including CAP-P03-005",
+    "modifying the production capability registry",
+    "resolving CONF-001 or introducing LCP/INP values",
+    "upgrading P5 to SATISFIED",
+    "rewriting the historical credential incident",
+    "modifying the unrelated sps2/tools/portability.py modification",
+    "P9 or any later phase",
+    "pushing to any remote",
+    "self-approval of any future gate"
+  ]
+}

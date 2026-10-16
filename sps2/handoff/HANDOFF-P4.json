@@ -1,0 +1,134 @@
+{
+  "schema": "sps2.handoff-set/v1",
+  "phase": "P4",
+  "generated": "2026-10-03",
+  "handoffs": [
+    {
+      "handoff_id": "HANDOFF-P4-PRODUCTION-PROMOTION",
+      "from_phase": "P4",
+      "current_task": "P4 production capability promotion and registry hardening",
+      "current_state": "APPROVED",
+      "completed": [
+        "Gate verified: P3 APPROVED, P4 NOT_STARTED, incident classification unchanged, legacy diff zero",
+        "Legacy baseline recorded before implementation",
+        "Implemented the hardened promotion gate with eleven independent gates A-K",
+        "Discovered by observation that the repository declares no licence",
+        "Corrected the P3 KNOWN_PERMISSIVE claim to UNDECLARED as an unverified assumption",
+        "Migrated the registry to the CAP-P03 identifier scheme",
+        "Executed real verification for four governance capabilities; all four verified",
+        "Proved ranking determinism across 40 permutations with an adversarial popularity fixture",
+        "Established that no executable CLS verifier exists; the SEO candidate is deferred, not promoted",
+        "Zero of five capabilities promoted; every blocker named per gate",
+        "Implemented a no-emoji validator with an explicit positive control",
+        "Built validate-p4.sh with 20 mandated negative cases and positive controls",
+        "Verified the final suite: 53 structural checks, 0 failed, 25 negative cases rejected, 0 missed",
+        "Proved the suite is non-vacuous by mutation test: tampering a stored assessment and breaking an implementation reference each produce a hard failure",
+        "Strengthened gate B so a provenance claim must RESOLVE to a real source URL, a real P2 research reference, or an existing repository path",
+        "Strengthened gate C to detect an embedded credential, verified by injecting a synthetic secret and observing gate C newly block",
+        "Added a permanent validator section enforcing requirement, evidence and implementation wiring",
+        "Added dedicated per-capability evidence records EV-P4-012 to EV-P4-025 and wired them into the registry and requirements",
+        "Migrated the P1, P2 and P3 validators to the current P4 gate and the CAP-P03 identifier scheme",
+        "Found the INCIDENT-P3-001 credential re-present in .claude/settings.json during P4 and re-contained it; see EV-P4-019",
+        "Fixed real defects without weakening any check",
+        "Carried the P3 incident boundary forward unchanged"
+      ],
+      "not_completed": [
+        "DEC-0020 and DEC-0021 await separate user approval",
+        "ZERO capabilities reached production; four are REMAIN_CANDIDATE blocked by gates D and H",
+        "CAP-P03-005 is DEFERRED; no executable CLS verifier was implemented",
+        "No repository licence was declared; that is a user legal decision",
+        "P5 and later phases have NOT started",
+        "LCP and INP thresholds remain UNVERIFIED; nothing was invented",
+        "CMS content modelling remains RESEARCH_FURTHER",
+        "The P3 incident was not reopened; revocation stays USER_ATTESTED and unverified",
+        "Checkpoint a7767cf remains preserved and was not purged",
+        "The repository licence is recorded UNRESOLVED by explicit user decision (DEC-0022); no licence was chosen or inferred.",
+        "P5 remains NOT_STARTED and NOT_APPROVED; no P5 record was created.",
+        "CAP-P03-005 remains DEFERRED and unpromoted; gates F and K are unsatisfied and neither was bypassed",
+        "P5 remains NOT_STARTED and NOT_APPROVED; no P5 record was created",
+        "No capability, skill, MCP, dependency or external software was installed"
+      ],
+      "blockers": [
+        "Gate H blocks all production promotion: no explicit User approval for production promotion exists.",
+        "Gate F blocks CAP-P03-005: no executable CLS verifier implementation exists.",
+        "Gate K blocks CAP-P03-005: CONF-001 remains unresolved for the SEO domain",
+        "No remote may be created or used until separately authorised",
+        "Gate D blocks all production promotion: the licence is UNRESOLVED by explicit user decision (DEC-0022) and no licence may be assumed.",
+        "CAP-P03-005 cannot be promoted: gate F (no executable CLS verifier) and gate K (CONF-001 UNRESOLVED) remain unsatisfied"
+      ],
+      "requirements": [
+        "REQ-P4-01",
+        "REQ-P4-02",
+        "REQ-P4-03",
+        "REQ-P4-04",
+        "REQ-P4-05",
+        "REQ-P4-06",
+        "REQ-P4-07",
+        "REQ-P4-08"
+      ],
+      "evidence": [
+        "EV-P4-001",
+        "EV-P4-002",
+        "EV-P4-003",
+        "EV-P4-004",
+        "EV-P4-005",
+        "EV-P4-006",
+        "EV-P4-007",
+        "EV-P4-008",
+        "EV-P4-009",
+        "EV-P4-010",
+        "EV-P4-011"
+      ],
+      "user_approval": "PENDING_USER_APPROVAL",
+      "next_allowed_action": "Wait for an explicit user instruction. P5 approval is the next outstanding decision and has NOT been given. Do NOT begin P5 without instruction.",
+      "forbidden_next_action": "Do NOT promote any capability to production without an explicit separate User approval, do NOT begin P5, do NOT perform capability discovery, do NOT install any capability, skill, MCP, dependency or external code, do NOT create a remote, do NOT push, do NOT modify the legacy implementation, do NOT purge checkpoint a7767cf, and do NOT perform Phase 01 remediation.",
+      "licence_state": {
+        "licence": "MIT",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "SPS 2.0 repository",
+        "licence_file": "LICENSE",
+        "provenance_prerequisite": "SATISFIED_BY_USER_ATTESTATION",
+        "independently_verified": false,
+        "gate_D": "SATISFIED"
+      },
+      "production_promotion_state": {
+        "approved": true,
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, whose gates F and K remain unsatisfied.",
+          "Installing any skill, MCP, dependency or external software.",
+          "Any capability discovery beyond re-evaluating the existing P4 candidates."
+        ],
+        "promoted_count": 4,
+        "promoted": [
+          "CAP-P03-001",
+          "CAP-P03-002",
+          "CAP-P03-003",
+          "CAP-P03-004"
+        ],
+        "not_promoted": {
+          "CAP-P03-005": "DEFER. Gate F fails: no executable CLS verifier exists. Gate K fails: CONF-001 is UNRESOLVED. Gate H approval was explicitly withheld. Neither gate was bypassed and no LCP or INP evidence was invented."
+        },
+        "gate_H": "SATISFIED for CAP-P03-001..004 only",
+        "basis": "Gate H satisfied by explicit User production-promotion approval. Every other gate A-K was computed and passing at promotion time. Promotion did not depend on popularity, recency or research interest."
+      },
+      "approved_by": "User",
+      "approved_on": "2026-10-04",
+      "approval_scope": {
+        "approved": [
+          "P4 as a completed, verified phase, including its existing bounded scope and its outcome of zero production promotions."
+        ],
+        "explicitly_not_approved": [
+          "Any production promotion of any capability.",
+          "Any licence selection or declaration. The licence remains UNRESOLVED.",
+          "P5, and the beginning of any P5 work.",
+          "Creation of a remote, or pushing anything."
+        ]
+      }
+    }
+  ]
+}

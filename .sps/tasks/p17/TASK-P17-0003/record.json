@@ -1,0 +1,52 @@
+{
+  "agent_selection": {
+    "available_agents": [
+      {
+        "agent_id": "stub-agent.py",
+        "available": true,
+        "probe_method": "VERSION_FLAG",
+        "probed_at": "2026-10-10T12:42:51Z",
+        "version": "p17-stub-agent 1.0.0 (repository-local test double, not an agent)"
+      },
+      {
+        "agent_id": "stub-slow.py",
+        "available": true,
+        "probe_method": "VERSION_FLAG",
+        "probed_at": "2026-10-10T12:42:51Z",
+        "version": "p17-stub-slow 1.0.0 (repository-local test double, not an agent)"
+      }
+    ],
+    "discovered_at": "2026-10-10T12:42:51Z",
+    "selected_agent": "stub-agent.py",
+    "selected_at": "2026-10-10T12:42:51Z",
+    "selection_fingerprint": "726c4e9b557b57bdad6b2ddee3361cd6e784bcbe24e68118b444bf543f725e88",
+    "selection_rationale": "Selected stub-agent.py (score 1, satisfying all 1 required capabilities: test-double). It was probed available at runtime at 2026-10-10T12:42:51Z. No other eligible alternative."
+  },
+  "created_at": "2026-10-10T12:42:51Z",
+  "digests": {
+    "evidence_sha256": null,
+    "plan_sha256": "f9739a7acfcebe363a190102b465374e5554c1de11ccc2b17e1ac08aff35be7f",
+    "stderr_sha256": null,
+    "stdout_sha256": null
+  },
+  "goal": "stub-mode:write=output.txt",
+  "plan": [
+    {
+      "agent_id": null,
+      "depends_on": [],
+      "description": "Execute task goal under the selected agent: stub-mode:write=output.txt (acceptance: python3 -c print('acceptance satisfied'))",
+      "output_summary": null,
+      "required_capabilities": [
+        "test-double"
+      ],
+      "status": "PENDING",
+      "step_id": "STEP-1"
+    }
+  ],
+  "required_capabilities": [
+    "test-double"
+  ],
+  "status": "AWAITING_USER_APPROVAL",
+  "task_id": "TASK-P17-0003",
+  "updated_at": "2026-10-10T12:42:51Z"
+}

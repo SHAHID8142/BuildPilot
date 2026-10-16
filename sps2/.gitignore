@@ -1,0 +1,7 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Local agent configuration may contain credentials written by the harness.
+# Never commit it; keep a safe template in version control instead.
+.claude/settings.local.json

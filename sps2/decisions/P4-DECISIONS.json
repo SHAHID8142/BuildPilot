@@ -1,0 +1,103 @@
+{
+  "schema": "sps2.decision-set/v1",
+  "phase": "P4",
+  "generated": "2026-10-03",
+  "note": "DEC-0020 and DEC-0021 await separate user approval.",
+  "decisions": [
+    {
+      "decision_id": "DEC-0020",
+      "title": "Production promotion is blocked pending a repository licence declaration",
+      "decision": "No capability may be promoted to production until the repository declares a licence and the user explicitly approves production promotion.",
+      "reason": "The repository contains no LICENSE or COPYING file, so the applicable licence is UNRESOLVED. The P4 gate treats an unknown licence as a hard block. P3 recorded KNOWN_PERMISSIVE on the assumption that project-authored source implies a permissive licence; that assumption was unverified and P4 corrected it to UNDECLARED.",
+      "evidence": [
+        "Gate D computed result",
+        "git ls-files shows no LICENCE or COPYING file"
+      ],
+      "alternatives": [
+        {
+          "option": "Assume project-authored source is permissive",
+          "rejected_because": "An unlicensed repository is all-rights-reserved by default, not permissive."
+        },
+        {
+          "option": "Add a LICENSE file on the agent's own initiative",
+          "rejected_because": "Choosing a licence is a legal and ownership decision reserved to the user."
+        }
+      ],
+      "status": "DECIDED",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "decision_id": "DEC-0021",
+      "title": "The SEO CLS verifier is deferred, not promoted",
+      "decision": "CAP-P03-005 remains a candidate because no executable CLS verifier exists and an unresolved research conflict touches the SEO domain.",
+      "reason": "The CLS threshold fact is verified from SRC-017, but a verified fact is not an implemented capability. Its provenance pointed at a Markdown research file, not code. Gate F and gate K both fail.",
+      "evidence": [
+        "Gate F result",
+        "Gate K result CONF-001",
+        "no LCP or INP retrieved"
+      ],
+      "alternatives": [
+        {
+          "option": "Promote it because the thresholds are verified",
+          "rejected_because": "Verification of a fact is not verification of a capability."
+        }
+      ],
+      "status": "DECIDED",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      }
+    },
+    {
+      "decision_id": "DEC-0022",
+      "title": "The repository licence remains unresolved and was not chosen",
+      "decision": "No licence was selected, added or inferred. The repository licence is recorded as UNRESOLVED and gate D continues to block every production promotion until the User makes an explicit licence decision.",
+      "reason": "The user instructed that the licence must not be invented or assumed, and that it be recorded as unresolved unless an explicit licence decision is provided. Selecting a licence is a legal and ownership decision reserved to the User.",
+      "evidence": [
+        "EV-P4-018"
+      ],
+      "alternatives": [
+        {
+          "option": "Infer MIT or another permissive licence from the project-authored source",
+          "rejected_because": "The user explicitly prohibited assuming a licence. An unlicensed repository is all-rights-reserved by default."
+        },
+        {
+          "option": "Add a LICENSE file to unblock gate D",
+          "rejected_because": "Choosing a licence is a legal decision reserved to the user and was explicitly withheld."
+        }
+      ],
+      "status": "DECIDED",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "approved_by": "User",
+        "approved_on": "2026-10-04",
+        "scope": "P4 only: phase completion and verification. This approval does NOT authorise production promotion of any capability, does NOT resolve the licence question, and does NOT approve or begin P5."
+      },
+      "unresolved": {
+        "item": "repository_licence",
+        "state": "RESOLVED_BY_USER_DECISION",
+        "resolved_on": "2026-10-04",
+        "decided_by": "User",
+        "licence": "MIT",
+        "scope": "SPS 2.0 repository",
+        "licence_file": "LICENSE",
+        "provenance_prerequisite": "SATISFIED_BY_USER_ATTESTATION",
+        "third_party_code_relicensed": false,
+        "independent_legal_verification_claimed": false,
+        "blocking_gate": "D",
+        "gate_D_now": "SATISFIED",
+        "note": "Gate D is satisfied. Gate H remains BLOCKED: no explicit User production approval exists, so 0 of 5 capabilities are promoted. D and H are independent."
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "sps2.decision-set/v1",
+  "phase": "P1",
+  "generated": "2026-10-03",
+  "note": "DEC-0009 and DEC-0010 approved by User on 2026-10-03.",
+  "decisions": [
+    {
+      "decision_id": "DEC-0009",
+      "title": "SPS 2.0 root is sps2/ within this repository, pending a standalone repository",
+      "decision": "Build the SPS 2.0 foundation under a self-contained sps2/ directory so no legacy file is modified, no remote is created and no machine-global state is touched.",
+      "reason": "The user authorised creating a new repository but specified no repository name, host or location. Creating a standalone git repository outside this workspace would write outside project-local scope and require inventing an unapproved destination.",
+      "evidence": [
+        "Phase 05 DEC-0007 established SPS 2.0 is a NEW repository; the standalone git init step is deliberately deferred, not silently skipped."
+      ],
+      "alternatives": [
+        {
+          "option": "Convert the legacy repository in place",
+          "rejected_because": "Prohibited; would modify the reference system."
+        },
+        {
+          "option": "Create a standalone repository outside this workspace",
+          "rejected_because": "No approved destination; would write outside project-local scope."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03"
+      }
+    },
+    {
+      "decision_id": "DEC-0010",
+      "title": "No-emoji is machine-enforced, not documentation-only",
+      "decision": "Enforce the global no-emoji rule with a repository scan plus a negative test rather than by documenting it alone.",
+      "reason": "Phase 01 finding F-9 showed that documentation asserting behaviour is a proven defect class in the legacy system.",
+      "evidence": [
+        "DEC-0008 established the no-emoji rule; finding F-9 established the documentation-only failure mode."
+      ],
+      "alternatives": [
+        {
+          "option": "Convert the legacy repository in place",
+          "rejected_because": "Prohibited; would modify the reference system."
+        },
+        {
+          "option": "Create a standalone repository outside this workspace",
+          "rejected_because": "No approved destination; would write outside project-local scope."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-03",
+        "basis": "Explicit user approval of the P1 final report, 2026-10-03"
+      }
+    }
+  ]
+}

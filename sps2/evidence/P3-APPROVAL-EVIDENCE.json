@@ -1,0 +1,79 @@
+{
+  "schema": "sps2.evidence-set/v1",
+  "phase": "P3",
+  "pass": "APPROVAL",
+  "generated": "2026-10-03",
+  "note": "Approval-transition evidence. No credential value appears here. Revocation remains USER_ATTESTED and was never independently verified. P4 remains NOT_APPROVED.",
+  "records": [
+    {
+      "evidence_id": "EV-P3-A01",
+      "source": "USER",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "User approved P3 including the security incident closure",
+      "expected_result": "explicit user instruction, 2026-10-03",
+      "observed_result": "P3 is approved with a bounded scope",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "USER_ATTESTATION",
+      "relates_to": {
+        "task_id": "P3-APPROVAL"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-A02",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Approval attribution is user-only and machine-verified",
+      "expected_result": "validate-p3.sh section 3",
+      "observed_result": "Every approval attributed to the User",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P3-APPROVAL"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-A03",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Approval bounds are machine-enforced",
+      "expected_result": "validate-p3.sh section 3 assertions",
+      "observed_result": "Approval did not leak into P4 or into capability states",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P3-APPROVAL"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-A04",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Forensic checkpoint a7767cf preserved through the approval transition",
+      "expected_result": "git cat-file -t a7767cf",
+      "observed_result": "Forensic evidence intact",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P3-APPROVAL"
+      }
+    },
+    {
+      "evidence_id": "EV-P3-A05",
+      "source": "VALIDATOR",
+      "timestamp": "2026-10-03T00:00:00Z",
+      "command": "Full validator suite green after the approval transition",
+      "expected_result": "validate-p3.sh, validate-p2.sh, validate-sps2.sh and the four legacy validators plus the secret-safety suite",
+      "observed_result": "No regression from the transition",
+      "result": "PASS",
+      "exit_code": 0,
+      "classification": "FACT",
+      "relates_to": {
+        "task_id": "P3-APPROVAL"
+      }
+    }
+  ]
+}

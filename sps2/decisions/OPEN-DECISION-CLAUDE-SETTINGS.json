@@ -1,0 +1,54 @@
+{
+  "schema": "sps2.open-decision/v1",
+  "decision_id": "DEC-0024",
+  "title": "Tracked .claude/settings.json: treatment recommended, awaiting an explicit user decision",
+  "state": "RESOLVED_APPLIED",
+  "resolved_on": "2026-10-04",
+  "resolved_by": "User explicit instruction (options A + C)",
+  "decision": "Treatment A + C applied as instructed: the committed-blob guard is retained permanently, and the working-tree file was restored to the clean HEAD version.",
+  "actions_taken": [
+    "Verified the HEAD blob for .claude/settings.json contains only the key enabledPlugins, no env block and no credential key, BEFORE restoring.",
+    "Ran git restore .claude/settings.json. The file now matches HEAD exactly.",
+    "Kept validate-p4.sh section 12b permanently enforced, with POSCTRL-E proving the guard detects a planted credential key."
+  ],
+  "final_state": {
+    "file_present": true,
+    "matches_HEAD": true,
+    "top_level_keys": ["enabledPlugins"],
+    "credential_keys": "none",
+    "working_tree_status": "clean"
+  },
+  "guard": "validate-p4.sh section 12b checks the COMMITTED blob at HEAD, so a credential can never be published by a future commit regardless of what the harness writes to the working tree.",
+  "verification": [
+    "No credential value was read, printed, hashed, logged or transmitted at any point.",
+    "No provider-side credential probe was performed.",
+    "The repository-wide secret scan returns clean.",
+    "The P3 history-credential mutation test passes all four scenarios."
+  ],
+  "kilo_worktrees_finding": {
+    "path": ".kilo/worktrees/soft-hair/",
+    "classification": "GENERATED_TOOLING_STATE",
+    "evidence": [
+      "It is a nested git repository containing a complete duplicate checkout of this project, including its own .claude directory.",
+      "The worktree name 'soft-hair' is a generated random identifier, not a meaningful project name.",
+      "It contains build and test output artifacts such as .test.out.",
+      "The tool ships its own .kilo/.gitignore, confirming it manages its own generated state.",
+      "Its .claude/settings.json contains only the key enabledPlugins, with no env block and no credential key."
+    ],
+    "already_excluded": true,
+    "exclusion_mechanism": ".git/info/exclude line 9: .kilo/worktrees/ - added by the tooling itself",
+    "action_taken": "None. No deletion and no .gitignore change.",
+    "rationale": "Evidence shows the path is generated tooling state that is ALREADY excluded locally, so there is no current staging hazard and no evidence-based reason to broaden .gitignore. The instruction was not to broaden .gitignore without evidence, and no such evidence of a live hazard exists.",
+    "caveat_for_the_user": ".git/info/exclude is local and is not committed or shared. A collaborator cloning this repository would not inherit the exclusion and would see .kilo/worktrees as untracked. Whether to commit a shared exclusion is a user decision and was not taken.",
+    "also_noted": "The .kilo directory itself is not excluded; only .kilo/worktrees is."
+  },
+  "not_done": [
+    "Checkpoint a7767cf was not modified or deleted.",
+    "No history rewrite, reflog expiry, garbage collection or force-push occurred.",
+    "The P3 incident classification USER_ATTESTED_NOT_INDEPENDENTLY_VERIFIED was not changed.",
+    "Revocation remains user-attested and was not independently verified.",
+    "The .kilo path was not deleted.",
+    ".gitignore was not modified."
+  ],
+  "related": ["EV-P4-019", "INCIDENT-P3-001", "PROVENANCE-SPS-CMS"]
+}

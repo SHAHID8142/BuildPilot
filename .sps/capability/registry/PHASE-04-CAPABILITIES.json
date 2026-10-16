@@ -1,0 +1,16 @@
+{
+  "schema": "sps.capabilities/v1",
+  "phase": "PHASE-04",
+  "title": "Capability Registry",
+  "generated": "2026-10-03",
+  "status": "AWAITING_USER_APPROVAL",
+  "note": "Intentionally EMPTY. Phase 04 establishes the registry mechanism only. Populating it requires live research and user approval (migration stage 3+ in PROVENANCE.md section 6). No capability is invented, and none is installed. See CAPABILITY-MODEL.md section 1 for the audit of the existing hardcoded routing this registry is designed to replace.",
+  "capabilities": [],
+  "counts": {
+    "total": 0,
+    "active": 0,
+    "pending_approval": 0,
+    "rejected": 0,
+    "removed": 0
+  }
+}

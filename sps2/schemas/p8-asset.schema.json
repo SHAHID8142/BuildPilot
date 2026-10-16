@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p8-asset/v1",
+  "title": "P8 CMS Asset Schema",
+  "description": "Schema for P8 CMS assets. All sources (upload, existing media, external URL) produce a uniform asset reference.",
+  "type": "object",
+  "required": ["id", "source", "local_path", "media_type", "size_bytes", "checksum", "uploaded_at", "uploaded_by"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "source": {"enum": ["upload", "existing_media", "external_url"]},
+    "original_url": {"type": ["string", "null"], "format": "uri"},
+    "local_path": {"type": "string", "minLength": 1},
+    "media_type": {"type": "string", "minLength": 1},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "checksum": {"type": "string", "minLength": 64, "maxLength": 64},
+    "uploaded_at": {"type": "string", "format": "date-time"},
+    "uploaded_by": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": false
+}
