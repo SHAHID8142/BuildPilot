@@ -36,7 +36,7 @@ echo -e "${DIM}no network, no installs, no discovery, no global writes${NC}"
 
 check_registry() {
 python3 - "$1" "$2" <<'PY'
-import json, sys, re
+import json, os, sys, re
 path, research_path = sys.argv[1], sys.argv[2]
 try:
     d = json.load(open(path))
@@ -49,7 +49,13 @@ except Exception:
 ready = {e.get("research_id"): (e.get("readiness") == "SUFFICIENT")
          for e in research.get("entries", [])}
 
-AGENT_WORDS = r'\b(agent|ai|assistant|model|bot|claude|cursor|codex|gemini|opencode|copilot)\b'
+try:
+    sys.path.insert(0, os.path.join(os.getcwd(), 'sps2', 'governance'))
+    import attribution as ATTR
+except Exception as exc:
+    print('ERR\tcanonical attribution policy unavailable: %s' % exc)
+    raise SystemExit(1)
+# SPEC-2: tokens come from the single authoritative policy; no local list.
 SAFE = {"VERIFIED_SAFE", "REVIEWED_LOW_RISK"}
 LIFE = ["DISCOVERED", "RESEARCHING", "EVALUATED", "PROPOSED", "PENDING_USER_APPROVAL",
         "APPROVED", "INSTALLING", "INSTALLED", "VERIFIED", "ACTIVE", "DEPRECATED",
@@ -80,7 +86,7 @@ for c in d.get("capabilities", []):
         who = (c.get("global_installation_authorized_by") or "").strip()
         if not who:
             print("ERR\t%s: install_scope GLOBAL without authorization - CASE D/N" % cid); continue
-        if re.search(AGENT_WORDS, who, re.I):
+        if ATTR.AGENTISH.search(who):
             print("ERR\t%s: global install authorized by non-user %r - CASE D/N"
                   % (cid, who)); continue
 
@@ -101,7 +107,7 @@ for c in d.get("capabilities", []):
         who = (c.get("approval_decided_by") or "").strip()
         if not who:
             print("ERR\t%s: APPROVED without a decider - CASE G" % cid); continue
-        if re.search(AGENT_WORDS, who, re.I):
+        if ATTR.AGENTISH.search(who):
             print("ERR\t%s: APPROVED attributed to non-user %r - CASE G" % (cid, who)); continue
 
     if life in ("VERIFIED", "ACTIVE") and not (c.get("evidence") or []):
@@ -176,8 +182,16 @@ sect "4b. Requirement approval integrity (JSON)"
 for rq in .sps/requirements/*.json; do
   [ -e "$rq" ] || continue
   OUT2="$(python3 - "$rq" <<'PY'
-import json, re, sys
-AGENT = re.compile(r'\b(agent|ai|assistant|model|bot|claude|cursor|codex|gemini|opencode)\b', re.I)
+import json, os, sys
+try:
+    sys.path.insert(0, os.path.join(os.getcwd(), 'sps2', 'governance'))
+    import attribution as ATTR  # SPEC-2: single authoritative policy
+except Exception as exc:
+    # Without the policy this control cannot run. Say so; do not go quiet:
+    # an empty OUT2 used to fall through every branch and record nothing.
+    sys.stderr.write('canonical attribution policy unavailable: %s\n' % exc)
+    raise SystemExit(2)
+AGENT = ATTR.AGENTISH
 d = json.load(open(sys.argv[1]))
 errs = []
 for r in d.get('requirements', []):
@@ -193,8 +207,13 @@ for r in d.get('requirements', []):
 print("\n".join(errs) if errs else "CLEAN")
 PY
 )"
-  if [ "$OUT2" = "CLEAN" ]; then
+  _rc4b=$?
+  if [ "$_rc4b" -ne 0 ]; then
+    fail "$rq: requirement-approval control could not run (exit $_rc4b) - canonical policy unavailable"
+  elif [ "$OUT2" = "CLEAN" ]; then
     pass "$rq: requirement approvals are properly attributed"
+  elif [ -z "$OUT2" ]; then
+    fail "$rq: requirement-approval control produced no output - refusing to pass"
   else
     while IFS= read -r line; do
       [ -n "$line" ] && fail "$rq: $line"
@@ -246,11 +265,44 @@ sect "7. Phase 04 state"
 grep -q 'AWAITING_USER_APPROVAL' .sps/STATE.md 2>/dev/null \
   && pass "STATE.md records Phase 04 as AWAITING_USER_APPROVAL" \
   || fail "STATE.md does not record AWAITING_USER_APPROVAL"
-if grep -rqiE '\*\*Decided by:\*\*[[:space:]]*(an?[[:space:]]+)?(agent|ai|assistant|model|bot)' .sps/ 2>/dev/null; then
-  fail "an approval is attributed to an agent - only the User may approve"
-else
-  pass "no approval is attributed to an agent"
-fi
+  # SPEC-2: agent attribution is judged by the single authoritative policy
+  # (sps2/governance/attribution_policy.json) via attribution.py, never by a
+  # local grep alternation.
+  #
+  # THREE-WAY EXIT CONTRACT - this control is fail-CLOSED:
+  #   0 = scan completed, nothing found            -> pass
+  #   1 = scan completed, agent name found         -> fail
+  #   2 = scan could not run (policy unavailable)  -> fail, never "pass"
+  # A bare `if cmd; then fail; else pass; fi` collapses 1 and 2 into one branch.
+  python3 - <<'PY' > /dev/null 2>&1
+import os, re, sys
+try:
+    sys.path.insert(0, os.path.join(os.getcwd(), 'sps2', 'governance'))
+    import attribution as ATTR
+except Exception as exc:
+    # Exit 2 = the control could not run. It must never be read as 'clean'.
+    sys.stderr.write('canonical attribution policy unavailable: %s\n' % exc)
+    sys.exit(2)
+rx = ATTR.AGENTISH
+for root, _, files in os.walk('.sps'):
+    for f in files:
+        if not f.endswith(('.md', '.json')):
+            continue
+        try:
+            txt = open(os.path.join(root, f), encoding='utf-8', errors='ignore').read()
+        except OSError:
+            continue
+        for m in re.finditer(r'Decided by:?\*\*([^\n]*)', txt):
+            if rx.search(m.group(1)):
+                sys.exit(1)
+sys.exit(0)
+PY
+  _rc=$?
+  case "$_rc" in
+    0) pass "no approval is attributed to an agent" ;;
+    1) fail "an approval is attributed to an agent - only the User may approve" ;;
+    *) fail "agent-attribution control could not run (exit $_rc) - canonical policy unavailable" ;;
+  esac
 fi  # end structural
 
 # ══ NEGATIVE SUITE — CASE A..N ═══════════════════════════════════════════════

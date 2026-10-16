@@ -48,7 +48,13 @@ echo -e "${DIM}root: $ROOT${NC}"
 # ── helper: evaluate a requirement file; prints OK/ERR lines ─────────────────
 check_requirements() {
 python3 - "$1" <<'PY'
-import json, sys, re
+import json, os, sys, re
+sys.path.insert(0, os.path.join(os.getcwd(), 'sps2', 'governance'))
+try:
+    import attribution as ATTR
+except Exception as exc:
+    print('ERR\tcanonical attribution policy unavailable: %s' % exc)
+    raise SystemExit(1)
 try:
     d = json.load(open(sys.argv[1]))
 except Exception as e:
@@ -87,7 +93,7 @@ for r in reqs:
         who = (r.get('approval_decided_by') or '').strip()
         if not who:
             print("ERR\t%s: APPROVED but approval_decided_by is empty" % rid); continue
-        if re.search(r'\b(agent|ai|assistant|model|bot|claude|gpt|cursor|codex)\b', who, re.I):
+        if ATTR.AGENTISH.search(who):
             print("ERR\t%s: APPROVED attributed to agent/model, not a user" % rid); continue
     if (r.get('verification_status') == 'VERIFIED'
             and r.get('approval_status') in ('NOT_REQUIRED', 'PENDING_USER_APPROVAL')

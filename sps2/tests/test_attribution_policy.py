@@ -1130,14 +1130,273 @@ class TestCheckerDocumentShapesFailVisibly(unittest.TestCase):
                 self.assertNotIn("Traceback", proc.stderr)
 
     def test_healthy_document_under_a_healthy_policy_stays_clean(self):
-        """Positive control: the guards must not fire on a valid document."""
+        """Positive control: the guards must not fire on a valid document.
+
+        The fixture carries the collection key that kind ``sources`` actually
+        reads. It previously used ``{"records": []}``, a key no sources handler
+        consults, so the test passed only because the absent ``sources`` key
+        was silently ignored -- it asserted a vacuous run as "clean". Now that
+        a missing collection is reported, the fixture must be genuinely valid.
+        """
         import tempfile
         with tempfile.TemporaryDirectory() as tmpdir:
             tree = self._isolated_tree(tmpdir)
             proc = self._run(tree, "sps2/tools/check_p2.py", "sources",
-                             '{"records": []}')
+                             '{"sources": []}')
         self.assertEqual(proc.stdout.strip(), "",
                          "a clean document must stay clean: %r" % proc.stdout)
+        self.assertEqual(proc.returncode, 0)
+
+    # Kinds carrying an independent, pre-existing "must not be empty" rule
+    # (check_p2.py:158 rejects an empty interop matrix). Their collections are
+    # still structurally sounded by the guard, but an empty list is a genuine
+    # violation, so they are excluded from the empty-collection positive
+    # control rather than being asserted clean.
+    KINDS_REQUIRING_NON_EMPTY = {"interop"}
+
+    def test_every_kind_accepts_a_correctly_keyed_empty_collection(self):
+        """Each kind's own collection key, empty, must still be clean.
+
+        Pins the positive control for the kinds whose only structural
+        requirement is the collection itself, so a future guard cannot start
+        rejecting well-formed documents.
+        """
+        import tempfile
+        for kind, key in self.REQUIRED_COLLECTIONS.items():
+            if kind in self.KINDS_REQUIRING_NON_EMPTY:
+                continue
+            with self.subTest(kind=kind):
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    tree = self._isolated_tree(tmpdir)
+                    proc = self._run(tree, "sps2/tools/check_p2.py", kind,
+                                     '{"%s": []}' % key)
+                self.assertEqual(
+                    proc.stdout.strip(), "",
+                    "kind %s must accept an empty %r list: %r"
+                    % (kind, key, proc.stdout))
+                self.assertEqual(proc.returncode, 0)
+
+    def test_interop_empty_matrix_rule_is_preserved(self):
+        """The pre-existing non-empty interop matrix rule must still fire.
+
+        check_p2.py:158 rejects an empty interop matrix. Pinned here because
+        the new structural guard sits on the same code path: a correct guard
+        must not shadow this rule, and this rule must not be mistaken for a
+        structural failure.
+        """
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tree = self._isolated_tree(tmpdir)
+            proc = self._run(tree, "sps2/tools/check_p2.py", "interop",
+                             '{"records": []}')
+        self.assertIn("interop matrix is empty", proc.stdout)
+        self.assertEqual(proc.returncode, 0)
+        self.assertNotIn("Traceback", proc.stderr)
+
+    # The collection key each kind is required to carry. check_p2.py read these
+    # with a bare d.get(key, []) default, so an ABSENT key made every handler
+    # iterate an empty list, emit nothing, and exit 0 — a silent PASS for a
+    # document that was never validated. check_sps2.py already guarded this via
+    # its _records() helper; check_p2.py never got the equivalent.
+    REQUIRED_COLLECTIONS = {
+        "sources": "sources",
+        "capability": "capabilities",
+        "interop": "records",
+        "requirements": "requirements",
+        "evidence": "records",
+        "decision": "decisions",
+        "handoff": "handoffs",
+    }
+
+    def test_document_missing_its_collection_key_is_reported_not_ignored(self):
+        """An object lacking its expected collection key must emit ERR.
+
+        A bare '{}' is valid JSON and a valid JSON *object*, so the top-level
+        type guard does not catch it. Every handler then iterated
+        d.get(<key>, []) -> no violations -> empty stdout -> scored as PASS by
+        validate-p2.sh:34-41. The document was never actually validated.
+        """
+        import tempfile
+        for kind, key in self.REQUIRED_COLLECTIONS.items():
+            with self.subTest(kind=kind, key=key):
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    tree = self._isolated_tree(tmpdir)
+                    proc = self._run(tree, "sps2/tools/check_p2.py", kind, "{}")
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "check_p2.py %s produced EMPTY stdout for a document with "
+                    "no %r collection; the harness scores empty stdout as PASS"
+                    % (kind, key))
+                self.assertIn("ERR", proc.stdout)
+                self.assertEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr)
+
+    def test_document_with_a_non_list_collection_is_reported(self):
+        """A present-but-wrong-typed collection must also be reported.
+
+        The key exists, so the missing-key guard does not fire; the handler
+        would iterate a non-list (or call .get() on a non-mapping element) and
+        either crash or silently check nothing.
+        """
+        import tempfile
+        for kind, key in self.REQUIRED_COLLECTIONS.items():
+            for payload in ('{"%s": null}' % key, '{"%s": 42}' % key,
+                            '{"%s": "x"}' % key):
+                with self.subTest(kind=kind, payload=payload):
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        tree = self._isolated_tree(tmpdir)
+                        proc = self._run(tree, "sps2/tools/check_p2.py",
+                                         kind, payload)
+                    self.assertNotEqual(
+                        proc.stdout.strip(), "",
+                        "check_p2.py %s produced EMPTY stdout for %s"
+                        % (kind, payload))
+                    self.assertIn("ERR", proc.stdout)
+                    self.assertEqual(proc.returncode, 0)
+                    self.assertNotIn("Traceback", proc.stderr)
+
+    def test_checker_document_guards_do_not_drift_between_siblings(self):
+        """check_sps2.py and check_p2.py must agree on collection handling.
+
+        The missing-key guard existed only in check_sps2.py; pinning both
+        checkers against the same fixtures keeps them from diverging again.
+
+        NOTE: an earlier version of this test looped over
+        REQUIRED_COLLECTIONS but ran the byte-identical command
+        ``check_sps2.py capability "{}"`` on every iteration, so it never
+        touched check_p2.py at all: it passed with check_p2.py fully reverted,
+        and still passed after 'sources' was renamed to 'source_records' in
+        check_p2.py's mapping. It asserted nothing about drift. The commands
+        below are built from the loop variables, so a divergence in either
+        checker's mapping or guard is now detected.
+        """
+        import tempfile
+        for kind, key in self.REQUIRED_COLLECTIONS.items():
+            # check_p2.py dispatches on the argument it is given.
+            with self.subTest(sibling="check_p2.py", kind=kind, key=key):
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    tree = self._isolated_tree(tmpdir)
+                    proc = self._run(tree, "sps2/tools/check_p2.py",
+                                     kind, "{}")
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "check_p2.py %s produced EMPTY stdout for a document with "
+                    "no %r collection; the harness scores empty as PASS"
+                    % (kind, key))
+                self.assertIn("ERR", proc.stdout)
+                self.assertIn(key, proc.stdout,
+                              "the ERR must name the missing collection %r"
+                              % key)
+                self.assertEqual(proc.returncode, 0)
+
+        # check_sps2.py accepts a NARROWER and differently-spelled kind set:
+        # {"requirement", "capability", "evidence", "decision", "handoff",
+        # "action"} -- singular, and it has no "sources"/"interop". Exercise the
+        # shared names and assert the invariant that matters: it must never
+        # exit 0 with empty stdout for a document that has no such collection.
+        shared = {"requirement": "requirements", "capability": "capabilities",
+                  "evidence": "records", "decision": "decisions",
+                  "handoff": "handoffs"}
+        for kind, key in shared.items():
+            with self.subTest(sibling="check_sps2.py", kind=kind, key=key):
+                with tempfile.TemporaryDirectory() as tmpdir:
+                    tree = self._isolated_tree(tmpdir)
+                    proc = self._run(tree, "sps2/tools/check_sps2.py",
+                                     kind, "{}")
+                self.assertEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "check_sps2.py %s produced EMPTY stdout for a document "
+                    "with no %r collection" % (kind, key))
+                self.assertIn("ERR", proc.stdout)
+
+    ELEMENT_SHAPE_KEY = {
+        "sources": "sources",
+        "capability": "capabilities",
+        "interop": "records",
+        "requirements": "requirements",
+        "evidence": "records",
+        "decision": "decisions",
+        "handoff": "handoffs",
+    }
+
+    def test_non_object_list_elements_are_reported(self):
+        """A correctly-typed list of NON-object elements must not pass.
+
+        This is the third structural shape (after a missing key and a non-list
+        value). Every per-record handler calls .get() on each element, so an
+        integer element raises AttributeError, escapes main(), and leaves
+        stdout empty -- which validate-p2.sh's assert_clean scores as PASS.
+        check_sps2.py reports it as "<key>[i] is not an object"; check_p2.py
+        did not, and no test covered it.
+        """
+        import tempfile
+        for kind, key in self.ELEMENT_SHAPE_KEY.items():
+            for payload in ('{"%s": [1]}' % key,
+                            '{"%s": ["x"]}' % key,
+                            '{"%s": [null]}' % key,
+                            '{"%s": [[1, 2]]}' % key):
+                with self.subTest(kind=kind, payload=payload):
+                    with tempfile.TemporaryDirectory() as tmpdir:
+                        tree = self._isolated_tree(tmpdir)
+                        proc = self._run(tree, "sps2/tools/check_p2.py",
+                                         kind, payload)
+                    self.assertNotEqual(
+                        proc.stdout.strip(), "",
+                        "check_p2.py %s produced EMPTY stdout for %s; the "
+                        "harness scores empty stdout as PASS"
+                        % (kind, payload))
+                    self.assertIn("ERR", proc.stdout)
+                    self.assertIn("is not an object", proc.stdout)
+                    self.assertEqual(proc.returncode, 0)
+                    self.assertNotIn("Traceback", proc.stderr)
+
+    # check_p3.py's registry mode reads reg.get("capabilities") or [], so a
+    # registry that is not an object, or that omits the key, made the checks
+    # vacuous while stdout stayed empty. validate-p3.sh:90-91 scores an empty
+    # stdout as a PASS, so such a registry was reported clean unchecked.
+    REGISTRY_STRUCTURAL_DOCUMENTS = [
+        "{}", "[]", "42", "null", '"a string"', "true",
+        '{"capabilities": null}', '{"capabilities": 42}',
+        '{"capabilities": "x"}',
+    ]
+
+    def test_p3_registry_structural_failures_are_reported(self):
+        """A structurally invalid P3 registry must emit ERR, not empty stdout."""
+        import subprocess
+        import tempfile
+        for payload in self.REGISTRY_STRUCTURAL_DOCUMENTS:
+            with self.subTest(registry=payload):
+                with tempfile.NamedTemporaryFile("w", suffix=".json",
+                                                 delete=False) as tf:
+                    tf.write(payload)
+                    tmp_name = tf.name
+                try:
+                    proc = subprocess.run(
+                        [sys.executable,
+                         os.path.join(SPS2, "tools", "check_p3.py"),
+                         "registry", tmp_name],
+                        capture_output=True, text=True, cwd=REPO)
+                finally:
+                    os.unlink(tmp_name)
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "check_p3.py registry produced EMPTY stdout for %r; "
+                    "validate-p3.sh scores empty stdout as PASS" % payload)
+                self.assertIn("ERR", proc.stdout)
+                self.assertEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr)
+
+    def test_p3_real_registry_stays_clean(self):
+        """Positive control: the committed registry must still validate clean."""
+        import subprocess
+        proc = subprocess.run(
+            [sys.executable, os.path.join(SPS2, "tools", "check_p3.py"),
+             "registry", os.path.join(SPS2, "capability", "registry.json")],
+            capture_output=True, text=True, cwd=REPO)
+        self.assertEqual(proc.stdout.strip(), "",
+                         "the real registry must stay clean: %r" % proc.stdout)
         self.assertEqual(proc.returncode, 0)
 
 
@@ -1197,6 +1456,186 @@ class TestP3RecordsModeActuallyChecks(unittest.TestCase):
         self.assertEqual(
             self._run_records("decisions", good).stdout.strip(), "",
             "a well-formed, empty decision set should report nothing")
+
+    # ------------------------------------------------------------------
+    # Defect D5 (unknown kind) and corollary D5b (absent collection).
+    #
+    # check_records() branched on requirements|evidence|decisions and then a
+    # bare `else:` that validated HANDOFFS. An unrecognised kind therefore fell
+    # into the handoffs fallback, inspected the WRONG key, emitted NOTHING, and
+    # validate-p3.sh:103 (`[ -z "$OUT" ] && pass`) scored that empty stdout as a
+    # PASS. Any kind outside the four legitimate ones -- a typo, a path, "" --
+    # made `records` mode vacuous.
+    #
+    # CRITICAL FIXTURE RULE: every unknown-kind control below uses a fixture
+    # corrupt ONLY for `requirements`, never a fixture corrupt for all kinds.
+    # A fixture corrupt for all kinds is MASKED by the handoffs fallback: the
+    # broken code emits nothing, the test sees "clean", and the control reports
+    # OK on broken code. A prior workstream made exactly that mistake.
+    # ------------------------------------------------------------------
+
+    # The legitimate kind -> required collection key map, mirroring
+    # check_p3.py's RECORD_COLLECTIONS.
+    RECORD_COLLECTIONS = {
+        "requirements": "requirements",
+        "evidence": "records",
+        "decisions": "decisions",
+        "handoff": "handoffs",
+    }
+
+    # Corrupt ONLY for `requirements`: a bad requirement_id. Under the defect
+    # this fixture is invisible to every other kind and to unknown kinds.
+    REQUIREMENTS_ONLY_CORRUPT = '{"requirements": [{"id": "BOGUS"}]}'
+
+    def test_unknown_kind_is_rejected_visibly(self):
+        """An unknown kind must emit ERR, never a vacuous empty-stdout PASS.
+
+        The fixture is corrupt ONLY for requirements, so the only way this can
+        report empty stdout is the D5 fallback: unknown kind -> handoffs branch
+        -> wrong key -> nothing emitted -> scored as PASS.
+        """
+        for kind in ("bogus", "reqs", "", "requirement", "HANDOFF",
+                     "sps2/requirements/P3-REQUIREMENTS.json"):
+            with self.subTest(kind=kind):
+                proc = self._run_records(kind, self.REQUIREMENTS_ONLY_CORRUPT)
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "check_p3.py records kind=%r produced EMPTY stdout for a "
+                    "requirements-corrupt fixture; validate-p3.sh:103 scores "
+                    "empty stdout as PASS" % kind)
+                self.assertIn("unknown records kind", proc.stdout)
+                self.assertEqual(
+                    len(proc.stdout.strip().splitlines()), 1,
+                    "the rejection must be a single ERR line, not a dump: %r"
+                    % proc.stdout)
+                self.assertEqual(proc.returncode, 0,
+                                 "the checker contract is exit 0 with ERR on "
+                                 "stdout")
+                self.assertNotIn("Traceback", proc.stderr)
+
+    def test_missing_kind_argument_is_rejected_with_usage(self):
+        """`records` with no kind/path must fail actionably, not silently."""
+        import subprocess
+        proc = subprocess.run(
+            [sys.executable, os.path.join(SPS2, "tools", "check_p3.py"),
+             "records"],
+            capture_output=True, text=True, cwd=REPO)
+        self.assertNotEqual(proc.stdout.strip(), "",
+                            "a missing kind argument must not be silent")
+        self.assertIn("ERR", proc.stdout)
+        self.assertIn("usage", proc.stdout.lower())
+        self.assertEqual(proc.returncode, 0)
+        self.assertNotIn("Traceback", proc.stderr)
+
+    def test_missing_collection_is_distinguished_from_an_empty_one(self):
+        """D5b: '{}' must be reported, an explicit empty list must stay clean.
+
+        Every branch read d.get(<key>, []), so an ABSENT collection was
+        indistinguishable from a genuinely empty one and '{}' scored clean for
+        all four legitimate kinds.
+        """
+        for kind, key in self.RECORD_COLLECTIONS.items():
+            with self.subTest(kind=kind, payload="{}"):
+                absent = self._run_records(kind, "{}")
+                self.assertNotEqual(
+                    absent.stdout.strip(), "",
+                    "kind %s accepted a document with no %r collection; "
+                    "absent and empty are not the same document"
+                    % (kind, key))
+                self.assertIn("ERR", absent.stdout)
+                self.assertIn(key, absent.stdout,
+                              "the ERR must name the missing collection %r"
+                              % key)
+                self.assertEqual(absent.returncode, 0)
+                self.assertNotIn("Traceback", absent.stderr)
+
+            with self.subTest(kind=kind, payload="empty list"):
+                present = self._run_records(kind, '{"%s": []}' % key)
+                self.assertEqual(
+                    present.stdout.strip(), "",
+                    "kind %s rejected an explicitly present, empty %r list; "
+                    "an empty collection is legitimate: %r"
+                    % (kind, key, present.stdout))
+                self.assertEqual(present.returncode, 0)
+
+    def test_non_list_collection_is_reported(self):
+        """A present-but-wrong-typed collection must be reported, not crash."""
+        for kind, key in self.RECORD_COLLECTIONS.items():
+            for payload in ('{"%s": null}' % key, '{"%s": 42}' % key,
+                            '{"%s": "x"}' % key, '{"%s": {}}' % key):
+                with self.subTest(kind=kind, payload=payload):
+                    proc = self._run_records(kind, payload)
+                    self.assertNotEqual(
+                        proc.stdout.strip(), "",
+                        "check_p3.py records kind=%s produced EMPTY stdout "
+                        "for %s" % (kind, payload))
+                    self.assertIn("ERR", proc.stdout)
+                    self.assertEqual(proc.returncode, 0)
+                    self.assertNotIn("Traceback", proc.stderr)
+
+    def test_malformed_payload_is_reported_not_crashed(self):
+        """Not-JSON input must emit ERR on stdout, leaving stdout non-empty."""
+        for payload in ("{not json", "", "[1,2]", '"a string"', "null", "42"):
+            with self.subTest(payload=payload):
+                proc = self._run_records("requirements", payload)
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "malformed payload %r produced EMPTY stdout" % payload)
+                self.assertIn("ERR", proc.stdout)
+                self.assertEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr)
+
+    def test_all_four_legitimate_kinds_still_work(self):
+        """Negative control: a corrupt document of EACH kind is still caught.
+
+        Pins that hardening the dispatch did not disable the four real
+        branches. Each payload is corrupt only for its own kind.
+        """
+        corrupt = {
+            "requirements": '{"requirements": [{"requirement_id": "BOGUS"}]}',
+            "evidence": '{"records": [{"evidence_id": "BOGUS"}]}',
+            "decisions": '{"decisions": [{"decision_id": "DEC-0001", '
+                         '"state": "APPROVED"}]}',
+            "handoff": '{"handoffs": [{"handoff_id": "HANDOFF-P3"}]}',
+        }
+        for kind, payload in corrupt.items():
+            with self.subTest(kind=kind):
+                proc = self._run_records(kind, payload)
+                self.assertNotEqual(
+                    proc.stdout.strip(), "",
+                    "kind %s no longer catches a corrupt document" % kind)
+                self.assertIn("ERR", proc.stdout)
+                self.assertEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr)
+
+    def test_the_four_real_p3_documents_still_validate_clean(self):
+        """Positive control: hardening must not manufacture false positives.
+
+        NOTE (important non-defect): pointing `evidence`/`decisions`/`handoff`
+        at a *requirements* document correctly yields 0 B, because that document
+        legitimately has no such key. This test therefore runs each kind against
+        the document that actually carries its collection.
+        """
+        import subprocess
+        docs = {
+            "requirements": "requirements/P3-REQUIREMENTS.json",
+            "evidence": "evidence/P3-EVIDENCE.json",
+            "decisions": "decisions/P3-DECISIONS.json",
+            "handoff": "handoff/HANDOFF-P3.json",
+        }
+        for kind, rel in docs.items():
+            with self.subTest(kind=kind):
+                proc = subprocess.run(
+                    [sys.executable,
+                     os.path.join(SPS2, "tools", "check_p3.py"),
+                     "records", kind, os.path.join(SPS2, rel)],
+                    capture_output=True, text=True, cwd=REPO)
+                self.assertEqual(
+                    proc.stdout.strip(), "",
+                    "the real P3 %s document must stay clean: %r"
+                    % (kind, proc.stdout))
+                self.assertEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", proc.stderr)
 
 
 if __name__ == "__main__":

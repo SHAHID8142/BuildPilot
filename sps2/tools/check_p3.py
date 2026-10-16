@@ -122,10 +122,61 @@ def check_selection(sel, caps):
         err("PROVENANCE_OVERCLAIM: runtime tracing is not implemented")
     if not (sel.get("staleness", {}).get("effect_of_stale") or "").strip():
         err("MISSING_STALENESS_EFFECT: stale behaviour is undefined")
+# The collection key each `records` kind is required to carry, mirroring
+# check_sps2.py's MAP/_records() dispatch. This mapping is the single source of
+# truth for BOTH the unknown-kind guard and the missing-collection guard.
+#
+# Defect D5: an unrecognised kind fell through to the `else:` handoffs branch,
+# inspected the wrong key, emitted NOTHING, and validate-p3.sh:103
+# (`[ -z "$OUT" ] && pass`) scored that empty stdout as a PASS. Any kind that
+# is not one of these four made `records` mode vacuous.
+# Defect D5b: every branch read d.get(<key>, []), so an absent collection was
+# indistinguishable from a genuinely empty one and `{}` scored clean for all
+# four legitimate kinds.
+RECORD_COLLECTIONS = {
+    "requirements": "requirements",
+    "evidence": "records",
+    "decisions": "decisions",
+    "handoff": "handoffs",
+}
+
+
+def records_collection(e, d, key, kind):
+    """Return the record collection ``key``, reporting structural failures.
+
+    Mirrors check_sps2.py's _records(): an absent key and a non-list value are
+    both reported as ERR messages instead of raising. Raising would leave
+    stdout empty (a traceback goes to stderr), and empty stdout is the PASS
+    signal for validate-p3.sh, so the failure must be visible on stdout.
+
+    A present-but-empty list is deliberately NOT an error: an empty collection
+    is legitimate for every one of the four kinds here (all four real P3
+    documents are only non-empty by content, not by contract), so it stays
+    clean exactly as before.
+    """
+    if key not in d:
+        e.append("%s: document missing %r collection" % (kind, key))
+        return []
+    items = d.get(key)
+    if not isinstance(items, list):
+        e.append("%s: %r must be a list" % (kind, key))
+        return []
+    ok = []
+    for i, item in enumerate(items):
+        if isinstance(item, dict):
+            ok.append(item)
+        else:
+            # check_sps2.py reports this shape; a non-dict element would make
+            # the per-record .get() raise AttributeError and empty stdout.
+            e.append("%s: %s[%d] is not an object" % (kind, key, i))
+    return ok
+
+
 def check_records(kind, path):
     d = json.load(open(path))
     if kind == "requirements":
-        for r in d.get("requirements", []):
+        reqs = records_collection(e, d, "requirements", kind)
+        for r in reqs:
             rid = r.get("requirement_id", "<no id>")
             if not re.fullmatch(r"REQ-[A-Z0-9]+-\d{2,}", str(rid)):
                 err("%s: bad requirement_id" % rid)
@@ -143,9 +194,10 @@ def check_records(kind, path):
                 who = (ap.get("decided_by") or "").strip()
                 if not who or AGENTISH.search(who):
                     err("%s: approval attributed to a non-user %r" % (rid, who))
-        ids = [r.get("requirement_id") for r in d.get("requirements", [])]
+        ids = [r.get("requirement_id") for r in reqs]
     elif kind == "evidence":
-        for r in d.get("records", []):
+        recs = records_collection(e, d, "records", kind)
+        for r in recs:
             rid = r.get("evidence_id", "<no id>")
             if not re.fullmatch(r"EV-[A-Z0-9]+-\d{3,}", str(rid)):
                 err("%s: bad evidence_id" % rid)
@@ -155,9 +207,10 @@ def check_records(kind, path):
             if r.get("result") == "PASS" \
                and not (r.get("observed_result") or "").strip():
                 err("%s: PASS with empty observed_result" % rid)
-        ids = [r.get("evidence_id") for r in d.get("records", [])]
+        ids = [r.get("evidence_id") for r in recs]
     elif kind == "decisions":
-        for x in d.get("decisions", []):
+        decs = records_collection(e, d, "decisions", kind)
+        for x in decs:
             did = x.get("decision_id", "<no id>")
             if not re.fullmatch(r"DEC-\d{4}", str(did)):
                 err("%s: bad decision_id" % did)
@@ -168,15 +221,24 @@ def check_records(kind, path):
                 who = (x.get("approval").get("decided_by") or "").strip()
                 if not who or AGENTISH.search(who):
                     err("%s: approval attributed to a non-user %r" % (did, who))
-        ids = [x.get("decision_id") for x in d.get("decisions", [])]
-    else:
-        for h in d.get("handoffs", []):
+        ids = [x.get("decision_id") for x in decs]
+    elif kind == "handoff":
+        # This branch is now reached ONLY for the explicit kind "handoff".
+        # It used to be a bare `else:`, which is what made every unknown kind
+        # vacuously "pass": it inspected the wrong key and emitted nothing.
+        hs = records_collection(e, d, "handoffs", kind)
+        for h in hs:
             if not h.get("next_allowed_action") or not h.get("forbidden_next_action"):
                 err("%s: must state next and forbidden actions" % h.get("handoff_id"))
             if h.get("user_approval") == "APPROVED" \
                and "APPROVED" not in (h.get("current_state") or ""):
                 err("%s: approval contradicts current_state" % h.get("handoff_id"))
-        ids = [h.get("handoff_id") for h in d.get("handoffs", [])]
+        ids = [h.get("handoff_id") for h in hs]
+    else:
+        # Unreachable via main() (which rejects unknown kinds before calling
+        # here); kept so a future caller cannot silently get a vacuous pass.
+        err("unknown records kind %r" % kind)
+        return
     for dup in sorted({i for i in ids if ids.count(i) > 1}):
         err("duplicate IDs in %s: %s" % (kind, dup))
 
@@ -188,7 +250,23 @@ def main():
     mode = sys.argv[1]
     try:
         if mode == "registry":
-            check_registry(json.load(open(sys.argv[2])))
+            reg = json.load(open(sys.argv[2]))
+            # A registry that is not an object, or that carries no 'capabilities'
+            # key, makes check_registry iterate an empty list: no violation is
+            # emitted, stdout stays empty, and validate-p3.sh:90-91 scores an
+            # empty stdout as a PASS. The document would be reported clean
+            # without ever being checked. Fail visibly instead, matching
+            # check_sps2.py's _records() and check_p2.py's collection guard.
+            if not isinstance(reg, dict):
+                print("ERR\tregistry must be a JSON object")
+                return 0
+            if "capabilities" not in reg:
+                print("ERR\tregistry missing 'capabilities' collection")
+                return 0
+            if not isinstance(reg.get("capabilities"), list):
+                print("ERR\t'capabilities' must be a list")
+                return 0
+            check_registry(reg)
         elif mode == "selection":
             reg = json.load(open(sys.argv[2]))
             check_selection(json.load(open(sys.argv[3])),
@@ -199,7 +277,25 @@ def main():
             # kind matched no branch in check_records, so no check ran and stdout
             # was always empty; validate-p3.sh scores empty stdout as a PASS, so
             # every P3 record file was being passed vacuously.
-            check_records(sys.argv[2], sys.argv[3])
+            #
+            # The argv[2] correction alone left the residue this guard closes:
+            # ANY kind outside the four legitimate ones (including a typo, a
+            # path, or "") still matched no branch, still emitted nothing, and
+            # was still scored as a PASS. Unknown kinds and a missing kind
+            # argument are rejected VISIBLY here, on stdout, exit 0 to honour
+            # the checker contract (ERR lines on stdout; return 2 only for
+            # usage/unknown mode). A silent return would reintroduce D5.
+            if len(sys.argv) < 4:
+                print("ERR\trecords requires a kind and a path; "
+                      "usage: check_p3.py records <%s> <path>"
+                      % "|".join(sorted(RECORD_COLLECTIONS)))
+                return 0
+            kind = sys.argv[2]
+            if kind not in RECORD_COLLECTIONS:
+                print("ERR\tunknown records kind %r; expected one of: %s"
+                      % (kind, ", ".join(sorted(RECORD_COLLECTIONS))))
+                return 0
+            check_records(kind, sys.argv[3])
         elif mode == "gate":
             ok, reasons = engine.promote(json.load(open(sys.argv[2])))
             for m in reasons:

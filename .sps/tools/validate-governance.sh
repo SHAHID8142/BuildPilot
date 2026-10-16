@@ -169,19 +169,98 @@ case "$STATE_APPROVAL" in
 esac
 
 # Reject approvals attributed to an agent/model rather than a human.
-if grep -rqiE '\*\*Decided by:\*\*[[:space:]]*(an?[[:space:]]+)?(agent|ai|assistant|model|bot|claude|gpt|cursor|codex)' \
-     "$SPS" 2>/dev/null; then
-  fail "an approval is attributed to an agent/model - only the User may approve"
-else
-  pass "no approval is attributed to an agent, model, or bot"
-fi
+  # SPEC-2: agent attribution is judged by the single authoritative policy
+  # (sps2/governance/attribution_policy.json) via attribution.py, never by a
+  # local grep alternation.
+  #
+  # THREE-WAY EXIT CONTRACT - this control is fail-CLOSED:
+  #   0 = scan completed, nothing found            -> pass
+  #   1 = scan completed, agent name found         -> fail
+  #   2 = scan could not run (policy unavailable)  -> fail, never "pass"
+  # A bare `if VAR="$(helper)"; then fail; else pass; fi` collapses cases 1 and 2
+  # into the same branch; that is exactly the defect this control previously had
+  # (its grep exited 2 on an invalid ERE and always took the pass branch).
+  agent_flagged_md() {
+    python3 - "$SPS" <<'PYEOF'
+import os, re, sys
+try:
+    sys.path.insert(0, os.path.join(os.getcwd(), 'sps2', 'governance'))
+    import attribution as ATTR
+except Exception as exc:
+    # Exit 2 = the control could not run. It must never be read as 'clean'.
+    sys.stderr.write('canonical attribution policy unavailable: %s\n' % exc)
+    sys.exit(2)
+rx = re.compile(r'Decided by:?\*\*([^\n]*)')
+for base, _, files in os.walk(sys.argv[1]):
+    for f in files:
+        if not f.endswith(('.md', '.json')):
+            continue
+        try:
+            txt = open(os.path.join(base, f), encoding='utf-8', errors='ignore').read()
+        except OSError:
+            continue
+        for m in rx.finditer(txt):
+            if ATTR.AGENTISH.search(m.group(1)):
+                print(os.path.join(base, f))
+                sys.exit(1)
+sys.exit(0)
+PYEOF
+  }
+  agent_flagged_json() {
+    python3 - "$SPS" <<'PYEOF'
+import os, re, sys
+try:
+    sys.path.insert(0, os.path.join(os.getcwd(), 'sps2', 'governance'))
+    import attribution as ATTR
+except Exception as exc:
+    # Exit 2 = the control could not run. It must never be read as 'clean'.
+    sys.stderr.write('canonical attribution policy unavailable: %s\n' % exc)
+    sys.exit(2)
+rx = re.compile(r'\"(?:decided_by|approved_by)\"\s*:\s*\"([^\"]*)\"')
+for base, _, files in os.walk(sys.argv[1]):
+    for f in files:
+        if not f.endswith('.json'):
+            continue
+        try:
+            txt = open(os.path.join(base, f), encoding='utf-8', errors='ignore').read()
+        except OSError:
+            continue
+        for m in rx.finditer(txt):
+            if ATTR.AGENTISH.search(m.group(1)):
+                print(os.path.join(base, f))
+                sys.exit(1)
+sys.exit(0)
+PYEOF
+  }
 
-# JSON approval records must not self-populate decided_by without a User value.
-if grep -rqiE '"(decided_by|approved_by)"[[:space:]]*:[[:space:]]*"(?!User)' "$SPS" 2>/dev/null; then
-  fail "a JSON decided_by/approved_by is populated with a non-User value"
-else
-  pass "no JSON approval field is self-populated by an agent"
-fi
+  # Reject approvals attributed to an agent/model rather than a human.
+  AGENT_MD="$(agent_flagged_md)"; _rc=$?
+  case "$_rc" in
+    0) if [ -n "$AGENT_MD" ]; then
+         fail "agent attribution scan reported a hit with no path: $AGENT_MD"
+       else
+         pass "no approval is attributed to an agent, model, or bot"
+       fi ;;
+    1) fail "an approval is attributed to an agent/model - only the User may approve: $AGENT_MD" ;;
+    *) fail "agent-attribution markdown control could not run (exit $_rc) - canonical policy unavailable" ;;
+  esac
+
+  # JSON approval records must not name an agent. SPEC-2: this control previously
+  # used the POSIX-ERE negative lookahead '(?!User)', which BSD grep cannot
+  # compile; grep exited 2, the non-zero status selected the pass branch, and the
+  # control therefore never enforced anything. It is replaced by the canonical
+  # policy applied to JSON approval fields, which is what its own message claimed,
+  # under the same three-way fail-closed contract.
+  AGENT_JSON="$(agent_flagged_json)"; _rc=$?
+  case "$_rc" in
+    0) if [ -n "$AGENT_JSON" ]; then
+         fail "JSON agent scan reported a hit with no path: $AGENT_JSON"
+       else
+         pass "no JSON approval field is self-populated by an agent"
+       fi ;;
+    1) fail "a JSON decided_by/approved_by names an agent: $AGENT_JSON" ;;
+    *) fail "JSON agent-attribution control could not run (exit $_rc) - canonical policy unavailable" ;;
+  esac
 
 # Decision records belonging to the CURRENT phase must be resolved.
 #

@@ -256,6 +256,55 @@ MAP = {"sources": sources, "capability": capability, "interop": interop,
        "requirements": requirements, "evidence": evidence,
        "decision": decision, "handoff": handoff}
 
+# The collection each kind is required to carry. Every handler reads its
+# records with a bare d.get(<key>, []), so an ABSENT key made the handler
+# iterate an empty list, emit nothing and exit 0. validate-p2.sh:34-41 scores
+# an empty stdout as a clean PASS, so such a document was reported as valid
+# without ever being checked. check_sps2.py already guarded this shape via its
+# _records() helper; this mirrors that contract so the two cannot drift.
+REQUIRED_COLLECTIONS = {
+    "sources": "sources",
+    "capability": "capabilities",
+    "interop": "records",
+    "requirements": "requirements",
+    "evidence": "records",
+    "decision": "decisions",
+    "handoff": "handoffs",
+}
+
+
+def _check_collection(d, kind, e):
+    """Report a missing or non-list collection for ``kind`` as ERR messages.
+
+    A missing key and a non-list value are both structural failures: each makes
+    the per-record checks vacuous while stdout stays empty, which the shell
+    harness cannot distinguish from success.
+
+    Returns True when the collection is usable, so the caller can skip the
+    per-record handler. Running the handler against a non-list would raise
+    TypeError (e.g. iterating None), which escapes main() and leaves stdout
+    empty -- the very false-PASS this guard exists to prevent.
+    """
+    key = REQUIRED_COLLECTIONS.get(kind)
+    if key is None:
+        return True
+    if key not in d:
+        e.append("document missing %r collection" % key)
+        return False
+    if not isinstance(d.get(key), list):
+        e.append("%r must be a list" % key)
+        return False
+    # A present, correctly-typed list of NON-OBJECT elements is the third shape
+    # that makes the per-record checks vacuous: each handler calls .get() on the
+    # element, raises AttributeError, escapes main(), and leaves stdout empty --
+    # which the shell harness scores as a PASS. check_sps2.py already reports
+    # this ("<key>[i] is not an object"); mirror it so the siblings agree.
+    for i, item in enumerate(d.get(key)):
+        if not isinstance(item, dict):
+            e.append("%s[%d] is not an object" % (key, i))
+            return False
+    return True
+
 
 def main():
     if len(sys.argv) != 3:
@@ -282,6 +331,14 @@ def main():
         # stdout stays empty, and validate-p2.sh scores an empty stdout as a
         # clean PASS. Fail visibly instead, matching check_sps2.py.
         print("ERR\t%s: top-level document must be an object" % kind)
+        return 0
+    structural = []
+    usable = _check_collection(data, kind, structural)
+    for msg in structural:
+        print("ERR\t%s" % msg)
+    if not usable:
+        # The per-record handler would raise on a structurally invalid
+        # collection; the ERR above already reports the document as unclean.
         return 0
     for msg in MAP[kind](data):
         print("ERR\t%s" % msg)
