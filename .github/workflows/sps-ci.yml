@@ -147,7 +147,7 @@ jobs:
           MIN_TESTS=500
 
           set +e
-          OUTPUT="$(python3 -m unittest "${MODULES[@]}" 2>&1)"
+          OUTPUT="$(python3 -m unittest -v "${MODULES[@]}" 2>&1)"
           STATUS=$?
           set -e
 
@@ -166,6 +166,45 @@ jobs:
             echo "::error::Only ${RAN} tests executed, below the required minimum of ${MIN_TESTS}. Either tests were lost or the module list is incomplete."
             exit 1
           fi
+
+          # --- per-module presence guard ---------------------------------------
+          # A total threshold cannot see a module whose tests silently stopped
+          # running, nor one whose file was deleted (deletion removes it from
+          # git ls-files, so the discovered list shrinks with it). Compare the
+          # discovered set against a COMMITTED manifest instead.
+          MANIFEST=".github/expected-test-modules.txt"
+          if [ ! -f "${MANIFEST}" ]; then
+            echo "::error::missing ${MANIFEST}; refusing to report success without a module baseline."
+            exit 1
+          fi
+          ABSENT=0
+          while IFS= read -r EXPECTED; do
+            [ -n "${EXPECTED}" ] || continue
+            if ! printf '%s\n' "${MODULES[@]}" | grep -qxF "${EXPECTED}"; then
+              echo "::error::expected test module ${EXPECTED} was not discovered."
+              ABSENT=$((ABSENT+1))
+            fi
+          done < "${MANIFEST}"
+          ZERO=0
+          LOG="$(mktemp "${TMPDIR:-/tmp}/unittest-guard.XXXXXX")"
+          printf '%s\n' "$OUTPUT" > "$LOG"
+          # NOTE: grep -q on a PIPE with a large stream lets grep exit early and
+          # printf die of SIGPIPE; under GitHub Actions' `bash -eo pipefail` that
+          # turns a HEALTHY match into a false "executed 0 tests" failure
+          # (reproduced: pipeline exit 141). Grep a FILE instead - no pipe, no
+          # SIGPIPE, no race.
+          for MODULE in "${MODULES[@]}"; do
+            if ! grep -qF "(${MODULE}." "$LOG"; then
+              echo "::error::module ${MODULE} executed 0 tests."
+              ZERO=$((ZERO+1))
+            fi
+          done
+          rm -f "$LOG"
+          if [ "${ABSENT}" -ne 0 ] || [ "${ZERO}" -ne 0 ]; then
+            echo "::error::module guard failed: ${ABSENT} absent, ${ZERO} executed zero tests."
+            exit 1
+          fi
+          echo "Per-module guard: all $(wc -l < "${MANIFEST}" | tr -d ' ') expected modules present and executed."
 
           if [ "${STATUS}" -ne 0 ]; then
             echo "::error::unittest exited ${STATUS} with ${RAN} tests executed."
