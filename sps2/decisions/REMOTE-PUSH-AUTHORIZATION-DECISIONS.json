@@ -1,0 +1,71 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "REMOTE-PUSH-AUTHORIZATION-DECISIONS",
+  "phase": "cross-cutting governance (remote policy)",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes an explicit in-session User authorization of 2026-10-16, it originates no approval and grants none)",
+  "note": "Supersedes the no-push consequence of DEC-0001 (KEEP_LOCAL_ONLY, User-approved 2026-10-03) for exactly one operation on exactly one branch. DEC-0001 itself forbade a remote and is contradicted by live state (KI-15: configured origin, recorded pushes); that wider contradiction (D1-D5 decisions of the SPEC-2 audit) remains OPEN and is NOT resolved here. The User's explicit in-session grant covers: creating this record, committing it, and pushing the existing branch build/roadmap-p3-completion to the existing remote origin. Verbatim in-session act cited in approval.basis. Phase 3 observation via the GitHub API (web) is part of the authorized push-and-observe flow.",
+
+  "decisions": [
+    {
+      "decision_id": "DEC-0032",
+      "title": "Authorize pushing build/roadmap-p3-completion to origin, superseding DEC-0001's KEEP_LOCAL_ONLY for this branch",
+      "decision": "ONE push of ONE branch: 'git push origin build/roadmap-p3-completion', non-force, to the ALREADY-CONFIGURED remote origin (github.com/SHAHID8142/Shahid-Master-Skill.git). No other branch, no tag, no force-push, no remote-URL change, no remote deletion, no fetch/pull/deploy/publish beyond what this push requires. DEC-0001's KEEP_LOCAL_ONLY no-push clause is superseded to exactly this extent; every other effect of DEC-0001 stands. Any future push requires its own explicit authorization. The push exists so that the GitHub Actions workflow committed on this branch (075f618) can produce the real CI run evidence required by R8-Phase-4.",
+      "reason": "Round 8 Phase 1 found push authorization missing AND DEC-0001 contradictory (KI-15: branch tracks origin, ahead 11, reflog shows 'update by push'), and instructed: stop before any remote operation and report the exact decision needed. That exact decision was put to the User and explicitly granted: the User selected 'Authorize push + supersede DEC-0001 (Recommended)'. Without the push there is no real CI run, and the release verdict is capped at NOT_READY on missing evidence.",
+      "evidence": [
+        "in-session User selection, round 8 (2026-10-16): r8_push = 'Authorize push + supersede DEC-0001 (Recommended)'",
+        ".sps/decisions/DEC-0001-git-init-no-remote.md: 'KEEP_LOCAL_ONLY ... No push may be attempted, and no remote may be invented, until the user issues a new explicit instruction.' - this record IS that instruction",
+        ".sps/audits/README.md KI-15: configured remote + four recorded pushes contradict DEC-0001; awaits User decision D1-D5 (still open; not resolved by this record)",
+        "git branch -vv: 'build/roadmap-p3-completion ... [origin/build/roadmap-p3-completion: ahead 11]'",
+        "git reflog show origin/build/roadmap-p3-completion: '... update by push'",
+        "GOVERNANCE.md: 'a future agent may revisit a decision only by creating a new decision record that supersedes the old one - never by silently editing history.'"
+      ],
+      "alternatives": [
+        {"alternative": "Push without recording a superseding decision", "why_rejected": "Would push against an APPROVED KEEP_LOCAL_ONLY decision that had never been superseded; governance requires a new decision record, not a silent override."},
+        {"alternative": "Amend DEC-0001 in place", "why_rejected": "GOVERNANCE.md forbids silently editing history/decisions; supersession must be a new record."},
+        {"alternative": "Force-push", "why_rejected": "Not granted; expressly excluded by this record and would destroy remote provenance."},
+        {"alternative": "Push other branches or tags too", "why_rejected": "Grant is scoped to exactly this branch; everything else is listed as not approved."}
+      ],
+      "status": "ACTIVE",
+      "supersedes": "DEC-0001",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "Explicit, verbatim, in-session User act of 2026-10-16: asked 'Do you authorize pushing build/roadmap-p3-completion to origin - which requires resolving DEC-0001's KEEP_LOCAL_ONLY policy by a superseding User decision?', the User selected the option 'Authorize push + supersede DEC-0001 (Recommended)'. This is a direct quotation of the authorization act, recorded at the moment it was given. No approval beyond this grant is implied; the User simultaneously declined validators-in-CI and deferred f060703 ratification and the reports/ question."
+      }
+    }
+  ],
+
+  "non_goals": [
+    "No force-push, in any circumstance",
+    "No push of any branch other than build/roadmap-p3-completion",
+    "No push of tags",
+    "No change to the remote configuration (origin already exists; nothing is configured or invented)",
+    "No fetch, pull, deploy, publish, or release action",
+    "No validators-in-CI change (explicitly declined by the User in the same session)",
+    "No resolution of the wider DEC-0001/KI-15 contradictions D1-D5 or of DEC-0002's identity obligation"
+  ],
+  "supersedes_note": "Supersedes DEC-0001 solely in its no-push consequence, for exactly the one push described. DEC-0001 remains authoritative for everything else, and KI-15's wider D1-D5 questions remain open.",
+  "explicitly_not_approved_by_this_record": [
+    "Any second push, or any push after a rejected one without new authorization",
+    "Any push of main, audit/*, review/*, or any other branch or ref",
+    "Any force-push or history rewrite on the remote",
+    "Any remote add/remove/rename or credential change",
+    "Any deploy, publish, release, or package upload",
+    "Any CI workflow change (validators-in-CI was explicitly declined in the same session)",
+    "Any ratification of f060703 or resolution of the reports/ tracking question (both deferred by the User in the same session)"
+  ],
+  "unresolved_questions": [
+    {"id": "UQ-REM-1", "question": "Does one explicit push grant one push, or an ongoing policy for this branch? This record assumes one push; recurring pushes need fresh grants."},
+    {"id": "UQ-REM-2", "question": "The wider D1-D5 DEC-0001/DEC-0002 discrepancy (KI-15) remains open and untouched by this record."}
+  ],
+  "related": [
+    ".sps/decisions/DEC-0001-git-init-no-remote.md (superseded in the no-push consequence only)",
+    ".sps/audits/README.md (KI-15, KI-16, SPEC-2)",
+    "sps2/decisions/PHASE3-COMMIT-AUTHORIZATION-TRANSCRIPTION-DECISIONS.json (DEC-0031; the CI-authorization transcription that this push makes observable in CI)",
+    ".github/workflows/sps-ci.yml (the workflow that will run)",
+    "reports/SPS2-ROUND8-FINAL-VERIFICATION.md (round-8 report; records the observed run)"
+  ]
+}
