@@ -13,6 +13,17 @@ ranking emits an explanation. A forced user choice overrides automatic ranking,
 subject to mandatory safety constraints that cannot be waived.
 """
 import re
+import os
+import sys
+# Agent-name tokens come from the single authoritative policy
+# (sps2/governance/attribution_policy.json) via attribution.py.
+# SPEC-2 consolidation: this module must not keep its own token list.
+_GOVERNANCE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "governance")
+if _GOVERNANCE not in sys.path:
+    sys.path.insert(0, _GOVERNANCE)
+import attribution as _ATTRIBUTION  # noqa: E402
+
 
 LIFECYCLE = ["RESEARCHED", "CANDIDATE", "EVALUATED", "APPROVED", "INSTALLED",
              "VERIFIED", "ACTIVE", "STALE", "REJECTED", "DEFERRED", "REMOVED"]
@@ -29,9 +40,7 @@ FACT = ["FACT", "EVIDENCE", "INFERENCE", "UNKNOWN"]
 # Mandatory safety constraints: a forced user choice CANNOT override these.
 NON_OVERRIDABLE_SECURITY = {"VULNERABLE", "SUSPECTED_RISK"}
 
-AGENTISH = re.compile(
-    r'\b(agent|assistant|model|bot|claude|cursor|codex|gemini|opencode|'
-    r'cline|copilot|windsurf|aider)\b', re.I)
+AGENTISH = _ATTRIBUTION.AGENTISH
 
 CAP_ID = re.compile(r"^CAP-SPS-\d{3}$")
 

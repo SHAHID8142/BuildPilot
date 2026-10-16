@@ -195,7 +195,11 @@ def main():
                             reg.get("capabilities", []))
         elif mode == "records":
             # usage: check_p3.py records <kind> <path>  -> argv = [prog, records, kind, path]
-            check_records(sys.argv[2 + 1], sys.argv[3])
+            # argv[2] is the KIND and argv[3] is the PATH. Passing argv[3] as the
+            # kind matched no branch in check_records, so no check ran and stdout
+            # was always empty; validate-p3.sh scores empty stdout as a PASS, so
+            # every P3 record file was being passed vacuously.
+            check_records(sys.argv[2], sys.argv[3])
         elif mode == "gate":
             ok, reasons = engine.promote(json.load(open(sys.argv[2])))
             for m in reasons:

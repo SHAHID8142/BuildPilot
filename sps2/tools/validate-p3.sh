@@ -203,8 +203,9 @@ jq -e '[.capabilities[].install_scope] | all(. == "PROJECT_LOCAL")' \
 python3 - "$SPS2" > "$TMP/ap" 2>&1 <<'PY'
 import json, re, sys
 B = sys.argv[1]
-AGENTISH = re.compile(r'\b(agent|ai|assistant|model|bot|self|script|cline)\b',
-                      re.I)
+sys.path.insert(0, B + '/governance')
+import attribution as ATTR
+AGENTISH = ATTR.AGENTISH  # SPEC-2: single authoritative policy
 reg = json.load(open(B + '/capability/registry.json'))
 for c in reg['capabilities']:
     ap = c.get('approval') or {}

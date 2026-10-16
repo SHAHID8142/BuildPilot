@@ -10,13 +10,78 @@ predicate rather than hard-coding it.
 
 Core therefore never names an agent, and the control still holds.
 """
+import json
+import os
 import re
 
-# Names that indicate the decision was made by an automated agent rather than
-# by an identifiable human User.
+POLICY_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                           "attribution_policy.json")
+
+
+def load_agent_tokens(path=POLICY_PATH):
+    """The agent-name token set, loaded from the authoritative policy file.
+
+    sps2/governance/attribution_policy.json is the single source of truth for
+    these tokens. Consumers MUST import them from here (or call this) rather
+    than hardcoding a list of their own; a hardcoded duplicate is a divergence
+    bug. Matching semantics live in this module, not in the data file. A
+    missing or malformed policy file raises rather than silently degrading to
+    an empty vocabulary, which would let every approver identity through.
+    """
+    with open(path, "r", encoding="utf-8") as handle:
+        policy = json.load(handle)
+    if not isinstance(policy, dict):
+        # Valid JSON of the wrong top-level type (a list, string, number,
+        # boolean or null) must fail as a controlled ValueError. Calling
+        # .get() on it raises AttributeError instead, which is NOT part of
+        # this module's documented failure surface: it escapes the consumer
+        # guards in check_sps2.py / check_p2.py, which then print nothing to
+        # stdout, and an empty stdout is scored as a clean PASS by
+        # assert_clean in validate-sps2.sh. Fail closed with a type that the
+        # guards already handle.
+        raise ValueError("attribution policy must be a JSON object, got %s: %r"
+                         % (type(policy).__name__, path))
+    tokens = policy.get("tokens")
+    if not isinstance(tokens, list) or not tokens:
+        raise ValueError("attribution policy defines no tokens: %r" % (path,))
+    if not all(isinstance(t, str) and t for t in tokens):
+        raise ValueError("attribution policy has a non-string token: %r" % (tokens,))
+    return tuple(tokens)
+
+# Heuristic denylist of names that INDICATE the decision was made by an
+# automated agent rather than by an identifiable human User.
+#
+# SCOPE. A match is evidence that an approval is agent-attributed. Nothing
+# further follows from a match, and nothing at all follows from a NON-match:
+#
+#   - The TOKEN SET is the single source of truth, in
+#     sps2/governance/attribution_policy.json, which this module is the sole
+#     consumer of. That is a statement about this file's placement, NOT a
+#     claim that it authoritatively classifies any identity: no requirement,
+#     schema or decision record enumerates agent identities, and the file is
+#     a heuristic vocabulary, not a registry.
+#   - A non-match does NOT show that decided_by is a real, authorized User.
+#     It is self-asserted free text: the schemas constrain it only to a
+#     string (p10-slice adds no length or pattern at all), never to an
+#     identity.
+#   - String matching cannot establish identity or trusted provenance; the
+#     repository defines no identity provider, account registry or signature
+#     against which decided_by could be checked.
+#   - It is NOT exhaustive. Unicode confusables (cross-script homoglyphs),
+#     interior separators and invisible characters defeat it; \b does not
+#     fire across "_" or a digit.
+#   - Being a denylist, it can also reject a legitimate identity that merely
+#     contains a listed word.
+#   - It deliberately does NOT match "self", "script" or "autonomous"; each is
+#     an ordinary English word that can denote a human name. Legacy validators
+#     that listed them are migrated to this behaviour under SPEC-2.
+#
+# The authoritative obligations are separate and unchanged: rejecting missing,
+# null, fabricated or agent-attributed approval (REQ-P10-09 c.6), and the
+# schema-enforced decided_by_role == "USER" marker. This heuristic neither
+# replaces them nor evidences that they were satisfied.
 AGENTISH = re.compile(
-    r"\b(agent|ai|assistant|model|bot|claude|cursor|codex|gemini|opencode|"
-    r"cline|copilot|windsurf|aider|chatgpt|gpt)\b", re.I)
+    r"\b(%s)\b" % "|".join(re.escape(t) for t in load_agent_tokens()), re.I)
 
 
 def approval_is_user_attributable(approval):

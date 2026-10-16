@@ -243,8 +243,9 @@ B = sys.argv[1]
 req = json.load(open(B + '/requirements/P4-REQUIREMENTS.json'))
 dec = json.load(open(B + '/decisions/P4-DECISIONS.json'))
 ho = json.load(open(B + '/handoff/HANDOFF-P4.json'))['handoffs'][0]
-AGENT = re.compile(r'\b(agent|ai|assistant|model|cline|copilot|bot|'
-                   r'self|script|autonomous)\b', re.I)
+sys.path.insert(0, B + '/governance')
+import attribution as ATTR
+AGENT = ATTR.AGENTISH  # SPEC-2: single authoritative policy
 
 def approval_ok(a, where):
     """An approval is valid only when attributable to an identifiable User."""
@@ -335,14 +336,15 @@ for c in reg['capabilities']:
 # record exists AND is attributable to an identifiable User. An unauthorised P5
 # artefact is still a failure, so the check is conditional rather than removed.
 # P6 stays forbidden outright: no P6 approval exists.
-AGENTWORDS = ('agent', 'assistant', 'model', 'bot', 'ai ')
+sys.path.insert(0, os.path.join(B, 'governance'))
+import attribution as ATTR
 P5_AUTH = os.path.join(B, 'evidence/P5-EVIDENCE.json')
 p5_authorised = False
 if os.path.exists(P5_AUTH):
     pa = json.load(open(P5_AUTH)).get('phase_approval') or {}
     who = (pa.get('authorised_by') or '').strip().lower()
     if pa.get('scope') == 'P5 implementation/integration' and who \
-            and not any(w in who for w in AGENTWORDS):
+            and not ATTR.AGENTISH.search(who):
         p5_authorised = True
     else:
         print("P5_AUTHORISATION_NOT_USER_ATTRIBUTABLE: %r" % who)
@@ -375,8 +377,7 @@ if os.path.exists(_p6dec):
         _who = (_a.get('decided_by') or '').strip()
         _when = (_a.get('decided_on') or _a.get('decided_at') or '').strip()
         if _a.get('state') != 'APPROVED' or not _who or not _when or \
-                any(w in _who.lower() for w in
-                    ('agent', 'assistant', 'model', 'bot')):
+                ATTR.AGENTISH.search(_who):
             print("P6_DECISION_NOT_USER_ATTRIBUTABLE: %s" % _d)
             _ok = False
     _p6open = _ok
@@ -454,11 +455,12 @@ d=json.load(open('$SPS2/requirements/P4-REQUIREMENTS.json'))
 d['requirements'][0]['approval']['approved_by']='Agent (self-approved)'
 json.dump(d,open('$TMP/appr2.json','w'))
 "
-if python3 - "$TMP/appr2.json" <<'PY'
-import json, re, sys
-AGENT = re.compile(r'\b(agent|ai|assistant|model|bot|self|script)\b', re.I)
+if python3 - "$TMP/appr2.json" "$SPS2" <<'PY'
+import json, sys
+sys.path.insert(0, sys.argv[2] + '/governance')
+import attribution as ATTR
 d = json.load(open(sys.argv[1]))
-rejected = any(AGENT.search((r['approval'].get('approved_by') or ''))
+rejected = any(ATTR.AGENTISH.search((r['approval'].get('approved_by') or ''))
                for r in d['requirements'])
 sys.exit(0 if rejected else 1)
 PY
@@ -714,6 +716,11 @@ python3 - "$SPS2" > "$TMP/h" 2>&1 <<'PY'
 import importlib.util as _ilu
 import json, os, sys
 B = sys.argv[1]
+# SPEC-2: make the governance import explicit here too. This block previously
+# relied on promotion_gates.py side-effecting sys.path for sps2/governance; if
+# that exec ever moves, the bare `import attribution` below would raise.
+sys.path.insert(0, B + '/governance')
+import attribution as ATTR
 _spec = _ilu.spec_from_file_location("pg", B + '/capability/promotion_gates.py')
 _pg = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_pg)
 reg = json.load(open(B + '/capability/registry.json'))
@@ -817,14 +824,14 @@ if reg['counts']['promoted'] != len(promoted):
 # its own interpreter, so the authorisation test is re-derived here rather than
 # carried over. It is conditional for the reason documented in the first block.
 # P6 remains forbidden outright. CAP-P03-005 must stay deferred in every phase.
-AGENTWORDS = ('agent', 'assistant', 'model', 'bot', 'ai ')
+import attribution as ATTR  # SPEC-2: single authoritative policy
 p5_authorised = False
 _pa = os.path.join(B, 'evidence/P5-EVIDENCE.json')
 if os.path.exists(_pa):
     _rec = json.load(open(_pa)).get('phase_approval') or {}
     _who = (_rec.get('authorised_by') or '').strip().lower()
     if _rec.get('scope') == 'P5 implementation/integration' and _who \
-            and not any(w in _who for w in AGENTWORDS):
+            and not ATTR.AGENTISH.search(_who):
         p5_authorised = True
 P5_ARTEFACTS = ('requirements/P5-REQUIREMENTS.json',
                 'handoff/HANDOFF-P5.json', 'handoff/HANDOFF-P5.md',

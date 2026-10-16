@@ -11,11 +11,35 @@ Usage: check_p2.py <kind> <json-file>
 import json
 import re
 import sys
+import os
+# Agent-name tokens come from the single authoritative policy
+# (sps2/governance/attribution_policy.json) via attribution.py.
+# SPEC-2 consolidation: this module must not keep its own token list.
+_GOVERNANCE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "governance")
+if _GOVERNANCE not in sys.path:
+    sys.path.insert(0, _GOVERNANCE)
+
 from datetime import datetime, timezone
 
-AGENT = re.compile(
-    r'\b(agent|assistant|model|bot|claude|cursor|codex|gemini|opencode|'
-    r'cline|copilot)\b', re.I)
+# The predicate is obtained behind the same fail-closed guard as check_sps2.py.
+# An unguarded import here would terminate the process with an EMPTY stdout and
+# a traceback on stderr when the policy is missing or malformed; stdout
+# emptiness is the success signal for assert_clean in validate-p2.sh, which
+# discards stderr via `2>/dev/null`, so that would be scored as a PASS. Capture
+# the reason and report it as a controlled ERR line from main() instead.
+#
+# The broad `Exception` clause is deliberate: any failure to obtain the
+# predicate must fail closed with a visible ERR line rather than a silent
+# empty-stdout pass, including policy shapes this guard does not enumerate.
+# KeyboardInterrupt/SystemExit derive from BaseException, not Exception.
+ATTRIBUTION_ERROR = None
+try:
+    import attribution as _ATTRIBUTION  # noqa: E402
+    AGENT = _ATTRIBUTION.AGENTISH
+except Exception as _ex:
+    AGENT = None
+    ATTRIBUTION_ERROR = "%s: %s" % (type(_ex).__name__, _ex)
 
 RECS = {"KEEP", "ADAPT", "REWRITE", "REPLACE", "RESEARCH_FURTHER",
         "REJECT", "DEFER"}
@@ -241,10 +265,23 @@ def main():
     if kind not in MAP:
         print("unknown kind: %s" % kind)
         return 2
+    if ATTRIBUTION_ERROR is not None:
+        # Fail visibly. stdout must NOT be empty here: validate-p2.sh scores an
+        # empty stdout as a clean PASS.
+        print("ERR\tattribution policy unavailable: %s" % ATTRIBUTION_ERROR)
+        return 0
     try:
         data = json.load(open(path))
     except Exception as ex:
         print("ERR\tnot valid JSON: %s" % ex)
+        return 0
+    if not isinstance(data, dict):
+        # Valid JSON of the wrong top-level type (a list, string, number,
+        # boolean or null) would make the handlers call .get() on a non-mapping
+        # and raise AttributeError. That escapes this function entirely, so
+        # stdout stays empty, and validate-p2.sh scores an empty stdout as a
+        # clean PASS. Fail visibly instead, matching check_sps2.py.
+        print("ERR\t%s: top-level document must be an object" % kind)
         return 0
     for msg in MAP[kind](data):
         print("ERR\t%s" % msg)

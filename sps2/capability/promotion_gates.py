@@ -15,14 +15,22 @@ import json
 import os
 import re
 import subprocess
+import sys
+# Agent-name tokens come from the single authoritative policy
+# (sps2/governance/attribution_policy.json) via attribution.py.
+# SPEC-2 consolidation: this module must not keep its own token list.
+_GOVERNANCE = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "governance")
+if _GOVERNANCE not in sys.path:
+    sys.path.insert(0, _GOVERNANCE)
+import attribution as _ATTRIBUTION  # noqa: E402
+
 
 # sps2/capability/promotion_gates.py -> up 3 levels reaches the repository root.
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__))))
 
-AGENTISH = re.compile(
-    r'\b(agent|assistant|model|bot|claude|cursor|codex|gemini|opencode|'
-    r'cline|copilot|windsurf|aider)\b', re.I)
+AGENTISH = _ATTRIBUTION.AGENTISH
 CAP_ID = re.compile(r'^CAP-P03-\d{3}$')
 SECRET_RX = re.compile(r'sk-or-v1-[A-Za-z0-9]{32,}|sk-ant-[A-Za-z0-9\-_]{20,}')
 LIFECYCLE = {"RESEARCHED", "CANDIDATE", "EVALUATED", "APPROVED", "INSTALLED",
