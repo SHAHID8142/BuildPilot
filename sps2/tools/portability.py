@@ -98,6 +98,8 @@ CORE_VALIDATORS = (
     ("P7 readiness", ["python3", "sps2/tools/validate-p7-readiness.py"],
      "P7 READINESS RECORDED"),
     ("P5 unit tests", ["python3", "sps2/tests/test_p5.py"], "OK"),
+    ("P7 zero-adapter readiness unit tests",
+     ["python3", "sps2/tests/test_p7_zero_adapter_readiness.py"], "OK"),
     ("snapshot mutations", ["bash", "sps2/tools/test-snapshot-integrity.sh"],
      "SNAPSHOT MUTATION SUITE"),
     ("phase boundary mutations", ["bash", "sps2/tools/test-phase-boundary.sh"],
