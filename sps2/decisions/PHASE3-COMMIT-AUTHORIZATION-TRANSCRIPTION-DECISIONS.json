@@ -1,0 +1,117 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "PHASE3-COMMIT-AUTHORIZATION-TRANSCRIPTION-DECISIONS",
+  "phase": "cross-cutting governance (not phase-scoped)",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes an existing User authorization already executed on 2026-10-16, it originates no approval and grants none)",
+  "note": "Placed into sps2/decisions/ under the User's explicit in-session round-6 authorization of item DEC-E; authored read-only as the remediation for defect DP-10: the User-approved CI/migration authorization for SPS2 Phase 3 currently survives only in the UNTRACKED narrative report reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md. 'git ls-files reports/' returns 0 files, so a fresh clone loses that evidence entirely. This record restates the already-executed authorization in the governance-native decision contract so it becomes durable and tracked. It contains ONE decision, DEC-0031, whose approval.state is APPROVED solely because the User approval it records predates this record and was already executed as commits 238c9e4 and cdcbca8. This record does NOT approve anything itself. CRITICAL PROVENANCE LIMIT: the source narrative report contains NO verbatim quoted User authorization text — it records decisions in the agent's own summarizing voice ('### Decision N — APPROVED: ...') and refers to 'your ruling' without quoting it. Therefore approval.basis below does NOT contain a fabricated verbatim User quote; it states the provenance limitation explicitly. If the User's exact words are required for this record to satisfy the repository's evidence standard, they must be supplied by the User; an agent must not reconstruct them. Validate with: python3 sps2/tools/check_sps2.py decision <path> — that command ALWAYS exits 0, so inspect stdout for ERR lines. STATUS IN REPOSITORY: this record was placed (round 6) and committed (round 7, 2026-10-16) under the User's explicit in-session authorization — round-6 item DEC-E created it, and the round-7 mission's Phase-1 scope 5 ('DEC-0031 governance record') authorized its commit. The commit that introduces this file is its entry point in git history. As of placement (2026-10-16, round 6), HEAD is 04c498df3ef8472cb058f46b35e15500848eb861 and both transcribed commits (238c9e4ea0f9d8ddbbc2b503b779c5edd4b4e428, cdcbca83679844ea66196f25773f42d9b64569ec) remain ancestors of HEAD.",
+
+  "decisions": [
+    {
+      "decision_id": "DEC-0031",
+      "title": "Transcription of the already-executed Phase 3 User authorization for the .sps/tools attribution-policy migration and the Python unittest CI job",
+      "decision": "TWO already-executed, User-authorized changes are transcribed here so that the authorization survives a fresh clone. (1) COMMIT 238c9e4 — '.sps/tools validator migrations + checker/test changes': exactly 6 files are in scope, namely .sps/tools/validate-capability.sh, .sps/tools/validate-control.sh, .sps/tools/validate-governance.sh, sps2/tests/test_attribution_policy.py, sps2/tools/check_p2.py, sps2/tools/check_p3.py. The scope was to migrate the three .sps/tools shell validators onto the canonical attribution policy and to fix checker false-PASS behaviour so that a malformed or unknown input produces a visible non-empty error rather than empty stdout. (2) COMMIT cdcbca8 — 'add Python unittest CI job with a zero-test guard': exactly 1 file is in scope, .github/workflows/sps-ci.yml, adding a fourth CI job named python-unittest alongside the three pre-existing jobs (lint-and-smoke, version-sanity, powershell-syntax), which those three do not alter. The CI scope was to add a job that executes the deterministic Python unittest suite with fetch-depth: 0 and a zero-test guard (RAN == 0 -> fail; RAN < MIN_TESTS=500 -> fail), with no pip install and no network. Both changes were executed before this record was written; this record changes no file and is not authority to change any file.",
+      "reason": "The authorization for both commits exists only in reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md, which is UNTRACKED: 'git ls-files reports/' returns 0 of the 9 report files present on disk. That report is also NOT gitignored (git check-ignore reports/... reports no match), so the loss is not the result of an intentional ignore rule but of the directory never having been added. The consequence recorded as defect DP-10 is that a fresh clone receives both commits in its history while receiving none of the reasoning, scope or authorization that produced them; a future agent would find two commits traceable to no User decision, which is precisely the failure mode .sps/GOVERNANCE.md section 5 exists to prevent ('Prevents future agents from re-litigating settled architecture because they did not know why a decision was made'). Re-stating the authorization in the decision contract makes it durable and machine-checkable. The author is an agent, not a User; under .sps/GOVERNANCE.md the Approval axis is 'User only', so this record can only transcribe an approval that already exists and can never create one.",
+      "evidence": [
+        "reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md:28 - '### Decision 1 — APPROVED: commit the three .sps/tools migrations + checker/test changes'; :29 - 'Commit 238c9e4, exactly the 6 authorized files, 768 insertions(+), 39 deletions(-)' (the source of the transcribed authorization; UNTRACKED)",
+        "reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md:83 - '### Decision 4 — APPROVED: add the Python unittest CI job'; :84 - 'Executed, then committed as cdcbca8'; :86 - 'Pure addition to .github/workflows/sps-ci.yml: 98 insertions(+), 0 deletions(-)' (the source of the transcribed authorization; UNTRACKED)",
+        "VERIFIED by read-only git: 'git cat-file -t 238c9e4' -> commit; 'git merge-base --is-ancestor 238c9e4 HEAD' -> true (238c9e4 IS an ancestor of HEAD)",
+        "VERIFIED by read-only git: 'git cat-file -t cdcbca8' -> commit; 'git rev-parse HEAD' -> cdcbca83679844ea66196f25773f42d9b64569ec; 'git rev-parse cdcbca8' -> identical, so cdcbca8 IS HEAD at the time of this record",
+        "VERIFIED file scope of 238c9e4: 'git show --stat --format=%H%n%an <%ae>%n%ad%n%s 238c9e4' lists exactly 6 files (.sps/tools/validate-capability.sh | 76 ++++-, .sps/tools/validate-control.sh | 10 +-, .sps/tools/validate-governance.sh | 103 ++++++-, sps2/tests/test_attribution_policy.py | 443 ++++++++++++++++++++++-, sps2/tools/check_p2.py | 57 +++++, sps2/tools/check_p3.py | 118 ++++++-) with '6 files changed, 768 insertions(+), 39 deletions(-)' - the report's count, file list and insertion/deletion totals all MATCH",
+        "VERIFIED file scope of cdcbca8: 'git show --stat --format=%H%n%an <%ae>%n%ad%n%s cdcbca8' lists exactly 1 file (.github/workflows/sps-ci.yml | 98 ++++++++++++++++++++++++++++++++++++++++++++) with '1 file changed, 98 insertions(+)'; 'git show --numstat --format= cdcbca8' -> '98 0 .github/workflows/sps-ci.yml'; the raw diff contains 0 deletion lines, confirming the report's '98 insertions(+), 0 deletions(-)'",
+        "VERIFIED that the CI change is a PURE INSERTION (no line removed, no other file touched) but is technically a MODIFY, not an ADD: 'git diff-tree --no-commit-id --name-status -r cdcbca8' -> 'M .github/workflows/sps-ci.yml' and 'git cat-file -e 238c9e4:.github/workflows/sps-ci.yml' succeeds, i.e. the file already existed at the parent (81 lines) and grew to 179 lines. The narrative's description 'Pure addition to .github/workflows/sps-ci.yml' is accurate about the change content but must not be read as a new-file addition",
+        "VERIFIED linear history: 'git rev-list --parents -n 1 cdcbca8' -> 'cdcbca8 238c9e4'; 'git rev-list --parents -n 1 238c9e4' -> '238c9e4 320d3a5', matching the report's 'HEAD moved 320d3a5 -> 238c9e4 -> cdcbca8'",
+        "VERIFIED author and date of both commits: author 'SPS Governance (local) <sps-governance@local.invalid>', 238c9e4 authored Fri Oct 16 08:19:30 2026 +0600 (2026-10-16T08:19:30+06:00) and cdcbca8 authored Fri Oct 16 08:25:15 2026 +0600 (2026-10-16T08:25:15+06:00). Both commits carry a machine/pseudonymous identity, NOT a human User identity; this is recorded rather than smoothed over",
+        "VERIFIED that neither commit touches a governance decision record: neither file list above contains any decisions/*.json path, consistent with the report's Decision 7 statement",
+        "VERIFIED that the source report does NOT contain verbatim User authorization text: 'grep -n \"^>\"' returns blockquotes only at lines 64-67 (an agent-authored 'Resolution of the Decision 1 vs Decision 2 conflict (your ruling)'), and the decision headings at lines 28/44/69/83/90 are written in the agent's summarizing voice. No quoted User utterance exists in this report",
+        "Defect DP-10 evidence: 'git ls-files reports/' -> 0 files; 'git status --porcelain' -> '?? reports/'; 'find reports -type f ! -name .DS_Store' -> 9 files; 'git check-ignore -v reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md' -> no match, so reports/ is untracked but NOT ignored",
+        ".sps/GOVERNANCE.md:65 - the Approval axis is '**User only**'; .sps/GOVERNANCE.md:74 - 'An agent must never infer approval from completion, or verification from approval'",
+        "sps2/governance/SCHEMAS/decision.schema.json:5 - 'User approval is never fabricated or inferred'; :80 - decided_by 'MUST NOT name an agent, model or automation. Only the user may approve.'"
+      ],
+      "alternatives": [
+        {
+          "option": "Commit reports/ wholesale so the narrative report itself becomes durable",
+          "why_not_chosen": "It makes the evidence durable but leaves it in a non-governance-native form: a fresh clone would gain 9 narrative reports, none of them in the decision contract, none machine-checkable, and the authorization would still not be discoverable by any decision-record consumer. It also expands blast radius from the 2 authorized commits to 9 unrelated files (7 of which record other phases' work), and it does not resolve the governance question of whether an agent-authored narrative may stand as the record of a User approval. Recorded as alternative (a) in the DP-10 trade-off analysis."
+        },
+        {
+          "option": "Leave reports/ untracked and treat the two commits as self-documenting via their commit messages",
+          "why_not_chosen": "The commit messages describe what changed, not who authorized it, in what scope, or with what non-goals. Under .sps/GOVERNANCE.md the Approval axis is User-only and must be recorded separately from completion and verification, so a commit message cannot carry the authorization. This is the status quo that produces DP-10."
+        },
+        {
+          "option": "Reconstruct the User's verbatim authorization text for the approval.basis field",
+          "why_not_chosen": "FORBIDDEN. The source report contains no verbatim User quotation, so any reconstructed text would be fabricated approval. sps2/governance/SCHEMAS/decision.schema.json:5 states 'User approval is never fabricated or inferred'. approval.basis below therefore records the provenance limitation plainly instead of supplying a quotation."
+        },
+        {
+          "option": "Mark this decision PROPOSED / PENDING_USER_APPROVAL to be maximally conservative",
+          "why_not_chosen": "The underlying authorization is not pending: it was given, executed and is already in HEAD as 238c9e4 and cdcbca8. Recording it as PENDING would misstate history in the opposite direction. It is recorded APPROVED to match the source report, with the transcription-not-creation limit stated in approval.basis and in the top-level note."
+        }
+      ],
+      "status": "ACTIVE",
+      "supersedes": null,
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "TRANSCRIBED, NOT ORIGINATED. The User approval recorded here predates this record and was already executed as commits 238c9e4 (2026-10-16T08:19:30+06:00) and cdcbca8 (2026-10-16T08:25:15+06:00). The sole source is the UNTRACKED narrative report reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md, which states at line 28 '### Decision 1 — APPROVED: commit the three .sps/tools migrations + checker/test changes' and at line 83 '### Decision 4 — APPROVED: add the Python unittest CI job'. decided_at is the date on which the authorized commits were created and the source report was written (2026-10-16); it is NOT a new approval date and this record invents none. decided_by is 'User' because that is what the source report records. PROVENANCE LIMITATION, stated plainly: the source report contains NO verbatim quotation of the User's authorization text; it records the decisions in the agent's own summarizing voice and refers to 'your ruling' (lines 54, 64, 146) without quoting it. Accordingly no verbatim User quotation is asserted in this field, because supplying one would be fabricating approval. If a verbatim User basis is required by the repository's evidence standard, it must be provided by the User; an agent must not reconstruct it. This record originates no approval, grants no new authority, and authorizes no new change."
+      }
+    }
+  ],
+
+  "non_goals": [
+    "Not an approval. This record creates no User approval and grants no authority to change any file. DEC-0031 transcribes an authorization that already existed and was already executed on 2026-10-16; it is a durability remedy for defect DP-10, not a new decision.",
+    "Not a new approval date. decided_at 2026-10-16 is the date the authorized commits were created and the source report was written. No approval date is invented, inferred or back-dated.",
+    "Not a change to reports/. This record does not add, move, rename or delete any file under reports/, and it makes no recommendation about whether reports/ should become tracked. That question is left open at top level.",
+    "Not a claim that the transcribed authorization was quoted verbatim. The source narrative contains no verbatim User text; this record says so rather than filling the gap.",
+    "Not a re-litigation or amendment of the authorized scope. The 6-file scope of 238c9e4 and the 1-file scope of cdcbca8 are restated exactly as committed; no file is added to or removed from either scope.",
+    "Not a resolution of the Decision 1 vs Decision 2 conflict beyond what the source reports: patch B is recorded there as SUPERSEDED per the User ruling and not applied, and this record neither applies nor re-decides it.",
+    "Not a ratification of the uncommitted Decision 3 change. sps2/governance/attribution.py is modified in the worktree but appears in NEITHER commit; the source report lists its commit status as outstanding and this record does not commit, approve or resolve it.",
+    "Not authority to push. Both commits remain unpushed; the source report recorded ahead/behind 0/3 against the branch's upstream.",
+    "Not a claim that CI has ever run. The source report states the job is validated only by structure, git apply --check and local execution of the extracted job body, and that no GitHub Actions run has been observed.",
+    "Not a validation of the source report's other numeric claims. This record verifies only the two commits' existence, ancestry, file lists, insertion/deletion counts, author, date and the add-versus-insert distinction."
+  ],
+
+  "explicitly_not_approved_by_this_record": [
+    "The transcribed authorization itself: DEC-0031 asserts no approval of its own and its approval block records a pre-existing User approval only",
+    "Any new change to any file. This record originates no commit and no authority to edit; its placement (round 6, DEC-E) and its commit (round 7, Phase-1 scope 5) were each explicitly User-authorized in-session; nothing beyond this one file was authorized by either grant",
+    "Any addition, move, rename or deletion under reports/, including making reports/ tracked or adding a .gitignore rule for it",
+    "Any commit or push of the two commits 238c9e4 and cdcbca8, which remain unpushed and are not staged by this record",
+    "The uncommitted Decision 3 change to sps2/governance/attribution.py, and any decision on whether to commit it",
+    "Any resolution of patch B's superseded status, and any permission to apply both patch B and the worktree fix",
+    "The residual accepted fail-open on a well-formed but meaningless token ([\"zzz\"])",
+    "Any claim that reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md is tracked, approved, or a governance record of record",
+    "The other 8 files under reports/, whose tracking status is undecided",
+    "Any CI enforcement change beyond the python-unittest job already committed in cdcbca8",
+    "Any change to .sps/GOVERNANCE.md, including repair of the malformed code fence at lines 93-198",
+    "Any change to sps2/governance/SCHEMAS/decision.schema.json",
+    "Any re-verification of the source report's test results (modules 29, ran 889, passed 888, failed 0, skipped 1), which this record did not re-run",
+    "Any determination about DEC-0001 (KEEP_LOCAL_ONLY) or the git remote discrepancy KI-15"
+  ],
+
+  "unresolved_questions": [
+    {
+      "id": "UQ-DP10-1",
+      "question": "Is an agent-authored transcription that cites an untracked narrative report sufficient evidence of a User approval, or must the User supply their verbatim authorization text before DEC-0031 may be relied upon as the record of record?",
+      "blocked_by": "The source report reports the approvals in the agent's summarizing voice and quotes no User utterance. Only the User can supply the verbatim basis. sps2/governance/SCHEMAS/decision.schema.json:5 forbids fabricating or inferring it.",
+      "effect_if_unresolved": "DEC-0031's approval.basis documents the provenance limitation rather than a quotation. If the repository's evidence standard requires a verbatim basis, this record is not yet the final word and the User must confirm or supply it."
+    },
+    {
+      "id": "UQ-DP10-2",
+      "question": "Should reports/ become tracked, gitignored, or remain untracked-by-omission?",
+      "blocked_by": "reports/ is untracked but NOT gitignored, so its untracked state is an omission rather than a stated policy. Choosing among tracking, ignoring or leaving it is a repository-ownership decision, not an agent decision.",
+      "effect_if_unresolved": "The 9 narrative reports continue to be lost on a fresh clone; only authorizations transcribed into the decision contract (such as DEC-0031) survive. The other 8 reports carry no transcription."
+    }
+  ],
+
+  "related": [
+    "reports/SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md (UNTRACKED - sole source of the transcribed authorization)",
+    "commit 238c9e4ea0f9d8ddbbc2b503b779c5edd4b4e428 (6 files, 768 insertions, 39 deletions)",
+    "commit cdcbca83679844ea66196f25773f42d9b64569ec (HEAD at time of writing; 1 file, 98 insertions, 0 deletions)",
+    "commit 320d3a58c2a7a9f9a6ddd76ffe6f265d0a7b9e71 (parent of 238c9e4)",
+    "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json (DEC-0025..DEC-0028; concrete compliant example of a User-approved, tracked record)",
+    "sps2/decisions/LEGACY-PATH-DEFINITION-DECISIONS.json (DEC-0030; structural template for non_goals and explicitly_not_approved_by_this_record)",
+    "sps2/decisions/LEGACY-SCOPE-DECISIONS.json (DEC-0029)",
+    "sps2/governance/SCHEMAS/decision.schema.json (sps2/decision/v1)",
+    ".sps/GOVERNANCE.md sections 5 and 9 (decision records; project-local state rule)"
+  ]
+}
