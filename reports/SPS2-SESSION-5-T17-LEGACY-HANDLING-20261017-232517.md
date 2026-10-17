@@ -90,3 +90,62 @@ before validator run).
 - PROP-20261017-path-derivation ratification
 - DEC-7301/7302/7303/7305 formal ratification; C6/C7; push policy beyond
   DEC-0032; p4's `P7_ARTIFACT_CREATED` question
+
+---
+
+## Addendum (2026-10-17 23:45 +06:00)
+
+### Post-report work, in order
+
+1. **Master-checklist audit completed** (`wf_42b5fe5f-2e8`, 115 agents,
+   4.62M tokens, 1773 tool uses): 106 raw gaps raised, **96 confirmed real**
+   by independent verify agents (8 refuted as already covered, 2 verifiers
+   still in flight at cutoff were mooted by the same edits). All 96 closed
+   and pushed (`a392faf`):
+   - SECTION-DOD 28–50: data-layer correctness, web/API hardening
+     (CSRF/SSRF/LLM-injection/webhook signatures), session & auth hygiene,
+     production posture (CSP/HSTS/log scrubbing), dependency & source
+     hygiene, env validation, health/graceful-shutdown/backoff, privacy &
+     legal surfaces, API contract versioning, hook/format automation,
+     EXIF+RLS, security.txt, observability, uptime & alerts, resilience
+     posture, spending guardrails
+   - VERIFICATION-RECIPES: server-side caching, payload compression,
+     connection pooling, background queues, debounce/re-render, new
+     Test-isolation & pre-deploy recipe (mock time, mock APIs, E2E,
+     load/stress, migration rollback, PITR), extended cleanup gate
+   - DESIGN-GATE: Copy laws section (12 laws), error boundaries, text
+     scaling, lang attribute, PWA completeness
+   - MOBILE-LOW-END: minify + code-split + HTTP/2 checklist item
+   - sps-seo: og:image 1200×630, noopener noreferrer, llms.txt, GSC
+     verification, backlink strategy, SPF/DKIM/DMARC
+   - check_laws.py: +15 DoD markers, +7 DESIGN-GATE markers;
+     test_law_checker.py: 11 tests (2 new negative cases)
+   - Coverage cross-check script confirmed all 96 items present in docs.
+
+2. **CI green on 945ecce** (run 39054355422).
+
+3. **Hover/touch law** (user-reported failure: agents keep designing
+   hover-to-reveal patterns invisible on touch): MOBILE-LOW-END
+   "Hover/touch law (hard guard)" — hover-gated content as sole access
+   path banned; desktop hover = progressive enhancement via
+   `@media (hover: hover)`; tooltips on focus AND tap; tap-first
+   replacement patterns. DESIGN-GATE cross-ref + law-checker marker.
+   Pushed `101effe`, CI green.
+
+4. **T-17 adversarial review returned**: manifest pins verified clean +
+   4 findings (1 MAJOR, 2 MINOR, 1 NIT). All 4 fixed and smoke-tested
+   (fresh install: no backup churn; partial install: sps-cms backed up
+   without sps; real upgrade: 4.0.0→4.1.0 report). uninstall.sh now
+   preserves backups at ~/.sps-backups-uninstalled. Pushed `69b43b0`,
+   CI green (run 39055012423).
+
+5. **Legal/consent checklist audit launched** (`wf_366a6347-b5b`, 8
+   sections from the user's Gemini legal list). At addendum time: 43/51
+   agents done, 28 gaps confirmed / 0 refuted so far. Gap-closing batch
+   to follow on completion (likely a new skill/sps/LEGAL-COMPLIANCE.md +
+   SECTION-DOD pointers).
+
+### Battery state at addendum time
+
+1104 passed / 2 skipped; p2/p3/p5/sps2 green; p4 58/2 (documented
+pre-existing); legacy check PASS; law check PASS; lint PASS.
