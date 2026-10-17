@@ -18,7 +18,7 @@ EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged). Amended same day by
 # DEC-7305: 22 exceptions, then 23 (skill-search.sh + its scripts/ mirror).
-EXPECTED_MANIFEST_SHA256 = "cf12d85743f4ed69a874363c70a14d0c4389c7fc203abbbf68b1bac2790acc0f"
+EXPECTED_MANIFEST_SHA256 = "d88a1e8dd5e175251e1d7f33a4c9adbe32143bdbaa3b9d3f58ea80f48ae6e4be"
 EXPECTED_EXCEPTION_COUNT = 24  # DEC-7301 as amended by DEC-7305 (sps-seo registration + mirror resyncs + skill-search + its mirror)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {

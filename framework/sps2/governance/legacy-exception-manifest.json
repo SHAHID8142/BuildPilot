@@ -86,11 +86,11 @@
     },
     {
       "path": "install.sh",
-      "expected_blob": "b75aa0eeb3a6eb8f83bc28bde44a39f1af048963",
+      "expected_blob": "c44b2e2653d9deb1326ca8d17fb1cb31e0c774cd",
       "expected_mode": "100755",
-      "sha256": "8529b892665919457e5a5f6e18ca6b14c11be1e52e411edc5bc3c8773525da1e",
+      "sha256": "8f54edaa9ded34b0f7f1d475825541c023448f688107aa6eed3a8fad9b447370",
       "authorization": "DEC-7305",
-      "reason": "T-17: backup-before-replace, version detection and upgrade report in sync_core_skill; pinned by DEC-7305 as amended 2026-10-17."
+      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18."
     },
     {
       "path": "install.ps1",
