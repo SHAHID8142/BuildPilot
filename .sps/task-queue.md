@@ -89,3 +89,22 @@
 - Motivation: BuildPilot verifies process/code rules, not that the built
   product actually works — the gap identified in the self-build simulation
   (2026-10-18). User-approved.
+
+---
+
+## T-32 (queued): Hook-enforced laws (ECC-inspired)
+- Wire check_laws.py core checks into Claude Code PreToolUse/PostToolUse hooks
+  so violating writes are blocked at write-time, outside model context — not
+  caught only when the checker is later invoked. Consent-gated install
+  (TOOL-CONSENT law). Source: ECC repo review 2026-10-18, user-approved.
+
+## T-33 (queued): Lesson auto-proposals (ECC-inspired)
+- At session end, agent proposes lesson candidates (pattern + confidence) to
+  lessons/inbox/ as PROPOSALS ONLY — nothing lands without the existing
+  user-approval review flow (never auto-extracted into rules; LESSONS.md hard
+  rules unchanged). Source: ECC instincts//evolve, user-approved with human
+  gate preserved.
+
+## T-25 (amended): fold in ECC AgentShield attack-surface checklist
+- Secrets CI gate scope extended: also scan hooks configs, MCP configs,
+  permissions files for prompt-injection/exfil patterns. Source: ECC review.
