@@ -56,3 +56,11 @@ Read this to understand the current project context, completed tasks, and next s
 - Ordering: attach gate_record LAST, after every state change — earlier claims go stale otherwise (MIST-20261017-001).
 - Read the schema before adding fields; additionalProperties:false is common (MIST-20261017-002).
 - After any restructure, recheck every hardcoded path depth (2 occurrences: MIST-20261017-003/004; promotion proposal PROP-20261017-path-derivation awaiting ratification).
+
+## 2026-10-18 — Session 6: legal gate + file-splitting + user-guidance + universal hosts
+- LEGAL-COMPLIANCE.md shipped: 8 sections, 49-item adversarial audit folded in (AUP added)
+- FILE-SPLITTING.md (300/500 caps) + USER-GUIDANCE.md (one-step law) as hard laws 15/10
+- Universal host support: install.sh --agent '*' = 30+ hosts; 6 new adapters (goose/crush/trae/junie/zed/openclaw)
+- install.sh re-pinned in legacy manifest (self-hash d88a1e8d…)
+- Commits: 999fa65, 6ebd2d8, d2cafd3 — battery 1104 OK, sps2 80/80
+- Skill best-practices verified: all SKILL.md < 500 lines, descriptions < 1536 chars
