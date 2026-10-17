@@ -25,7 +25,7 @@
     "schema": "sps2.p10-gate-record/v1",
     "producing_command": "python3 -B framework/sps2/tools/p10_runtime_gate.py --slice framework/sps2/project/SLICE-P10-01.json --build-dir framework/sps2/project/SLICE-P10-01-build --slice-id-history framework/sps2/project/SLICE-ID-HISTORY.json --json",
     "emitting_tool_version": "p10_runtime_gate Phase A (BuildPilot framework/sps2, 2026-10-17)",
-    "utc_timestamp": "2026-10-17T13:26:23Z",
+    "utc_timestamp": "2026-10-17T14:10:04Z",
     "inputs": {
      "../../domain/backend/operations.json": "sha256:96a99b282d57c5ddc16ee58bfdeb8ceb612401126163bc9df2a529ca113d1e42",
      "../../domain/cms/data/content.json": "sha256:d46558b7c3b9929d2fe5319d8fbedbb5984ba643cc4ddb9b46b559134f1027ae",
@@ -37,7 +37,7 @@
     "outputs": {
      "../project/SLICE-P10-01-build/index.html": "sha256:5c41a93c6b23b55a026017f96eaf92ef739bfb87915db0c4c5e6a6ae9ba95b17",
      "../project/SLICE-P10-01-build/robots.txt": "sha256:8fdbaa95dda72457352c21d176e7403d996fae9c67d156531bcdb20c46a2f055",
-     "../project/SLICE-P10-01-build/sitemap.xml": "sha256:801d62a48c8bb5f90a0b00ac62e5976814b934024a4890328416667f81cdecc3"
+     "../project/SLICE-P10-01-build/sitemap.xml": "sha256:966193e9eec9d171b27dffd04d1421f6887d4863ea0d946715886f762d9a3d03"
     }
    }
   }

@@ -443,8 +443,22 @@ def build_home_slice(
     )
     (out / "robots.txt").write_text(robots, encoding="utf-8")
 
+    # Sitemap locs must be routes, not content ids: the single authorized
+    # route (SUPPORTED_ROUTE, DEC-7105) is the published loc for this slice's
+    # content. P9's generator reads item["slug"] with id fallback; the CMS
+    # content model has no slug field, so project the route onto the slice's
+    # record view. Other records pass through unchanged (their slug/id rules
+    # remain P9-owned).
+    sitemap_items = []
+    for item in content_records:
+        if isinstance(item, Mapping) and item.get("id") == content_id:
+            projected = dict(item)
+            projected["slug"] = SUPPORTED_ROUTE
+            sitemap_items.append(projected)
+        else:
+            sitemap_items.append(item)
     sitemap_model = generate_sitemap_from_cms_items(
-        list(content_records), base_url=canonical_domain
+        sitemap_items, base_url=canonical_domain
     )
     sitemap_xml = generate_sitemap_xml(sitemap_model)
     (out / "sitemap.xml").write_text(sitemap_xml, encoding="utf-8")
