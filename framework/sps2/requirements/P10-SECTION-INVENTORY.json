@@ -6,7 +6,7 @@
   "provenance": {
     "generated_at": "2026-10-09",
     "generator": "sps2 contract scaffolding: format established by the governance directive; no CMS state or P8 content contract was consulted",
-    "cms_state_digest": "sha256:28338b3ecac98d5f1ede21ce178121c22c3ea69f35541b9d1e3152e481c8922f",
+    "cms_state_digest": "sha256:da03c15478f9eaccb58cf7bd0b85563d0f45870ceced4978297beeefc07f9636",
     "p8_contract_digest": "sha256:0e129f8ddb251196b56d48d8d492b6287a23944659ef8086ab48e957fa721a78"
   },
   "user_approval": null,

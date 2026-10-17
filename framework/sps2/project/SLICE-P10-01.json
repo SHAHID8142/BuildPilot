@@ -1,52 +1,59 @@
 {
-  "slice_id": "SLICE-P10-01",
-  "section_id": "home",
-  "route": "/",
-  "cms_content_references": [
-    {
-      "content_id": "60e51f0536cb413e86e96ff6f750846a",
-      "field_slots": ["heading", "body"],
-      "required_status": "published"
-    }
-  ],
-  "layout_id": "home-default",
-  "axis_contracts": {
-    "frontend": {
-      "renderer_entry_point": "PLACEHOLDER-NOT-BUILT: no renderer exists yet (implementation is unauthorized); the runtime gate must replace this reference before any build claim",
-      "produces": "static_html_document",
-      "encoding_contract": "PER_SINK_HTML_ESCAPE"
-    },
-    "cms": {
-      "consumption_boundary": "P8_SAFE_OUTPUT"
-    },
-    "backend": {
-      "exposure_class": "LOCAL_NON_NETWORK_EXPOSED",
-      "state_changing_operations": []
-    },
-    "data": {
-      "data_dependencies": [],
-      "project_local": true
-    },
-    "validation": {
-      "schema_validation": true,
-      "reparse_validation": true
-    },
-    "assets": {
-      "asset_references": []
-    },
-    "seo": {
-      "audit_mode": "P9_DEPLOYMENT_AUDIT",
-      "expected_exit_code": 0
-    },
-    "tests": {
-      "test_entry_point": "PLACEHOLDER-NOT-BUILT: no slice test suite exists yet (implementation is unauthorized); the runtime gate must replace this reference before any test claim",
-      "negative_cases": []
-    }
+ "slice_id": "SLICE-P10-01",
+ "section_id": "home",
+ "route": "/",
+ "cms_content_references": [
+  {
+   "content_id": "60e51f0536cb413e86e96ff6f750846a",
+   "field_slots": [
+    "heading",
+    "body"
+   ],
+   "required_status": "published"
+  }
+ ],
+ "layout_id": "home-default",
+ "axis_contracts": {
+  "frontend": {
+   "renderer_entry_point": "PLACEHOLDER-NOT-BUILT: no renderer exists yet (implementation is unauthorized); the runtime gate must replace this reference before any build claim",
+   "produces": "static_html_document",
+   "encoding_contract": "PER_SINK_HTML_ESCAPE"
   },
-  "acceptance_state": "DRAFT",
-  "evidence_references": [
-    "../evidence/P10-EVIDENCE.json"
-  ],
-  "rollback_reference": "Revert = delete the build output directory and this slice document; no backend, no data store, and no CMS record is touched by the slice (state_changing_operations and data_dependencies are empty by DEC-7108), so nothing else can require rollback. Rollback rehearsal (HOME-ACC-23) cannot run until the harness exists and is NOT claimed here.",
-  "user_approval": null
+  "cms": {
+   "consumption_boundary": "P8_SAFE_OUTPUT"
+  },
+  "backend": {
+   "exposure_class": "LOCAL_NON_NETWORK_EXPOSED",
+   "state_changing_operations": []
+  },
+  "data": {
+   "data_dependencies": [],
+   "project_local": true
+  },
+  "validation": {
+   "schema_validation": true,
+   "reparse_validation": true
+  },
+  "assets": {
+   "asset_references": []
+  },
+  "seo": {
+   "audit_mode": "P9_DEPLOYMENT_AUDIT",
+   "expected_exit_code": 0
+  },
+  "tests": {
+   "test_entry_point": "PLACEHOLDER-NOT-BUILT: no slice test suite exists yet (implementation is unauthorized); the runtime gate must replace this reference before any test claim",
+   "negative_cases": []
+  }
+ },
+ "acceptance_state": "APPROVED",
+ "evidence_references": [
+  "../evidence/P10-EVIDENCE.json"
+ ],
+ "rollback_reference": "Revert = delete the build output directory and this slice document; no backend, no data store, and no CMS record is touched by the slice (state_changing_operations and data_dependencies are empty by DEC-7108), so nothing else can require rollback. Rollback rehearsal (HOME-ACC-23) cannot run until the harness exists and is NOT claimed here.",
+ "user_approval": {
+  "decided_by": "User",
+  "decided_by_role": "USER",
+  "decided_at": "2026-10-17"
+ }
 }

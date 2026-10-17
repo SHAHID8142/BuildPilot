@@ -1,30 +1,49 @@
 {
-  "schema": "sps2.evidence/v1",
-  "phase": "P10",
-  "generated": "2026-10-16",
-  "purpose": "P10 evidence placeholder, created under the Round 12 'SLICE-AUTHORING: AUTHORIZE' grant so that the DRAFT slice document sps2/project/SLICE-P10-01.json can reference at least one real, resolvable evidence record (the schema requires evidence_references minItems 1). This file records NO runtime verification: no gate pass, no P9 audit run, no build output, no test execution. Every runtime claim about P10 remains UNVERIFIED.",
-  "probe_limitation": "The P10 runtime gate has never returned an overall PASS against any input, and no P10 build output exists. The single record below is a PLACEHOLDER-PROVENANCE record, not a verification record: its result is BLOCKED, and BLOCKED is not a PASS.",
-  "governance_discrepancy": "The P10 runtime gate tool (sps2/tools/p10_runtime_gate.py) and its test module (sps2/tests/test_p10_runtime_gate.py) exist in the working tree but are UNTRACKED; no recorded decision authorizes their creation or their tracking. This discrepancy is recorded here so it cannot be concealed. It is outside this file's authorization to resolve.",
-  "records": [
-    {
-      "evidence_id": "EV-P10-001",
-      "source": "GOVERNANCE",
-      "timestamp": "2026-10-16T17:00:00+06:00",
-      "command": "python3 sps2/tools/check_sps2.py decision sps2/decisions/P10-DELEGATED-DECISIONS.json",
-      "expected_result": "Validator exits clean (no ERR lines) after the Round 12 ratification of DEC-7101..7104 and DEC-7110",
-      "observed_result": "Validator emitted no ERR lines; all ten delegated decisions now carry approval.state=APPROVED (DEC-7105..7109 decided 2026-10-13; DEC-7101..7104 and DEC-7110 decided 2026-10-16 per the Round 12 User decision message transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json). This is a GOVERNANCE-STATE observation only.",
-      "result": "BLOCKED",
-      "exit_code": 0,
-      "relates_to": {
-        "requirement_id": "REQ-P10-17",
-        "task_id": "P10"
-      },
-      "coverage_note": "Covers governance state only: the ratification of the five pending delegated decisions. Covers NO runtime control. The gate controls (schema-structural through approval-state-interaction) have no evidence records at all, because no build, no harness run, and no gate pass has ever occurred. This record exists so the DRAFT slice's evidence_references resolves to a real file; it must never be cited as proof that any P10 runtime criterion passed.",
-      "blocked_reason": "BLOCKED is this record's permanent result class until real runtime evidence replaces it: no P10 implementation exists (unauthorized), no build output exists, the referenced Home Content is unpublished (PUBLICATION: DEFER), and the runtime gate has never been run against a complete slice."
+ "schema": "sps2.evidence/v1",
+ "phase": "P10",
+ "generated": "2026-10-16",
+ "purpose": "P10 evidence placeholder, created under the Round 12 'SLICE-AUTHORING: AUTHORIZE' grant so that the DRAFT slice document sps2/project/SLICE-P10-01.json can reference at least one real, resolvable evidence record (the schema requires evidence_references minItems 1). This file records NO runtime verification: no gate pass, no P9 audit run, no build output, no test execution. Every runtime claim about P10 remains UNVERIFIED.",
+ "probe_limitation": "The P10 runtime gate has never returned an overall PASS against any input, and no P10 build output exists. The single record below is a PLACEHOLDER-PROVENANCE record, not a verification record: its result is BLOCKED, and BLOCKED is not a PASS.",
+ "governance_discrepancy": "The P10 runtime gate tool (sps2/tools/p10_runtime_gate.py) and its test module (sps2/tests/test_p10_runtime_gate.py) exist in the working tree but are UNTRACKED; no recorded decision authorizes their creation or their tracking. This discrepancy is recorded here so it cannot be concealed. It is outside this file's authorization to resolve.",
+ "records": [
+  {
+   "evidence_id": "EV-P10-001",
+   "source": "GOVERNANCE",
+   "timestamp": "2026-10-16T17:00:00+06:00",
+   "command": "python3 sps2/tools/check_sps2.py decision sps2/decisions/P10-DELEGATED-DECISIONS.json",
+   "expected_result": "Validator exits clean (no ERR lines) after the Round 12 ratification of DEC-7101..7104 and DEC-7110",
+   "observed_result": "Validator emitted no ERR lines; all ten delegated decisions now carry approval.state=APPROVED (DEC-7105..7109 decided 2026-10-13; DEC-7101..7104 and DEC-7110 decided 2026-10-16 per the Round 12 User decision message transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json). This is a GOVERNANCE-STATE observation only.",
+   "result": "BLOCKED",
+   "exit_code": 0,
+   "relates_to": {
+    "requirement_id": "REQ-P10-17",
+    "task_id": "P10"
+   },
+   "coverage_note": "Covers governance state only: the ratification of the five pending delegated decisions. Covers NO runtime control. The gate controls (schema-structural through approval-state-interaction) have no evidence records at all, because no build, no harness run, and no gate pass has ever occurred. This record exists so the DRAFT slice's evidence_references resolves to a real file; it must never be cited as proof that any P10 runtime criterion passed.",
+   "blocked_reason": "BLOCKED is this record's permanent result class until real runtime evidence replaces it: no P10 implementation exists (unauthorized), no build output exists, the referenced Home Content is unpublished (PUBLICATION: DEFER), and the runtime gate has never been run against a complete slice.",
+   "gate_record": {
+    "schema": "sps2.p10-gate-record/v1",
+    "producing_command": "python3 -B framework/sps2/tools/p10_runtime_gate.py --slice framework/sps2/project/SLICE-P10-01.json --build-dir framework/sps2/project/SLICE-P10-01-build --slice-id-history framework/sps2/project/SLICE-ID-HISTORY.json --json",
+    "emitting_tool_version": "p10_runtime_gate Phase A (BuildPilot framework/sps2, 2026-10-17)",
+    "utc_timestamp": "2026-10-17T13:26:23Z",
+    "inputs": {
+     "../../domain/backend/operations.json": "sha256:96a99b282d57c5ddc16ee58bfdeb8ceb612401126163bc9df2a529ca113d1e42",
+     "../../domain/cms/data/content.json": "sha256:d46558b7c3b9929d2fe5319d8fbedbb5984ba643cc4ddb9b46b559134f1027ae",
+     "../../domain/cms/data/content_types.json": "sha256:6635ed4d508248477a42ef88eaf39914ed5f5fe86a82a6272153cb0e5ede8855",
+     "../project/SLICE-ID-HISTORY.json": "sha256:ec5bf0900ce6a407b891f2202762a891804ea285269f824ddc4df26248599e3b",
+     "../project/SLICE-P10-01.json": "sha256:1ad12b3e654ffb607a914808936a22aa8c60abaf37c3301ed090f1315110e050",
+     "../requirements/P10-SECTION-INVENTORY.json": "sha256:5e1518987d027e32c2dba719208bd3a90aaacce964098d19e6b4c250279fb09f"
+    },
+    "outputs": {
+     "../project/SLICE-P10-01-build/index.html": "sha256:5c41a93c6b23b55a026017f96eaf92ef739bfb87915db0c4c5e6a6ae9ba95b17",
+     "../project/SLICE-P10-01-build/robots.txt": "sha256:8fdbaa95dda72457352c21d176e7403d996fae9c67d156531bcdb20c46a2f055",
+     "../project/SLICE-P10-01-build/sitemap.xml": "sha256:801d62a48c8bb5f90a0b00ac62e5976814b934024a4890328416667f81cdecc3"
     }
-  ],
-  "closure": {
-    "state": "NOT_CLOSED",
-    "reason": "P10 has no completed slice, no build, no gate pass, and no User approval. Nothing here closes P10 or any part of it."
+   }
   }
+ ],
+ "closure": {
+  "state": "NOT_CLOSED",
+  "reason": "P10 has no completed slice, no build, no gate pass, and no User approval. Nothing here closes P10 or any part of it."
+ }
 }

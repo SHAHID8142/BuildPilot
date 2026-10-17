@@ -1,0 +1,5 @@
+{
+  "schema": "sps2.backend-operations/v1",
+  "note": "Backend operation manifest required by REQ-P10-07 and DEC-7112 design #5. The Home slice (SLICE-P10-01) declares state_changing_operations=[]: the P10 Home surface is static-first with no backend routes, so this manifest enumerates zero state-changing operations. The empty list is the authorized empty-case representation per REQ-P10-07's state_changing_operations_contract. This manifest is self-declared code: the runtime-gate reconciliation proves consistency, not real-world completeness. It must be extended with an entry for every state-changing operation the backend actually offers, before that operation ships.",
+  "operations": []
+}
