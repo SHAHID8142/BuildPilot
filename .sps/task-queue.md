@@ -1,7 +1,7 @@
 # Task Queue
 
 ## doing
-- (empty)
+- [ ] id: T-19 task: Nightly skill-ecosystem scan — build per delivered design (GitHub Actions cron 03:17 UTC, report-only, [skip ci], deduped tracking issue, 6 vetting gates) — started: 2026-10-18
 
 ## queued (oldest first)
 - (empty)
