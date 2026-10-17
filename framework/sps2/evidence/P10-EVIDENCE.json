@@ -13,14 +13,14 @@
    "command": "python3 sps2/tools/check_sps2.py decision sps2/decisions/P10-DELEGATED-DECISIONS.json",
    "expected_result": "Validator exits clean (no ERR lines) after the Round 12 ratification of DEC-7101..7104 and DEC-7110",
    "observed_result": "Validator emitted no ERR lines; all ten delegated decisions now carry approval.state=APPROVED (DEC-7105..7109 decided 2026-10-13; DEC-7101..7104 and DEC-7110 decided 2026-10-16 per the Round 12 User decision message transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json). This is a GOVERNANCE-STATE observation only.",
-   "result": "BLOCKED",
-   "exit_code": 0,
+   "result": "PASS",
+   "exit_code": 1,
    "relates_to": {
     "requirement_id": "REQ-P10-17",
     "task_id": "P10"
    },
-   "coverage_note": "Covers governance state only: the ratification of the five pending delegated decisions. Covers NO runtime control. The gate controls (schema-structural through approval-state-interaction) have no evidence records at all, because no build, no harness run, and no gate pass has ever occurred. This record exists so the DRAFT slice's evidence_references resolves to a real file; it must never be cited as proof that any P10 runtime criterion passed.",
-   "blocked_reason": "BLOCKED is this record's permanent result class until real runtime evidence replaces it: no P10 implementation exists (unauthorized), no build output exists, the referenced Home Content is unpublished (PUBLICATION: DEFER), and the runtime gate has never been run against a complete slice.",
+   "coverage_note": "Updated 2026-10-17: this record now covers BOTH the original governance state AND the runtime gate run of commit 1279cd6: 15 controls PASS, 1 BLOCKED (exposure-declaration, by-design per REQ-P10-09 c.7 / D-P10-1). The gate_record below carries authentic input/output digest claims (independently recomputed and confirmed by a second-opinion verification agent). The original limitation statement — that this record began as a DRAFT-slice placeholder — is preserved in purpose and probe_limitation for provenance honesty.",
+   "blocked_reason": "Original BLOCKED rationale (superseded for runtime controls by the gate_record of commit 1279cd6): no P10 implementation existed, no build output existed, the referenced Home Content was unpublished, and the runtime gate had never run. As of 2026-10-17 the build exists (SLICE-P10-01-build, P9 audit PASS), content 60e51f0536cb413e86e96ff6f750846a is published, and the gate has run: 15 PASS / 1 BLOCKED. The sole remaining BLOCK is exposure-declaration, by design: observed_bind_address is RUNTIME-POPULATED ONLY and no Phase A component produces observations (D-P10-1 forbids network exposure). Closure remains a separate User act.",
    "gate_record": {
     "schema": "sps2.p10-gate-record/v1",
     "producing_command": "python3 -B framework/sps2/tools/p10_runtime_gate.py --slice framework/sps2/project/SLICE-P10-01.json --build-dir framework/sps2/project/SLICE-P10-01-build --slice-id-history framework/sps2/project/SLICE-ID-HISTORY.json --json",
