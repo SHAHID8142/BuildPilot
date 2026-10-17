@@ -136,3 +136,29 @@ templates. A correct template with a broken render is a FAIL.
   timestamp. Storefront + CMS controls ship together (SPS law).
 - The BuildPilot framework engine lives at `framework/domain/seo/` — this skill
   is its user-facing standard; keep them in sync.
+
+---
+
+## Hardening Rules (engine-grounded additions)
+
+- **LCP/CLS are engine-evaluated, never asserted:** `evaluate_lcp()` is
+  observation-gated (returns unevaluated without a real observation — do not
+  fabricate a pass); `evaluate_cls` requires a measured value. Static proxies
+  (`analyze_font_display_html`, `analyze_static_shift_prevention`) are code
+  checks, not performance proofs — name which one you ran.
+- **Thresholds:** Core Web Vitals thresholds come from the engine's config
+  (`validate_cwv_config`); `assert_no_invented_thresholds` exists precisely
+  because inventing numbers is the classic failure. Never hardcode a
+  "good score" that the engine doesn't define.
+- **Sitemap/robots invariants:** unpublished records are excluded from
+  sitemaps by the generator (strictly, not best-effort); every sitemap URL
+  must be robots-allowed; canonical URLs are validated (absolute https, no
+  loopback/private hosts). Draft previews stay noindex — never hand-write a
+  canonical or robots directive that contradicts the publication state.
+- **Structured data:** JSON-LD must match the page's real content; the
+  engine's specialized validators (LocalBusiness/`--local`,
+  Product/Offer/`--ecommerce`, hreflang/`--multilingual`) are the arbiters —
+  don't hand-roll schema checks the engine already runs.
+- **Deployment mode is fail-closed:** run audits with `--mode deployment` in
+  handoffs; CRITICAL findings exit non-zero and must be fixed before the
+  handoff checkpoint, not waived.

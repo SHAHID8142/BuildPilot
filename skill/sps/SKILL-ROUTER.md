@@ -3,6 +3,16 @@
 `/sps` remains the only orchestrator. Do **not** install Superpowers (or similar)
 as a second orchestrator by default.
 
+## Dynamic selection (research-before-route)
+
+The map below is the OFFLINE DEFAULT, not a lock. Per [DYNAMIC-SKILLS.md](DYNAMIC-SKILLS.md):
+before a significant chunk, run a bounded ecosystem research pass
+(`bash scripts/skill-search.sh <domain>`, GitHub, skills.sh) — if a better-maintained
+or newer skill exists, propose the swap in the section packet and auto-update the
+installed skill (`npx skills add <owner>/<repo> --skill <name> -g -y`). Bundled SPS
+skills update via `scripts/sps-update.sh --yes`. Read any new skill's SKILL.md before
+first use; conflict bans below still apply regardless of origin.
+
 ## Protocol (every chunk)
 
 1. Detect job domains (UI, review, React, CMS, security, test, backend, …)

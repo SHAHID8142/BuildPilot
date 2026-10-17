@@ -108,3 +108,43 @@ Read [METHOD-CARD.md](METHOD-CARD.md) at the start of every session.
 
 ### 10. Mandatory Roundtrip DoD (Zero-Bug Delivery)
 - Every CMS feature requires passing the 5-point [ROUNDTRIP-VERIFICATION.md](ROUNDTRIP-VERIFICATION.md) gate with documented proof.
+
+---
+
+## Hardening Laws (v2.4.0 additions — engine-grounded)
+
+### H1. Output Safety Law (XSS-proof by construction)
+- Every CMS string that reaches HTML goes through the approved sink encoder
+  (`encode_for_html`) exactly once — never hand-escape, never double-encode,
+  never interpolate raw values into templates. Plain-text fields pass
+  `validate_plain_text` (no markup allowed) before storage.
+- Reference implementation: `framework/domain/cms/output_safety.py`. A section
+  that renders any CMS value without the adapter fails the Section DoD.
+
+### H2. RBAC & Publication Boundary Law
+- Every state-changing admin action calls `RBAC.require_permission(role, action)`
+  first (framework/domain/cms/auth.py). Publish/unpublish/archive go through the
+  publishing state machine (`publishing.py`) — never direct writes to the status
+  field. Draft content is excluded from public rendering and sitemaps by the
+  engine; never bypass that exclusion for a preview (use the noindex preview path).
+
+### H3. Validation-at-Entry Law
+- All admin input passes `framework/domain/cms/validation.py` validators
+  (content, content types, sections, revisions, assets, permission matrix).
+  A field that fails validation never reaches storage — fail closed, show the
+  field-level error, keep the rest of the form intact.
+
+### H4. Revisions & Rollback Law
+- Every content mutation creates a revision (`_create_revision`) before saving.
+  Rollback uses the engine's rollback path and is itself audited. An admin
+  action without a revision trail is a defect.
+
+### H5. Audit Trail Law
+- Every admin action writes an audit entry (actor, role, action, target,
+  timestamp) via the engine's audit module. The audit log is append-only:
+  no UI or API path may edit or delete audit entries.
+
+### H6. Asset Upload Law (engine-enforced)
+- Uploads enforce extension/MIME whitelisting, traversal sanitization, and size
+  caps (framework/domain/cms/assets.py). Serve user uploads with
+  content-type sniffing defenses; never trust client-declared MIME alone.

@@ -2,7 +2,7 @@
  "schema": "sps2.legacy-exception-manifest/v1",
  "decision_id": "DEC-7301",
  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
- "exception_count": 19,
+ "exception_count": 22,
  "exceptions": [
   {
    "path": "get-sps.ps1",
@@ -38,11 +38,11 @@
   },
   {
    "path": "scripts/update-sps.ps1",
-   "expected_blob": "097d570cfe49875b99a81a40c4826e395e567a29",
+   "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
    "expected_mode": "100644",
-   "sha256": "a7aa9869ff6feadcafee1f15518471e8a0940307242542ff6ec89b126e96e702",
+   "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
    "authorization": "DEC-7201",
-   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+   "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
   },
   {
    "path": "skill/sps/scripts/bootstrap-sps.sh",
@@ -62,11 +62,11 @@
   },
   {
    "path": "skill/sps/scripts/update-sps.ps1",
-   "expected_blob": "097d570cfe49875b99a81a40c4826e395e567a29",
+   "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
    "expected_mode": "100644",
-   "sha256": "a7aa9869ff6feadcafee1f15518471e8a0940307242542ff6ec89b126e96e702",
+   "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
    "authorization": "DEC-7201",
-   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+   "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
   },
   {
    "path": "scripts/smoke-sps.sh",
@@ -155,12 +155,36 @@
    "expected_blob": "25fe793d9438af0b7b4f7735d1155c9d5d8f0477",
    "expected_mode": "100755",
    "sha256": "d7409b52441030c995dfa3ddece85a1c87e250834e35f732945f7f319701dac3"
+  },
+  {
+   "path": "skill/sps/scripts/smoke-sps.sh",
+   "authorization": "DEC-7305",
+   "reason": "Byte-identical mirror resync with scripts/smoke-sps.sh primary (set -e fix + sps-seo checks); pinned by DEC-7305 as amended.",
+   "expected_blob": "083e36f6728a0ba0e83458393e14a1cbda884687",
+   "expected_mode": "100755",
+   "sha256": "c7bdd39af5f991cfccb2803cbca6fcae8764c2cee74db75b44097d993191f618"
+  },
+  {
+   "path": "skill/sps/scripts/sps-doctor.sh",
+   "authorization": "DEC-7305",
+   "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended.",
+   "expected_blob": "762c1c8a95b1199dbb7ba098f8ebbdcd953b5ceb",
+   "expected_mode": "100755",
+   "sha256": "95410fc43a8dd6e59625cfa728236f08bb9fb1caff7f446fb01526cfac1d2e30"
+  },
+  {
+   "path": "scripts/skill-search.sh",
+   "authorization": "DEC-7305",
+   "reason": "New dynamic skill-selection research helper (DYNAMIC-SKILLS law); pinned by DEC-7305 as amended.",
+   "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+   "expected_mode": "100755",
+   "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303"
   }
  ],
  "related_test_artifacts": [
   {
    "path": "framework/sps2/tests/test_updater_safety.py",
-   "sha256": "f02569f155cb9ed4d5983ca7ebc2248444bfef37752fc60c9d8522c1796d945b",
+   "sha256": "7ef8bb82ab30758e58641da49953e30eecf4c40bd9dc059a479e98d87bb0529e",
    "authorization": "DEC-7201",
    "reason": "Updater-safety regression evidence; not a legacy-path exception."
   }

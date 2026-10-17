@@ -39,7 +39,11 @@ Current skill version: read `VERSION` and stamp it into `./.sps/agent.md`.
 10. **Context Efficiency & Surgical Edits.** Use targeted line-range edits and grep searches. Never dump whole files by default ([CONTEXT-EFFICIENCY.md](CONTEXT-EFFICIENCY.md)).
 11. **Skill Router & Mistake Promotion.** Route every chunk through [SKILL-ROUTER.md](SKILL-ROUTER.md) (one primary skill per domain, `sps-cms` mandatory for CMS). Promote repeated mistakes to [MISTAKE-PROMOTION.md](MISTAKE-PROMOTION.md).
 12. **Cleanup & Verification DoD.** Run tests, typecheck, lint, and verify live round-trips before submitting for approval.
-13. **Auto-Update Awareness.** On session start, run `scripts/check-update.sh` (24h-cached); if an update is available, auto-apply it via `scripts/sps-update.sh --yes` and report what changed.
+13. **Task Queue (No Dropping).** Finish the current task before starting any new one; incoming tasks are QUEUED to `./.sps/task-queue.md`, never started mid-task ([TASK-QUEUE.md](TASK-QUEUE.md)).
+14. **Write Confinement.** The agent writes ONLY inside the project directory — no agent-private memory, no home-dir state; cross-session knowledge goes into `./.sps/` ([WRITE-CONFINEMENT.md](WRITE-CONFINEMENT.md)).
+15. **Handoff Checkpoint.** No hand-back to the user until the written verification checkpoint (request re-read → full local battery → live verify → adversarial second opinion → honesty audit → checkpoint record) has PASSed on the final state ([HANDOFF-CHECKPOINT.md](HANDOFF-CHECKPOINT.md)).
+16. **Deploy Budget.** Batch all fixes into one change set, validate the full local battery, then push/CI/deploy ONCE — never deploy-per-fix; report CI runs consumed in the handoff ([DEPLOY-BUDGET.md](DEPLOY-BUDGET.md)).
+17. **Auto-Update Awareness.** On session start, run `scripts/check-update.sh` (24h-cached); if an update is available, auto-apply it via `scripts/sps-update.sh --yes` and report what changed.
 
 ---
 

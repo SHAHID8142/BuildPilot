@@ -17,8 +17,8 @@ EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged).
-EXPECTED_MANIFEST_SHA256 = "fd58e6009d153c25cc9a586e80a41620aa0e100b8c2363e836a6bea970165f5d"
-EXPECTED_EXCEPTION_COUNT = 19  # DEC-7301 as amended by DEC-7305 (sps-seo registration + check-update.sh mirror resync)
+EXPECTED_MANIFEST_SHA256 = "e96f41bdfa3b2d072d34efd562589ecd6008b2cb99385649ab933c0bc53a5638"
+EXPECTED_EXCEPTION_COUNT = 22  # DEC-7301 as amended by DEC-7305 (sps-seo registration + mirror resyncs + skill-search)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",
@@ -206,8 +206,12 @@ def verify_legacy_exceptions(root: Path) -> list[str]:
                 violations.append(f"{path_value}: missing stage-0 entry")
             elif stage_blob not in {baseline_blob, record["expected_blob"]}:
                 violations.append(f"{path_value}: stage-0 blob is neither baseline nor expected")
-            if baseline_blob is None:
-                violations.append(f"{path_value}: missing authority-baseline blob")
+            if baseline_blob is None and stage_blob is not None:
+                # Absent at baseline is only legitimate for a file the
+                # manifest ADDS (stage-0 carries its expected content); for
+                # any file that existed at baseline this is a deletion.
+                if stage_blob != record["expected_blob"]:
+                    violations.append(f"{path_value}: missing authority-baseline blob")
         except (OSError, ValueError) as exc:
             violations.append(f"{path_value}: git integrity check failed: {exc}")
 
@@ -222,7 +226,12 @@ def verify_legacy_exceptions(root: Path) -> list[str]:
         )
         for line in status_output.splitlines():
             fields = line.split("\t", 1)
-            if fields and fields[0] != "M":
+            status = fields[0] if fields else ""
+            # "M" = modified legacy file (the manifest's original semantics).
+            # "A" = a file the manifest explicitly ADDS as a pinned exception
+            # (absent at baseline). Both are authorized; anything else
+            # (D = deleted, R/T = rename/typechange, C = copy) is a violation.
+            if status not in ("M", "A"):
                 violations.append(f"legacy exception status is not a modification: {line}")
     except ValueError as exc:
         violations.append(f"legacy exception status check failed: {exc}")

@@ -351,12 +351,13 @@ class PowerShellUpdaterSafetyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="sps-updater-") as directory:
             root = Path(directory)
             home = root / "home"
-            repository = home / ".sps" / "src" / "Shahid-Personal-SkillSet"
+            repository = home / ".sps" / "src" / "BuildPilot"
             repository.mkdir(parents=True)
             _git("-c", "init.defaultBranch=main", "init", cwd=repository)
             (repository / "local-change.txt").write_text("preserve me\n", encoding="utf-8")
             environment = os.environ.copy()
             environment["HOME"] = str(home)
+            environment["SPS_REPO_DIR"] = str(repository)
             result = subprocess.run(
                 [
                     "pwsh",

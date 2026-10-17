@@ -14,8 +14,10 @@
 param([switch]$Check, [switch]$Yes, [switch]$Force)
 
 $ErrorActionPreference = "Stop"
+# Source-repo location: SPS_REPO_DIR env override (parity with the bash
+# updater), else the default install path.
+$repoDir = if ($env:SPS_REPO_DIR) { $env:SPS_REPO_DIR } else { Join-Path $HOME ".sps\src\BuildPilot" }
 $repoUrl = "https://github.com/SHAHID8142/BuildPilot.git"
-$repoDir = Join-Path $HOME ".sps\src\BuildPilot"
 $branch = "main"
 $manifest = Join-Path $HOME ".sps\install-manifest.env"
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
