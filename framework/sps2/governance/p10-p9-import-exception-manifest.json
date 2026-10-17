@@ -1,0 +1,58 @@
+{
+  "schema": "sps2.p10-p9-import-exception-manifest/v1",
+  "decision_id": "DEC-7302",
+  "baseline_commit": "c49f3852e1c31d0136269c80fe58201b059af3ec",
+  "exception_count": 4,
+  "exceptions": [
+    {
+      "file": "framework/domain/frontend/home_render.py",
+      "module": "framework.domain.seo.indexing",
+      "symbols": [
+        "generate_robots_txt",
+        "generate_sitemap_from_cms_items",
+        "generate_sitemap_xml"
+      ],
+      "authorization": "DEC-7302"
+    },
+    {
+      "file": "framework/domain/frontend/home_render.py",
+      "module": "framework.domain.seo.metadata",
+      "symbols": [
+        "generate_metadata_from_content",
+        "render_html_meta_tags"
+      ],
+      "authorization": "DEC-7302"
+    },
+    {
+      "file": "framework/domain/frontend/home_render.py",
+      "module": "framework.domain.seo.model",
+      "symbols": [
+        "RobotsConfig",
+        "RobotsGroup"
+      ],
+      "authorization": "DEC-7302"
+    },
+    {
+      "file": "framework/domain/frontend/tests/test_home_render.py",
+      "module": "framework.domain.seo.audit",
+      "symbols": [
+        "audit_directory"
+      ],
+      "authorization": "DEC-7302"
+    }
+  ],
+  "forbidden_import_forms": [
+    "import framework.domain.seo.*",
+    "aliased module imports",
+    "star imports",
+    "unlisted files",
+    "unlisted modules",
+    "unlisted symbols",
+    "duplicate source symbols",
+    "dynamic imports",
+    "syntax-invalid files",
+    "symlinked files",
+    "path traversal",
+    "paths outside the repository root"
+  ]
+}

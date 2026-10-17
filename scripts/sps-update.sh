@@ -15,8 +15,8 @@
 
 set -uo pipefail
 
-REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/Shahid-Personal-SkillSet.git}"
-REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/Shahid-Personal-SkillSet}"
+REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/BuildPilot.git}"
+REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/BuildPilot}"
 BRANCH="${SPS_BRANCH:-main}"
 MANIFEST="$HOME/.sps/install-manifest.env"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -129,7 +129,7 @@ if ! cd "$REPO_DIR"; then
   bad "Cannot enter the updated source directory; reinstall stopped."
   exit 1
 fi
-VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skills/sps/VERSION" 2>/dev/null || echo "unknown")"
+VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skill/sps/VERSION" 2>/dev/null || echo "unknown")"
 echo -e "${DIM}Installing SPS v${VERSION}…${NC}"
 bash ./install.sh --yes
 rc=$?

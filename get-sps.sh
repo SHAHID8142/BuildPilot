@@ -2,7 +2,7 @@
 # One-command SPS bootstrap: clone/pull repo, then install.
 #
 # Recommended:
-#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
 #
 # With options:
 #   curl -fsSL .../get-sps.sh | bash -s -- --yes
@@ -13,8 +13,8 @@
 
 set -euo pipefail
 
-REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/Shahid-Personal-SkillSet.git}"
-REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/Shahid-Personal-SkillSet}"
+REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/BuildPilot.git}"
+REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/BuildPilot}"
 BRANCH="${SPS_BRANCH:-main}"
 
 CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -75,8 +75,8 @@ else
 fi
 
 VERSION="unknown"
-if [[ -f "$REPO_DIR/skills/sps/VERSION" ]]; then
-  VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skills/sps/VERSION")"
+if [[ -f "$REPO_DIR/skill/sps/VERSION" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skill/sps/VERSION")"
 fi
 echo -e "${DIM}SPS version:${NC} $VERSION"
 echo ""

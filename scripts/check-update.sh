@@ -13,7 +13,7 @@
 
 set -uo pipefail
 
-RAW_VERSION_URL="https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/skills/sps/VERSION"
+RAW_VERSION_URL="https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/skill/sps/VERSION"
 STATE_FILE="$HOME/.sps/update-state.env"
 TTL_SECONDS=86400
 FORCE=false
@@ -44,8 +44,9 @@ installed_version() {
     [[ -n "$v" ]] && { echo "$v"; return; }
   fi
   local cand
-  for cand in "$HOME/.sps/src/Shahid-Personal-SkillSet/skills/sps/VERSION" \
-              "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)/skills/sps/VERSION"; do
+  for cand in "$HOME/.sps/src/BuildPilot/skill/sps/VERSION" \
+              "$HOME/.sps/src/Shahid-Personal-SkillSet/skill/sps/VERSION" \
+              "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)/skill/sps/VERSION"; do
     if [[ -f "$cand" ]]; then
       tr -d '[:space:]' < "$cand"
       return

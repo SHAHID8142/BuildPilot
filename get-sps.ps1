@@ -1,10 +1,10 @@
 # One-command SPS bootstrap for Windows: clone/pull repo, then install.
 #
 # Recommended:
-#   irm https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.ps1 | iex
+#   irm https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.ps1 | iex
 #
 # With options:
-#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.ps1))) -Yes
+#   & ([scriptblock]::Create((irm https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.ps1))) -Yes
 #
 # Local:
 #   powershell -ExecutionPolicy Bypass -File get-sps.ps1 -Yes
@@ -16,8 +16,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$repoUrl = if ($env:SPS_REPO_URL) { $env:SPS_REPO_URL } else { "https://github.com/SHAHID8142/Shahid-Personal-SkillSet.git" }
-$repoDir = if ($env:SPS_REPO_DIR) { $env:SPS_REPO_DIR } else { Join-Path $env:USERPROFILE ".sps\src\Shahid-Personal-SkillSet" }
+$repoUrl = if ($env:SPS_REPO_URL) { $env:SPS_REPO_URL } else { "https://github.com/SHAHID8142/BuildPilot.git" }
+$repoDir = if ($env:SPS_REPO_DIR) { $env:SPS_REPO_DIR } else { Join-Path $env:USERPROFILE ".sps\src\BuildPilot" }
 $branch = if ($env:SPS_BRANCH) { $env:SPS_BRANCH } else { "main" }
 
 Write-Host ""

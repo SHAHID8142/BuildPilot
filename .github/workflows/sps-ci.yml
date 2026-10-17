@@ -40,12 +40,12 @@ jobs:
 
       - name: VERSION parses and matches templates
         run: |
-          V="$(tr -d '[:space:]' < skills/sps/VERSION)"
+          V="$(tr -d '[:space:]' < skill/sps/VERSION)"
           echo "VERSION=$V"
           [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "VERSION malformed: $V"; exit 1; }
-          grep -qF "SPS version: $V" skills/sps/templates/audit-report.md \
+          grep -qF "SPS version: $V" skill/sps/templates/audit-report.md \
             || { echo "templates/audit-report.md not stamped with $V"; exit 1; }
-          grep -qF "Skill version: $V" skills/sps/templates/agent.md \
+          grep -qF "Skill version: $V" skill/sps/templates/agent.md \
             || { echo "templates/agent.md not stamped with $V"; exit 1; }
           grep -qF "**Version:** $V" README.md \
             || { echo "README.md version mismatch ($V)"; exit 1; }
@@ -54,7 +54,7 @@ jobs:
 
       - name: Script mirrors in sync
         run: |
-          diff -rq scripts skills/sps/scripts || { echo "scripts/ and skills/sps/scripts/ drifted"; exit 1; }
+          diff -rq scripts skill/sps/scripts || { echo "scripts/ and skill/sps/scripts/ drifted"; exit 1; }
 
       - name: No profile flags in installers (single unified install)
         run: |
@@ -86,7 +86,7 @@ jobs:
     timeout-minutes: 15
     steps:
       # fetch-depth: 0 is MANDATORY, not an optimisation.
-      # sps2/tests/test_attribution_policy.py:49 pins BASELINE_REV to
+      # framework/sps2/tests/test_attribution_policy.py:49 pins BASELINE_REV to
       # 788bf8a2892ee72705276c9d846626ca0470400d and reads that commit's blob
       # content. A shallow clone cannot resolve it, and 19 tests across 5
       # methods then fail for reasons unrelated to the change under test.
@@ -115,7 +115,7 @@ jobs:
 
           # Deliberately NOT `unittest discover`. In this repository
           # `python3 -m unittest discover -s . -t .` locates ZERO tests and
-          # exits 5 ("NO TESTS RAN") because sps2/, sps2/tests/ and domain/
+          # exits 5 ("NO TESTS RAN") because framework/sps2/, framework/sps2/tests/ and framework/domain/
           # carry no __init__.py, so the stdlib loader will not recurse into
           # them. Discovery is unusable as a gate: it cannot demonstrate the
           # suite ran.
@@ -211,8 +211,8 @@ jobs:
             exit "${STATUS}"
           fi
 
-      # OPTIONAL, OFF BY DEFAULT. sps2/tools/test-portability.py is RED at HEAD
+      # OPTIONAL, OFF BY DEFAULT. framework/sps2/tools/test-portability.py is RED at HEAD
       # (33 passed, 6 failed, 14 controls) and is NOT part of the supported
       # suite. Do not enable until it is green and explicitly approved.
       # - name: Portability exercise (excluded: red at HEAD)
-      #   run: python3 sps2/tools/test-portability.py
+      #   run: python3 framework/sps2/tools/test-portability.py

@@ -14,8 +14,8 @@
 param([switch]$Check, [switch]$Yes, [switch]$Force)
 
 $ErrorActionPreference = "Stop"
-$repoUrl = "https://github.com/SHAHID8142/Shahid-Personal-SkillSet.git"
-$repoDir = Join-Path $HOME ".sps\src\Shahid-Personal-SkillSet"
+$repoUrl = "https://github.com/SHAHID8142/BuildPilot.git"
+$repoDir = Join-Path $HOME ".sps\src\BuildPilot"
 $branch = "main"
 $manifest = Join-Path $HOME ".sps\install-manifest.env"
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path

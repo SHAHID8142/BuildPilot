@@ -1,0 +1,86 @@
+{
+  "schema": "sps2.legacy-exception-manifest/v1",
+  "decision_id": "DEC-7301",
+  "baseline_commit": "c49f3852e1c31d0136269c80fe58201b059af3ec",
+  "exception_count": 8,
+  "exceptions": [
+    {
+      "path": "get-sps.ps1",
+      "expected_blob": "27bb2cc52957e00ca0d2d2ecac1cd23ba893bcad",
+      "expected_mode": "100644",
+      "sha256": "3fb777c1fd7bf0d85646a149d096a10662b5486435eb61d90446508cd79e8f98",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "get-sps.sh",
+      "expected_blob": "44cb088d22c4fb030e6535811c8a02c4a8f29e51",
+      "expected_mode": "100755",
+      "sha256": "3749a5fdff0cdce7db9feb378a08fa218bed8c9d155049d32b3ec4ba0bbf6b4a",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "scripts/bootstrap-sps.sh",
+      "expected_blob": "f6c9d1bf0664eed155e1b706b5b64de5463d8c1f",
+      "expected_mode": "100755",
+      "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "scripts/sps-update.sh",
+      "expected_blob": "b0e5b8a88480d9cec48b7b03426ed0ea05e4d0a8",
+      "expected_mode": "100755",
+      "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "scripts/update-sps.ps1",
+      "expected_blob": "74025aaebc098c6ca989dbdcaf50977f7e63ff20",
+      "expected_mode": "100644",
+      "sha256": "a7aa9869ff6feadcafee1f15518471e8a0940307242542ff6ec89b126e96e702",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "skill/sps/scripts/bootstrap-sps.sh",
+      "expected_blob": "f6c9d1bf0664eed155e1b706b5b64de5463d8c1f",
+      "expected_mode": "100755",
+      "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "skill/sps/scripts/sps-update.sh",
+      "expected_blob": "b0e5b8a88480d9cec48b7b03426ed0ea05e4d0a8",
+      "expected_mode": "100755",
+      "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "skill/sps/scripts/update-sps.ps1",
+      "expected_blob": "74025aaebc098c6ca989dbdcaf50977f7e63ff20",
+      "expected_mode": "100644",
+      "sha256": "a7aa9869ff6feadcafee1f15518471e8a0940307242542ff6ec89b126e96e702",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    }
+  ],
+  "related_test_artifacts": [
+    {
+      "path": "framework/sps2/tests/test_updater_safety.py",
+      "sha256": "74573ed787529f982bb5f8607eae0f463619ef9d38df8dd2080c406f9889dea2",
+      "authorization": "DEC-7201",
+      "reason": "Updater-safety regression evidence; not a legacy-path exception."
+    }
+  ],
+  "explicitly_excluded_paths": [
+    "scripts/check-update.ps1",
+    "scripts/check-update.sh",
+    "skill/sps/scripts/check-update.ps1",
+    "skill/sps/scripts/check-update.sh"
+  ]
+}

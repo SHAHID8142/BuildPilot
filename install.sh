@@ -7,7 +7,7 @@
 #   bash install.sh --agents claude-code,cursor --yes
 #
 # Prefer one-command bootstrap:
-#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
 
 set -uo pipefail
 
@@ -56,7 +56,7 @@ LOG_DIR="$HOME/.sps"
 LOG="$LOG_DIR/install.log"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSION="unknown"
-[[ -f "$REPO/skills/sps/VERSION" ]] && VERSION="$(tr -d '[:space:]' < "$REPO/skills/sps/VERSION")"
+[[ -f "$REPO/skill/sps/VERSION" ]] && VERSION="$(tr -d '[:space:]' < "$REPO/skill/sps/VERSION")"
 START_TS=$SECONDS
 
 usage() {
@@ -68,7 +68,7 @@ Single unified install: /sps orchestrator + complete curated skill stack
 token efficiency) for every detected agent host.
 
 One-command (clone/pull + install):
-  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
 
 Update:
   bash scripts/sps-update.sh --yes     (or: get-sps.sh, which pulls + reinstalls)
@@ -244,8 +244,8 @@ EOF
 }
 
 sync_core_skill() {
-  local src="$REPO/skills/sps"
-  local cms_src="$REPO/skills/sps-cms"
+  local src="$REPO/skill/sps"
+  local cms_src="$REPO/skill/sps-cms"
   if [ ! -d "$src" ]; then
     warn "skills/sps not found - run from repo root"
     return

@@ -24,13 +24,14 @@ info() { echo -e "  ${DIM}- $*${NC}"; }
 
 MISSING=0
 
-REPO_REF="$HOME/.sps/src/Shahid-Personal-SkillSet"
+REPO_REF="$HOME/.sps/src/BuildPilot"
+[[ -d "$REPO_REF" ]] || REPO_REF="$HOME/.sps/src/Shahid-Personal-SkillSet"  # pre-rename installs
 SCRIPT_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION="unknown"
-if [[ -f "$REPO_REF/skills/sps/VERSION" ]]; then
-  VERSION="$(tr -d '[:space:]' < "$REPO_REF/skills/sps/VERSION")"
-elif [[ -f "$SCRIPT_REPO/skills/sps/VERSION" ]]; then
-  VERSION="$(tr -d '[:space:]' < "$SCRIPT_REPO/skills/sps/VERSION")"
+if [[ -f "$REPO_REF/skill/sps/VERSION" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$REPO_REF/skill/sps/VERSION")"
+elif [[ -f "$SCRIPT_REPO/skill/sps/VERSION" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$SCRIPT_REPO/skill/sps/VERSION")"
 fi
 info "SPS version reference: $VERSION"
 
@@ -74,8 +75,8 @@ else
   bad "Install manifest missing (run get-sps.sh / install.sh)"
 fi
 
-if [[ -d "$HOME/.sps/src/Shahid-Personal-SkillSet/.git" ]]; then
-  ok "Source clone at ~/.sps/src/Shahid-Personal-SkillSet"
+if [[ -d "$HOME/.sps/src/BuildPilot/.git" ]]; then
+  ok "Source clone at ~/.sps/src/BuildPilot"
 else
   info "No source clone yet — use: curl .../get-sps.sh | bash"
 fi
@@ -120,7 +121,7 @@ fi
 echo ""
 echo -e "${BOLD}Next commands${NC}"
 info "Update SPS:       bash scripts/sps-update.sh --yes   (or --check)"
-info "Install/update:  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash"
+info "Install/update:  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash"
 info "Doctor again:     bash scripts/sps-doctor.sh [project-dir]"
 info "In a project:     /sps  |  /sps audit  |  /sps sync  |  /sps doctor"
 

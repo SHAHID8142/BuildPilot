@@ -24,8 +24,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TEMPLATE_DIR="$REPO/skills/sps/templates"
-VERSION="$(tr -d '[:space:]' < "$REPO/skills/sps/VERSION" 2>/dev/null || echo "unknown")"
+TEMPLATE_DIR="$REPO/skill/sps/templates"
+VERSION="$(tr -d '[:space:]' < "$REPO/skill/sps/VERSION" 2>/dev/null || echo "unknown")"
 TARGET="${TARGET:-$PWD}"
 DEST="$TARGET/.sps"
 
@@ -98,7 +98,7 @@ if [[ ! -f "$DEST/section-todos/README.md" || "$FORCE" == true ]]; then
   cat > "$DEST/section-todos/README.md" <<EOF
 # Section todos
 
-Create one file per section using skills/sps/TODO-FORMAT.md
+Create one file per section using skill/sps/TODO-FORMAT.md
 EOF
   echo "write $DEST/section-todos/README.md"
 fi

@@ -18,7 +18,7 @@ $ErrorActionPreference = "SilentlyContinue"
 # degrade to "offline". Pin the protocol before the first request. On
 # PowerShell 7+ this line is a no-op (TLS 1.2+ is already the default).
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
-$rawUrl = "https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/skills/sps/VERSION"
+$rawUrl = "https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/skill/sps/VERSION"
 $stateFile = Join-Path $HOME ".sps\update-state.env"
 $ttlSeconds = 86400
 
@@ -108,7 +108,7 @@ function Get-InstalledVersion {
         $line = Select-String -Path $manifest -Pattern '^SPS_VERSION=' | Select-Object -First 1
         if ($line) { return ($line.Line -split '=')[1].Trim() }
     }
-    $cand = Join-Path $HOME ".sps\src\Shahid-Personal-SkillSet\skills\sps\VERSION"
+    $cand = Join-Path $HOME ".sps\src\BuildPilot\skills\sps\VERSION"
     if (Test-Path $cand) { return (Get-Content $cand -Raw).Trim() }
     return "unknown"
 }

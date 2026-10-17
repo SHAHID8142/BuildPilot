@@ -59,7 +59,7 @@ pass "bootstrap --force rerun"
 if grep -q "/sps lock" "$TMP/project/AGENTS.md"; then pass "bootstrap wrote AGENTS.md lock"
 else fail "bootstrap missing AGENTS.md lock"
 fi
-if [[ -f "$REPO/skills/sps/METHOD-CARD.md" && -f "$REPO/skills/sps/CMS-COUPLING.md" ]]; then pass "v3 law files present"
+if [[ -f "$REPO/skill/sps/METHOD-CARD.md" && -f "$REPO/skill/sps/CMS-COUPLING.md" ]]; then pass "v3 law files present"
 else fail "v3 law files missing"
 fi
 
