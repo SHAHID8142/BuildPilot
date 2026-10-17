@@ -5,11 +5,12 @@
 
 ## queued (oldest first)
 - [x] id: T-21 task: Write proper README.md for the repo — finished: 2026-10-18 (already delivered in PR #4: README refreshed to live facts + USER-GUIDE.md linked; no further work)
-- [ ] id: T-20 task: Lessons→validators automation — when check_laws.py rejects the same doc mistake twice, auto-generate the negative test (user-approved next build, 2026-10-18) — plan: .sps/plan-t20-lessons-validators.md
+- [x] id: T-20 task: Lessons→validators automation — finished: 2026-10-18 (sps-lawlog.sh ledger, gen_law_test.py with --approved-by human gate + injection hardening, check_generated_tests.py GENERATED_TEST_UNREVIEWED; PR #6 merged 5a0920b; injection vuln caught by second-opinion verifier and re-exploit-verified blocked)
 
 ## queued (oldest first)
 - (empty — all received tasks finished; law-checker + design-craft batches pushed af84a39/407b515, CI watching)
 
+- [x] id: T-23 task: Directory-hygiene law + automatic check — finished: 2026-10-18 (DIRECTORY-HYGIENE.md placement law, sps-hygiene.sh check/fix with quarantine; PR #6 merged 5a0920b)
 ## done
 - [x] id: T-19 task: Nightly skill-ecosystem scan — finished: 2026-10-18 (scripts/ecosystem-scan.sh + tsv + mirrors, .github/workflows/ecosystem-scan.yml, v4.3.0, manifest 33 exceptions; PR #5 merged CI-green 137716a; second-opinion caught report .md-extension bug)
 - [x] id: T-12 task: Dynamic skill-selection redesign + CMS/SEO hardening (folded: T-13, T-14, T-15, T-17) — finished: 2026-10-17 sessions 4-5 (SKILL-ROUTER dynamic selection, sps-update.sh, COMPANY-LIFECYCLE.md, TOOL-CONSENT.md, install.sh backup/upgrade; commits 122c9e7…509e32b)
@@ -35,15 +36,3 @@
 
 ---
 
-## T-23 (queued): Directory-hygiene law + automatic placement check
-- User directive 2026-10-18: agents must maintain directory cleanliness —
-  every file type has exactly one correct home; no temp/scratch/stray files
-  left behind; misplaced files (agent-placed OR user-placed) get moved to
-  the right place, not left.
-- Enforcement: rule in skill docs (placement map + cleanup duty) PLUS
-  automatic check (doctor/validator flags stray/misplaced files).
-- Autofix policy: agent fixes safe moves automatically, then reports;
-  ambiguous ones listed for user approval.
-- Scope: applies to BuildPilot repo itself AND as guidance for client
-  projects (.sps placement rules).
-- Blocked on: T-20 integration (fan-out builders running).
