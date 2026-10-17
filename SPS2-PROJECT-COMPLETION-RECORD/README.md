@@ -45,3 +45,11 @@ Make the SPS2 project safe and usable for its intended operators by completing a
 ## Update rule
 
 At every meaningful checkpoint, append dated evidence to `reports/SPS2-COMPLETION-COORDINATION.md`, update the relevant backlog row here, and add a short handoff. Preserve prior entries. Record exact commands, exit codes, counts, skips, tool availability, live branch/HEAD, and worktree changes. A new session must rebaseline before writing code.
+
+## 2026-10-18 addendum
+
+The statuses above are a 2026-10-17 snapshot and are now superseded (not rewritten — the files above stay as historical record). Current state as of 2026-10-18, branch `main` @ `56e74ee`, clean tree:
+
+- **Skill (`skill/sps/`, v4.3.0):** working — PR #7 merged with 13/13 CI checks green (incl. Windows install smoke + validator battery), 1236-test battery OK, all validators clean.
+- **Framework (`framework/sps2/`):** NOT READY by design — P10 release gate intact and fail-closed (15/16 PASS, 1 by-design BLOCK on exposure-declaration, exit 1); inventory still `COMPLETE_AWAITING_USER_APPROVAL`, `user_approval: null`.
+- **Backlog B0–B14 disposition, fresh evidence, and remaining user-owned actions:** see [`reports/SPS2-COMPLETION-RECORD-ADDENDUM-20261018.md`](../reports/SPS2-COMPLETION-RECORD-ADDENDUM-20261018.md).

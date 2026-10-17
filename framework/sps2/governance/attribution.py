@@ -140,6 +140,43 @@ def load_agent_tokens(path=POLICY_PATH):
 AGENTISH = re.compile(
     r"\b(%s)\b" % "|".join(re.escape(t) for t in load_agent_tokens()), re.I)
 
+# Literal self-attestation markers (narrow attribution fix, backlog item B5).
+#
+# WHY THIS IS NOT A TOKEN. DEC-0027 ratified that "self" is excluded from the
+# agent-token policy because it is an ordinary English surname ("Jane Self",
+# "Selfridge"), and adding a token requires a User decision record. This rule
+# therefore does NOT touch the token set. It is a separate, narrower predicate
+# rule: a decided_by whose WHOLE value is a self-approval marker ("Self",
+# "Self-approved", "Self (self-approved)", "(Self)", "Me", "Myself" — any
+# case, surrounding whitespace, or parenthesisation) is a literal
+# self-attestation, not a name, and is not User-attributable evidence.
+#
+#   - Matching is on the NORMALISED WHOLE VALUE, never a substring search, so
+#     "Jane Self", "Marcus Self", "Self, John" and "Selfridge" normalise to
+#     values that are not markers and stay accepted.
+#   - Normalisation is trim + lowercase + collapse of whitespace/hyphen/
+#     parenthesis runs to single spaces, so case variants ("SELF-APPROVED"),
+#     padding ("  self  ") and spacing variants ("Self ( self-approved )")
+#     all land on a marker value.
+#   - This rejects a literal self-attestation string and nothing more. It is
+#     NOT identity verification: a non-match still does not establish that a
+#     real, authorized human User decided (see the non-goals above).
+SELF_ATTESTATION_SEPARATORS = re.compile(r"[\s\-()]+")
+SELF_ATTESTATION_MARKERS = frozenset((
+    "self",                # "Self", "(self)", "SELF"
+    "self approved",       # "Self-approved", "SELF APPROVED"
+    "self self approved",  # "Self (self-approved)"
+    "me",
+    "myself",
+))
+
+
+def is_self_attestation(decided_by):
+    """True only when decided_by is, as a WHOLE value, a self-approval marker."""
+    norm = SELF_ATTESTATION_SEPARATORS.sub(
+        " ", (decided_by or "").strip().lower()).strip()
+    return norm in SELF_ATTESTATION_MARKERS
+
 
 def approval_is_user_attributable(approval):
     """True only for an APPROVED decision naming an identifiable User.
@@ -157,7 +194,7 @@ def approval_is_user_attributable(approval):
     if a.get("state") != "APPROVED":
         return False
     who = (a.get("decided_by") or "").strip()
-    if not who or AGENTISH.search(who):
+    if not who or AGENTISH.search(who) or is_self_attestation(who):
         return False
     return bool((a.get("decided_on") or a.get("decided_at") or "").strip())
 
@@ -172,6 +209,8 @@ def reason_not_attributable(approval):
         return "APPROVED without decided_by"
     if AGENTISH.search(who):
         return "APPROVED by an agent, not a user: %r" % who
+    if is_self_attestation(who):
+        return "APPROVED by a literal self-attestation, not a user: %r" % who
     if not (a.get("decided_on") or a.get("decided_at") or "").strip():
         return "APPROVED without decided_on or decided_at"
     return ""

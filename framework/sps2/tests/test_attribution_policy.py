@@ -405,23 +405,75 @@ class TestCrossConsumerConsistency(unittest.TestCase):
                 self.assertTrue(bool(attribution.AGENTISH.search(value)))
 
     def test_self_referent_only_fixture_is_not_rejected_by_design(self):
-        """Documents that POSCTRL-G's rejection comes from 'Agent', not 'self'.
+        """'self' is not an AGENTISH token, so the surname 'Jane Self' survives.
 
-        With the word 'Agent' removed, the same fixture is ACCEPTED. That is
-        intentional: 'self' is not a policy token, and adding it would reject
-        the legitimate surname 'Jane Self'. The open decision record carries the
-        provenance question; this test pins the current, approved behaviour.
+        The literal self-attestation markers ("Self", "Self-approved",
+        "Self (self-approved)", "Me", "Myself") are rejected by the SEPARATE
+        whole-value rule (is_self_attestation, backlog item B5), never by the
+        token set: adding 'self' as a token would reject the legitimate
+        surname 'Jane Self'. This test pins both halves of that split.
         """
-        approval = {"state": "APPROVED", "decided_by": "Self (self-approved)",
-                    "decided_on": "2026-10-13"}
-        self.assertTrue(
-            attribution.approval_is_user_attributable(approval),
-            "'Self (self-approved)' is currently accepted by design; if this "
-            "fails, 'self' became a token and the open decision record must be "
-            "resolved before that change")
         self.assertFalse(bool(attribution.AGENTISH.search("Jane Self")))
         self.assertFalse(bool(attribution.AGENTISH.search("Nora Script")))
         self.assertFalse(bool(attribution.AGENTISH.search("Autonomous Council")))
+        # The token set must NOT have grown to include self-approval markers.
+        self.assertNotIn("self", _policy_tokens())
+
+    def test_literal_self_attestation_is_rejected_as_evidence(self):
+        """B5: a self-approval string is not User-attributable evidence.
+
+        Rejected as the WHOLE value, in any case, with optional whitespace and
+        parenthesisation. This is a narrow predicate rule, not identity
+        verification, and it does not rewrite any historical record.
+        """
+        for value in ("Self", "self", "SELF",
+                      "Self-approved", "self-approved", "SELF-APPROVED",
+                      "Self (self-approved)", "self (SELF-approved)",
+                      "(self)", "(Self)", "Me", "me", "ME", "Myself", "myself"):
+            with self.subTest(value=value):
+                self.assertFalse(
+                    attribution.approval_is_user_attributable(
+                        {"state": "APPROVED", "decided_by": value,
+                         "decided_on": "2026-10-13"}),
+                    "%r must be rejected as self-attestation" % value)
+                self.assertTrue(
+                    attribution.reason_not_attributable(
+                        {"state": "APPROVED", "decided_by": value,
+                         "decided_on": "2026-10-13"}),
+                    "%r must carry a rejection reason" % value)
+
+    def test_self_attestation_marker_is_not_an_agent_token(self):
+        """The rejection must come from the marker rule, not from AGENTISH.
+
+        If AGENTISH ever fired on these, the DEC-0027 surname protection
+        ('Jane Self') would have been broken by widening the token set.
+        """
+        for value in ("Self (self-approved)", "SELF-APPROVED", "self",
+                      "(self)", "Me", "Myself"):
+            with self.subTest(value=value):
+                self.assertFalse(bool(attribution.AGENTISH.search(value)))
+
+    def test_real_names_containing_self_are_preserved(self):
+        """B5's false-positive guard: a name containing 'Self' stays valid."""
+        for value in ("Jane Self", "Marcus Self", "Selfridge", "Self, John",
+                      "Ma Self", "Nora Script", "Autonomous Council"):
+            with self.subTest(value=value):
+                self.assertFalse(attribution.is_self_attestation(value))
+                self.assertTrue(
+                    attribution.approval_is_user_attributable(
+                        {"state": "APPROVED", "decided_by": value,
+                         "decided_on": "2026-10-13"}),
+                    "%r must remain accepted as a real name" % value)
+
+    def test_whitespace_and_empty_decided_by_stay_rejected(self):
+        """Blank/whitespace values are not names and not markers."""
+        for value in ("", "   ", "\t\n"):
+            with self.subTest(value=value):
+                self.assertFalse(attribution.is_self_attestation(value))
+                self.assertFalse(
+                    attribution.approval_is_user_attributable(
+                        {"state": "APPROVED", "decided_by": value,
+                         "decided_on": "2026-10-13"}))
 
     def _load(self):
         mods = {}
@@ -451,11 +503,13 @@ class TestCrossConsumerConsistency(unittest.TestCase):
                     self.assertEqual(bool(rx.search(value)), expected)
 
     def test_other_values_agree_even_where_policy_is_permissive(self):
-        """self / unknown strings pass the canonical policy.
+        """self / unknown strings pass the canonical MATCHER.
 
-        They pass because it is not exhaustive. Consumers must still AGREE,
-        which is the property SPEC-2 actually changed. This test documents the
-        known coverage gap rather than asserting it is desirable.
+        The matcher is deliberately not exhaustive ('self' is not a token, so
+        'Jane Self' survives). The B5 self-attestation rule is a PREDICATE rule
+        applied downstream of the matcher, so the matcher-agreement property
+        these consumer tests assert is unchanged: every consumer still returns
+        the same verdict for the same input.
         """
         mods = self._load()
         for value in self.OTHER:
@@ -469,9 +523,12 @@ class TestCrossConsumerConsistency(unittest.TestCase):
         for value in corpus:
             approval = {"state": "APPROVED", "decided_by": value,
                         "decided_on": "2026-10-13"}
-            # The predicate additionally requires a non-blank decider, so a
-            # blank value is rejected even though the matcher does not fire.
-            expect_ok = bool(value.strip()) and not bool(attribution.AGENTISH.search(value))
+            # The predicate additionally requires a non-blank decider and, per
+            # the B5 narrow fix, rejects a whole-value self-attestation marker
+            # even though the matcher does not fire on it.
+            expect_ok = (bool(value.strip())
+                         and not bool(attribution.AGENTISH.search(value))
+                         and not attribution.is_self_attestation(value))
             with self.subTest(value=value):
                 self.assertEqual(attribution.approval_is_user_attributable(approval), expect_ok)
 
