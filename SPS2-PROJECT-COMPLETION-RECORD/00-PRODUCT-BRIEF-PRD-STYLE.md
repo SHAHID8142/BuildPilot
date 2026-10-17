@@ -92,7 +92,9 @@ This is a documented capability list, not a fresh verification of every installe
 
 ### Installation footprint and external dependencies
 
-The installer documents a global install by default and accepts an agent selection. It synchronizes SPS skill files into supported agent skill directories, writes an install manifest and logs under the user’s `~/.sps` directory, and invokes external tooling such as `npx skills` to fetch skills from third-party repositories. When Claude Code is detected, the installer also attempts Claude marketplace/plugins and Context7 setup; when Python tooling is available, it attempts Graphify setup. Some optional skill additions can fail while the core mirrors still install successfully. Review the install log and doctor output rather than assuming every optional integration succeeded.
+The installer documents a global install by default and accepts an agent selection. It synchronizes SPS skill files into supported agent skill directories, writes an install manifest and logs under the user’s `~/.sps` directory, and invokes external tooling such as `npx skills` to fetch skills from third-party repositories. When Claude Code is detected, the installer also attempts Claude marketplace/plugins and Context7 setup; when Python tooling is available, it attempts Graphify setup. On macOS/Linux, some optional skill additions can fail while the core mirrors still install successfully (install.sh:181-192, 421-428). On Windows PowerShell, the installer still continues past optional failures but exits non-zero if any optional step failed (install.ps1:345-347) — doctor output is the reliable status signal on both platforms. Review the install log and doctor output rather than assuming every optional integration succeeded.
+
+Specific installer behaviors relevant to trust review: the installers set `GIT_SSH_COMMAND` with `-oStrictHostKeyChecking=accept-new` (install.sh:15, install.ps1:9 — updated from `no` by the Package 2 hardening; unknown hosts are accepted on first use, changed host keys are rejected) and `npm_config_yes=true` (install.sh:17, install.ps1:10), so ~27 third-party skills are fetched via `npx skills add … -y` without per-skill consent. Each install refreshes the managed `sps`/`sps-cms`/`sps-seo` skill directories with `rm -rf` (install.sh sync_core_skill), overwriting local customizations in those paths. The uninstallers confine every deletion to allowlisted agent-skill roots and reject symlinked or traversal targets (Package 3 hardening; uninstall.sh `safe_rm`, uninstall.ps1 `Remove-ConstrainedItem`). The updaters refuse to run against a dirty source worktree (scripts/sps-update.sh:63-75) and validate the remote VERSION string as strict semver (scripts/check-update.sh:57-65).
 
 The updater can contact GitHub to check the remote version, fetch or clone the repository, and rerun the installer. The skill currently instructs session-start update checks and auto-application when an update is available. These operations have network access and may change the user’s global agent skill installation. Treat this as a material product behavior and validate it on the target host before relying on it.
 
@@ -123,6 +125,8 @@ The skill contains operational limits (for example, a stated initial-payload bud
 The README presents a unified install for macOS/Linux and Windows PowerShell, a doctor check, update commands, and uninstall commands. The documented lifecycle is:
 
 `install → check health → use/update → uninstall (optionally retain personal memory)`
+
+By default uninstall removes `~/.sps` including personal memory; `--keep-personal` / `-KeepPersonal` retains it (uninstall.sh:216-223, uninstall.ps1:188-191). The uninstallers additionally confine every deletion to allowlisted agent-skill roots and refuse symlinked or traversal targets (see §6 trust review).
 
 The README also describes an update check in the orchestrator workflow. Whether unattended update behavior is appropriate for a particular user or organization is an **Open** product-policy question and should be decided explicitly; do not infer consent to change this policy from the documentation alone.
 
@@ -160,7 +164,7 @@ Formal thresholds, supported-version policy, and release criteria are **Open**.
 - `skills/` — included skill packages and their supporting resources.
 - `scripts/` — installation support, health checks, lint/smoke/bootstrap, and related tooling.
 - `get-sps.sh`, `get-sps.ps1`, uninstall scripts — documented entry points for installation lifecycle.
-- `tests/` and CI configuration — automated checks; their current coverage and gate status must be verified from current evidence.
+- Root-level smoke/lint scripts (`test_claude.sh`, `test_timeout.sh`, `test_uiux.sh`, `scripts/lint-sps.sh`, `scripts/smoke-sps.sh`) and CI configuration at `.github/workflows/sps-ci.yml` — automated checks; their current coverage and gate status must be verified from current evidence. (There is no root `tests/` directory.)
 - `SPS2-PROJECT-COMPLETION-RECORD/` — this remediation effort’s goal, evidence, backlog, workflow, and approval boundaries; it is not itself the product specification.
 
 This map is a high-level orientation, not an exhaustive architecture inventory.
@@ -171,6 +175,7 @@ The current repository documents two different install models:
 
 - The root `README.md`, `install.sh`, `install.ps1`, and 4.0.0 changelog describe one unified install with no minimal/full profiles; installer manifests use `PROFILE=all`.
 - `CATALOG.md` still lists `core`, `full`, and `minimal` profiles, and describes Trail of Bits as a full-profile option.
+- The 4.0.0 changelog entry itself retains profile vocabulary: `CHANGELOG.md:12-13` bullets are labeled 'Core profile +5 skills' / 'Full profile +8 skills' and :15 says the updater 'preserves install profile/agents from manifest', despite the same entry announcing profile removal (`CHANGELOG.md:3-7`).
 
 The available 4.0.0 installer/changelog materials point to the unified model as the intended current behavior, but the catalog conflict remains unresolved documentation debt. This brief does not treat the product-owner’s intended policy as settled. Align the catalog and any related references, then verify installer behavior, before using install profiles as a product requirement.
 
@@ -195,7 +200,7 @@ Do not silently fill these gaps with assumptions. Record decisions in the approp
 
 This brief describes the **SPS product** based on repository documentation. The SPS2 completion dossier tracks a **separate engineering/remediation effort** to verify and address repository findings and establish honest release readiness. Completing this brief does not complete that backlog, approve governance changes, or make P10/release gates ready.
 
-See [the completion dossier](README.md), especially its current-state evidence, finite backlog, and decision boundaries.
+See [the completion dossier](./README.md) (the dossier's own index, `SPS2-PROJECT-COMPLETION-RECORD/README.md` — not the product README), especially its current-state evidence, finite backlog, and decision boundaries.
 
 ## Source basis
 
