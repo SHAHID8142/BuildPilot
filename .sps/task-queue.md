@@ -64,3 +64,11 @@
   Phase 4 starts (proves questions were asked, not just gates trusting it).
 - One-page cheat sheet of user commands linked from kickoff first message.
 - User-approved 2026-10-18.
+
+---
+
+## T-29 (queued): Skill-provenance gate
+- Pin sha256 of every installed third-party skill at install time; sps-doctor
+  flags drift on later runs (upstream tamper detection).
+- Lower priority until third-party skills are actually installed, but the
+  mechanism lands now. User-approved 2026-10-18 (8-item hardening list).
