@@ -165,6 +165,18 @@ if cl.is_file():
         v("company-lifecycle: Phase 4 missing LEGAL-COMPLIANCE gate reference")
 
 # ── LEGAL-COMPLIANCE: gate doc present with all 8 sections ───────────────────
+ls_ = REPO / "skill" / "sps" / "LESSONS.md"
+if ls_.is_file():
+    lt2 = ls_.read_text(encoding="utf-8", errors="replace")
+    if "user approves" not in lt2 and "user's approval" not in lt2:
+        v("lessons: no user-approval requirement in LESSONS.md")
+    if "No auto-send" not in lt2:
+        v("lessons: no-auto-send rule missing from LESSONS.md")
+else:
+    v("lessons: LESSONS.md missing")
+if not (REPO / "scripts" / "sps-lesson.sh").is_file():
+    v("lessons: scripts/sps-lesson.sh missing")
+
 lg = REPO / "skill" / "sps" / "LEGAL-COMPLIANCE.md"
 if lg.is_file():
     lt = lg.read_text(encoding="utf-8", errors="replace")

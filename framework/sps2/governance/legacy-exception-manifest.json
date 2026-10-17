@@ -2,7 +2,7 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 24,
+  "exception_count": 25,
   "exceptions": [
     {
       "path": "get-sps.ps1",
@@ -195,6 +195,14 @@
       "sha256": "fc545c4e8d1041495f48cc04089ae1a28c893a783c4afdcb7214ef73c9f742ee",
       "authorization": "DEC-7305",
       "reason": "CI workflow gains the machine law-check step (check_laws.py); pinned by DEC-7305 as amended 2026-10-17."
+    },
+    {
+      "path": "scripts/sps-lesson.sh",
+      "expected_blob": "3be82c6e00369fd0d67bb9435e1f8ab38a90b74a",
+      "expected_mode": "100755",
+      "sha256": "6eac640fbfc044c30d9b3a7a50b1b3b6b43cc22e1e38ab846559a66f3e73cdd1",
+      "authorization": "DEC-7305",
+      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18."
     }
   ],
   "related_test_artifacts": [

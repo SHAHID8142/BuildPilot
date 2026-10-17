@@ -145,6 +145,14 @@ class TestLawCheckerNegativeSuite(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertIn("G1/G2", err)
 
+    def test_missing_lessons_gate_fires(self) -> None:
+        def mutate(tmp: Path) -> None:
+            (tmp / "skill/sps/LESSONS.md").unlink()
+
+        rc, err = _run_on_copy(mutate)
+        self.assertEqual(rc, 1)
+        self.assertIn("LESSONS.md missing", err)
+
 
 if __name__ == "__main__":
     unittest.main()
