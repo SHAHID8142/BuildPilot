@@ -15,6 +15,13 @@ Each section ends with a user manual check before the next section starts.
   skill/sps/HANDOFF-CHECKPOINT.md records PASS on the final state.
 - **Deploy budget:** batch all fixes, validate locally, push/CI once
   (skill/sps/DEPLOY-BUDGET.md). CI minutes are a budget.
+- **Tool consent:** verify a tool exists before invoking it; a missing tool
+  stops the task — disclose what/why/install-scope and get explicit consent,
+  never silent installs (skill/sps/TOOL-CONSENT.md).
+- **Company lifecycle:** client jobs run the kickoff → platform research →
+  G1 confirm → plan → build → delivery → after-sale workflow in
+  skill/sps/COMPANY-LIFECYCLE.md (1 month all-type support + 1 month free
+  SEO standard on every completed job).
 
 ## BUPT alias
 "BUPT" is the User's shortcut for this project's SPS skill: when the User says

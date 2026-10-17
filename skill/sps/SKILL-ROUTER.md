@@ -19,9 +19,15 @@ first use; conflict bans below still apply regardless of origin.
 2. Pick **one primary** skill per domain from the table below
 3. Optional **one secondary** if it adds distinct value
 4. If a required skill is missing:
-   - try install with the host's supported method (`npx skills`, plugin marketplace,
-     copy into skills dir, or this repo's installer)
-   - if install fails, stop and give the user exact manual install steps
+   - **Tool Consent gate first** ([TOOL-CONSENT.md](TOOL-CONSENT.md)): state what
+     skill is missing, why the chunk needs it, and what installation involves,
+     then get the user's explicit consent BEFORE installing. Never install
+     silently; never run the installer in the same turn as the request.
+   - After consent, install with the host's supported method (`npx skills`,
+     plugin marketplace, copy into skills dir, or this repo's installer) and
+     record it in `.sps/installs.md`.
+   - If the user declines or install fails, stop and give the user exact manual
+     install steps; use the table's Fallback column meanwhile and say so.
 5. Invoke only the selected skills
 6. If unavailable, use SPS fallback docs + expert persona and say so
 

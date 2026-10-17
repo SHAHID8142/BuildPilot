@@ -26,7 +26,7 @@ Current skill version: read `VERSION` and stamp it into `./.sps/agent.md`.
 1. **`/sps` lock & Root Mirrors.** Once `./.sps/` exists, all build/fix/refactor/audit work MUST use `/sps`. Mirror the lock into `AGENTS.md` / `GEMINI.md` / `CLAUDE.md`. (Release with `/sps release-lock`).
 2. **Always Write Memory.** Update `./.sps/` (`handoff.md`, `agent.md`, `content-model.md`) every run and after every approved chunk.
 3. **No Hallucinations & Evidence Labels.** Never invent facts; mark risky claims as `Known`, `Assumed`, or `Unverified`.
-4. **Mandatory Discovery.** Grill until complete on goals, stack, CMS, auth, mobile policies, multi-agent roles, and deploy targets.
+4. **Mandatory Discovery.** Grill until complete on goals, stack, CMS, auth, mobile policies, multi-agent roles, and deploy targets. Client jobs run the full company lifecycle (kickoff questionnaire → platform research → G1 user confirm → lifecycle plan → build → delivery → after-sale: 1 month all-type support + 1 month free SEO) per [COMPANY-LIFECYCLE.md](COMPANY-LIFECYCLE.md).
 5. **Plan-First Zero-Code Gate ([PLAN-GATE.md](PLAN-GATE.md)).** Write `./.sps/plan.md`, present it, and **stop — zero code before user approval**. Then build one section at a time.
 6. **CMS-Coupled Section Delivery.** If CMS is enabled, storefront + CMS for the same section ship together. Storefront-only done is strictly forbidden ([CMS-COUPLING.md](CMS-COUPLING.md)).
 7. **Design Gate & Zero Clichés.** No fake dummy buttons, no purple-on-dark clichés, no uncurated stock slop. Research before design ([DESIGN-GATE.md](DESIGN-GATE.md)).
@@ -43,7 +43,8 @@ Current skill version: read `VERSION` and stamp it into `./.sps/agent.md`.
 14. **Write Confinement.** The agent writes ONLY inside the project directory — no agent-private memory, no home-dir state; cross-session knowledge goes into `./.sps/` ([WRITE-CONFINEMENT.md](WRITE-CONFINEMENT.md)).
 15. **Handoff Checkpoint.** No hand-back to the user until the written verification checkpoint (request re-read → full local battery → live verify → adversarial second opinion → honesty audit → checkpoint record) has PASSed on the final state ([HANDOFF-CHECKPOINT.md](HANDOFF-CHECKPOINT.md)).
 16. **Deploy Budget.** Batch all fixes into one change set, validate the full local battery, then push/CI/deploy ONCE — never deploy-per-fix; report CI runs consumed in the handoff ([DEPLOY-BUDGET.md](DEPLOY-BUDGET.md)).
-17. **Auto-Update Awareness.** On session start, run `scripts/check-update.sh` (24h-cached); if an update is available, auto-apply it via `scripts/sps-update.sh --yes` and report what changed.
+17. **Tool Consent.** Before invoking any tool, verify it exists; a missing tool STOPS the task path — disclose what/why/install-scope and get explicit user consent, never silent installs or workarounds ([TOOL-CONSENT.md](TOOL-CONSENT.md)).
+18. **Auto-Update Awareness.** On session start, run `scripts/check-update.sh` (24h-cached); if an update is available, auto-apply it via `scripts/sps-update.sh --yes` and report what changed.
 
 ---
 

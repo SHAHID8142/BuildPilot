@@ -16,9 +16,10 @@ MANIFEST_RELATIVE_PATH = "framework/sps2/governance/legacy-exception-manifest.js
 EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
-# moved legacy files; DEC-7301 authorization itself unchanged).
-EXPECTED_MANIFEST_SHA256 = "e96f41bdfa3b2d072d34efd562589ecd6008b2cb99385649ab933c0bc53a5638"
-EXPECTED_EXCEPTION_COUNT = 22  # DEC-7301 as amended by DEC-7305 (sps-seo registration + mirror resyncs + skill-search)
+# moved legacy files; DEC-7301 authorization itself unchanged). Amended same day by
+# DEC-7305: 22 exceptions, then 23 (skill-search.sh + its scripts/ mirror).
+EXPECTED_MANIFEST_SHA256 = "cb75a35149a5a3814456a00505f833627d4e69432e1f3004596e3f099d1c31c7"
+EXPECTED_EXCEPTION_COUNT = 23  # DEC-7301 as amended by DEC-7305 (sps-seo registration + mirror resyncs + skill-search + its mirror)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",

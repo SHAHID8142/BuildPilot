@@ -18,15 +18,19 @@ newer skill exists, it installs the update.
    fewer open bugs) or better-fitted to the task than the installed one,
    propose it in the plan/section packet: name, source, why it beats the
    current choice. The user approves the swap once; it then becomes the
-   new default for that domain (recorded in `.sps/agent.md`).
-3. **Auto-update installed skills.** When a routed skill has a newer
-   upstream version, refresh it before use:
-   ```bash
-   npx skills add <owner>/<repo> --skill <name> -g -y
-   ```
-   (same command the installer uses — it overwrites the local copy with
-   the latest). The bundled SPS skills (`sps`, `sps-cms`, `sps-seo`)
-   update through the repo's own updater (`scripts/sps-update.sh --yes`).
+   new default for that domain (recorded in `.sps/installs.md`).
+3. **Auto-update installed skills (consent-scoped).** When a routed skill has
+   a newer upstream version:
+   - **Bundled SPS skills** (`sps`, `sps-cms`, `sps-seo`): refresh through the
+     repo's own updater (`scripts/sps-update.sh --yes`) — pre-approved, no gate.
+   - **Third-party skills**: these are global installs of external code, so the
+     Tool Consent gate applies ([TOOL-CONSENT.md](TOOL-CONSENT.md)) — disclose
+     what/why/install-scope, get explicit consent, WAIT, then run:
+     ```bash
+     npx skills add <owner>/<repo> --skill <name> -g -y
+     ```
+     and record the outcome in `.sps/installs.md`. Never auto-run the command
+     on a skill the user has not already approved for that domain.
 4. **Research is bounded.** Time-box the discovery pass; if nothing better
    is found quickly, proceed with the installed default and say so. Never
    block a build on an open-ended skill hunt.
@@ -39,5 +43,5 @@ newer skill exists, it installs the update.
    (one taste system, one testing framework, etc.) hold regardless of
    where the skill came from.
 7. **Record the choice.** Any skill added or swapped is recorded in
-   `.sps/agent.md` (name, source, date, why) so the next session inherits
-   the decision — this is project memory, not agent memory.
+   `.sps/installs.md` (name, source, date, why, consent status) so the next
+   session inherits the decision — this is project memory, not agent memory.
