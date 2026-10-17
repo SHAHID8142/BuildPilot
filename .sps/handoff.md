@@ -75,3 +75,9 @@ Read this to understand the current project context, completed tasks, and next s
 - PR #1 merged (30534ba): 123 commits — hard laws, legal gate, lesson channel, universal hosts, T-17
 - main branch protection enabled: 4 required CI checks, force-push/deletion blocked
 - Local main synced to 30534ba; build/roadmap-p3-completion retained for future work
+
+## 2026-10-18 — Session 6d: /sps lesson review + /sps status shipped (PR #3)
+- /sps lesson review: per-lesson workflow (Problem/Rule/Applies-to shown, target verified, approve/reject/edit)
+- /sps status: read-only dashboard (branch, queue, handoff, after-sale, version, lessons, unpushed)
+- Manifest 28 exceptions (self-hash 216658ce…); all validators + CI green
+- Ecosystem-scan design delivered (report-only, GitHub Actions nightly, [skip ci]) — build queued

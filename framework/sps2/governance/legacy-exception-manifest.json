@@ -142,9 +142,9 @@
     },
     {
       "path": "README.md",
-      "expected_blob": "78418d2a1261b25c8c6499a44f779e7b9fee8579",
+      "expected_blob": "ba098d0e0c9573d6f24ed78d0ac19ae6373af982",
       "expected_mode": "100644",
-      "sha256": "0d38da24e42b3a93ea7e905fc819f4a8046aa303dd62804e59783883e726985d",
+      "sha256": "0186447715e9906be397ce06a5cc672116c4f710c9cdf053ae654b7a78a56dd3",
       "authorization": "DEC-7305",
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },

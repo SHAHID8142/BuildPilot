@@ -1,13 +1,15 @@
 # BuildPilot (`/sps`)
 
-**Version:** 4.2.0 · **Repo:** `SHAHID8142/BuildPilot` (private)
+**Version:** 4.2.0 · **Repo:** `SHAHID8142/BuildPilot`
 
 BuildPilot tells your coding agent **how to build a project step by step** — with
 memory, approvals, and (when you use a CMS) **storefront + admin controls
 together**.
 
-It works on **skills-compatible coding agents** (Claude Code, Cursor, Codex,
-Antigravity, Windsurf, Copilot, OpenCode, and similar).
+It works on **skills-compatible coding agents** — Claude Code, Cursor, Codex,
+Gemini CLI / Antigravity, Windsurf, OpenCode, GitHub Copilot, Cline, Roo Code,
+Kiro, Amp, Goose, Crush, TRAE, Junie, Zed, OpenClaw, and 30+ more (the full
+Agent Skills-standard registry).
 It does **not** work the same on every tool, and it is **not** for ChatGPT-style
 chatbots.
 
@@ -19,13 +21,17 @@ chatbots.
 |---|---|---|
 | What | Installable instructions your agent follows | A rulebook + referee that machine-checks agent work |
 | Use it | `curl … get-sps.sh \| bash`, then type `/sps` in any project | Not user-installable yet — under construction, see its own gate |
-| Status | ✅ Working, v4.0.0, 1,075 tests pass | 🚧 In progress — release gate NOT READY by design |
+| Status | ✅ Working, v4.2.0, 1,105 tests pass | 🚧 In progress — release gate NOT READY by design |
 | Formerly | `skills/` | `sps2/` + `domain/` |
 
 The skill is what you use today. The framework is a stricter, machine-verified
 rebuild that agents must pass like an exam before work counts as done.
 
 ---
+
+**New here?** Read the [User Guide](USER-GUIDE.md) — everything a person does:
+install, approve work, the lesson loop, safety model. This README is the map;
+the guide is the walkthrough.
 
 ## Quick start (one-command install)
 
@@ -99,6 +105,8 @@ No profiles, no minimal/full choice — one command installs everything:
 | `/sps audit` | Score the project against SPS rules |
 | `/sps sync` | Fix **CMS debt** |
 | `/sps doctor` | Check install / host / skill health |
+| `/sps status` | One-glance dashboard: branch, queue, after-sale clocks, pending lessons |
+| `/sps lesson review` | Review lessons captured in client projects; approve them into permanent rules |
 
 More modes (documented in the skill itself): `/sps cms-sync` / `/sps couple`
 (aliases of sync), `/sps release-lock` / `/sps unlock` (final handoff).
@@ -140,7 +148,8 @@ BuildPilot/
 ├── README.md            ← you are here
 ├── skill/               ← the product (installable)
 │   ├── sps/             ← /sps orchestrator + workflow docs + hosts/
-│   └── sps-cms/         ← CMS engine skill
+│   ├── sps-cms/         ← CMS engine skill
+│   └── sps-seo/         ← technical SEO standard
 ├── framework/           ← the machine-verified governance framework (in progress)
 │   ├── sps2/            ← gates, validators, decisions, evidence
 │   └── domain/          ← sample site the gates check against
