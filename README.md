@@ -1,6 +1,6 @@
 # BuildPilot (`/sps`)
 
-**Version:** 4.2.0 · **Repo:** `SHAHID8142/BuildPilot`
+**Version:** 4.3.0 · **Repo:** `SHAHID8142/BuildPilot`
 
 BuildPilot tells your coding agent **how to build a project step by step** — with
 memory, approvals, and (when you use a CMS) **storefront + admin controls
@@ -21,7 +21,7 @@ chatbots.
 |---|---|---|
 | What | Installable instructions your agent follows | A rulebook + referee that machine-checks agent work |
 | Use it | `curl … get-sps.sh \| bash`, then type `/sps` in any project | Not user-installable yet — under construction, see its own gate |
-| Status | ✅ Working, v4.2.0, 1,105 tests pass | 🚧 In progress — release gate NOT READY by design |
+| Status | ✅ Working, v4.3.0, 1,105 tests pass | 🚧 In progress — release gate NOT READY by design |
 | Formerly | `skills/` | `sps2/` + `domain/` |
 
 The skill is what you use today. The framework is a stricter, machine-verified

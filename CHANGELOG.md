@@ -1,5 +1,22 @@
 # Changelog
 
+## 4.3.0
+
+- **Nightly skill-ecosystem scan** (`scripts/ecosystem-scan.sh` +
+  `.github/workflows/ecosystem-scan.yml`): 13 routed domains checked against
+  GitHub + skills.sh; 6 supply-chain vetting gates before any candidate is
+  proposed; report-only (never installs — Tool Consent law); dated reports
+  committed with `[skip ci]` (zero CI minutes); deduped tracking issue.
+- **/sps lesson review** (first-class command): per-lesson workflow with
+  Problem/Rule/Applies-to display and approve/reject/edit adoption
+  (shipped late 4.2.0 cycle, stamped here).
+- **/sps status** dashboard: branch, task queue, handoff, after-sale clocks,
+  pending lessons, unpushed commits.
+- **USER-GUIDE.md**: human walkthrough (install, gates, approvals, lessons,
+  safety model).
+- Governance: manifest at 32 pinned paths; main branch protection (4 required
+  checks); R1–R5 ratified by the User (DEC-USER-RATIFICATION-20261018).
+
 ## 4.2.0
 
 - **Legal & compliance gate** (`LEGAL-COMPLIANCE.md`): 8 conditional sections

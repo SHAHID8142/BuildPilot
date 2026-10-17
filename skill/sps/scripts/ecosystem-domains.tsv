@@ -1,0 +1,20 @@
+# ecosystem-domains.tsv — input for scripts/ecosystem-scan.sh (nightly skill-ecosystem scan)
+# Columns (TAB-separated): domain<TAB>current-skill<TAB>current-upstream-repo<TAB>search-query
+# - current-upstream-repo: the repo the installed skill comes from (per SKILL-ROUTER.md).
+#   Multiple repos are space-separated; the scan checks each and uses the newest push.
+# - Rows whose current-skill contains "(bundled)" are version-compared against
+#   SHAHID8142/BuildPilot skill/sps/VERSION instead of swap-searched (refresh-bundled).
+# - search-query feeds the GitHub repo search (<query>+claude+skill) and skills.sh API.
+anti-slop	design-taste-frontend	Leonxlnx/taste-skill	design taste frontend
+ui-review	web-design-guidelines	vercel-labs/agent-skills	web design guidelines review
+react-quality	vercel-react-best-practices	vercel-labs/agent-skills	react best practices
+testing	webapp-testing	anthropics/skills	webapp testing
+seo	sps-seo (bundled)	SHAHID8142/BuildPilot	technical seo audit
+copywriting	copywriting	coreyhaines31/marketingskills	copywriting marketing
+mobile	vercel-react-native-skills	vercel-labs/agent-skills	react native mobile
+backend	supabase + prisma	supabase/mcp prisma/skills	supabase prisma backend
+deploy	deploy-to-vercel	vercel-labs/agent-skills	deploy vercel
+discovery	grill-me	mattpocock/skills	discovery questions grill
+verification	verification-before-completion	obra/superpowers	verification before completion
+security	differential-review + static-analysis	trailofbits/skills	security code review
+cms	sps-cms (bundled)	SHAHID8142/BuildPilot	cms engine

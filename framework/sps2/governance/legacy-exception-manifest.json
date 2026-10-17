@@ -2,7 +2,7 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 28,
+  "exception_count": 33,
   "exceptions": [
     {
       "path": "get-sps.ps1",
@@ -134,17 +134,17 @@
     },
     {
       "path": "CHANGELOG.md",
-      "expected_blob": "314508c4aaccf438c4376da652022bf7b6bf0a28",
+      "expected_blob": "c53c0e4d83bd6d92fd82d1ee5ab581fa164c0182",
       "expected_mode": "100644",
-      "sha256": "5812ca5c6c79b716b48333ef9c1a01215b05274d6390e198b519f4644431cef6",
+      "sha256": "f62a1334f387ce4b1a1cbf870ca34c19f743043521f885f440d2122abd35f0a6",
       "authorization": "DEC-7305",
       "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "README.md",
-      "expected_blob": "ba098d0e0c9573d6f24ed78d0ac19ae6373af982",
+      "expected_blob": "cf1375a70b2e9ef52fbfe8371e58dc579a4f21b1",
       "expected_mode": "100644",
-      "sha256": "0186447715e9906be397ce06a5cc672116c4f710c9cdf053ae654b7a78a56dd3",
+      "sha256": "ca8cbf34672d5c23d39e6e449317ea23728b45e3d0b581956d135721d6fb6e07",
       "authorization": "DEC-7305",
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
@@ -227,6 +227,46 @@
       "sha256": "7c8f9bf3f53b6b3ff7db43973756b4d0b19cba029dddd4d9beb46a71771822d0",
       "authorization": "DEC-7305",
       "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "scripts/ecosystem-scan.sh",
+      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+      "expected_mode": "100755",
+      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "scripts/ecosystem-domains.tsv",
+      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+      "expected_mode": "100644",
+      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "skill/sps/scripts/ecosystem-scan.sh",
+      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+      "expected_mode": "100755",
+      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "skill/sps/scripts/ecosystem-domains.tsv",
+      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+      "expected_mode": "100644",
+      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": ".github/workflows/ecosystem-scan.yml",
+      "expected_blob": "082ef3402b1c7dce10ffe6afa181e77a53df0e8a",
+      "expected_mode": "100644",
+      "sha256": "aa096fa002c5be424f32457c7b66b01146e702769febff9d97cb26ff4ce564b6",
+      "authorization": "DEC-7305",
+      "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18."
     }
   ],
   "related_test_artifacts": [
