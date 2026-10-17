@@ -78,9 +78,9 @@
     },
     {
       "path": "README.md",
-      "expected_blob": "4db056d3ddc17444468b1f3cdfdca4c9d7d05b6d",
+      "expected_blob": "8ca33deba9bf88551d7609a80441d5dc3db3c204",
       "expected_mode": "100644",
-      "sha256": "cb8458465e7d7a5059a5451e2888cb9a89f834044ff123f1ba4d22e7aaa884cf",
+      "sha256": "9536155a2bfff2f04e67f04955466eea0dc483b734578ebbe2574044247e178c",
       "authorization": "DEC-7305",
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
     },

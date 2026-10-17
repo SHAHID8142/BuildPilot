@@ -24,7 +24,7 @@ EXPECTED_DECISION_ID = "DEC-7301"
 # 2026-10-18 (shell-scripts audit fixes): installer arg-loop/symlink/color fixes in
 # install.sh, uninstall.sh, get-sps.sh, sps-status.sh, sps-doctor.sh, sps-update.sh,
 # sps-hygiene.sh, bootstrap-sps.sh (+ mirrors).
-EXPECTED_MANIFEST_SHA256 = "1383427f79732dc8ae8a9a1bd52ab333bc63f8c011d4bcbc4d55ded074f8ee1c"
+EXPECTED_MANIFEST_SHA256 = "f24d9dc5bc87634d653c8081b56cd0635d538ff4eccf6e700cf12732ae9b5edf"
 EXPECTED_EXCEPTION_COUNT = 57  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
