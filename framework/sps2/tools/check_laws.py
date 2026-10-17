@@ -138,6 +138,7 @@ if dg.is_file():
                         "Anti-slop ban list", "44×44px", "cubic-bezier",
                         "Bento", "prefers-color-scheme", "top-edge highlight",
                         "Autofocus the first field", "Copy laws",
+                        "Hover is never the only path",
                         "Above-the-fold sells", "Benefits before features",
                         "No padded copy", "error boundaries",
                         "manifest.json", "offline fallback"):

@@ -46,6 +46,30 @@ Avoid on mobile unless approved:
 - scroll-jacking
 - autoplaying heavy media
 - large blur stacks / expensive shadows
+
+## Hover/touch law (hard guard)
+
+Touch devices have no hover. Any content or action reachable ONLY through
+`:hover`/`onMouseEnter` is **invisible or unreachable on phones and
+tablets** — this is the single most repeated mobile design failure.
+
+- **Never hide critical content or actions behind hover**: tooltips that
+  carry required info, hover-revealed menus/buttons, hover-to-preview
+  cards, hover-only CTAs — all banned as the sole access path. If it
+  matters on desktop hover, it must also exist as a tap target, an
+  always-visible element, or an `aria-expanded` disclosure that works on
+  tap.
+- **Desktop hover = progressive enhancement only.** Design the touch
+  interaction first (tap/press/expand), then add hover polish on
+  pointer-fine devices via `@media (hover: hover) and (pointer: fine)`.
+  Never gate behavior on hover without a pointer-independent equivalent.
+- Tooltips: show on focus AND tap (not hover-only); icon-only controls
+  always carry an accessible name.
+- Hover-reveal replacement patterns that pass: accordion/disclosure on
+  tap, sticky visible labels, bottom-sheet details, long-press menus
+  (with visible affordance).
+
+Avoid on mobile (motion):
 - continuous animation loops
 - dual heavy animation libraries
 
@@ -88,6 +112,8 @@ No section approval and no handoff for UI work unless the packet includes:
 - [ ] Asset budget respected or explicitly approved
 - [ ] Reduced-motion path exists if motion is present
 - [ ] Mobile path does not feel laggy by design intent
+- [ ] **No content/action is hover-gated as the only path** (hover-reveal
+      works on tap too, or an equivalent tap-first pattern exists)
 - [ ] Build output is minified (JS + CSS) and code-split per route (no
       single monolith bundle); served over HTTP/2+ so parallel small
       files are an asset, not a liability

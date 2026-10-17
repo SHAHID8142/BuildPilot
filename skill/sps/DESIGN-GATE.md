@@ -92,6 +92,9 @@ Concrete, checkable rules — an agent that skips these produces the
 - Animate only `transform`/`opacity`. Stagger list entrances 30–50ms/item.
 - Distinct `:hover`/`:focus-visible`/`:active`/`:disabled` on every
   interactive control; `:focus-visible` = 2px offset ring.
+- **Hover is never the only path** ([MOBILE-LOW-END.md](MOBILE-LOW-END.md)
+  hover/touch law): anything hover-revealed on desktop must also work by
+  tap/focus; wrap desktop-only hover in `@media (hover: hover)`.
 - Optimistic UI for toggles/likes/creates; all decorative motion off under
   `prefers-reduced-motion`.
 
