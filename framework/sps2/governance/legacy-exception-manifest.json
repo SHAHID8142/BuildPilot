@@ -2,7 +2,7 @@
  "schema": "sps2.legacy-exception-manifest/v1",
  "decision_id": "DEC-7301",
  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
- "exception_count": 18,
+ "exception_count": 19,
  "exceptions": [
   {
    "path": "get-sps.ps1",
@@ -147,12 +147,20 @@
    "sha256": "2f9d7d5c9975c3ee2efd2ce31a18405b8467dc8712b7ce2c6fb2cbaf1faa7ed2",
    "authorization": "DEC-7305",
    "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305."
+  },
+  {
+   "path": "skill/sps/scripts/check-update.sh",
+   "authorization": "DEC-7305",
+   "reason": "Mirror byte-identical resync with scripts/check-update.sh primary (legacy-path VERSION line that was applied to the primary only, pre-range); content and mode pinned by DEC-7305 as amended.",
+   "expected_blob": "25fe793d9438af0b7b4f7735d1155c9d5d8f0477",
+   "expected_mode": "100755",
+   "sha256": "d7409b52441030c995dfa3ddece85a1c87e250834e35f732945f7f319701dac3"
   }
  ],
  "related_test_artifacts": [
   {
    "path": "framework/sps2/tests/test_updater_safety.py",
-   "sha256": "74573ed787529f982bb5f8607eae0f463619ef9d38df8dd2080c406f9889dea2",
+   "sha256": "f02569f155cb9ed4d5983ca7ebc2248444bfef37752fc60c9d8522c1796d945b",
    "authorization": "DEC-7201",
    "reason": "Updater-safety regression evidence; not a legacy-path exception."
   }

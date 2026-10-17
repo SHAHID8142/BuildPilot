@@ -171,6 +171,14 @@ This map is a high-level orientation, not an exhaustive architecture inventory.
 
 ## 12. Documentation consistency and known conflict
 
+**Resolved 2026-10-17 (commit 5526cad).** The brief's draft (below) flagged a conflict between the unified install model and profile vocabulary in `CATALOG.md` / `CHANGELOG.md`. That conflict has since been eliminated:
+
+- `CATALOG.md` now describes the single unified install (no `core`/`full`/`minimal` profiles).
+- The 4.0.0 changelog bullets were rewritten to `+13 catalog skills (single unified stack — profile vocabulary retired)`, and the updater wording no longer references install profiles.
+- CI's profile-flag guard still enforces that no profile flags return to the installers.
+
+Original draft finding, preserved for provenance:
+
 The current repository documents two different install models:
 
 - The root `README.md`, `install.sh`, `install.ps1`, and 4.0.0 changelog describe one unified install with no minimal/full profiles; installer manifests use `PROFILE=all`.

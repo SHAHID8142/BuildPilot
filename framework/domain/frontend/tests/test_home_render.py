@@ -255,15 +255,30 @@ class HomeDraftPublishedTests(unittest.TestCase):
             self.assertFalse(result.draft_preview)
             self.assertEqual(result.sitemap_url_count, 1)
             sitemap = (tmp / "sitemap.xml").read_text(encoding="utf-8")
-            self.assertIn("home", sitemap)
+            # The sitemap loc is the authorized route (DEC-7105), not the
+            # record's slug or content id: the slice projects slug="/" onto
+            # its own record before handing it to the P9 generator.
+            self.assertIn("<loc>https://example.com/</loc>", sitemap)
+            self.assertNotIn("home", sitemap)
         finally:
             shutil.rmtree(tmp)
 
-    def test_real_cms_data_is_draft_and_default_build_aborts(self):
-        # The REAL repository content is draft: the default build must abort.
+    def test_real_cms_data_builds_published_after_ratification(self):
+        # The REAL repository content is published (user-ratified P10
+        # completion, commit 1279cd6): the default build succeeds and the
+        # record is NOT a draft preview. A draft state must still abort.
         content = _load(CONTENT_PATH)
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            result = build_home_slice(_slice(), content, self._cts(), tmp)
+            self.assertFalse(result.draft_preview)
+            self.assertEqual(result.content_status, "published")
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        draft_record = dict(content[0])
+        draft_record["status"] = "draft"
         with self.assertRaises(HomeBuildError):
-            build_home_slice(_slice(), content, self._cts(), tempfile.mkdtemp())
+            build_home_slice(_slice(), [draft_record], self._cts(), tempfile.mkdtemp())
 
 
 class HomeBuildShapeTests(unittest.TestCase):
@@ -419,10 +434,16 @@ class HomeEvidenceBoundaryTests(unittest.TestCase):
         self.assertEqual(evidence["records"][0]["result"], "BLOCKED")
         self.assertEqual(evidence["closure"]["state"], "NOT_CLOSED")
 
-    def test_slice_is_draft_with_null_approval(self):
+    def test_slice_is_approved_by_user_record(self):
+        # The slice carries a genuine user-approval record (user-ratified P10
+        # completion, commit 1279cd6). A DRAFT state or null approval here
+        # would mean the ratification was lost.
         doc = _load(SLICE_PATH)
-        self.assertEqual(doc["acceptance_state"], "DRAFT")
-        self.assertIsNone(doc["user_approval"])
+        self.assertEqual(doc["acceptance_state"], "APPROVED")
+        approval = doc["user_approval"]
+        self.assertEqual(approval["decided_by_role"], "USER")
+        self.assertTrue(approval["decided_by"])
+        self.assertTrue(approval["decided_at"])
 
     def test_real_gate_runs_against_real_slice_and_fails_closed(self):
         # The actual runtime gate, actual slice, actual exit code. The gate

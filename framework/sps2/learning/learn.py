@@ -67,6 +67,15 @@ def load_ledger() -> list[dict]:
             # fail-closed: report, never drop
             print(f"WARN: ledger line {i} unparseable ({exc}); preserved as-is", file=sys.stderr)
             continue
+        if not isinstance(e, dict) or not all(
+            isinstance(e.get(f), t) for f, t in MISTAKE_SCHEMA.items()
+        ) or e.get("status") not in ("open", "resolved", "promoted") or not RFC3339.match(
+            str(e.get("timestamp", ""))
+        ):
+            # Parseable JSON but not a valid ledger entry: warn and skip for
+            # consumers (the raw line stays in the file — never dropped).
+            print(f"WARN: ledger line {i} violates the entry schema; skipped for consumers, preserved in file", file=sys.stderr)
+            continue
         entries.append(e)
     return entries
 

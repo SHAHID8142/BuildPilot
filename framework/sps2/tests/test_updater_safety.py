@@ -15,9 +15,9 @@ GET_SPS = REPO / "get-sps.sh"
 BASH_UPDATER = REPO / "scripts" / "sps-update.sh"
 PS_BOOTSTRAP = REPO / "get-sps.ps1"
 PS_UPDATER = REPO / "scripts" / "update-sps.ps1"
-MIRROR_BOOTSTRAP = REPO / "skills" / "sps" / "scripts" / "bootstrap-sps.sh"
-MIRROR_BASH_UPDATER = REPO / "skills" / "sps" / "scripts" / "sps-update.sh"
-MIRROR_PS_UPDATER = REPO / "skills" / "sps" / "scripts" / "update-sps.ps1"
+MIRROR_BOOTSTRAP = REPO / "skill" / "sps" / "scripts" / "bootstrap-sps.sh"
+MIRROR_BASH_UPDATER = REPO / "skill" / "sps" / "scripts" / "sps-update.sh"
+MIRROR_PS_UPDATER = REPO / "skill" / "sps" / "scripts" / "update-sps.ps1"
 
 
 def _git(*arguments, cwd):
@@ -340,8 +340,8 @@ class PowerShellUpdaterSafetyTests(unittest.TestCase):
             (BOOTSTRAP, MIRROR_BOOTSTRAP),
             (BASH_UPDATER, MIRROR_BASH_UPDATER),
             (PS_UPDATER, MIRROR_PS_UPDATER),
-            (REPO / "scripts" / "check-update.sh", REPO / "skills" / "sps" / "scripts" / "check-update.sh"),
-            (REPO / "scripts" / "check-update.ps1", REPO / "skills" / "sps" / "scripts" / "check-update.ps1"),
+            (REPO / "scripts" / "check-update.sh", REPO / "skill" / "sps" / "scripts" / "check-update.sh"),
+            (REPO / "scripts" / "check-update.ps1", REPO / "skill" / "sps" / "scripts" / "check-update.ps1"),
         ):
             with self.subTest(primary=primary, mirror=mirror):
                 self.assertEqual(primary.read_bytes(), mirror.read_bytes())

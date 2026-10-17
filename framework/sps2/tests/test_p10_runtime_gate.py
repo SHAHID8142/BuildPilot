@@ -1811,7 +1811,13 @@ class TestDec7112ReqP10_07Reconciliation(GateFixtureCase):
     operation manifest. Missing manifest fails closed."""
 
     def test_missing_manifest_fails_closed(self) -> None:
-        r = check_req_p10_07_reconciliation(_valid_slice())
+        # The real repository now ships operations.json (P10 completion,
+        # commit 1279cd6), so the missing-manifest scenario is exercised in
+        # an isolated root where the manifest does not exist.
+        with mock.patch(
+            "framework.sps2.tools.p10_runtime_gate._repo_root", return_value=self.tmp
+        ):
+            r = check_req_p10_07_reconciliation(_valid_slice())
         self.assertEqual(r.result, FAIL)
         self.assertIn("fail-closed", r.detail)
         self.assertIn("operations.json", r.detail)
@@ -2663,7 +2669,15 @@ class TestFailClosedOrchestration(GateFixtureCase):
         self.assertEqual(by_id["schema-structural"].result, FAIL)
 
     def test_report_never_passes_without_real_prerequisites(self) -> None:
-        report = run_gate(**self._fixture())
+        # The real repository now ships an (empty) operations.json (P10
+        # completion, commit 1279cd6), which would let req-p10-07 reconcile
+        # honestly. This test's scenario is "no real prerequisites at all",
+        # so it runs in an isolated root where the manifest is absent —
+        # keeping the fail-closed reconciliation expectation intact.
+        with mock.patch(
+            "framework.sps2.tools.p10_runtime_gate._repo_root", return_value=self.tmp
+        ):
+            report = run_gate(**self._fixture())
         self.assertEqual(report.overall, FAIL)
         failed_ids = {r.control_id for r in report.failures}
         # approval-state-interaction is NOT in this list: the fixture inventory

@@ -137,7 +137,10 @@ class TestLegacyExceptionContract(unittest.TestCase):
             duplicate = dict(manifest["exceptions"][0])
             manifest["exceptions"].pop(1)
             manifest["exceptions"].append(duplicate)
-            manifest["exception_count"] = 8
+            # Track the record list length so the count contract does not
+            # mask the duplicate-path contract this test exercises (the
+            # manifest was amended 8 -> 18 exceptions by DEC-7305).
+            manifest["exception_count"] = len(manifest["exceptions"])
             path = root / legacy_exceptions.MANIFEST_RELATIVE_PATH
             path.write_bytes(canonical_json(manifest))
             with mock.patch.object(

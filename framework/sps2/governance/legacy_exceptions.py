@@ -17,8 +17,8 @@ EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged).
-EXPECTED_MANIFEST_SHA256 = "a42ad4054d3672d464244ca2e49d0ace20fbe65d722573e046c9c7b3d66c1095"
-EXPECTED_EXCEPTION_COUNT = 18  # DEC-7301 as amended by DEC-7305 (sps-seo registration)
+EXPECTED_MANIFEST_SHA256 = "fd58e6009d153c25cc9a586e80a41620aa0e100b8c2363e836a6bea970165f5d"
+EXPECTED_EXCEPTION_COUNT = 19  # DEC-7301 as amended by DEC-7305 (sps-seo registration + check-update.sh mirror resync)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",
@@ -238,8 +238,17 @@ def verify_legacy_repository(
     """Return all changed or untracked legacy paths not covered by DEC-7301."""
     exclude_prefixes = exclude_prefixes or []
     violations = verify_legacy_exceptions(root)
-    manifest_exceptions = load_manifest(root)["exceptions"]
-    exempt = set(record["path"] for record in manifest_exceptions) if violations == [] else set()
+    exempt: set[str] = set()
+    if violations == []:
+        # The manifest passed every integrity check, so its exception list is
+        # authoritative for the diff exemption. If manifest integrity FAILED,
+        # the failure is already recorded in `violations` (fail-closed): the
+        # diff exemption is withheld and every changed path is reported.
+        try:
+            manifest_exceptions = load_manifest(root)["exceptions"]
+        except ValueError:
+            manifest_exceptions = []
+        exempt = set(record["path"] for record in manifest_exceptions)
     try:
         diff = _git(root, "diff", "--name-only", baseline, "--", *pathspec)
     except ValueError as exc:

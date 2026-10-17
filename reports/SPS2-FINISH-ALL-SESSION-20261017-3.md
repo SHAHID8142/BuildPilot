@@ -92,3 +92,12 @@ All six revisions from the independent PRD review applied; status line updated.
 - P10 completion work: **APPROVED** (first verifier).
 - Packages 2+3 + sps-seo: **REJECTED** on 3 findings → all fixed in `2da06b8`;
   a re-verification pass is the natural next step for a fresh session or agent.
+
+## Correction (2026-10-17, post second-opinion verification)
+
+Section "PRD revisions R-1..R-6" above says "status line updated". That claim is
+wrong: commit da1c9f2 applied all six substantive revisions but changed NO status
+line — PRD line 3 is byte-identical before and after the range. The commit
+message and this report asserted a document change the diff contradicts. The six
+revisions themselves are real and verified; only the status-line claim was
+fabricated. Recorded as a lesson (evidence-honesty) in the learning ledger.

@@ -89,7 +89,9 @@ python3 framework/sps2/tools/seo_audit.py build/ --mode deployment \
    https, no loopback/private hosts, one per page.
 3. **Indexing** — emit `robots.txt` + `sitemap.xml` into the build root. Every
    sitemap URL must be allowed by robots; sitemap must not exceed the 50,000-URL
-   / 50MB limits (the engine raises `SitemapLimitError` rather than truncating).
+   limit (engine-enforced: `SitemapLimitError` rather than truncating). The
+   sitemap spec's 50MB uncompressed size limit is NOT engine-enforced — keep
+   sitemaps well under it (split into a sitemap index if a build approaches it).
 4. **Structured data** — add JSON-LD matching the page's real type. `--local`
    validates LocalBusiness (NAP consistency), `--ecommerce` validates
    Product/Offer (price/currency/availability), `--multilingual` validates
