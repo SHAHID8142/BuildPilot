@@ -56,11 +56,19 @@ Concrete, checkable rules — an agent that skips these produces the
   (`#FAFAFA`-ish), never stark `#FFF`.
 - Neutrals tinted 2–5% with the brand hue; translucent borders
   (`rgba(255,255,255,.08)` dark / `rgba(0,0,0,.06)` light).
+- Dark cards get a 1px inset **top-edge highlight**
+  (`inset 0 1px 0 rgba(255,255,255,.05–.1)`) — the lit-from-above depth cue.
+- Badges/status pills: background = semantic color at ~10% opacity, text =
+  high-contrast same-hue tone — never a solid saturated fill.
 - Semantic tokens for success/warning/danger/info; never color alone for
   status (icon/text must carry it); WCAG AA contrast (4.5:1 body, 3:1 large).
+- Theme switching: default to `prefers-color-scheme`, persist an explicit
+  user toggle override, crossfade the swap (no flash of wrong theme).
 
 **Space & layout**
 - Strict 4px/8px spacing unit. Inner padding < outer gap (proximity).
+- Primary feature blocks use **asymmetric Bento-style grids** (one dominant
+  cell + supporting cells), never uniform equal-width card rows.
 - Nested radii: `inner = outer − padding`. No cards inside cards; separate
   groups with background shifts or 1px dividers, not more boxes.
 - ≥25% of the viewport stays whitespace. Primary mobile actions in the
@@ -90,6 +98,8 @@ Concrete, checkable rules — an agent that skips these produces the
 **Forms & input**
 - Persistent labels above fields (no placeholder-as-label); validate on
   blur, not per keystroke; recovery instructions under the invalid field.
+- Autofocus the first field when opening a modal or auth screen (with
+  focus-trap and return-focus-on-close).
 - Correct `inputmode` + `autocomplete`; auto-format cards/phones/dates;
   password visibility toggle.
 - <5 options → segmented control/radio cards, not a dropdown; >5 inputs →
@@ -97,7 +107,7 @@ Concrete, checkable rules — an agent that skips these produces the
 
 **Power-user patterns (dashboard/app UI)**
 - Command palette (Cmd/Ctrl+K) for global search/actions; shortcut badges
-  in menus; slide-over drawers instead of stacked modals.
+  in menus AND tooltips; slide-over drawers instead of stacked modals.
 - Undo toast for deletions; confirm modals only for permanent destruction.
 - Data tables: numeric columns right-aligned, text left-aligned, ellipsis
   + hover-title for overflow; nav labels 1–2 words.

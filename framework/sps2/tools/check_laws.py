@@ -12,8 +12,6 @@ Exit 0 = all laws hold; exit 1 = violations (printed, one per line).
 """
 from __future__ import annotations
 
-import json
-import os
 import re
 import sys
 from pathlib import Path
@@ -132,7 +130,9 @@ dg = REPO / "skill" / "sps" / "DESIGN-GATE.md"
 if dg.is_file():
     dt = dg.read_text(encoding="utf-8", errors="replace")
     for marker_text in ("tabular-nums", "60-30-10", "prefers-reduced-motion",
-                        "Anti-slop ban list", "44×44px", "cubic-bezier"):
+                        "Anti-slop ban list", "44×44px", "cubic-bezier",
+                        "Bento", "prefers-color-scheme", "top-edge highlight",
+                        "Autofocus the first field"):
         if marker_text not in dt:
             v(f"design-gate: craft law missing: {marker_text}")
 
