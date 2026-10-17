@@ -18,6 +18,13 @@ handoff. An unchecked handoff is an incomplete task.
    command, load the page, do the install/uninstall round-trip, whatever
    proves the change works outside of unit tests. A fix that was never
    executed is not a fix.
+3b. **Meaningful-test audit** (project/app work): read the tests that
+   passed for the changed behavior — do they actually assert the outcome,
+   or do they pass vacuously (no assertions, tautological checks, mocks
+   answering everything)? A vacuous test is a FAIL, not a pass.
+3c. **Clean-environment test** (delivery handoffs): from a fresh clone +
+   the written setup docs only, install and run the app. If the docs
+   miss a step, the docs are not done.
 4. **Adversarial second opinion.** For any non-trivial change, a second
    agent (or a fresh self-review pass with refutation instructions)
    attempts to find flaws. Findings are fixed or refuted with evidence

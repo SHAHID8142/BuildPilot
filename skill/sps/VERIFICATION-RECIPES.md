@@ -79,6 +79,15 @@ Check:
 - motion library count on mobile
 - whether desktop-only rich assets are correctly gated
 
+## Runtime performance (backend/full-stack work)
+
+Check:
+- no N+1 query patterns in list/detail views (grep loops containing queries)
+- no unbounded queries (missing LIMIT/pagination on user-facing lists)
+- no repeated identical API calls from the client (dedupe/cache)
+- long-running handlers can't pile up (timeouts on outbound calls)
+- service-down behavior: app degrades with a user-safe message, not a hang
+
 ## Anti-hallucination review
 
 Check:

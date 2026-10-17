@@ -78,27 +78,40 @@ For JSX / TypeScript components:
 20. Todos closed or explicitly deferred with reasons.
 21. Security basics verified (input validation, traversal guards, auth check).
 22. Workspace hygiene: zero duplicate assets left behind ([WORKSPACE-HYGIENE.md](WORKSPACE-HYGIENE.md)).
+23. **No duplicate logic:** before adding a function/component, grep for an
+    existing one; extending beats duplicating.
+24. **No hardcoded environment config:** URLs, IDs, ports, and env-ish values
+    come from config/env — never baked into source (secrets are a separate,
+    stricter ban).
+25. **Concurrency basics:** duplicate form submissions and double-click
+    actions don't create duplicates; concurrent updates don't silently
+    overwrite each other (last-write or optimistic lock — say which).
+26. **Error messages are user-safe:** production failures never leak stack
+    traces, SQL, file paths, or internal hosts; details go to logs only.
+27. **Dependency health:** before a section ships, `npm audit` (or the
+    stack's equivalent) runs; new highs are fixed or explicitly accepted
+    by the user in the approval packet.
 
 ---
 
 ## 6. Deploy-Readiness (per section)
 
-23. Build passes for the deploy target (e.g. `vercel build` / framework build).
-24. Env vars used are documented in `./.sps/handoff.md` (never committed).
-25. Section works on a preview/deploy URL, not only localhost.
+28. Build passes for the deploy target (e.g. `vercel build` / framework build).
+29. Env vars used are documented in `./.sps/handoff.md` (never committed).
+30. Section works on a preview/deploy URL, not only localhost.
 
 ---
 
 ## 7. Memory Updates
 
-26. `handoff.md`, `content-model.md`, `section-registry.md` updated.
-27. Any design pivots written to `design-system.md` + `changelog-sps.md`.
+31. `handoff.md`, `content-model.md`, `section-registry.md` updated.
+32. Any design pivots written to `design-system.md` + `changelog-sps.md`.
 
 ---
 
 ## 8. Approval Gate & Manual Check Loop
 
-28. Send the appropriate Tier 1 or Tier 2 approval packet ([APPROVAL-PACKETS.md](APPROVAL-PACKETS.md)) before proceeding to the next section (unless in batch approval mode).
-29. **Manual check loop:** the user checks the section live (storefront + CMS admin).
+33. Send the appropriate Tier 1 or Tier 2 approval packet ([APPROVAL-PACKETS.md](APPROVAL-PACKETS.md)) before proceeding to the next section (unless in batch approval mode).
+34. **Manual check loop:** the user checks the section live (storefront + CMS admin).
     - On feedback: fix items, re-run verification, resubmit.
     - Only after the user confirms OK does the next section start.
