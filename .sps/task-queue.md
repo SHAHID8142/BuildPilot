@@ -32,3 +32,18 @@
 - Both failures pre-exist on origin/main (reproduced in a clean worktree);
   CI is unaffected (runs check_laws + unittest only).
 - Requires re-pinning validate-p4.sh / validate-p6.py in the manifest.
+
+---
+
+## T-23 (queued): Directory-hygiene law + automatic placement check
+- User directive 2026-10-18: agents must maintain directory cleanliness —
+  every file type has exactly one correct home; no temp/scratch/stray files
+  left behind; misplaced files (agent-placed OR user-placed) get moved to
+  the right place, not left.
+- Enforcement: rule in skill docs (placement map + cleanup duty) PLUS
+  automatic check (doctor/validator flags stray/misplaced files).
+- Autofix policy: agent fixes safe moves automatically, then reports;
+  ambiguous ones listed for user approval.
+- Scope: applies to BuildPilot repo itself AND as guidance for client
+  projects (.sps placement rules).
+- Blocked on: T-20 integration (fan-out builders running).

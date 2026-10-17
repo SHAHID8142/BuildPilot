@@ -88,6 +88,18 @@ On approval the agent:
 Rejected lessons move to `lessons/rejected/` with a one-line reason —
 never deleted (a rejected lesson that reappears is a signal).
 
+### From repeat rejection to regression test
+
+When `check_laws.py` rejects the same `(check_id, target_file)` twice, the
+mistake is a regression risk, not a one-off. Run `bash scripts/sps-lawlog.sh run`
+(append each FAIL to `.sps/law-rejections.jsonl`), and once a repeat shows up,
+propose the negative test with
+`python3 framework/sps2/tools/gen_law_test.py --check <id> --file <f> --approved-by <you>`
+— the generated `test_law_regress_*.py` joins the battery and the mistake can
+never silently return. **No auto-land**: generation proposes; only an explicit
+`--approved-by` writes, and the generated test stays invalid until its
+`# reviewed by:` header is filled (enforced by `check_generated_tests.py`).
+
 ## Hard rules
 
 - **No auto-send**: lessons leave a client project only on explicit `send`.
