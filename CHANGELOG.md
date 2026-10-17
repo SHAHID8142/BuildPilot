@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.2.0
+
+- **Legal & compliance gate** (`LEGAL-COMPLIANCE.md`): 8 conditional sections
+  (agreements, consent, privacy, payments, comms/marketing, IP/licensing,
+  AI governance, accessibility/sector/incident) from a 49-item adversarial
+  audit; scoped at kickoff, walked at Phase 4 pre-delivery.
+- **File-splitting law** (`FILE-SPLITTING.md`): 300-line soft / 500-line hard
+  caps per source file, 8 splitting rules, enforced at the cleanup gate.
+- **Step-by-step user guidance** (`USER-GUIDANCE.md`, hard law 15): external
+  platform actions one step at a time; secrets never pasted in chat.
+- **Cross-project lesson channel** (`LESSONS.md` + `scripts/sps-lesson.sh`):
+  capture lessons in client projects, send as PRs to BuildPilot, adopt only
+  after user approval. Never auto-sent, never auto-merged.
+- **Universal host support**: `install.sh --agents '*'` covers 30+ agents
+  (added Goose, Crush, TRAE, Junie, Zed, OpenClaw, Droid, Qoder, Warp, and
+  more); 6 new host adapters; SKILL.md names the full Agent Skills registry.
+- Hover/touch law: hover-gated content banned as the sole access path.
+- Governance: legacy manifest at 25 pinned exceptions; main branch
+  protection with 4 required CI checks.
+
 ## 4.1.0
 
 - **Robust legacy-skill handling (T-17)**: `install.sh` now backs up existing

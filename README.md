@@ -1,6 +1,6 @@
 # BuildPilot (`/sps`)
 
-**Version:** 4.1.0 · **Repo:** `SHAHID8142/BuildPilot` (private)
+**Version:** 4.2.0 · **Repo:** `SHAHID8142/BuildPilot` (private)
 
 BuildPilot tells your coding agent **how to build a project step by step** — with
 memory, approvals, and (when you use a CMS) **storefront + admin controls
