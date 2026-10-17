@@ -71,8 +71,22 @@ Per-section parallel lanes (CMS / UI / content / test) follow
 cleanliness, task queue, last handoff, after-sale clocks, skill version, pending
 lessons, unpushed commits) — safe to run anytime, no session boot or state change.
 
+### Hygiene
+`/sps hygiene` → run `bash scripts/sps-hygiene.sh` (`check` default; `fix` for safe
+moves). Placement law + cleanup duty: [DIRECTORY-HYGIENE.md](DIRECTORY-HYGIENE.md) —
+every file has one home; run before handback, paste output into the checkpoint.
+
 ### Lesson Review
 `/sps lesson review` → run `bash scripts/sps-lesson.sh review`, then for each lesson in `lessons/inbox/`: read it, verify the `Applies-to` target doc exists, propose the exact doc edit to the user, and ask approve / reject / edit ([LESSONS.md](LESSONS.md)). On approval: merge the rule into the named doc (matching section style), add a `check_laws.py` marker if machine-checkable, move the file to `lessons/adopted/` with `status: adopted` + date, and add one line to the session report. On reject: move to `lessons/rejected/` with a one-line reason — never delete. The user approves every lesson.
+
+### Law Log
+`/sps lawlog` — close the lesson loop: lesson → rule in doc → machine check →
+regression test. Run `bash scripts/sps-lawlog.sh run` (wraps `check_laws.py`,
+logs each FAIL to `.sps/law-rejections.jsonl`); when the same
+`(check_id, target_file)` repeats, propose the regression test with
+`python3 framework/sps2/tools/gen_law_test.py --check <id> --file <f> --approved-by <you>`
+— the test joins the battery. **Human gate:** generation proposes, only
+`--approved-by` writes; nothing auto-lands ([LESSONS.md](LESSONS.md)).
 
 ### Read-Only Q&A Carve-Out (Context-Efficiency)
 If the user's request is purely investigatory or asking a simple code question ("explain this function", "what does X do?", "where is Y defined?"), SKIP full session boot / heavy memory load and answer directly. Only activate full memory, audit, or discovery for actual build, refactor, audit, or code-modifying tasks.

@@ -2,120 +2,8 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 33,
+  "exception_count": 37,
   "exceptions": [
-    {
-      "path": "get-sps.ps1",
-      "expected_blob": "8d2f3f6467de6d5a0356823d953bb6713452dbbc",
-      "expected_mode": "100644",
-      "sha256": "3fb777c1fd7bf0d85646a149d096a10662b5486435eb61d90446508cd79e8f98",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "get-sps.sh",
-      "expected_blob": "3d693595c3fec680b3e99745c00592727f1ae368",
-      "expected_mode": "100755",
-      "sha256": "3749a5fdff0cdce7db9feb378a08fa218bed8c9d155049d32b3ec4ba0bbf6b4a",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "scripts/bootstrap-sps.sh",
-      "expected_blob": "8d148a159dbe1c880e87f71be3a69817062aa09b",
-      "expected_mode": "100755",
-      "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "scripts/sps-update.sh",
-      "expected_blob": "262940c82f776b59bdb66454228fd77c74229275",
-      "expected_mode": "100755",
-      "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "scripts/update-sps.ps1",
-      "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
-      "expected_mode": "100644",
-      "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
-      "authorization": "DEC-7201",
-      "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
-    },
-    {
-      "path": "skill/sps/scripts/bootstrap-sps.sh",
-      "expected_blob": "8d148a159dbe1c880e87f71be3a69817062aa09b",
-      "expected_mode": "100755",
-      "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "skill/sps/scripts/sps-update.sh",
-      "expected_blob": "262940c82f776b59bdb66454228fd77c74229275",
-      "expected_mode": "100755",
-      "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "skill/sps/scripts/update-sps.ps1",
-      "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
-      "expected_mode": "100644",
-      "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
-      "authorization": "DEC-7201",
-      "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
-    },
-    {
-      "path": "scripts/smoke-sps.sh",
-      "expected_blob": "083e36f6728a0ba0e83458393e14a1cbda884687",
-      "expected_mode": "100755",
-      "sha256": "c7bdd39af5f991cfccb2803cbca6fcae8764c2cee74db75b44097d993191f618",
-      "authorization": "DEC-7305",
-      "reason": "sps-seo skill registration in install/uninstall smoke checks; content and mode pinned by DEC-7301."
-    },
-    {
-      "path": "scripts/sps-doctor.sh",
-      "expected_blob": "3b83f8dd9d54b78dee8fbcd878c3e3c664df9fdd",
-      "expected_mode": "100755",
-      "sha256": "3b785c1fda2417cbc6bf5abc5096d41c4b0994d2a0e9d6e2efe4a88cf00b7654",
-      "authorization": "DEC-7305",
-      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md)."
-    },
-    {
-      "path": "install.sh",
-      "expected_blob": "c44b2e2653d9deb1326ca8d17fb1cb31e0c774cd",
-      "expected_mode": "100755",
-      "sha256": "8f54edaa9ded34b0f7f1d475825541c023448f688107aa6eed3a8fad9b447370",
-      "authorization": "DEC-7305",
-      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": "install.ps1",
-      "expected_blob": "08a90ad5842f30e16daa650c235d782f8d5d8f2c",
-      "expected_mode": "100644",
-      "sha256": "ca6d4670ba18f2f86abb1eef079324782c19e57643281a3816fb3039ecdda532",
-      "authorization": "DEC-7305",
-      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305."
-    },
-    {
-      "path": "uninstall.sh",
-      "expected_blob": "8b60eec5b15e317faa605768b1ef5c211146ce16",
-      "expected_mode": "100755",
-      "sha256": "30895a9438d2d17ba110e212e4121edd809a7383a66d757f9a5358a9494b8a08",
-      "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305."
-    },
-    {
-      "path": "uninstall.ps1",
-      "expected_blob": "24ad7a177078a997c27381e66261709b5ba542f5",
-      "expected_mode": "100644",
-      "sha256": "c574b992aa68b15150a2319efd2f041c735c3fea5269822565bd714cb17f4c44",
-      "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305."
-    },
     {
       "path": ".github/expected-test-modules.txt",
       "expected_blob": "6e8aaea387928459b5818daa68d1730a2a9e47b5",
@@ -123,6 +11,22 @@
       "sha256": "80143cca62bbdfd07e5b5551351f76c00fd62c9cdb4c0c432341c496fb52329d",
       "authorization": "DEC-7305",
       "reason": "test_learning.py module registered (29 modules); content and mode pinned by DEC-7305."
+    },
+    {
+      "path": ".github/workflows/ecosystem-scan.yml",
+      "expected_blob": "082ef3402b1c7dce10ffe6afa181e77a53df0e8a",
+      "expected_mode": "100644",
+      "sha256": "aa096fa002c5be424f32457c7b66b01146e702769febff9d97cb26ff4ce564b6",
+      "authorization": "DEC-7305",
+      "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": ".github/workflows/sps-ci.yml",
+      "expected_blob": "9ebd1399a9f0574e56de66739ef19b0ee7889305",
+      "expected_mode": "100644",
+      "sha256": "fc545c4e8d1041495f48cc04089ae1a28c893a783c4afdcb7214ef73c9f742ee",
+      "authorization": "DEC-7305",
+      "reason": "CI workflow gains the machine law-check step (check_laws.py); pinned by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "CATALOG.md",
@@ -149,12 +53,172 @@
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
     {
+      "path": "get-sps.ps1",
+      "expected_blob": "8d2f3f6467de6d5a0356823d953bb6713452dbbc",
+      "expected_mode": "100644",
+      "sha256": "3fb777c1fd7bf0d85646a149d096a10662b5486435eb61d90446508cd79e8f98",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "get-sps.sh",
+      "expected_blob": "3d693595c3fec680b3e99745c00592727f1ae368",
+      "expected_mode": "100755",
+      "sha256": "3749a5fdff0cdce7db9feb378a08fa218bed8c9d155049d32b3ec4ba0bbf6b4a",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "install.ps1",
+      "expected_blob": "08a90ad5842f30e16daa650c235d782f8d5d8f2c",
+      "expected_mode": "100644",
+      "sha256": "ca6d4670ba18f2f86abb1eef079324782c19e57643281a3816fb3039ecdda532",
+      "authorization": "DEC-7305",
+      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305."
+    },
+    {
+      "path": "install.sh",
+      "expected_blob": "c44b2e2653d9deb1326ca8d17fb1cb31e0c774cd",
+      "expected_mode": "100755",
+      "sha256": "8f54edaa9ded34b0f7f1d475825541c023448f688107aa6eed3a8fad9b447370",
+      "authorization": "DEC-7305",
+      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "scripts/bootstrap-sps.sh",
+      "expected_blob": "8d148a159dbe1c880e87f71be3a69817062aa09b",
+      "expected_mode": "100755",
+      "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "scripts/ecosystem-domains.tsv",
+      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+      "expected_mode": "100644",
+      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "scripts/ecosystem-scan.sh",
+      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+      "expected_mode": "100755",
+      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "scripts/skill-search.sh",
+      "authorization": "DEC-7305",
+      "reason": "New dynamic skill-selection research helper (DYNAMIC-SKILLS law); pinned by DEC-7305 as amended.",
+      "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+      "expected_mode": "100755",
+      "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303"
+    },
+    {
+      "path": "scripts/smoke-sps.sh",
+      "expected_blob": "083e36f6728a0ba0e83458393e14a1cbda884687",
+      "expected_mode": "100755",
+      "sha256": "c7bdd39af5f991cfccb2803cbca6fcae8764c2cee74db75b44097d993191f618",
+      "authorization": "DEC-7305",
+      "reason": "sps-seo skill registration in install/uninstall smoke checks; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "scripts/sps-doctor.sh",
+      "expected_blob": "3b83f8dd9d54b78dee8fbcd878c3e3c664df9fdd",
+      "expected_mode": "100755",
+      "sha256": "3b785c1fda2417cbc6bf5abc5096d41c4b0994d2a0e9d6e2efe4a88cf00b7654",
+      "authorization": "DEC-7305",
+      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md)."
+    },
+    {
+      "path": "scripts/sps-hygiene.sh",
+      "expected_blob": "c6b479509562cd7eb1bfe21d44a7d807cd052ae0",
+      "sha256": "190e956ea9d6ae4bfd4237d8059b72cabe8709ee8340b05510d300e719959685",
+      "expected_mode": "100755",
+      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
+      "authorization": "DEC-7305"
+    },
+    {
+      "path": "scripts/sps-lawlog.sh",
+      "expected_blob": "02bf9da23ff7d37574687dbc9ac9af8d57bb9484",
+      "sha256": "7c6df20affc92ee712c712cdb32d1cc336401ed4b3525de64b3acd411a7dd0fc",
+      "expected_mode": "100755",
+      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
+      "authorization": "DEC-7305"
+    },
+    {
+      "path": "scripts/sps-lesson.sh",
+      "expected_blob": "5664960d7736ccce81f2aaf0f12cbed48c0e7fbe",
+      "expected_mode": "100755",
+      "sha256": "2a309b8de2e653483a58aa2e8b209c009e7710c11a97dce3c7dd4f68480fa548",
+      "authorization": "DEC-7305",
+      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
+    },
+    {
+      "path": "scripts/sps-status.sh",
+      "expected_blob": "937f8e1512921bff7bb17af52ffc86489e172016",
+      "expected_mode": "100755",
+      "sha256": "7c8f9bf3f53b6b3ff7db43973756b4d0b19cba029dddd4d9beb46a71771822d0",
+      "authorization": "DEC-7305",
+      "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "scripts/sps-update.sh",
+      "expected_blob": "262940c82f776b59bdb66454228fd77c74229275",
+      "expected_mode": "100755",
+      "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
+      "path": "scripts/update-sps.ps1",
+      "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
+      "expected_mode": "100644",
+      "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
+      "authorization": "DEC-7201",
+      "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
+    },
+    {
+      "path": "skill/sps/scripts/bootstrap-sps.sh",
+      "expected_blob": "8d148a159dbe1c880e87f71be3a69817062aa09b",
+      "expected_mode": "100755",
+      "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+    },
+    {
       "path": "skill/sps/scripts/check-update.sh",
       "authorization": "DEC-7305",
       "reason": "Mirror byte-identical resync with scripts/check-update.sh primary (legacy-path VERSION line that was applied to the primary only, pre-range); content and mode pinned by DEC-7305 as amended.",
       "expected_blob": "25fe793d9438af0b7b4f7735d1155c9d5d8f0477",
       "expected_mode": "100755",
       "sha256": "d7409b52441030c995dfa3ddece85a1c87e250834e35f732945f7f319701dac3"
+    },
+    {
+      "path": "skill/sps/scripts/ecosystem-domains.tsv",
+      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+      "expected_mode": "100644",
+      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "skill/sps/scripts/ecosystem-scan.sh",
+      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+      "expected_mode": "100755",
+      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+      "authorization": "DEC-7305",
+      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "skill/sps/scripts/skill-search.sh",
+      "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+      "expected_mode": "100755",
+      "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303",
+      "authorization": "DEC-7305",
+      "reason": "Mirror of scripts/skill-search.sh required by the CI 'Script mirrors in sync' check (diff -rq scripts skill/sps/scripts); pinned by DEC-7305 as amended."
     },
     {
       "path": "skill/sps/scripts/smoke-sps.sh",
@@ -173,36 +237,20 @@
       "sha256": "3b785c1fda2417cbc6bf5abc5096d41c4b0994d2a0e9d6e2efe4a88cf00b7654"
     },
     {
-      "path": "scripts/skill-search.sh",
-      "authorization": "DEC-7305",
-      "reason": "New dynamic skill-selection research helper (DYNAMIC-SKILLS law); pinned by DEC-7305 as amended.",
-      "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+      "path": "skill/sps/scripts/sps-hygiene.sh",
+      "expected_blob": "c6b479509562cd7eb1bfe21d44a7d807cd052ae0",
+      "sha256": "190e956ea9d6ae4bfd4237d8059b72cabe8709ee8340b05510d300e719959685",
       "expected_mode": "100755",
-      "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303"
+      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
+      "authorization": "DEC-7305"
     },
     {
-      "path": "skill/sps/scripts/skill-search.sh",
-      "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+      "path": "skill/sps/scripts/sps-lawlog.sh",
+      "expected_blob": "02bf9da23ff7d37574687dbc9ac9af8d57bb9484",
+      "sha256": "7c6df20affc92ee712c712cdb32d1cc336401ed4b3525de64b3acd411a7dd0fc",
       "expected_mode": "100755",
-      "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303",
-      "authorization": "DEC-7305",
-      "reason": "Mirror of scripts/skill-search.sh required by the CI 'Script mirrors in sync' check (diff -rq scripts skill/sps/scripts); pinned by DEC-7305 as amended."
-    },
-    {
-      "path": ".github/workflows/sps-ci.yml",
-      "expected_blob": "9ebd1399a9f0574e56de66739ef19b0ee7889305",
-      "expected_mode": "100644",
-      "sha256": "fc545c4e8d1041495f48cc04089ae1a28c893a783c4afdcb7214ef73c9f742ee",
-      "authorization": "DEC-7305",
-      "reason": "CI workflow gains the machine law-check step (check_laws.py); pinned by DEC-7305 as amended 2026-10-17."
-    },
-    {
-      "path": "scripts/sps-lesson.sh",
-      "expected_blob": "5664960d7736ccce81f2aaf0f12cbed48c0e7fbe",
-      "expected_mode": "100755",
-      "sha256": "2a309b8de2e653483a58aa2e8b209c009e7710c11a97dce3c7dd4f68480fa548",
-      "authorization": "DEC-7305",
-      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
+      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
+      "authorization": "DEC-7305"
     },
     {
       "path": "skill/sps/scripts/sps-lesson.sh",
@@ -213,14 +261,6 @@
       "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
     },
     {
-      "path": "scripts/sps-status.sh",
-      "expected_blob": "937f8e1512921bff7bb17af52ffc86489e172016",
-      "expected_mode": "100755",
-      "sha256": "7c8f9bf3f53b6b3ff7db43973756b4d0b19cba029dddd4d9beb46a71771822d0",
-      "authorization": "DEC-7305",
-      "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
       "path": "skill/sps/scripts/sps-status.sh",
       "expected_blob": "937f8e1512921bff7bb17af52ffc86489e172016",
       "expected_mode": "100755",
@@ -229,44 +269,36 @@
       "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18."
     },
     {
-      "path": "scripts/ecosystem-scan.sh",
-      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+      "path": "skill/sps/scripts/sps-update.sh",
+      "expected_blob": "262940c82f776b59bdb66454228fd77c74229275",
       "expected_mode": "100755",
-      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+      "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
+      "authorization": "DEC-7201",
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
     },
     {
-      "path": "scripts/ecosystem-domains.tsv",
-      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+      "path": "skill/sps/scripts/update-sps.ps1",
+      "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
       "expected_mode": "100644",
-      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+      "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
+      "authorization": "DEC-7201",
+      "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
     },
     {
-      "path": "skill/sps/scripts/ecosystem-scan.sh",
-      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+      "path": "uninstall.ps1",
+      "expected_blob": "24ad7a177078a997c27381e66261709b5ba542f5",
+      "expected_mode": "100644",
+      "sha256": "c574b992aa68b15150a2319efd2f041c735c3fea5269822565bd714cb17f4c44",
+      "authorization": "DEC-7305",
+      "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305."
+    },
+    {
+      "path": "uninstall.sh",
+      "expected_blob": "8b60eec5b15e317faa605768b1ef5c211146ce16",
       "expected_mode": "100755",
-      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+      "sha256": "30895a9438d2d17ba110e212e4121edd809a7383a66d757f9a5358a9494b8a08",
       "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": "skill/sps/scripts/ecosystem-domains.tsv",
-      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
-      "expected_mode": "100644",
-      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": ".github/workflows/ecosystem-scan.yml",
-      "expected_blob": "082ef3402b1c7dce10ffe6afa181e77a53df0e8a",
-      "expected_mode": "100644",
-      "sha256": "aa096fa002c5be424f32457c7b66b01146e702769febff9d97cb26ff4ce564b6",
-      "authorization": "DEC-7305",
-      "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18."
+      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305."
     }
   ],
   "related_test_artifacts": [
