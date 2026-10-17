@@ -285,9 +285,10 @@ class TestPublicationRule(unittest.TestCase):
 
 
 class TestPersistedHomeRecord(unittest.TestCase):
-    """The real persisted Home records remain draft and unpublished."""
+    """The real persisted Home record: published by user ratification
+    (P10 completion, commit 1279cd6), structurally valid, published-only."""
 
-    def test_persisted_home_content_is_draft_and_unpublished(self) -> None:
+    def test_persisted_home_content_is_published(self) -> None:
         import json
         import os
 
@@ -296,15 +297,15 @@ class TestPersistedHomeRecord(unittest.TestCase):
         contents = json.load(open(os.path.join(data_dir, "content.json")))
         home_ct = next(c for c in ctypes if c["name"] == "home")
         home_content = next(c for c in contents if c["type_id"] == home_ct["id"])
-        # The persisted Home Content is still draft/unpublished.
-        self.assertEqual(home_content["status"], "draft")
-        self.assertIsNone(home_content["published_at"])
-        # And it resolves structurally but does NOT satisfy published-only.
+        # The persisted Home Content is published (user-ratified 2026-10-17).
+        self.assertEqual(home_content["status"], "published")
+        self.assertTrue(home_content["published_at"])
+        # And it resolves structurally and satisfies published-only.
         res = resolve_content_slots(
             "home-default", home_content, content_type_id=home_ct["id"]
         )
         self.assertTrue(res.ok)
-        self.assertFalse(satisfies_published_only(res))
+        self.assertTrue(satisfies_published_only(res))
 
 
 if __name__ == "__main__":
