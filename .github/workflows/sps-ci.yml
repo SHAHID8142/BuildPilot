@@ -24,6 +24,9 @@ jobs:
       - name: SPS lint
         run: bash scripts/lint-sps.sh
 
+      - name: Machine law check (DoD / checkpoint / context-budget)
+        run: python3 framework/sps2/tools/check_laws.py
+
       - name: SPS smoke
         run: bash scripts/smoke-sps.sh
         env:

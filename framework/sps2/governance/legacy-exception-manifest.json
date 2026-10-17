@@ -2,7 +2,7 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 23,
+  "exception_count": 24,
   "exceptions": [
     {
       "path": "get-sps.ps1",
@@ -187,6 +187,14 @@
       "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303",
       "authorization": "DEC-7305",
       "reason": "Mirror of scripts/skill-search.sh required by the CI 'Script mirrors in sync' check (diff -rq scripts skill/sps/scripts); pinned by DEC-7305 as amended."
+    },
+    {
+      "path": ".github/workflows/sps-ci.yml",
+      "expected_blob": "9ebd1399a9f0574e56de66739ef19b0ee7889305",
+      "expected_mode": "100644",
+      "sha256": "fc545c4e8d1041495f48cc04089ae1a28c893a783c4afdcb7214ef73c9f742ee",
+      "authorization": "DEC-7305",
+      "reason": "CI workflow gains the machine law-check step (check_laws.py); pinned by DEC-7305 as amended 2026-10-17."
     }
   ],
   "related_test_artifacts": [
