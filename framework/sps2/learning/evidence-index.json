@@ -1,0 +1,848 @@
+{
+ "schema": "sps2.evidence-index/v1",
+ "built_at": "2026-10-17T14:04:47Z",
+ "reports": [
+  {
+   "file": "CODEX-INDEPENDENT-REPOSITORY-AUDIT-20261016-171338.md",
+   "sha256_16": "43169ce1be4f5b27",
+   "size": 40830,
+   "verdicts": []
+  },
+  {
+   "file": "CODEX-SECURITY-HARDENING-PLAN-20261016-172529.md",
+   "sha256_16": "0f4fbb6b3fc5055e",
+   "size": 39913,
+   "verdicts": []
+  },
+  {
+   "file": "GITHUB-ONLINE-BACKUP-PREP-20261016-235500.md",
+   "sha256_16": "c7c8ef3ef82fa0ad",
+   "size": 6026,
+   "verdicts": []
+  },
+  {
+   "file": "GITHUB-ONLINE-BACKUP-VERIFIED-20261017-000032.md",
+   "sha256_16": "6aa4258de2d26000",
+   "size": 5154,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-C4-CORRECTION-CLAUDE-REVIEW-20261017-140810.md",
+   "sha256_16": "858f36cc7e176965",
+   "size": 8142,
+   "verdicts": [
+    "FAIL",
+    "NEEDS REVISION",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-C4-CORRECTION-IMPLEMENTATION-20261017-1348.md",
+   "sha256_16": "c9028a0d1207c0ce",
+   "size": 9667,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-C4-REPAIR-IMPLEMENTATION-20261017-1640.md",
+   "sha256_16": "354b4776a6c08b75",
+   "size": 3496,
+   "verdicts": [
+    "FAIL",
+    "NEEDS REVISION",
+    "NOT READY",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-C5-IMPLEMENTATION-REVIEW-20261017-1656.md",
+   "sha256_16": "da0a906ec0a99e04",
+   "size": 3503,
+   "verdicts": [
+    "NOT READY",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-CLAUDE-CODEBASE-PLAIN-REPORT-20261017-1755.md",
+   "sha256_16": "ebccfc63560da43a",
+   "size": 6098,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-CLAUDE-CROSS-REVIEW-C4-C12-BATCH-20261017-1312.md",
+   "sha256_16": "656e5f3f7b2663a5",
+   "size": 16816,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-CLAUDE-PRD-REVIEW-20261017-1735.md",
+   "sha256_16": "392e5478bc6547ba",
+   "size": 12893,
+   "verdicts": [
+    "NEEDS REVISION"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-AGENT-PROMPTS-20261017.md",
+   "sha256_16": "f3e94f4ad1ae9efb",
+   "size": 7570,
+   "verdicts": [
+    "BLOCKED_USER",
+    "NOT READY"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C0-C1-CHECKPOINT-20261017-115553.md",
+   "sha256_16": "fb81c0cfcff70117",
+   "size": 7236,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C0-C3-VERIFICATION-20261017-120811.md",
+   "sha256_16": "31ce79c970a5916f",
+   "size": 7743,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-COMPLETION-C10-CODEX-AUDIT-20261017-124611.md",
+   "sha256_16": "07a89a23b9ab661f",
+   "size": 12374,
+   "verdicts": [
+    "NEEDS REVISION"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C11-CODEX-LEGACY-FINDINGS-AUDIT-20261017-125019.md",
+   "sha256_16": "73b334ddb1b4b691",
+   "size": 16302,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C12-RESIDUAL-ASSESSMENT-20261017-124804.md",
+   "sha256_16": "58fa0ea96f9595c6",
+   "size": 10788,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-COMPLETION-C13-CODEX-DOC-CONSISTENCY-AUDIT-20261017-1249.md",
+   "sha256_16": "01422f475d3b7554",
+   "size": 11589,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "NOT READY",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C4-CODEX-REVIEW-20261017-121735.md",
+   "sha256_16": "af327da22bcd3083",
+   "size": 5620,
+   "verdicts": [
+    "NEEDS REVISION"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C5-CODEX-AUDIT-20261017-123100.md",
+   "sha256_16": "48094e11948ce84d",
+   "size": 5669,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-COMPLETION-C8-CODEX-GOVERNANCE-AUDIT-20261017-1239.md",
+   "sha256_16": "a95ce7e305578f11",
+   "size": 6534,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-C9-CODEX-P10-READINESS-AUDIT-20261017-1243.md",
+   "sha256_16": "1467b90f73e2523b",
+   "size": 13013,
+   "verdicts": [
+    "FAIL",
+    "NOT READY",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-COMPLETION-COORDINATION.md",
+   "sha256_16": "7ba97bba4d7b193c",
+   "size": 71702,
+   "verdicts": [
+    "BLOCKED_USER",
+    "NEEDS REVISION",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-DEEP-QA-CODEX-FINAL-20261017-095249.md",
+   "sha256_16": "7d7fe471c16adad2",
+   "size": 18786,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-DEEP-QA-CODEX-FINDINGS-20261017-093559.md",
+   "sha256_16": "75de815811af2677",
+   "size": 37724,
+   "verdicts": [
+    "FAIL"
+   ]
+  },
+  {
+   "file": "SPS2-DEEP-QA-CODEX-TODO-20261017-093559.md",
+   "sha256_16": "6b2c1ce32d8f9b76",
+   "size": 6406,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-DELEGATED-DECISIONS-20261017.md",
+   "sha256_16": "f41dc67348c428a8",
+   "size": 4567,
+   "verdicts": [
+    "APPROVED",
+    "NOT READY"
+   ]
+  },
+  {
+   "file": "SPS2-FINAL-AUTHORIZED-EXECUTION-20261016-135200.md",
+   "sha256_16": "9e3a1bc8b778931a",
+   "size": 32897,
+   "verdicts": [
+    "FAIL"
+   ]
+  },
+  {
+   "file": "SPS2-FINAL-END-TO-END-READINESS-20261016-091500.md",
+   "sha256_16": "851f2e7f44fbcd87",
+   "size": 66502,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-FINAL-EXECUTION-MISSION-20261016-124100.md",
+   "sha256_16": "cb4847e29cc86a6e",
+   "size": 36617,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-FINAL-IMPLEMENTATION-PASS-HANDOFF-20261017-083157.md",
+   "sha256_16": "baa9a976ace46e26",
+   "size": 16695,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-FINAL-REMEDIATION-20261016-111400.md",
+   "sha256_16": "4c1a98e68aef6e92",
+   "size": 38143,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-INDEPENDENT-QA-CLAUDE-FINAL-20261017-100309.md",
+   "sha256_16": "8664991b9f84e6f7",
+   "size": 12634,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-INDEPENDENT-QA-CLAUDE-FINDINGS-20261017-100309.md",
+   "sha256_16": "9a982b8a50d654b9",
+   "size": 13008,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-INDEPENDENT-QA-CLAUDE-TODO-20261017-100309.md",
+   "sha256_16": "d47bf104e5123ba9",
+   "size": 3367,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-INDEPENDENT-REVIEW-OF-MASTER-MISSION-20261017-072036.md",
+   "sha256_16": "e205e1e90583517f",
+   "size": 19211,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-INTEGRATION-PASS-FINAL-20261017-083701.md",
+   "sha256_16": "b3b769d4c4f6b1ad",
+   "size": 14442,
+   "verdicts": [
+    "APPROVED",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-MASTER-IMPLEMENTATION-AND-REVIEW-PACKAGE-20261017-002434.md",
+   "sha256_16": "241cb38b37f2c01b",
+   "size": 18355,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-MASTER-RESULTS-VERIFICATION-AND-DECISION-PACKAGE-20261017-071058.md",
+   "sha256_16": "b38732790cb76725",
+   "size": 15393,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-MASTER-RESUME-BASELINE-20261017-001717.md",
+   "sha256_16": "3d214f2f57ae721f",
+   "size": 6191,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-OVERNIGHT-BUILD-VERIFICATION-20261016-063738.md",
+   "sha256_16": "cb8c421721f4d54f",
+   "size": 56549,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-P10-GATE-COMPLETION-20261017.md",
+   "sha256_16": "4a87b0f5f1d261d6",
+   "size": 6091,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-PHASE2-RELEASE-READINESS-20261016-072628.md",
+   "sha256_16": "c5045301ef2114a5",
+   "size": 69975,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md",
+   "sha256_16": "553bb50e92a5b7f0",
+   "size": 15562,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-PHASE3-SAFE-REMEDIATION-20261016-081050.md",
+   "sha256_16": "824d0fd7599e32b6",
+   "size": 64788,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-PHASE4-RELEASE-VERIFICATION-20261016-084449.md",
+   "sha256_16": "f3536db4df754708",
+   "size": 62512,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "NOT READY",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-PROJECT-COMPLETION-BACKLOG-20261017.md",
+   "sha256_16": "b17c819035ead454",
+   "size": 16049,
+   "verdicts": [
+    "BLOCKED_USER",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-READINESS-REMEDIATION-20261016-101600.md",
+   "sha256_16": "834145ec9a4d773c",
+   "size": 44359,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-REMEDIATION-IMPLEMENTATION-P1-P4-20261017-103753.md",
+   "sha256_16": "8f8123f6f3f5699c",
+   "size": 5251,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-REMEDIATION-PLAN-20261017-101852.md",
+   "sha256_16": "e1e9fcb8e5abac41",
+   "size": 16900,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-REMEDIATION-PLAN-REVIEW-CLAUDE-20261017-101824.md",
+   "sha256_16": "64ccecf79446e139",
+   "size": 22897,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-REMEDIATION-REVIEW-P1-P4-CLAUDE-20261017-111759.md",
+   "sha256_16": "4f934e57f0ad324d",
+   "size": 10485,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND12-EXECUTION-20261016-170620.md",
+   "sha256_16": "2b3dbc084ce9469c",
+   "size": 11076,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND12-P10-DECISION-PACKAGE-20261016-154756.md",
+   "sha256_16": "f48e5a06da04aab7",
+   "size": 33376,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND13-HOME-IMPLEMENTATION-20261016-171848.md",
+   "sha256_16": "b44bcd4ea8e1f46c",
+   "size": 15850,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND14-GATE-SEMANTICS-IMPLEMENTATION-20261016-174815.md",
+   "sha256_16": "0b6e92d891e30a8d",
+   "size": 12510,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md",
+   "sha256_16": "5d9c46dcb2ac9ac0",
+   "size": 28658,
+   "verdicts": [
+    "FAIL"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND15-RECONCILIATION-20261016-180319.md",
+   "sha256_16": "c1f2e7c435ed206a",
+   "size": 24778,
+   "verdicts": [
+    "FAIL"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND16-AUTONOMOUS-ENGINEERING-20261016-182330.md",
+   "sha256_16": "cf433bb806baab45",
+   "size": 31007,
+   "verdicts": [
+    "FAIL"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND16-RATIFICATION-AND-DIGEST-REGENERATION-20261016-180627.md",
+   "sha256_16": "9c3af9d5a9c83065",
+   "size": 8145,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND17-R15-DEFECT-RESOLUTION-20261016-182229.md",
+   "sha256_16": "6992fefc9c13e2de",
+   "size": 18150,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND18-CONSOLIDATION-AND-READINESS-20261016-183724.md",
+   "sha256_16": "8bcb4e7022788ff0",
+   "size": 12570,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND19-COMMIT-BOUNDARY-REVIEW-20261016-184230.md",
+   "sha256_16": "95fdc7318fbec13f",
+   "size": 19141,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND19B-INDEPENDENT-SECURITY-AUTHORIZATION-AUDIT-20261016-184905.md",
+   "sha256_16": "44854774a966cfd3",
+   "size": 27382,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND20-AUTHORIZATION-RECONCILIATION-20261016-190200.md",
+   "sha256_16": "fb33142a3f2ce808",
+   "size": 15737,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND20B-DEEP-SECURITY-RELIABILITY-AUDIT-20261016-191028.md",
+   "sha256_16": "cea6a4495b31339d",
+   "size": 33738,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND21A-IMPLEMENTATION-UPDATER-P17-20261016-193714.md",
+   "sha256_16": "68d47ff37777b900",
+   "size": 11250,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND21A-UPDATER-P17-PATCH-PREPARATION-20261016-191745.md",
+   "sha256_16": "61d94c4ac731b742",
+   "size": 21979,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND21B-LEGACY-CONTRACT-RECONCILIATION-20261016-192129.md",
+   "sha256_16": "07e32fff88497590",
+   "size": 22007,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND22-CONTRACT-RESOLUTION-PLAN-20261016-193213.md",
+   "sha256_16": "c2f7cc0cb37e82c4",
+   "size": 24987,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND23-GOVERNANCE-DECISION-PACKAGE-20261016-194327.md",
+   "sha256_16": "98db6c5f7adff0de",
+   "size": 27795,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND24-INDEPENDENT-GOVERNANCE-REVIEW-20261016-202254.md",
+   "sha256_16": "5d79e1dd7b4bc754",
+   "size": 22759,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND24A-MIRROR-SYNC-20261016-194456.md",
+   "sha256_16": "df708c0d6038a986",
+   "size": 3974,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND25-AMENDED-GOVERNANCE-PACKAGE-20261016-223101.md",
+   "sha256_16": "2ff1bcbd6184bad4",
+   "size": 28242,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND25A-INLINE-UPDATER-AUDIT-20261016-223509.md",
+   "sha256_16": "a25863996b12c39e",
+   "size": 14383,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND26-CONTRACT-IMPLEMENTATION-20261016-233353.md",
+   "sha256_16": "9323a37495736631",
+   "size": 14385,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND26A-FALLBACK-REMOVAL-20261016-231445.md",
+   "sha256_16": "368dd2a1a8b04012",
+   "size": 7029,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND27-GOVERNANCE-DECISION-READINESS-20261016-232543.md",
+   "sha256_16": "dc03aa8cf781e674",
+   "size": 18587,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND6-AUTHORIZED-IMPLEMENTATION-20261016-125200.md",
+   "sha256_16": "26f1103506585709",
+   "size": 11433,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND6-EXECUTION-AND-VERIFICATION-20261016-132200.md",
+   "sha256_16": "7de70589959d33a4",
+   "size": 15389,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND7-FINAL-COMMIT-CI-VERIFICATION-20261016-140500.md",
+   "sha256_16": "8042c518d055e008",
+   "size": 13965,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND8-FINAL-VERIFICATION.md",
+   "sha256_16": "4b1467da6d99a79d",
+   "size": 13251,
+   "verdicts": [
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-ROUND9-FINAL-CI-VERIFICATION-20261016-151500.md",
+   "sha256_16": "5086b6e328e12869",
+   "size": 9873,
+   "verdicts": []
+  },
+  {
+   "file": "SPS2-ROUND9-PREFLIGHT-AND-PATCH-PROPOSAL-20261016-145509.md",
+   "sha256_16": "45296e486af79f33",
+   "size": 13801,
+   "verdicts": [
+    "FAIL"
+   ]
+  },
+  {
+   "file": "SPS2-SECOND-PASS-INTEGRATION-FINAL-20261017-092558.md",
+   "sha256_16": "379bbfc07a9378f7",
+   "size": 21172,
+   "verdicts": [
+    "APPROVED",
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-SECOND-PASS-TODO-LEDGER-20261017-084905.md",
+   "sha256_16": "4b5c32506f50ab26",
+   "size": 10152,
+   "verdicts": [
+    "APPROVED",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-TECHNICAL-COMPLETION-FINAL-20261017-090901.md",
+   "sha256_16": "de739f7e025e6b9f",
+   "size": 12635,
+   "verdicts": [
+    "FAIL",
+    "PASS"
+   ]
+  },
+  {
+   "file": "SPS2-TECHNICAL-COMPLETION-MASTER-TODO-20261017-084925.md",
+   "sha256_16": "b57e0c9ef86fd73e",
+   "size": 6403,
+   "verdicts": [
+    "APPROVED"
+   ]
+  },
+  {
+   "file": "SPS2-USER-DECISION-PACKET-20261017-130047.md",
+   "sha256_16": "f313df55553c4a63",
+   "size": 22093,
+   "verdicts": [
+    "APPROVED",
+    "BLOCKED_USER"
+   ]
+  },
+  {
+   "file": "SPS2-USER-DECISION-PACKET-ADDENDUM-20261017.md",
+   "sha256_16": "0b8503dd79f8293d",
+   "size": 2218,
+   "verdicts": [
+    "NOT READY"
+   ]
+  }
+ ],
+ "verdict_keywords": {
+  "PASS": [
+   "GITHUB-ONLINE-BACKUP-VERIFIED-20261017-000032.md",
+   "SPS2-C4-CORRECTION-CLAUDE-REVIEW-20261017-140810.md",
+   "SPS2-C4-REPAIR-IMPLEMENTATION-20261017-1640.md",
+   "SPS2-C5-IMPLEMENTATION-REVIEW-20261017-1656.md",
+   "SPS2-CLAUDE-CODEBASE-PLAIN-REPORT-20261017-1755.md",
+   "SPS2-CLAUDE-CROSS-REVIEW-C4-C12-BATCH-20261017-1312.md",
+   "SPS2-COMPLETION-C0-C1-CHECKPOINT-20261017-115553.md",
+   "SPS2-COMPLETION-C11-CODEX-LEGACY-FINDINGS-AUDIT-20261017-125019.md",
+   "SPS2-COMPLETION-C13-CODEX-DOC-CONSISTENCY-AUDIT-20261017-1249.md",
+   "SPS2-COMPLETION-C9-CODEX-P10-READINESS-AUDIT-20261017-1243.md",
+   "SPS2-COMPLETION-COORDINATION.md",
+   "SPS2-DEEP-QA-CODEX-TODO-20261017-093559.md",
+   "SPS2-FINAL-IMPLEMENTATION-PASS-HANDOFF-20261017-083157.md",
+   "SPS2-FINAL-REMEDIATION-20261016-111400.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-FINAL-20261017-100309.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-FINDINGS-20261017-100309.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-TODO-20261017-100309.md",
+   "SPS2-INDEPENDENT-REVIEW-OF-MASTER-MISSION-20261017-072036.md",
+   "SPS2-INTEGRATION-PASS-FINAL-20261017-083701.md",
+   "SPS2-MASTER-IMPLEMENTATION-AND-REVIEW-PACKAGE-20261017-002434.md",
+   "SPS2-MASTER-RESULTS-VERIFICATION-AND-DECISION-PACKAGE-20261017-071058.md",
+   "SPS2-OVERNIGHT-BUILD-VERIFICATION-20261016-063738.md",
+   "SPS2-P10-GATE-COMPLETION-20261017.md",
+   "SPS2-PHASE2-RELEASE-READINESS-20261016-072628.md",
+   "SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md",
+   "SPS2-PHASE3-SAFE-REMEDIATION-20261016-081050.md",
+   "SPS2-PHASE4-RELEASE-VERIFICATION-20261016-084449.md",
+   "SPS2-PROJECT-COMPLETION-BACKLOG-20261017.md",
+   "SPS2-READINESS-REMEDIATION-20261016-101600.md",
+   "SPS2-REMEDIATION-IMPLEMENTATION-P1-P4-20261017-103753.md",
+   "SPS2-REMEDIATION-REVIEW-P1-P4-CLAUDE-20261017-111759.md",
+   "SPS2-ROUND14-GATE-SEMANTICS-IMPLEMENTATION-20261016-174815.md",
+   "SPS2-ROUND17-R15-DEFECT-RESOLUTION-20261016-182229.md",
+   "SPS2-ROUND19-COMMIT-BOUNDARY-REVIEW-20261016-184230.md",
+   "SPS2-ROUND24A-MIRROR-SYNC-20261016-194456.md",
+   "SPS2-ROUND26-CONTRACT-IMPLEMENTATION-20261016-233353.md",
+   "SPS2-ROUND8-FINAL-VERIFICATION.md",
+   "SPS2-SECOND-PASS-INTEGRATION-FINAL-20261017-092558.md",
+   "SPS2-SECOND-PASS-TODO-LEDGER-20261017-084905.md",
+   "SPS2-TECHNICAL-COMPLETION-FINAL-20261017-090901.md"
+  ],
+  "FAIL": [
+   "SPS2-C4-CORRECTION-CLAUDE-REVIEW-20261017-140810.md",
+   "SPS2-C4-REPAIR-IMPLEMENTATION-20261017-1640.md",
+   "SPS2-CLAUDE-CODEBASE-PLAIN-REPORT-20261017-1755.md",
+   "SPS2-COMPLETION-C0-C1-CHECKPOINT-20261017-115553.md",
+   "SPS2-COMPLETION-C13-CODEX-DOC-CONSISTENCY-AUDIT-20261017-1249.md",
+   "SPS2-COMPLETION-C9-CODEX-P10-READINESS-AUDIT-20261017-1243.md",
+   "SPS2-DEEP-QA-CODEX-FINDINGS-20261017-093559.md",
+   "SPS2-FINAL-AUTHORIZED-EXECUTION-20261016-135200.md",
+   "SPS2-FINAL-IMPLEMENTATION-PASS-HANDOFF-20261017-083157.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-FINAL-20261017-100309.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-FINDINGS-20261017-100309.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-TODO-20261017-100309.md",
+   "SPS2-INDEPENDENT-REVIEW-OF-MASTER-MISSION-20261017-072036.md",
+   "SPS2-MASTER-IMPLEMENTATION-AND-REVIEW-PACKAGE-20261017-002434.md",
+   "SPS2-MASTER-RESULTS-VERIFICATION-AND-DECISION-PACKAGE-20261017-071058.md",
+   "SPS2-P10-GATE-COMPLETION-20261017.md",
+   "SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md",
+   "SPS2-PHASE4-RELEASE-VERIFICATION-20261016-084449.md",
+   "SPS2-PROJECT-COMPLETION-BACKLOG-20261017.md",
+   "SPS2-REMEDIATION-IMPLEMENTATION-P1-P4-20261017-103753.md",
+   "SPS2-ROUND14-GATE-SEMANTICS-IMPLEMENTATION-20261016-174815.md",
+   "SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md",
+   "SPS2-ROUND15-RECONCILIATION-20261016-180319.md",
+   "SPS2-ROUND16-AUTONOMOUS-ENGINEERING-20261016-182330.md",
+   "SPS2-ROUND17-R15-DEFECT-RESOLUTION-20261016-182229.md",
+   "SPS2-ROUND24A-MIRROR-SYNC-20261016-194456.md",
+   "SPS2-ROUND26-CONTRACT-IMPLEMENTATION-20261016-233353.md",
+   "SPS2-ROUND9-PREFLIGHT-AND-PATCH-PROPOSAL-20261016-145509.md",
+   "SPS2-SECOND-PASS-INTEGRATION-FINAL-20261017-092558.md",
+   "SPS2-TECHNICAL-COMPLETION-FINAL-20261017-090901.md"
+  ],
+  "NEEDS REVISION": [
+   "SPS2-C4-CORRECTION-CLAUDE-REVIEW-20261017-140810.md",
+   "SPS2-C4-REPAIR-IMPLEMENTATION-20261017-1640.md",
+   "SPS2-CLAUDE-PRD-REVIEW-20261017-1735.md",
+   "SPS2-COMPLETION-C10-CODEX-AUDIT-20261017-124611.md",
+   "SPS2-COMPLETION-C4-CODEX-REVIEW-20261017-121735.md",
+   "SPS2-COMPLETION-COORDINATION.md"
+  ],
+  "NOT READY": [
+   "SPS2-C4-REPAIR-IMPLEMENTATION-20261017-1640.md",
+   "SPS2-C5-IMPLEMENTATION-REVIEW-20261017-1656.md",
+   "SPS2-COMPLETION-AGENT-PROMPTS-20261017.md",
+   "SPS2-COMPLETION-C13-CODEX-DOC-CONSISTENCY-AUDIT-20261017-1249.md",
+   "SPS2-COMPLETION-C9-CODEX-P10-READINESS-AUDIT-20261017-1243.md",
+   "SPS2-DELEGATED-DECISIONS-20261017.md",
+   "SPS2-PHASE4-RELEASE-VERIFICATION-20261016-084449.md",
+   "SPS2-USER-DECISION-PACKET-ADDENDUM-20261017.md"
+  ],
+  "BLOCKED_USER": [
+   "SPS2-COMPLETION-AGENT-PROMPTS-20261017.md",
+   "SPS2-COMPLETION-COORDINATION.md",
+   "SPS2-PROJECT-COMPLETION-BACKLOG-20261017.md",
+   "SPS2-USER-DECISION-PACKET-20261017-130047.md"
+  ],
+  "APPROVED": [
+   "SPS2-COMPLETION-C13-CODEX-DOC-CONSISTENCY-AUDIT-20261017-1249.md",
+   "SPS2-COMPLETION-C8-CODEX-GOVERNANCE-AUDIT-20261017-1239.md",
+   "SPS2-DELEGATED-DECISIONS-20261017.md",
+   "SPS2-FINAL-END-TO-END-READINESS-20261016-091500.md",
+   "SPS2-FINAL-EXECUTION-MISSION-20261016-124100.md",
+   "SPS2-FINAL-IMPLEMENTATION-PASS-HANDOFF-20261017-083157.md",
+   "SPS2-INDEPENDENT-QA-CLAUDE-FINDINGS-20261017-100309.md",
+   "SPS2-INDEPENDENT-REVIEW-OF-MASTER-MISSION-20261017-072036.md",
+   "SPS2-INTEGRATION-PASS-FINAL-20261017-083701.md",
+   "SPS2-MASTER-IMPLEMENTATION-AND-REVIEW-PACKAGE-20261017-002434.md",
+   "SPS2-MASTER-RESUME-BASELINE-20261017-001717.md",
+   "SPS2-P10-GATE-COMPLETION-20261017.md",
+   "SPS2-PHASE3-DECISION-EXECUTION-20261016-082741.md",
+   "SPS2-PHASE4-RELEASE-VERIFICATION-20261016-084449.md",
+   "SPS2-REMEDIATION-PLAN-REVIEW-CLAUDE-20261017-101824.md",
+   "SPS2-ROUND12-EXECUTION-20261016-170620.md",
+   "SPS2-ROUND13-HOME-IMPLEMENTATION-20261016-171848.md",
+   "SPS2-ROUND23-GOVERNANCE-DECISION-PACKAGE-20261016-194327.md",
+   "SPS2-ROUND27-GOVERNANCE-DECISION-READINESS-20261016-232543.md",
+   "SPS2-ROUND6-AUTHORIZED-IMPLEMENTATION-20261016-125200.md",
+   "SPS2-SECOND-PASS-INTEGRATION-FINAL-20261017-092558.md",
+   "SPS2-SECOND-PASS-TODO-LEDGER-20261017-084905.md",
+   "SPS2-TECHNICAL-COMPLETION-MASTER-TODO-20261017-084925.md",
+   "SPS2-USER-DECISION-PACKET-20261017-130047.md"
+  ]
+ }
+}
