@@ -64,3 +64,9 @@ Read this to understand the current project context, completed tasks, and next s
 - install.sh re-pinned in legacy manifest (self-hash d88a1e8d…)
 - Commits: 999fa65, 6ebd2d8, d2cafd3 — battery 1104 OK, sps2 80/80
 - Skill best-practices verified: all SKILL.md < 500 lines, descriptions < 1536 chars
+
+## 2026-10-18 — Session 6b: cross-project lesson channel (user interview → build)
+- User decisions: command+auto-capture / git PR / approve-each / strict template
+- LESSONS.md + scripts/sps-lesson.sh (capture/send/review) shipped; law-checked
+- Manifest now 25 exceptions (sps-lesson.sh pinned), self-hash a384b6a8…
+- Commit d37942d — battery 1105 OK, sps2 80/80
