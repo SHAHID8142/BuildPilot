@@ -118,6 +118,24 @@ class TestLawCheckerNegativeSuite(unittest.TestCase):
         self.assertEqual(rc, 1)
         self.assertIn("junk file", err)
 
+    def test_missing_new_dod_law_fires(self) -> None:
+        def mutate(tmp: Path) -> None:
+            p = tmp / "skill/sps/SECTION-DOD.md"
+            p.write_text(p.read_text(encoding="utf-8").replace("Web/API hardening", "Web/API security"))
+
+        rc, err = _run_on_copy(mutate)
+        self.assertEqual(rc, 1)
+        self.assertIn("Web/API hardening", err)
+
+    def test_missing_copy_laws_fires(self) -> None:
+        def mutate(tmp: Path) -> None:
+            p = tmp / "skill/sps/DESIGN-GATE.md"
+            p.write_text(p.read_text(encoding="utf-8").replace("No padded copy", "No filler copy"))
+
+        rc, err = _run_on_copy(mutate)
+        self.assertEqual(rc, 1)
+        self.assertIn("No padded copy", err)
+
     def test_missing_g2_gate_fires(self) -> None:
         def mutate(tmp: Path) -> None:
             p = tmp / "skill/sps/COMPANY-LIFECYCLE.md"

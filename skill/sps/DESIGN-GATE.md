@@ -111,6 +111,36 @@ Concrete, checkable rules — an agent that skips these produces the
 - Undo toast for deletions; confirm modals only for permanent destruction.
 - Data tables: numeric columns right-aligned, text left-aligned, ellipsis
   + hover-title for overflow; nav labels 1–2 words.
+- React error boundaries (or framework equivalent) around every async
+  surface so one failing widget never whites out the page.
+- Respect browser text scaling (no px-locked text; zoom to 200% stays
+  usable); `lang` attribute on `<html>`; PWA completeness when the project
+  is installable: favicon set + apple-touch-icon + `manifest.json` +
+  offline fallback page.
+
+## Copy laws (marketing/landing copy)
+
+An agent that ignores these writes "AI copy" — long, hedging, feature-first.
+- **Above-the-fold sells**: hero states what the product does + for whom in
+  ≤2 lines; the visitor needs zero scrolling to know if they're in the
+  right place.
+- **One target buyer**: copy speaks to one persona, not "everyone"; if the
+  page serves two, split the page.
+- **Benefits before features**: every feature claim is tied to the outcome
+  the buyer gets ("Ship 2× faster", not "CI parallelization engine").
+- **Social proof next to claims**: a strong claim without adjacent proof
+  (number, testimonial, logo, case link) reads as marketing air — pair them.
+- **Handle objections before the CTA**: pricing, trust, effort, and risk
+  questions are answered above or beside the primary CTA, not in a FAQ
+  3 screens down.
+- **CTAs start with an action verb and state the outcome** ("Start free —
+  no card", "Book my demo"); never "Submit"/"Learn more" as the primary.
+- **Scannable**: short sentences; one idea per section; 1–3 bullets per
+  list, never walls of text; body copy supports the headline instead of
+  repeating it.
+- **No padded copy**: no generic openers ("In today's fast-paced world…"),
+  no filler paragraphs, no restating the headline as the first body line.
+  Every sentence earns its place or is deleted.
 
 ## Anti-slop ban list (extends law 7)
 

@@ -91,27 +91,96 @@ For JSX / TypeScript components:
 27. **Dependency health:** before a section ships, `npm audit` (or the
     stack's equivalent) runs; new highs are fixed or explicitly accepted
     by the user in the approval packet.
+28. **Data-layer correctness:** monetary values stored as integers in the
+    smallest unit (cents, never floats); timestamps stored in UTC (convert
+    at the display edge); foreign-key constraints declared with explicit
+    cascade rules (`ON DELETE`/`ON UPDATE` stated, not implied); multi-step
+    writes wrapped in a transaction (partial failure leaves no half-state).
+29. **Web/API hardening:** parameterized SQL only (no string-built queries);
+    tight CORS (explicit origin allowlist, never `*` with credentials);
+    CSRF protection on cookie-authenticated state-changing routes (SameSite
+    is a layer, not the fix); rate limiting on auth + public write
+    endpoints; webhook routes verify signatures before processing;
+    user-supplied URLs are SSRF-guarded (no private/loopback/link-local
+    fetches); prompts that embed user input are delimited and sanitized
+    (injection-safe).
+30. **Session & auth hygiene:** cookies set `HttpOnly` + `Secure` + `SameSite`;
+    session tokens expire and refresh tokens rotate on use; passwords hashed
+    with a modern KDF (bcrypt/argon2, never SHA/plain); user email verified
+    before account actions that can affect others; MFA offered for admin
+    accounts when the platform supports it.
+31. **Production posture:** debug/toolbars off in production builds; security
+    headers set (`Strict-Transport-Security`, `Content-Security-Policy`,
+    `X-Frame-Options`/`frame-ancestors`); log scrubbing — no tokens,
+    passwords, or personal data in log lines; sensitive data never in URLs.
+32. **Dependency & source hygiene:** lockfile pinned (exact versions
+    committed); unused dependencies removed; no `console.log` or TODO
+    markers left in shipped code; no stubbed functions pretending to work
+    (a stub is either implemented or explicitly gated behind a feature flag);
+    no deprecated framework APIs.
+33. **Env validation on startup:** required env vars are validated at boot
+    with named errors (fail fast, not mid-request).
+34. **Health endpoint:** the app exposes `/health` (or stack equivalent)
+    returning dependency status; graceful shutdown drains in-flight
+    requests; background jobs retry with exponential backoff and are
+    idempotent (webhook retries never double-apply).
+35. **Privacy & legal surfaces (public-facing projects):** cookie consent
+    banner when any non-essential cookie/tracker loads; Privacy Policy and
+    Terms pages exist and name the actual data collected; self-serve
+    account deletion flow when the app has user accounts (regulatory
+    baseline, and it's cheaper to build than to retrofit).
+36. **API contract:** public/API routes are documented (OpenAPI/Swagger or
+    equivalent in-repo doc) and versioned (`/api/v1/…`) so consumers
+    survive changes; breaking changes bump the version, never silently
+    reshape an existing route.
+37. **Hook & format automation:** pre-commit hooks run lint/format so the
+    cleanup gate is mechanical, not aspirational; an automated formatter
+    (Prettier/ruff/stack equivalent) is configured and its output committed.
+38. **Uploads scrubbed & DB tenancy:** uploaded images strip EXIF/GPS
+    metadata before storage; multi-tenant data enforces row-level security
+    (or an equivalent scoping check in every query path) — one tenant's ID
+    in a URL must never read another tenant's row.
+39. **security.txt:** production sites expose `/.well-known/security.txt`
+    (contact for security reports) — a one-file signal that reports are
+    welcome and where they go.
 
 ---
 
 ## 6. Deploy-Readiness (per section)
 
-28. Build passes for the deploy target (e.g. `vercel build` / framework build).
-29. Env vars used are documented in `./.sps/handoff.md` (never committed).
-30. Section works on a preview/deploy URL, not only localhost.
+40. Build passes for the deploy target (e.g. `vercel build` / framework build).
+41. Env vars used are documented in `./.sps/handoff.md` (never committed).
+42. Section works on a preview/deploy URL, not only localhost.
+43. **Observability wired before handoff:** structured JSON logging (one
+    line per request/exception, parseable); frontend + backend error
+    tracking reporting to a sink the owner actually sees (Sentry-class or
+    the platform's built-in); basic performance monitoring on the critical
+    routes. A crash on a real user's device must reach the owner, not
+    vanish.
+44. **Uptime & alerts:** external uptime monitoring on the production URL
+    with an alert channel the owner checks (email/chat) — "the site is
+    down" must be discovered by an alert, never by the owner's customer.
+45. **Resilience posture matches the platform:** traffic/HA needs were
+    asked at kickoff (expected traffic, uptime target); if the platform
+    runs multiple instances, a load balancer sits in front; reverse
+    proxy timeouts are set (no 60s hangs holding workers); feature flags
+    gate any high-risk change so rollback is a toggle, not a redeploy.
+46. **Spending guardrails:** cloud/AI API accounts used by the project have
+    hard spending limits/budget alerts set — an integration bug can cost
+    real money overnight.
 
 ---
 
 ## 7. Memory Updates
 
-31. `handoff.md`, `content-model.md`, `section-registry.md` updated.
-32. Any design pivots written to `design-system.md` + `changelog-sps.md`.
+47. `handoff.md`, `content-model.md`, `section-registry.md` updated.
+48. Any design pivots written to `design-system.md` + `changelog-sps.md`.
 
 ---
 
 ## 8. Approval Gate & Manual Check Loop
 
-33. Send the appropriate Tier 1 or Tier 2 approval packet ([APPROVAL-PACKETS.md](APPROVAL-PACKETS.md)) before proceeding to the next section (unless in batch approval mode).
-34. **Manual check loop:** the user checks the section live (storefront + CMS admin).
+49. Send the appropriate Tier 1 or Tier 2 approval packet ([APPROVAL-PACKETS.md](APPROVAL-PACKETS.md)) before proceeding to the next section (unless in batch approval mode).
+50. **Manual check loop:** the user checks the section live (storefront + CMS admin).
     - On feedback: fix items, re-run verification, resubmit.
     - Only after the user confirms OK does the next section start.

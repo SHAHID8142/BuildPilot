@@ -162,3 +162,17 @@ templates. A correct template with a broken render is a FAIL.
 - **Deployment mode is fail-closed:** run audits with `--mode deployment` in
   handoffs; CRITICAL findings exit non-zero and must be fixed before the
   handoff checkpoint, not waived.
+- **Share & AI-discovery surfaces:** every indexable page ships a
+  purpose-designed social share image (og:image sized 1200×630, not a reused
+  logo); external links that open in a new tab carry
+  `rel="noopener noreferrer"`; an `llms.txt` at the site root describes the
+  site for AI crawlers (what the site is, key pages, contact) alongside
+  robots.txt/sitemap.xml.
+- **Search Console & off-page:** Google Search Console (or Bing Webmaster)
+  verification is part of delivery, not an afterthought — the verification
+  record and a first indexing check land in the handoff; a basic backlink
+  strategy (directories, partner links, content worth citing) is proposed
+  in the lifecycle plan for client jobs rather than left unstated.
+- **Email deliverability (when the project sends email):** SPF, DKIM, and
+  DMARC DNS records are set and verified before launch — unauthenticated
+  mail lands in spam and burns the domain's reputation.

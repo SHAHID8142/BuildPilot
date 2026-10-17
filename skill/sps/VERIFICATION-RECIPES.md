@@ -85,8 +85,30 @@ Check:
 - no N+1 query patterns in list/detail views (grep loops containing queries)
 - no unbounded queries (missing LIMIT/pagination on user-facing lists)
 - no repeated identical API calls from the client (dedupe/cache)
+- expensive queries cached server-side where a repeat pattern exists
+- API payloads compressed (gzip/brotli at the server/proxy tier)
+- DB connections pooled (no per-request connect storms under load)
+- heavy work (emails, thumbnails, exports) runs in a background queue,
+  not inside the request cycle
 - long-running handlers can't pile up (timeouts on outbound calls)
 - service-down behavior: app degrades with a user-safe message, not a hang
+- client loops debounced (input/search handlers don't fire per keystroke);
+  re-renders driven by state changes, not whole-list recompute
+
+## Test-isolation & pre-deploy testing
+
+Check:
+- system time is mocked in tests that touch dates/deadlines (no flaky
+  midnight/timezone tests)
+- third-party APIs are mocked/stubbed in the test suite (no live network
+  in CI); contract smoke against the real API is a separate, explicit step
+- E2E smoke (real browser or full-stack request round-trip) passes before
+  any deploy
+- load and stress pass before launch: expected peak traffic sustained with
+  headroom; the breaking point is known, not discovered in production
+- migration rollback tested (down-migration runs clean before the up is
+  trusted); backup restore rehearsed (point-in-time recovery proven once
+  per project, not assumed)
 
 ## Anti-hallucination review
 
@@ -112,6 +134,11 @@ Always state:
 Check:
 - dead code and unused imports from the slice
 - consistent naming and file split
+- no circular imports between modules (import graph is acyclic)
+- no `console.log` / debug statements or TODO/FIXME markers left in
+  shipped source
+- no stubbed functions pretending to be done (implemented or feature-flagged)
+- lockfile pinned and committed; unused dependencies pruned
 - markers for next agent
 - secrets not introduced
 - workspace hygiene (no duplicate assets)

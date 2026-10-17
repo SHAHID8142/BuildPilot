@@ -88,3 +88,6 @@ No section approval and no handoff for UI work unless the packet includes:
 - [ ] Asset budget respected or explicitly approved
 - [ ] Reduced-motion path exists if motion is present
 - [ ] Mobile path does not feel laggy by design intent
+- [ ] Build output is minified (JS + CSS) and code-split per route (no
+      single monolith bundle); served over HTTP/2+ so parallel small
+      files are an asset, not a liability

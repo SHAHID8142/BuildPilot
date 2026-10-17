@@ -121,7 +121,12 @@ if dod.is_file():
     dt = dod.read_text(encoding="utf-8", errors="replace")
     for marker in ("No duplicate logic", "No hardcoded environment config",
                    "Concurrency basics", "Error messages are user-safe",
-                   "Dependency health"):
+                   "Dependency health", "Data-layer correctness",
+                   "Web/API hardening", "Session & auth hygiene",
+                   "Production posture", "Observability wired before handoff",
+                   "Uptime & alerts", "Env validation on startup",
+                   "Privacy & legal surfaces", "API contract",
+                   "Spending guardrails"):
         if marker not in dt:
             v(f"section-dod: audit-gap item missing: {marker}")
 
@@ -132,7 +137,10 @@ if dg.is_file():
     for marker_text in ("tabular-nums", "60-30-10", "prefers-reduced-motion",
                         "Anti-slop ban list", "44×44px", "cubic-bezier",
                         "Bento", "prefers-color-scheme", "top-edge highlight",
-                        "Autofocus the first field"):
+                        "Autofocus the first field", "Copy laws",
+                        "Above-the-fold sells", "Benefits before features",
+                        "No padded copy", "error boundaries",
+                        "manifest.json", "offline fallback"):
         if marker_text not in dt:
             v(f"design-gate: craft law missing: {marker_text}")
 
