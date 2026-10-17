@@ -305,7 +305,7 @@ def s11(r):
     r.section("11. Legacy protection")
     helper = os.path.join(SPS2, "governance", "legacy_exceptions.py")
     p = subprocess.run(
-        [sys.executable, helper, "--root", REPO, "--baseline", "c11da27",
+        [sys.executable, helper, "--root", REPO, "--baseline", "c39694f",
          "--pathspec", "skills", "--pathspec", "scripts", "--pathspec",
          "plugins", "--pathspec", ".github", "--pathspec", "templates",
          "--pathspec", "README.md", "--pathspec", "CHANGELOG.md",

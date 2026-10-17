@@ -7,7 +7,7 @@
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPS2="$(cd "$HERE/.." && pwd)"
-REPO="$(cd "$SPS2/.." && pwd)"
+REPO="$(cd "$SPS2/../.." && pwd)"
 CHECK="$HERE/check_p4.py"
 EMOJI="$HERE/check_emoji.py"
 GATE="$SPS2/capability/promotion_gates.py"
@@ -87,7 +87,7 @@ for f in capability/promotion_gates.py capability/promotion-assessments.json \
          handoff/HANDOFF-P4.json; do
   [ -f "$SPS2/$f" ] && pass "present $f" || fail "missing $f"
 done
-[ -f "$REPO/AUDIT-PHASE-08-P4-PRODUCTION-PROMOTION.md" ] \
+[ -f "$REPO/docs/audits/AUDIT-PHASE-08-P4-PRODUCTION-PROMOTION.md" ] \
   && pass "present AUDIT-PHASE-08 report" || fail "missing AUDIT-PHASE-08 report"
 
 sect "2. Positive controls: only an explicit User approval enables promotion"
@@ -189,7 +189,7 @@ for c in reg["capabilities"]:
     v = c.get("verification", {})
     rel = (c.get("provenance") or {}).get("repository_relative_path") or ""
     impl = rel.endswith((".py", ".sh", ".js", ".ts")) and \
-        os.path.isfile(os.path.join(B, "..", rel))
+        os.path.isfile(os.path.join(B, "..", "..", rel))
     if v.get("state") == "VERIFIED" and not impl:
         print("VERIFIED_WITHOUT_IMPLEMENTATION: %s" % c["capability_id"])
     if v.get("state") == "VERIFIED" and not v.get("observed_result"):
@@ -322,7 +322,7 @@ else:
         print("LICENCE_OVERCLAIMS_VERIFICATION")
 
 # A tracked licence file must exist and the registry must agree with it.
-R = os.path.dirname(B)
+R = os.path.dirname(os.path.dirname(B))
 tracked = subprocess.run(['git', '-C', R, 'ls-files'], capture_output=True,
                          text=True).stdout.split()
 lic_files = [n for n in tracked
@@ -495,7 +495,7 @@ print(json.load(open('$REG'))['counts']['promoted'])")
 
 sect "10. Legacy protection"
 LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
-  --root "$REPO" --baseline c11da27 \
+  --root "$REPO" --baseline c39694f \
   --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
   --pathspec templates --pathspec README.md --pathspec CHANGELOG.md \
   --pathspec CATALOG.md --pathspec '*.sh' --pathspec '*.ps1' \
@@ -520,7 +520,7 @@ sect "12. Requirement, evidence and implementation records must be wired"
 python3 - "$SPS2" > "$TMP/wire" 2>&1 <<'PY'
 import json, os, sys
 B = sys.argv[1]
-R = os.path.dirname(B)
+R = os.path.dirname(os.path.dirname(B))
 req = json.load(open(B + '/requirements/P4-REQUIREMENTS.json'))
 ev = json.load(open(B + '/evidence/P4-EVIDENCE.json'))['records']
 ids = {e['evidence_id'] for e in ev}

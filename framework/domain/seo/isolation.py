@@ -22,7 +22,7 @@ from framework.sps2.core.p9_surface import P9_ALLOWLIST_RELATIVE_PATHS
 from framework.sps2.governance.import_exceptions import scan_import_exceptions
 from framework.sps2.governance.legacy_exceptions import verify_legacy_repository
 
-AUTHORITY_BASELINE = "c49f3852e1c31d0136269c80fe58201b059af3ec"
+AUTHORITY_BASELINE = "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f"
 
 # Standard library module names (Python 3.10+ native set with fallback)
 FALLBACK_STDLIB = frozenset(

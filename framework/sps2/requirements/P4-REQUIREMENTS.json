@@ -21,8 +21,8 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/capability/promotion_gates.py",
-          "sps2/capability/promotion-assessments.json"
+          "framework/sps2/capability/promotion_gates.py",
+          "framework/sps2/capability/promotion-assessments.json"
         ],
         "verified": true,
         "evidence": [
@@ -72,8 +72,8 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/tools/check_p4.py",
-          "sps2/tools/validate-p4.sh"
+          "framework/sps2/tools/check_p4.py",
+          "framework/sps2/tools/validate-p4.sh"
         ],
         "verified": true,
         "evidence": [
@@ -123,7 +123,7 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/capability/engine.py"
+          "framework/sps2/capability/engine.py"
         ],
         "verified": true,
         "evidence": [
@@ -163,7 +163,7 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/capability/engine.py"
+          "framework/sps2/capability/engine.py"
         ],
         "verified": true,
         "evidence": [
@@ -204,7 +204,7 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/capability/engine.py"
+          "framework/sps2/capability/engine.py"
         ],
         "verified": true,
         "evidence": [
@@ -247,8 +247,8 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/capability/registry.json",
-          "sps2/research/P2-CAPABILITY-EXTRACTION.json"
+          "framework/sps2/capability/registry.json",
+          "framework/sps2/research/P2-CAPABILITY-EXTRACTION.json"
         ],
         "verified": true,
         "evidence": [
@@ -290,7 +290,7 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/tools/check_emoji.py"
+          "framework/sps2/tools/check_emoji.py"
         ],
         "verified": true,
         "evidence": [
@@ -330,8 +330,8 @@
       "implementation": {
         "state": "COMPLETE",
         "refs": [
-          "sps2/handoff/HANDOFF-P3.json",
-          "sps2/security/INCIDENT-P3-001-CREDENTIAL-EXPOSURE.md"
+          "framework/sps2/handoff/HANDOFF-P3.json",
+          "framework/sps2/security/INCIDENT-P3-001-CREDENTIAL-EXPOSURE.md"
         ],
         "verified": true,
         "evidence": [

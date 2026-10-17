@@ -1,7 +1,7 @@
 {
   "schema": "sps2.p10-p9-import-exception-manifest/v1",
   "decision_id": "DEC-7302",
-  "baseline_commit": "c49f3852e1c31d0136269c80fe58201b059af3ec",
+  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
   "exception_count": 4,
   "exceptions": [
     {

@@ -348,7 +348,7 @@ def _repo_root() -> str:
     path. Matches framework/sps2/tools/seo_audit.py's Path(__file__).resolve() form.
     """
     here = os.path.dirname(os.path.realpath(__file__))  # <repo>/framework/sps2/tools
-    return os.path.dirname(os.path.dirname(here))  # <repo>
+    return os.path.dirname(os.path.dirname(os.path.dirname(here)))  # <repo>
 
 
 def _ensure_importable() -> None:

@@ -14,7 +14,7 @@ from typing import Any
 MANIFEST_RELATIVE_PATH = "framework/sps2/governance/p10-p9-import-exception-manifest.json"
 EXPECTED_SCHEMA = "sps2.p10-p9-import-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7302"
-EXPECTED_MANIFEST_SHA256 = "e5c2fcf5af18ba57a54440dfdb945a977fa344654dbf1f5fd70accc88f05ff9a"
+EXPECTED_MANIFEST_SHA256 = "ba0ce08bbad63224595b1bd1a1acedde66b30062be6680d25a5359bd745df819"
 TOP_LEVEL_FIELDS = {
     "schema",
     "decision_id",

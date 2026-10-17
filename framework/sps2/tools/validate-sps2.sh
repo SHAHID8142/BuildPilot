@@ -11,7 +11,7 @@ set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPS2="$(cd "$HERE/.." && pwd)"
-REPO="$(cd "$SPS2/.." && pwd)"
+REPO="$(cd "$SPS2/../.." && pwd)"
 CHECK="$HERE/check_sps2.py"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[1;34m'
@@ -207,7 +207,7 @@ sect "9. Legacy protection"
 [ -f "$SPS2/legacy/MANIFEST.md" ] && pass "legacy manifest present" || fail "legacy manifest missing"
 LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
   --root "$REPO" \
-  --baseline c49f3852e1c31d0136269c80fe58201b059af3ec \
+  --baseline c39694fedd34b0b0e9fa91d24ac543d21ad52c9f \
   --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
   --pathspec install.sh --pathspec install.ps1 --pathspec uninstall.sh \
   --pathspec uninstall.ps1 --pathspec get-sps.sh --pathspec get-sps.ps1 2>&1)"

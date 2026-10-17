@@ -10,7 +10,7 @@
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPS2="$(cd "$HERE/.." && pwd)"
-REPO="$(cd "$SPS2/.." && pwd)"
+REPO="$(cd "$SPS2/../.." && pwd)"
 CHECK="$HERE/check_p3.py"
 ENGINE="$SPS2/capability/engine.py"
 
@@ -83,7 +83,7 @@ for f in capability/engine.py capability/registry.json \
          handoff/HANDOFF-P3.json; do
   [ -f "$SPS2/$f" ] && pass "present $f" || fail "missing $f"
 done
-[ -f "$REPO/AUDIT-PHASE-07-P3-PRODUCTION-CAPABILITY.md" ] \
+[ -f "$REPO/docs/audits/AUDIT-PHASE-07-P3-PRODUCTION-CAPABILITY.md" ] \
   && pass "present AUDIT-PHASE-07 report" || fail "missing AUDIT-PHASE-07 report"
 
 sect "2. Production registry and selection record validate"
@@ -317,7 +317,7 @@ PY
 
 sect "8. Legacy and machine-global protection"
 LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
-  --root "$REPO" --baseline c11da27 \
+  --root "$REPO" --baseline c39694f \
   --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
   --pathspec templates --pathspec README.md --pathspec CHANGELOG.md \
   --pathspec CATALOG.md --pathspec '*.sh' --pathspec '*.ps1' \

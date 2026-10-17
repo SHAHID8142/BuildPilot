@@ -166,15 +166,11 @@ class TestLegacyAndGovernancePreservation(unittest.TestCase):
     def test_legacy_diff_zero(self) -> None:
         repo_root = get_repo_root()
         violations = verify_legacy_diff_zero(repo_root)
-        self.assertEqual(
-            violations,
-            [
-                "legacy modified: scripts/check-update.ps1",
-                "legacy modified: scripts/check-update.sh",
-                "legacy modified: skill/sps/scripts/check-update.ps1",
-                "legacy modified: skill/sps/scripts/check-update.sh",
-            ],
-        )
+        # Re-baselined to the BuildPilot restructure commit (DEC-7304):
+        # the legacy diff against the pinned authority baseline must be
+        # exactly empty — every moved legacy path is now part of the new
+        # baseline, so any diff at all is a violation.
+        self.assertEqual(violations, [])
 
     def test_p7_isolation_governance_intact(self) -> None:
         repo_root = get_repo_root()

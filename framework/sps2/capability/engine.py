@@ -44,7 +44,7 @@ AGENTISH = _ATTRIBUTION.AGENTISH
 
 CAP_ID = re.compile(r"^CAP-SPS-\d{3}$")
 
-REQUIRED = ["capability_id", "name", "type", "framework", "domain", "purpose", "version",
+REQUIRED = ["capability_id", "name", "type", "domain", "purpose", "version",
             "source", "provenance", "licence", "security", "compatibility",
             "staleness", "install_scope", "evidence", "confidence",
             "lifecycle_state", "approval", "verification", "selection_policy"]

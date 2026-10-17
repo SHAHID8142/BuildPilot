@@ -9,7 +9,7 @@
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SPS2="$(cd "$HERE/.." && pwd)"
-REPO="$(cd "$SPS2/.." && pwd)"
+REPO="$(cd "$SPS2/../.." && pwd)"
 CHECK="$HERE/check_p2.py"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; BLUE='\033[1;34m'
@@ -65,7 +65,7 @@ for f in research/P2-ECOSYSTEM-MAP.md research/P2-COMPARATIVE-AUDIT.md \
          handoff/HANDOFF-P2.json; do
   [ -f "$SPS2/$f" ] && pass "present $f" || fail "missing $f"
 done
-[ -f "$REPO/AUDIT-PHASE-06-P2-CAPABILITY-INTELLIGENCE.md" ] \
+[ -f "$REPO/docs/audits/AUDIT-PHASE-06-P2-CAPABILITY-INTELLIGENCE.md" ] \
   && pass "present AUDIT-PHASE-06 report" || fail "missing AUDIT-PHASE-06 report"
 
 sect "2. Research records validate"
@@ -202,7 +202,7 @@ PY
 [ -z "$EMJ" ] && pass "no emoji in any sps2 file including research" || fail "emoji found: $EMJ"
 
 LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
-  --root "$REPO" --baseline c11da27 \
+  --root "$REPO" --baseline c39694f \
   --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
   --pathspec templates --pathspec README.md --pathspec CHANGELOG.md \
   --pathspec CATALOG.md --pathspec '*.sh' --pathspec '*.ps1' \

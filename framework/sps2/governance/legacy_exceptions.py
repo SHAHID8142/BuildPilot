@@ -17,7 +17,7 @@ EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged).
-EXPECTED_MANIFEST_SHA256 = "052a606faee89ee49cf0e4601b9637d885b5c33ef8c9e462f126c66b1952bbea"
+EXPECTED_MANIFEST_SHA256 = "59cdc23fba53d383d3c58b21bad34c946eff1ad5542f747b0732de7f3d6c6551"
 TOP_LEVEL_FIELDS = {
     "schema",
     "decision_id",

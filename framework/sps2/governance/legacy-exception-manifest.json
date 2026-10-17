@@ -1,12 +1,12 @@
 {
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
-  "baseline_commit": "c49f3852e1c31d0136269c80fe58201b059af3ec",
+  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
   "exception_count": 8,
   "exceptions": [
     {
       "path": "get-sps.ps1",
-      "expected_blob": "27bb2cc52957e00ca0d2d2ecac1cd23ba893bcad",
+      "expected_blob": "8d2f3f6467de6d5a0356823d953bb6713452dbbc",
       "expected_mode": "100644",
       "sha256": "3fb777c1fd7bf0d85646a149d096a10662b5486435eb61d90446508cd79e8f98",
       "authorization": "DEC-7201",
@@ -14,7 +14,7 @@
     },
     {
       "path": "get-sps.sh",
-      "expected_blob": "44cb088d22c4fb030e6535811c8a02c4a8f29e51",
+      "expected_blob": "3d693595c3fec680b3e99745c00592727f1ae368",
       "expected_mode": "100755",
       "sha256": "3749a5fdff0cdce7db9feb378a08fa218bed8c9d155049d32b3ec4ba0bbf6b4a",
       "authorization": "DEC-7201",
@@ -22,7 +22,7 @@
     },
     {
       "path": "scripts/bootstrap-sps.sh",
-      "expected_blob": "f6c9d1bf0664eed155e1b706b5b64de5463d8c1f",
+      "expected_blob": "8d148a159dbe1c880e87f71be3a69817062aa09b",
       "expected_mode": "100755",
       "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
       "authorization": "DEC-7201",
@@ -30,7 +30,7 @@
     },
     {
       "path": "scripts/sps-update.sh",
-      "expected_blob": "b0e5b8a88480d9cec48b7b03426ed0ea05e4d0a8",
+      "expected_blob": "262940c82f776b59bdb66454228fd77c74229275",
       "expected_mode": "100755",
       "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
       "authorization": "DEC-7201",
@@ -38,7 +38,7 @@
     },
     {
       "path": "scripts/update-sps.ps1",
-      "expected_blob": "74025aaebc098c6ca989dbdcaf50977f7e63ff20",
+      "expected_blob": "097d570cfe49875b99a81a40c4826e395e567a29",
       "expected_mode": "100644",
       "sha256": "a7aa9869ff6feadcafee1f15518471e8a0940307242542ff6ec89b126e96e702",
       "authorization": "DEC-7201",
@@ -46,7 +46,7 @@
     },
     {
       "path": "skill/sps/scripts/bootstrap-sps.sh",
-      "expected_blob": "f6c9d1bf0664eed155e1b706b5b64de5463d8c1f",
+      "expected_blob": "8d148a159dbe1c880e87f71be3a69817062aa09b",
       "expected_mode": "100755",
       "sha256": "6c04e3336935a9e42012ea6c60c89dd35a6d3e43eccfc15b3634384c81763197",
       "authorization": "DEC-7201",
@@ -54,7 +54,7 @@
     },
     {
       "path": "skill/sps/scripts/sps-update.sh",
-      "expected_blob": "b0e5b8a88480d9cec48b7b03426ed0ea05e4d0a8",
+      "expected_blob": "262940c82f776b59bdb66454228fd77c74229275",
       "expected_mode": "100755",
       "sha256": "d52a6a75117685315a51293fe7e574cb997155df971f5bbc2cb9194bb63856da",
       "authorization": "DEC-7201",
@@ -62,7 +62,7 @@
     },
     {
       "path": "skill/sps/scripts/update-sps.ps1",
-      "expected_blob": "74025aaebc098c6ca989dbdcaf50977f7e63ff20",
+      "expected_blob": "097d570cfe49875b99a81a40c4826e395e567a29",
       "expected_mode": "100644",
       "sha256": "a7aa9869ff6feadcafee1f15518471e8a0940307242542ff6ec89b126e96e702",
       "authorization": "DEC-7201",

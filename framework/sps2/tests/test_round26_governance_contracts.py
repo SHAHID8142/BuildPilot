@@ -20,7 +20,7 @@ from framework.sps2.governance.decision_identifiers import (
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-BASELINE = "c49f3852e1c31d0136269c80fe58201b059af3ec"
+BASELINE = "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f"
 
 
 def canonical_json(value: object) -> bytes:
