@@ -79,3 +79,13 @@
 - Machine check that every command in USER-GUIDE.md / README.md / SKILL.md
   exists in scripts/ with matching flags (docs can silently rot otherwise).
 - Found in hardening gap-scan 2026-10-18.
+
+---
+
+## T-31 (queued): Product-verification gate
+- Section DoD gains "prove it runs": run the app/tests where applicable,
+  screenshot for UI sections; proof lands in the approval packet so the user
+  sees the working thing, not a claim about it.
+- Motivation: BuildPilot verifies process/code rules, not that the built
+  product actually works — the gap identified in the self-build simulation
+  (2026-10-18). User-approved.
