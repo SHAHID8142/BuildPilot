@@ -108,3 +108,16 @@
 ## T-25 (amended): fold in ECC AgentShield attack-surface checklist
 - Secrets CI gate scope extended: also scan hooks configs, MCP configs,
   permissions files for prompt-injection/exfil patterns. Source: ECC review.
+
+---
+
+## T-34 (queued): Self-verification loop + fresh-context review law
+- Karpathy-loop adoption: before any "task complete" claim, the agent must
+  run the relevant checkers/validators itself and attach the output —
+  claiming done with unverified work is a law violation (checked at
+  handoff; HANDOFF-CHECKPOINT.md gains the requirement).
+- ECC adoption: fresh-context review becomes law in SECTION-DOD.md — every
+  section gets a reviewer agent that did not author it (already practiced;
+  now enforceable).
+- Source: Karpathy agent-loop/verifiability + ECC review, user-approved
+  2026-10-18.
