@@ -48,11 +48,31 @@ first use; conflict bans below still apply regardless of origin.
 | Discovery | `grill-me` | SPS discovery questions | PROFILE-SCOPING.md |
 | Surgical behavior | `karpathy-guidelines` | — | CONTEXT-EFFICIENCY.md |
 | Hallucination gate | `verification-before-completion` | `fact-check` | ANTI-HALLUCINATION.md |
-| Token efficiency | `caveman` (opt-in lite) | `context-mode` (Claude Code only) | CONTEXT-EFFICIENCY.md |
+| Token efficiency | `caveman` (opt-in lite) | `context-mode` (Claude Code only) | CONTEXT-EFFICIENCY.md + CONTEXT-BUDGET.md |
 | Security | Trail of Bits `differential-review` + `static-analysis` (Claude) | host security review | security checks in SECTION-DOD |
 | CMS engine | **`sps-cms` (bundled, synced by installer) — mandatory** | — | (required; not optional) |
 | Logos | `theSVG` | official brand source | LOGO-SOURCES.md |
 | Docs / library APIs | Context7 MCP when available | — | official docs fetch |
+
+## Token-consumption controls (always on)
+
+1. **Context budget on `.sps/`** ([CONTEXT-BUDGET.md](CONTEXT-BUDGET.md)) —
+   biggest single saver: a resuming agent reads `handoff.md` (≤150 lines),
+   not an unbounded ledger. Doctor enforces.
+2. **Narrow reads** (CONTEXT-EFFICIENCY.md): grep + line-offset reads, cite
+   `file:line`, filter tool output (`| tail`/`| grep`) before it enters the
+   conversation.
+3. **MCP servers worth running** (install only via the Tool Consent gate):
+   - **Context7** — library docs pulled on demand instead of reading vendored
+     docs or guessing (already wired by the installer when claude CLI exists).
+   - **Serena** (`uvx --from git+https://github.com/oraios/serena serena`)
+     — symbol-level code retrieval; returns the function, not the file.
+     Recommended for repos >50k lines.
+   - A **git MCP** (e.g. `@modelcontextprotocol/server-git`) when the agent
+     makes many small git queries — avoids repeated `git log/show` output
+     dumps. Skip if bash usage is already disciplined.
+4. **Never** load a full specialist skill for a one-line change in its
+   domain; use the fallback column instead.
 
 ## Conflict ban
 

@@ -117,6 +117,35 @@ if [[ -n "$PROJECT" && -d "$PROJECT" ]]; then
       info "$f missing"
     fi
   done
+
+  # Context-budget checks (CONTEXT-BUDGET.md): .sps hot files must stay small
+  # enough that a resuming agent never burns a session re-reading history.
+  echo ""
+  echo -e "${BOLD}Context budget (.sps hot files):${NC}"
+  budget_fail=0
+  check_budget() { # file max_lines max_bytes
+    local f="$PROJECT/.sps/$1" maxl=$2 maxb=$3 lines=0 bytes=0
+    [[ -f "$f" ]] || return 0
+    lines=$(wc -l < "$f" | tr -d ' ')
+    bytes=$(wc -c < "$f" | tr -d ' ')
+    if (( bytes > maxb * 150 / 100 || lines > maxl * 150 / 100 )); then
+      bad ".sps/$1 OVER BUDGET: ${lines}L/${bytes}B (budget ${maxl}L/${maxb}B) — archive old entries to .sps/archive/ (CONTEXT-BUDGET.md)"
+      budget_fail=$((budget_fail+1))
+    elif (( bytes > maxb * 90 / 100 || lines > maxl * 90 / 100 )); then
+      warn ".sps/$1 near budget: ${lines}L/${bytes}B (budget ${maxl}L/${maxb}B) — plan an archive pass"
+    else
+      ok ".sps/$1 ${lines}L/${bytes}B within budget"
+    fi
+  }
+  check_budget handoff.md 150 8192
+  check_budget agent.md 60 4096
+  check_budget profile.md 120 8192
+  check_budget plan.md 300 24576
+  check_budget task-queue.md 80 6144
+  check_budget audit-report.md 200 16384
+  if (( budget_fail > 0 )); then
+    bad "$budget_fail .sps file(s) over context budget — archive per CONTEXT-BUDGET.md rule 2"
+  fi
 fi
 
 echo ""

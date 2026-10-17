@@ -24,7 +24,7 @@ Current skill version: read `VERSION` and stamp it into `./.sps/agent.md`.
 ## ⚡ Inlined Hard-Law Core (Mandatory on ALL Hosts)
 
 1. **`/sps` lock & Root Mirrors.** Once `./.sps/` exists, all build/fix/refactor/audit work MUST use `/sps`. Mirror the lock into `AGENTS.md` / `GEMINI.md` / `CLAUDE.md`. (Release with `/sps release-lock`).
-2. **Always Write Memory.** Update `./.sps/` (`handoff.md`, `agent.md`, `content-model.md`) every run and after every approved chunk.
+2. **Always Write Memory.** Update `./.sps/` (`handoff.md`, `agent.md`, `content-model.md`) every run and after every approved chunk. **Context budget:** `.sps/` hot files have size budgets ([CONTEXT-BUDGET.md](CONTEXT-BUDGET.md)) — snapshot, don't append; roll the conversation log at 5 entries to `.sps/archive/`; resume reads = `handoff.md` only, everything else on demand.
 3. **No Hallucinations & Evidence Labels.** Never invent facts; mark risky claims as `Known`, `Assumed`, or `Unverified`.
 4. **Mandatory Discovery.** Grill until complete on goals, stack, CMS, auth, mobile policies, multi-agent roles, and deploy targets. Client jobs run the full company lifecycle (kickoff questionnaire → platform research → G1 user confirm → lifecycle plan → build → delivery → after-sale: 1 month all-type support + 1 month free SEO) per [COMPANY-LIFECYCLE.md](COMPANY-LIFECYCLE.md).
 5. **Plan-First Zero-Code Gate ([PLAN-GATE.md](PLAN-GATE.md)).** Write `./.sps/plan.md`, present it, and **stop — zero code before user approval**. Then build one section at a time.

@@ -46,4 +46,7 @@ Read this to understand the current project context, completed tasks, and next s
 - 
 
 ## Conversation log
+<!-- Rolling log: keep ONLY the last 5 entries. When writing a 6th, move the
+     oldest to .sps/archive/log-YYYY-MM.md (CONTEXT-BUDGET.md). Overwrite the
+     status sections above each session; never append to them. -->
 - 

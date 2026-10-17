@@ -78,11 +78,11 @@
     },
     {
       "path": "scripts/sps-doctor.sh",
-      "expected_blob": "762c1c8a95b1199dbb7ba098f8ebbdcd953b5ceb",
+      "expected_blob": "3b83f8dd9d54b78dee8fbcd878c3e3c664df9fdd",
       "expected_mode": "100755",
-      "sha256": "95410fc43a8dd6e59625cfa728236f08bb9fb1caff7f446fb01526cfac1d2e30",
+      "sha256": "3b785c1fda2417cbc6bf5abc5096d41c4b0994d2a0e9d6e2efe4a88cf00b7654",
       "authorization": "DEC-7305",
-      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301."
+      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md)."
     },
     {
       "path": "install.sh",
@@ -167,10 +167,10 @@
     {
       "path": "skill/sps/scripts/sps-doctor.sh",
       "authorization": "DEC-7305",
-      "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended.",
-      "expected_blob": "762c1c8a95b1199dbb7ba098f8ebbdcd953b5ceb",
+      "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md).",
+      "expected_blob": "3b83f8dd9d54b78dee8fbcd878c3e3c664df9fdd",
       "expected_mode": "100755",
-      "sha256": "95410fc43a8dd6e59625cfa728236f08bb9fb1caff7f446fb01526cfac1d2e30"
+      "sha256": "3b785c1fda2417cbc6bf5abc5096d41c4b0994d2a0e9d6e2efe4a88cf00b7654"
     },
     {
       "path": "scripts/skill-search.sh",
