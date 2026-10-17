@@ -5,6 +5,10 @@
 #   bash install.sh                 # interactive confirm when TTY
 #   bash install.sh --yes           # non-interactive
 #   bash install.sh --agents claude-code,cursor --yes
+#   bash install.sh --agents '*' --yes   # every host in the skills CLI registry
+#                                        # (claude-code, cursor, codex, antigravity,
+#                                        # windsurf, opencode, goose, crush, trae,
+#                                        # junie, zed, openclaw, droid, qoder, …)
 #
 # Prefer one-command bootstrap:
 #   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
@@ -47,6 +51,24 @@ SYNC_PATHS=(
   "$HOME/.kiro/skills"
   "$HOME/.amp/skills"
   "$HOME/.github/skills"
+  "$HOME/.config/goose/skills"
+  "$HOME/.goose/skills"
+  "$HOME/.crush/skills"
+  "$HOME/.config/trae/skills"
+  "$HOME/.trae/skills"
+  "$HOME/.junie/skills"
+  "$HOME/.config/junie/skills"
+  "$HOME/.zed/skills"
+  "$HOME/.openclaw/skills"
+  "$HOME/.droid/skills"
+  "$HOME/.config/opencode/skills"
+  "$HOME/.qoder/skills"
+  "$HOME/.kilocode/skills"
+  "$HOME/.warp/plugins/skills"
+  "$HOME/.grok/skills"
+  "$HOME/.hermes/skills"
+  "$HOME/.autohand/skills"
+  "$HOME/.zeroclaw/skills"
 )
 
 CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -142,11 +164,19 @@ compute_total_steps() {
 build_agent_args() {
   AGENT_ARGS=()
   if [[ "$AGENTS" == "*" ]]; then
+    # Full registry of the `skills` CLI (vercel-labs/skills). `universal`
+    # last: it copies into ~/.agents/skills, which every other agent also
+    # reads, so per-agent links take precedence.
     AGENT_ARGS=(
       --agent "claude-code" --agent "cursor" --agent "codex"
       --agent "antigravity" --agent "antigravity-cli"
       --agent "windsurf" --agent "github-copilot" --agent "opencode"
       --agent "cline" --agent "roo" --agent "kiro-cli" --agent "amp"
+      --agent "goose" --agent "crush" --agent "trae" --agent "junie"
+      --agent "zed" --agent "openclaw" --agent "droid" --agent "qoder"
+      --agent "kilo" --agent "warp" --agent "devin" --agent "replit"
+      --agent "adal" --agent "augment" --agent "continue" --agent "grok"
+      --agent "openhands" --agent "rovodev" --agent "zcode"
       --agent "universal"
     )
     return

@@ -13,7 +13,7 @@ description: >
 
 # /sps (v4.1.0 Master Orchestrator)
 
-`/sps` is a capability-aware master workflow for **skills-compatible coding agents** (Claude, Cursor, Codex, Antigravity/Gemini, Windsurf, OpenCode).
+`/sps` is a capability-aware master workflow for **skills-compatible coding agents** — any host that reads the Agent Skills standard (`SKILL.md`): Claude Code, Cursor, Codex, Gemini CLI / Antigravity, Windsurf, OpenCode, GitHub Copilot, Cline, Roo Code, Kiro, Amp, Goose, Crush, TRAE, Junie, Zed, OpenClaw, Droid, Qoder, Warp, and 40+ more (full registry: `npx skills add --agent '*'`; dedicated adapters in [hosts/](hosts/), generic fallback for the rest).
 
 Read [METHOD-CARD.md](METHOD-CARD.md) first every session.
 
