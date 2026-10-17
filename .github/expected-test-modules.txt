@@ -6,6 +6,9 @@ framework.domain.cms.tests.test_publishing
 framework.domain.cms.tests.test_rbac
 framework.domain.cms.tests.test_ssrf_redirects
 framework.domain.cms.tests.test_xss_protection
+framework.domain.frontend.tests.test_content_slots
+framework.domain.frontend.tests.test_home_render
+framework.domain.frontend.tests.test_layout_registry
 framework.domain.seo.tests.test_audit
 framework.domain.seo.tests.test_cwv
 framework.domain.seo.tests.test_indexing
@@ -18,7 +21,12 @@ framework.domain.seo.tests.test_specialized
 framework.domain.seo.tests.test_structured_data
 framework.domain.seo.tests.test_url_taxonomy
 framework.sps2.tests.test_attribution_policy
+framework.sps2.tests.test_check_update_safety
+framework.sps2.tests.test_gen_law_test
+framework.sps2.tests.test_generated_tests
+framework.sps2.tests.test_law_checker
 framework.sps2.tests.test_learning
+framework.sps2.tests.test_p10_runtime_gate
 framework.sps2.tests.test_p17_endtoend
 framework.sps2.tests.test_p17_execution_gate_attribution
 framework.sps2.tests.test_p17_lifecycle
@@ -26,4 +34,6 @@ framework.sps2.tests.test_p17_pinning
 framework.sps2.tests.test_p17_security
 framework.sps2.tests.test_p5
 framework.sps2.tests.test_p7_zero_adapter_readiness
+framework.sps2.tests.test_round26_governance_contracts
 framework.sps2.tests.test_shell_validator_policy_contract
+framework.sps2.tests.test_updater_safety

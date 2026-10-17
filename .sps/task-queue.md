@@ -121,3 +121,31 @@
   now enforceable).
 - Source: Karpathy agent-loop/verifiability + ECC review, user-approved
   2026-10-18.
+
+---
+
+## T-35 (queued): Plain-language mode
+- When a project sets `language: plain` in .sps/agent.md, every gate message
+  (kickoff, G1, G2, approval packets, handoff) is rewritten to 8th-grade words
+  with a one-line "what you're deciding" summary. Default remains current
+  technical style. User-approved 2026-10-18.
+
+## T-36 (queued): Client-project bootstrap scaffold
+- /sps on a fresh project scaffolds .sps/, kickoff file, backup dir, and
+  CHEAT-SHEET.md link in one step; T-28's check_kickoff.py then verifies it
+  happened. User-approved 2026-10-18.
+
+## T-37 (queued): Weekly self-audit workflow
+- GitHub Actions weekly cron: validator battery + docs-drift + hygiene +
+  provenance; opens an issue only on drift. Makes the 2026-10-18 manual audit
+  recurring. User-approved 2026-10-18.
+
+## T-38 (queued, low priority): After-sale clock dashboard
+- Web dashboard for the 1-month support/SEO clocks (/sps status already shows
+  them). UI polish; build only if there's real demand. User-approved as
+  low-priority 2026-10-18.
+
+## T-39 (queued, low priority): Third-party skill auto-upgrade
+- NOT while T-29 provenance pinning is the safety mechanism — auto-upgrade
+  would undo tamper detection. Revisit only with a review-then-apply flow.
+  User-approved as deferred 2026-10-18.
