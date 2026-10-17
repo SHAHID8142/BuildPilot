@@ -1,75 +1,93 @@
-# BuildPilot (`/sps`)
+<div align="center">
 
-**Version:** 4.3.0 · **Repo:** `SHAHID8142/BuildPilot`
+# 🏗️ BuildPilot
 
-BuildPilot tells your coding agent **how to build a project step by step** — with
-memory, approvals, and (when you use a CMS) **storefront + admin controls
-together**.
+### Your AI agent writes code. BuildPilot makes it keep its promises.
 
-It works on **skills-compatible coding agents** — Claude Code, Cursor, Codex,
-Gemini CLI / Antigravity, Windsurf, OpenCode, GitHub Copilot, Cline, Roo Code,
-Kiro, Amp, Goose, Crush, TRAE, Junie, Zed, OpenClaw, and 30+ more (the full
-Agent Skills-standard registry).
-It does **not** work the same on every tool, and it is **not** for ChatGPT-style
-chatbots.
+**A foreman for coding agents** — Claude Code, Cursor, Codex, and 30+ more.
+
+**Version:** 4.3.0 · 1,236 tests · MIT · `SHAHID8142/BuildPilot`
+
+</div>
 
 ---
 
-## What is in this repository (two things, clearly separated)
+## The problem you've already lived
 
-| | The **skill** (`skill/`) | The **framework** (`framework/`) |
-|---|---|---|
-| What | Installable instructions your agent follows | A rulebook + referee that machine-checks agent work |
-| Use it | `curl … get-sps.sh \| bash`, then type `/sps` in any project | Not user-installable yet — under construction, see its own gate |
-| Status | ✅ Working, v4.3.0, 1,105 tests pass | 🚧 In progress — release gate NOT READY by design |
-| Formerly | `skills/` | `sps2/` + `domain/` |
+You've done this. Everyone has:
 
-The skill is what you use today. The framework is a stricter, machine-verified
-rebuild that agents must pass like an exam before work counts as done.
+```text
+YOU:      Build me a landing page with a contact form.
+
+AGENT:    On it! Building now...
+
+AGENT:    Done! ✅ I created 14 files, refactored your router,
+          upgraded three dependencies, and added a dark mode
+          toggle you didn't ask for.
+
+YOU:      ...I just wanted a landing page.
+
+AGENT:    (new session)  Sorry, what landing page?
+```
+
+The agent freelanced. It skipped your intent, invented scope, and remembered
+none of it. And "done" was just a word it said.
+
+**BuildPilot is the fix.** It's a skill your coding agent follows — a foreman
+that stands between your request and the agent's hands:
+
+```text
+YOU:      Build me a landing page with a contact form.
+
+AGENT:    Before I build anything, three questions:
+          1. What pages, exactly?          → you answer
+          2. Contact form → where does it send?  → you answer
+          3. CMS for editing text later?   → you answer
+
+          Here is the written plan. I stop here.
+
+          ⏸️  GATE 1 — nothing gets built until you approve.
+
+YOU:      Approved. (but change the headline style)
+
+AGENT:    Plan updated. Building page 1 of 5...
+
+          ⏸️  GATE 2 — section 1 done. Proof: [test output]
+          [screenshot] [CMS admin wired to it]. Approve to continue?
+```
+
+Same agent. Same model. Different behavior — because it's following a
+foreman, not vibes.
 
 ---
 
-**New here?** Read the [User Guide](USER-GUIDE.md) — everything a person does:
-install, approve work, the lesson loop, safety model. This README is the map;
-the guide is the walkthrough.
+## Install in 30 seconds
 
-## Quick start (one-command install)
-
-### Mac / Linux
+**Mac / Linux:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash -s -- --yes
 ```
 
-### Windows (PowerShell)
+**Windows (PowerShell):**
 
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.ps1))) -Yes
 ```
 
-### Check install
+Then open your project, type **`/sps`**, and answer the kickoff questions.
+That's the whole onboarding.
 
 ```bash
+# Check the install is healthy:
 bash ~/.sps/src/BuildPilot/scripts/sps-doctor.sh
-```
 
-### Update
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash -s -- --yes
-# or, after a session-start auto-check:
+# Update later (same one-liner, or):
 bash ~/.sps/src/BuildPilot/scripts/sps-update.sh --yes
-```
 
-### Uninstall
-
-```bash
+# Uninstall (add --keep-personal to save your project memory):
 bash ~/.sps/src/BuildPilot/uninstall.sh --yes
-# keep personal memory:
-bash ~/.sps/src/BuildPilot/uninstall.sh --keep-personal --yes
 ```
-
-Windows: `uninstall.ps1` / `uninstall.ps1 -KeepPersonal -Yes`
 
 > **Trust note:** the installer fetches ~27 third-party skills via `npx skills add`
 > with auto-yes, uses `StrictHostKeyChecking=accept-new` for its git operations
@@ -79,46 +97,125 @@ Windows: `uninstall.ps1` / `uninstall.ps1 -KeepPersonal -Yes`
 
 ---
 
-## One installer — everything included
+## The contract your agent signs
 
-There is a **single unified install**: `/sps` + the complete curated skill stack.
-No profiles, no minimal/full choice — one command installs everything:
+Every BuildPilot run is bound by five promises. Not suggestions — machine-
+checked laws, with a referee (`framework/`) that fails the agent's work if
+any promise is broken:
 
-- `/sps` orchestrator + plan gate + auto-update system
-- Design taste (`design-taste-frontend` v2 + `hallmark` + `impeccable`)
-- **`sps-cms`** (mandatory CMS engine)
-- React/performance (`vercel-react-best-practices`, `vercel-composition-patterns`)
-- Testing (`webapp-testing`), live verify + Lighthouse (`agent-browser`)
-- SEO + copy (`ai-seo`, `copywriting`, `fact-check`)
-- Deploy (`deploy-to-vercel`)
-- **`karpathy-guidelines`** + **`verification-before-completion`** + `grill-me` + `caveman`
-- Backend (`supabase`, `supabase-postgres-best-practices`, `prisma-*`)
-- Mobile (`vercel-react-native-skills`, `sleek-design-mobile-apps`)
+| # | The promise | What enforces it |
+|---|---|---|
+| 1 | **No code before a plan you approved.** | The plan gate — a hard stop, every time |
+| 2 | **Every section ends in proof, not claims.** | Product-proof gate: test output, screenshot, or boot log — attached, or the handoff fails |
+| 3 | **CMS sites ship whole.** | Storefront + admin controls land in the same section, or the section is marked incomplete |
+| 4 | **It remembers.** | All project memory lives in `.sps/` inside *your* project — nothing sent anywhere |
+| 5 | **Mistakes can't quietly return.** | A rule broken twice gets an auto-generated regression test that lives in the test suite forever |
+
+And the promise to *you*, outside the machine: **`/sps` never pushes,
+publishes, or deploys without your explicit yes.**
 
 ---
 
-## Commands
+## What a gate looks like
+
+This is a real approval stop. The agent cannot move on until you answer:
+
+> ### ⏸️ G1 — Plan approval
+> **What you're deciding:** do you approve this plan before any code is written?
+>
+> **The plan in one breath:** a 5-page online shop with a photo gallery and a
+> contact form; you can edit the text yourself.
+>
+> **Your options:**
+> - ✅ **Approve** — building starts exactly as planned
+> - ✏️ **Change something** — tell us what to adjust (cheap now, expensive later)
+> - ❓ **Ask first** — we'd rather explain twice than build once wrong
+
+*(Projects can opt into plain-language mode — `language: plain` in
+`.sps/agent.md` — and every gate is written like the above: 8th-grade words,
+one-line "what you're deciding" summary. The technical default is unchanged.)*
+
+---
+
+## With vs. without
+
+| | Without BuildPilot | With BuildPilot |
+|---|---|---|
+| Getting started | "Just start coding" vibes | Kickoff questions → written plan → **your approval** |
+| Mid-build | Agent freelances for hours | Hard stop at every section; you steer |
+| "Is it done?" | Agent's word for it | Tests + validators + proof it runs |
+| Next week | Agent remembers nothing | Full project memory in `.sps/` |
+| CMS work | Storefront now, admin "later" | Both ship together or the section isn't done |
+| Mistakes | Silently repeat | Second rejection → auto-generated regression test |
+
+---
+
+## The workflow in one picture
+
+```
+ Discover          Plan            Build (section by section)         Handoff
+┌─────────┐    ┌─────────┐    ┌──────────────────────────────┐    ┌─────────┐
+│ goals    │    │ written │    │  section 1 → ⏸️ you approve  │    │ proof + │
+│ stack    │ →  │ + stop  │ →  │  section 2 → ⏸️ you approve  │ →  │ backup +│
+│ CMS/auth │    │ ⏸️ YOU  │    │  section 3 → ⏸️ you approve  │    │  unlock │
+│ deploy   │    │  DECIDE │    │  (storefront + CMS together) │    │         │
+└─────────┘    └─────────┘    └──────────────────────────────┘    └─────────┘
+                     ▲                                            │
+                     └────────── your project memory (.sps/) ─────┘
+```
+
+---
+
+## Don't take the README's word for it
+
+Every claim above has a command behind it. Run them yourself:
+
+| Claim | Prove it with |
+|---|---|
+| "Secrets can't sneak out" | `bash scripts/secret-scan.sh` — scans every push, CI blocks the merge |
+| "Third-party skills can't be tampered with" | `bash scripts/sps-provenance.sh check` — every installed skill's SHA-256 is pinned |
+| "The rules are actually enforced" | `python3 framework/sps2/tools/check_laws.py .` — the referee's own report card |
+| "Docs never rot" | `python3 framework/sps2/tools/check_docs_drift.py` — every command in the docs must exist, or this fails |
+| "Your work is backed up" | `bash scripts/sps-backup.sh` — rolling snapshots of your project memory |
+| "1,232 tests" | `PYTHONPATH=. python3 -m unittest $(cat .github/expected-test-modules.txt \| tr '\n' ' ')` — count them yourself |
+
+---
+
+## Commands you'll actually use
 
 | Command | What it does |
 |---|---|
-| `/sps` | Start / continue the normal build workflow |
+| `/sps` | Start / continue the build workflow |
+| `/sps status` | One-glance dashboard: branch, queue, support clocks, pending lessons |
 | `/sps audit` | Score the project against SPS rules |
-| `/sps sync` | Fix **CMS debt** |
 | `/sps doctor` | Check install / host / skill health |
-| `/sps status` | One-glance dashboard: branch, queue, after-sale clocks, pending lessons |
-| `/sps lesson review` | Review lessons captured in client projects; approve them into permanent rules |
+| `/sps sync` | Fix **CMS debt** |
+| `/sps lesson review` | Review lessons from client projects; approve them into permanent rules |
+| `/sps unlock` | Final handoff (alias: `release-lock`) |
 
-More modes (documented in the skill itself): `/sps cms-sync` / `/sps couple`
-(aliases of sync), `/sps release-lock` / `/sps unlock` (final handoff).
+More modes live in the skill itself (`/sps cms-sync` and `/sps couple` are
+aliases of sync). New to the skill? The one-page cheat sheet is at
+[`skill/sps/CHEAT-SHEET.md`](skill/sps/CHEAT-SHEET.md).
 
 ---
 
-## The workflow in one breath
+## What's in this repository (two things, clearly separated)
 
-Discover (goals, stack, CMS, auth, mobile, roles, deploy) → write `.sps/` memory +
-root mirrors → **plan → stop → your approval** → CMS foundation → one section at a
-time (storefront + CMS controls + proof they connect) → **stop for your approval →
-next section** → handoff.
+| | The **skill** (`skill/`) | The **framework** (`framework/`) |
+|---|---|---|
+| What | Installable instructions your agent follows | A rulebook + referee that machine-checks agent work |
+| Use it | `curl … get-sps.sh \| bash`, then type `/sps` in any project | Not user-installable yet — under construction, see its own gate |
+| Status | ✅ Working, v4.3.0 | 🚧 In progress — release gate NOT READY by design |
+| Formerly | `skills/` | `sps2/` + `domain/` |
+
+The skill is what you use today. The framework is a stricter, machine-verified
+rebuild that agents must pass like an exam before work counts as done.
+
+**New here?** Read the [User Guide](USER-GUIDE.md) — everything a person does:
+install, approve work, the lesson loop, safety model. This README is the map;
+the guide is the walkthrough.
+
+---
 
 ## Host compatibility
 
@@ -131,13 +228,11 @@ next section** → handoff.
 | Other skills-compatible agents | Varies |
 | Generic chatbots | No — out of scope |
 
-See `skill/sps/CAPABILITY-MATRIX.md` for details.
-
-## Safety
-
-- Review third-party skills before trusting them.
-- `/sps` never pushes, publishes, or deploys without your explicit approval.
-- Project memory lives in `.sps/` inside your project; nothing is sent anywhere.
+Works on the Agent Skills-standard registry: Claude Code, Cursor, Codex,
+Gemini CLI / Antigravity, Windsurf, OpenCode, GitHub Copilot, Cline, Roo Code,
+Kiro, Amp, Goose, Crush, TRAE, Junie, Zed, OpenClaw, and 30+ more.
+It does **not** work the same on every tool, and it is **not** for
+ChatGPT-style chatbots. Details: `skill/sps/CAPABILITY-MATRIX.md`.
 
 ---
 
@@ -153,7 +248,7 @@ BuildPilot/
 ├── framework/           ← the machine-verified governance framework (in progress)
 │   ├── sps2/            ← gates, validators, decisions, evidence
 │   └── domain/          ← sample site the gates check against
-├── scripts/             ← doctor, updater, lint, smoke
+├── scripts/             ← doctor, updater, backup/restore, hygiene, secret-scan
 ├── docs/                ← historical phase audits (docs/audits), dev tests
 ├── reports/             ← append-only work reports
 ├── loop/                ← Karpathy-style human-gated task loop (driver for agents)
@@ -164,5 +259,5 @@ BuildPilot/
 
 ## License
 
-MIT — see `LICENSE`. Third-party skills installed by the installer carry their own
-licenses and terms.
+MIT — see `LICENSE`. Third-party skills installed by the installer carry their
+own licenses and terms.

@@ -132,6 +132,24 @@ def _resolvable_in_project(top, root):
     return False
 
 
+def _surface_bases(root, surface):
+    """Directories the project-surface scans must walk.
+
+    The project surface lives at ``framework/sps2/`` since the restructure;
+    the historical default resolved a bare ``sps2/`` which no longer exists,
+    silently walking zero files (every negative case was missed). A legacy
+    bare ``sps2/`` directory is also scanned when present so old layouts
+    stay covered.
+    """
+    if not surface:
+        return [root]
+    bases = [os.path.join(root, "framework", surface)]
+    legacy = os.path.join(root, surface)
+    if os.path.isdir(legacy):
+        bases.append(legacy)
+    return bases
+
+
 def find_cross_project_imports(root, surface="sps2"):
     """Imports that resolve outside this project.
 
@@ -145,7 +163,13 @@ def find_cross_project_imports(root, surface="sps2"):
       * a path literal used as a filesystem path that escapes the project
     """
     findings = []
-    base = os.path.join(root, surface) if surface else root
+    for base in _surface_bases(root, surface):
+        findings.extend(_find_cross_project_imports_in(root, base))
+    return sorted(set(findings))
+
+
+def _find_cross_project_imports_in(root, base):
+    findings = []
     for path in project_files(base):
         if not path.endswith(".py"):
             continue
@@ -216,7 +240,10 @@ def _looks_like_path(s):
         return False
     if "://" in s:                 # a URL, not a filesystem path
         return False
-    if s.startswith("~"):
+    # A tilde path is "~/..."; a bare "~" is a token (e.g. the JSON-pointer
+    # decode target in str.replace("~0", "~")), not a path literal, and
+    # "~0"/"~1" are JSON-pointer escape tokens.
+    if s.startswith("~/"):
         return True
     if s.startswith(("../", "./..")):
         return True
@@ -254,20 +281,38 @@ def _escapes(s, root, base=None):
     return not (resolved == root or resolved.startswith(root + os.sep))
 
 
+# Files whose contents are historical records, not live behaviour: evidence
+# records quote the exact commands once run (including their temporary output
+# paths) and must stay verbatim, so path tokens inside them are provenance,
+# not project state reaching outside the repo.
+STATE_RECORD_SUFFIXES = (".json",)
+
+
+def _is_evidence_record(path):
+    parts = path.split(os.sep)
+    return "evidence" in parts and path.endswith(STATE_RECORD_SUFFIXES)
+
+
 # Callables whose string argument is genuinely a filesystem path. Without
 # this restriction the scan would flag its own search patterns: validators
 # legitimately carry home-relative and system-path literals as the very
 # strings they search for, which are not filesystem accesses.
 FS_CALLS = frozenset({
     "open", "makedirs", "mkdir", "remove", "unlink", "rmdir", "rename",
-    "replace", "chmod", "listdir", "scandir", "walk", "symlink", "link",
-    "stat", "lstat", "access", "chdir", "truncate", "copy", "copy2",
+    "replace", "chmod", "listdir", "scandir", "walk", "stat", "lstat",
+    "access", "chdir", "truncate", "copy", "copy2",
     "copyfile", "copytree", "rmtree", "read_text", "write_text",
     "read_bytes", "write_bytes", "exists", "isfile", "isdir", "islink",
     "abspath", "realpath", "relpath", "normpath", "expanduser", "join",
     "splitdrive", "splitext", "basename", "dirname", "getcwd", "Path",
     "open_text", "samefile", "sameopenfile",
 })
+# "symlink" and "link" are deliberately absent: a symlink's target is by
+# design an arbitrary path and creating the link never accesses it, so a
+# literal scan only produces noise (e.g. negative-control tests that plant
+# os.symlink("/etc/hosts", ...) to prove rejection). Actual cross-project
+# linkage through symlinks is caught behaviourally by the shared-inode
+# check in negatives() (N06).
 
 
 def _fs_call_name(node):
@@ -281,7 +326,13 @@ def _fs_call_name(node):
 def find_cross_project_state_refs(root, surface="sps2"):
     """Persistent state (JSON/MD) referencing paths outside the project."""
     findings = []
-    scan = os.path.join(root, surface) if surface else root
+    for scan in _surface_bases(root, surface):
+        findings.extend(_find_cross_project_state_refs_in(root, scan))
+    return sorted(set(findings))
+
+
+def _find_cross_project_state_refs_in(root, scan):
+    findings = []
     for path in project_files(scan):
         if not path.endswith((".json", ".md")):
             continue
@@ -291,6 +342,8 @@ def find_cross_project_state_refs(root, surface="sps2"):
         except (OSError, UnicodeDecodeError):
             continue
         rel = os.path.relpath(path, scan)
+        if _is_evidence_record(path):
+            continue
         for token in _iter_path_tokens(body):
             if _escapes(token, root, base=os.path.dirname(path)):
                 findings.append(
@@ -319,7 +372,8 @@ def check_two_projects_isolated(r):
         for dest in (a, b):
             shutil.copytree(REPO, dest,
                             ignore=shutil.ignore_patterns(
-                                ".git", "__pycache__", "*.pyc"))
+                                ".git", "__pycache__", "*.pyc",
+                                ".tmp-smoke-sps"))
         # Each copy must be independently valid
         for name, root in (("A", a), ("B", b)):
             layout = os.path.join(root, "framework", "sps2", "memory",
@@ -436,7 +490,8 @@ def negatives(r):
         base = os.path.join(tmp, "base")
         shutil.copytree(REPO, base,
                         ignore=shutil.ignore_patterns(
-                            ".git", "__pycache__", "*.pyc"))
+                            ".git", "__pycache__", "*.pyc",
+                            ".tmp-smoke-sps"))
 
         def fresh(name):
             root = os.path.join(tmp, name)

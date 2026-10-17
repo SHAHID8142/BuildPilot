@@ -31,7 +31,8 @@ CHECK_ID = "GENERATED_TEST_UNREVIEWED"
 
 # Placeholder reviewed-by values: angle-bracket templates or empty filler.
 PLACEHOLDER = re.compile(
-    r"^(<[^>]*>|\?+|tbd\b.*|todo\b.*|pending\b.*|n/?a$|placeholder$|your name$|user/date$)",
+    r"^(<[^>]*>|\?+|tbd\b.*|todo\b.*|pending\b.*|n/?a$|placeholder$"
+    r"|your name$|user/date$|me$|wip\b.*|later\b.*)",
     re.IGNORECASE,
 )
 
@@ -39,14 +40,17 @@ PLACEHOLDER = re.compile(
 def reviewed_by_value(text: str) -> tuple[bool, str | None]:
     """Return (found, value) for the reviewed-by header.
 
-    Tolerates the value on the marker line itself (gen_law_test.py emits
-    `# AUTO-GENERATED ... — reviewed by: <user/date>`) or on its own line.
-    found=True when any 'reviewed by:' line exists; value is the first
+    Only comment lines (stripped form starts with '#') are scanned: the
+    header is emitted as a Python comment, and a docstring or code line that
+    merely mentions "reviewed by:" must never satisfy the gate. found=True
+    when any such comment line carries the marker; value is the first
     non-empty candidate on such a line (same line only — never spans lines).
     """
     found = False
     value: str | None = None
     for line in text.splitlines():
+        if not line.lstrip().startswith("#"):
+            continue
         if "reviewed by:" in line:
             found = True
             candidate = line.split("reviewed by:", 1)[1].strip()

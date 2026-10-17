@@ -71,8 +71,12 @@ SYNC_PATHS=(
   "$HOME/.zeroclaw/skills"
 )
 
-CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-RED='\033[0;31m'; BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+if [ -t 1 ]; then
+  CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+  RED='\033[0;31m'; BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+else
+  CYAN=''; GREEN=''; YELLOW=''; RED=''; BOLD=''; DIM=''; NC=''
+fi
 INSTALLED=0; FAILED=0; STEP=0; TOTAL_STEPS=1
 LOG_DIR="$HOME/.sps"
 LOG="$LOG_DIR/install.log"
@@ -102,7 +106,10 @@ EOF
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --agents|-a)  AGENTS="${2:-}"; shift 2 ;;
+    --agents|-a)
+      AGENTS="${2:-}"
+      if [[ $# -lt 2 || -z "$AGENTS" ]]; then echo "missing value for --agents" >&2; exit 1; fi
+      shift 2 ;;
     --yes|-y)     ASSUME_YES=true; shift ;;
     --interactive|-i) INTERACTIVE=true; shift ;;
     --help|-h) usage; exit 0 ;;
@@ -148,17 +155,14 @@ progress_bar() {
   local filled=$(( cur * width / total ))
   (( filled > width )) && filled=$width
   local empty=$(( width - filled ))
-  local bar
-  bar="$(printf '%0.s█' $(seq 1 "$filled" 2>/dev/null) 2>/dev/null || true)"
-  local pad
-  pad="$(printf '%0.s░' $(seq 1 "$empty" 2>/dev/null) 2>/dev/null || true)"
+  local bar="" pad=""
+  if (( filled > 0 )); then
+    bar="$(printf '%0.s█' $(seq 1 "$filled") 2>/dev/null || true)"
+  fi
+  if (( empty > 0 )); then
+    pad="$(printf '%0.s░' $(seq 1 "$empty") 2>/dev/null || true)"
+  fi
   printf "${DIM}[%s%s] %s/%s${NC}" "$bar" "$pad" "$cur" "$total"
-}
-
-compute_total_steps() {
-  TOTAL_STEPS=28
-  if have claude; then TOTAL_STEPS=$((TOTAL_STEPS + 16)); fi
-  if have uv || have pip; then TOTAL_STEPS=$((TOTAL_STEPS + 1)); fi
 }
 
 build_agent_args() {
@@ -268,7 +272,7 @@ CLAUDE_PLUGINS=$claude_plugins
 CLAUDE_MARKETPLACES=$claude_marketplaces
 USE_CONTEXT7=$USE_CONTEXT7
 USE_GRAPHIFY=$USE_GRAPHIFY
-SYNC_PATHS=$(IFS=,; echo "${SYNC_PATHS[*]}")
+SYNC_PATHS=$(IFS=,; echo "${SYNC_PATHS[*]:-}")
 SPS_VERSION=$VERSION
 EOF
 }
@@ -319,7 +323,7 @@ sync_core_skill() {
   mkdir -p "$HOME/.sps"
   : > "$upgrade_report"
   local had_existing=false
-  for dest_root in "${SYNC_PATHS[@]}"; do
+  for dest_root in "${SYNC_PATHS[@]:-}"; do
     if mkdir -p "$dest_root" 2>/dev/null; then
       # Version detection + backup BEFORE the destructive replace.
       # Per-skill gate: a missing sps dir must not skip backups of
@@ -417,7 +421,7 @@ mkdir -p "$LOG_DIR/learned"
 # skills-add step runs — otherwise sync_core_skill mistakes the npx-created
 # copy for a previous install and "backs it up" on a fresh machine.
 PRE_EXISTING_SPS=()
-for _root in "${SYNC_PATHS[@]}"; do
+for _root in "${SYNC_PATHS[@]:-}"; do
   [ -d "$_root/sps" ] && PRE_EXISTING_SPS+=("$_root")
 done
 
@@ -448,37 +452,37 @@ compute_total_steps
 note "Planned steps: $TOTAL_STEPS"
 
 section "Installing"
-step "/sps core skill" npx skills add "$REPO" -g --copy -y "${AGENT_ARGS[@]}"
+step "/sps core skill" npx skills add "$REPO" -g --copy -y "${AGENT_ARGS[@]:-}"
 
 MANAGED_SKILLS+=(hallmark impeccable design-taste-frontend webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion)
-step "hallmark" npx skills add nutlope/hallmark -g -y "${AGENT_ARGS[@]}"
-step "impeccable" npx skills add pbakaus/impeccable -g -y "${AGENT_ARGS[@]}"
-step "design-taste-frontend (taste-skill v2)" npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y "${AGENT_ARGS[@]}"
-step "webapp-testing" npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y "${AGENT_ARGS[@]}"
-step "web-design-guidelines" npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y "${AGENT_ARGS[@]}"
-step "vercel-react-best-practices" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y "${AGENT_ARGS[@]}"
-step "vercel-composition-patterns" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y "${AGENT_ARGS[@]}"
-step "karpathy-guidelines" npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y "${AGENT_ARGS[@]}"
-step "agent-browser" npx skills add https://github.com/vercel-labs/agent-browser -g -y "${AGENT_ARGS[@]}"
-step "ai-seo" npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y "${AGENT_ARGS[@]}"
-step "copywriting" npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y "${AGENT_ARGS[@]}"
-step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]}"
-step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]}"
+step "hallmark" npx skills add nutlope/hallmark -g -y "${AGENT_ARGS[@]:-}"
+step "impeccable" npx skills add pbakaus/impeccable -g -y "${AGENT_ARGS[@]:-}"
+step "design-taste-frontend (taste-skill v2)" npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y "${AGENT_ARGS[@]:-}"
+step "webapp-testing" npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y "${AGENT_ARGS[@]:-}"
+step "web-design-guidelines" npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y "${AGENT_ARGS[@]:-}"
+step "vercel-react-best-practices" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y "${AGENT_ARGS[@]:-}"
+step "vercel-composition-patterns" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y "${AGENT_ARGS[@]:-}"
+step "karpathy-guidelines" npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y "${AGENT_ARGS[@]:-}"
+step "agent-browser" npx skills add https://github.com/vercel-labs/agent-browser -g -y "${AGENT_ARGS[@]:-}"
+step "ai-seo" npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y "${AGENT_ARGS[@]:-}"
+step "copywriting" npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y "${AGENT_ARGS[@]:-}"
+step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]:-}"
+step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]:-}"
 
 MANAGED_SKILLS+=(astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman)
-step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]}"
-step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]}"
-step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]}"
-step "supabase" npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y "${AGENT_ARGS[@]}"
-step "supabase-postgres-best-practices" npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y "${AGENT_ARGS[@]}"
-step "prisma-database-setup" npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y "${AGENT_ARGS[@]}"
-step "prisma-client-api" npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y "${AGENT_ARGS[@]}"
-step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]}"
-step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]}"
-step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]}"
-step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]}"
-step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]}"
-step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]}"
+step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]:-}"
+step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]:-}"
+step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]:-}"
+step "supabase" npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y "${AGENT_ARGS[@]:-}"
+step "supabase-postgres-best-practices" npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y "${AGENT_ARGS[@]:-}"
+step "prisma-database-setup" npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y "${AGENT_ARGS[@]:-}"
+step "prisma-client-api" npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y "${AGENT_ARGS[@]:-}"
+step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]:-}"
+step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]:-}"
+step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]:-}"
+step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]:-}"
+step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]:-}"
+step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]:-}"
 
 if have claude; then
   CLAUDE_MARKETPLACES+=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-skills)

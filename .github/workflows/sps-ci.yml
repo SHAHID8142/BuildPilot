@@ -4,6 +4,13 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: sps-ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-and-smoke:
     name: Lint + smoke
@@ -147,7 +154,7 @@ jobs:
           # but a partially-empty run exits 0. Capture output and assert the
           # parsed test count against MIN_TESTS so a green build cannot mean
           # zero executed tests. Raise MIN_TESTS as the suite grows.
-          MIN_TESTS=500
+          MIN_TESTS=1000
 
           set +e
           OUTPUT="$(python3 -m unittest -v "${MODULES[@]}" 2>&1)"
@@ -219,3 +226,44 @@ jobs:
       # suite. Do not enable until it is green and explicitly approved.
       # - name: Portability exercise (excluded: red at HEAD)
       #   run: python3 framework/sps2/tools/test-portability.py
+
+  validator-battery:
+    name: Validator battery
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # fetch-depth: 0 for parity with python-unittest: the validators and
+      # law checks read tracked history and pinned baselines.
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: P2..P4 shell validators
+        run: |
+          set -euo pipefail
+          bash framework/sps2/tools/validate-p2.sh
+          bash framework/sps2/tools/validate-p3.sh
+          bash framework/sps2/tools/validate-p4.sh
+
+      - name: P5..P7 + bootstrap Python validators
+        run: |
+          set -euo pipefail
+          python3 framework/sps2/tools/validate-p5.py
+          python3 framework/sps2/tools/validate-p6.py
+          python3 framework/sps2/tools/validate-p7-readiness.py
+          python3 framework/sps2/tools/validate-bootstrap.py
+
+      - name: sps2 validator + law + generated-test guards
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          bash framework/sps2/tools/validate-sps2.sh
+          python3 framework/sps2/tools/check_laws.py
+          python3 framework/sps2/tools/check_generated_tests.py

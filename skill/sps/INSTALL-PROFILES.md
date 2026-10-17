@@ -9,7 +9,7 @@ everything, one command updates, one command uninstalls.
 ### Mac / Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash -s -- --yes
+curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash -s -- --yes
 ```
 
 Local clone:
@@ -21,15 +21,15 @@ bash install.sh --yes
 ### Windows (PowerShell)
 
 ```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.ps1))) -Yes
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.ps1))) -Yes
 ```
 
 ## Update
 
 ```bash
-bash ~/.sps/src/Shahid-Personal-SkillSet/scripts/sps-update.sh --yes   # pulls + reinstalls
+bash ~/.sps/src/BuildPilot/scripts/sps-update.sh --yes   # pulls + reinstalls
 # or
-curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash -s -- --yes
+curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash -s -- --yes
 ```
 
 Sessions auto-check for updates on start (`scripts/check-update.sh`, cached 24h)
@@ -38,8 +38,8 @@ and auto-apply them.
 ## Uninstall
 
 ```bash
-bash ~/.sps/src/Shahid-Personal-SkillSet/uninstall.sh --yes
-bash ~/.sps/src/Shahid-Personal-SkillSet/uninstall.sh --keep-personal --yes   # keep ~/.sps memory
+bash ~/.sps/src/BuildPilot/uninstall.sh --yes
+bash ~/.sps/src/BuildPilot/uninstall.sh --keep-personal --yes   # keep ~/.sps memory
 ```
 
 Windows: `uninstall.ps1` / `uninstall.ps1 -KeepPersonal -Yes`

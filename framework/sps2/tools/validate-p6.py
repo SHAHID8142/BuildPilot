@@ -7,11 +7,14 @@ no machine-global writes, no runtime activation.
 Asserts the P6 research contract and the D-P6-2 boundaries. Negative cases
 assert that a violation is DETECTED, so none is vacuous.
 """
+import ast
 import copy
+import io
 import json
 import os
 import re
 import sys
+import tokenize
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
     os.path.abspath(__file__)))))  # tools -> sps2 -> framework -> repo root
@@ -325,7 +328,9 @@ def s8(r):
         if not G.approval_is_user_attributable(x.get("approval") or {}):
             r.bad("P6_REQUIREMENT_APPROVAL_NOT_USER: %s"
                   % (x.get("requirement_id") or "unnamed"))
-    r.ok("all %d requirements individually User-attributable" % len(reqs))
+    if all(G.approval_is_user_attributable(x.get("approval") or {})
+           for x in reqs):
+        r.ok("all %d requirements individually User-attributable" % len(reqs))
     s8b(r, ap.get("preserved_state") or {})
 
 
@@ -377,6 +382,70 @@ def s8b(r, preserved):
         r.ok("P7 recorded NOT_APPROVED; no P7 implementation deliverable")
 
 
+def _code_lines(path):
+    """Return the code lines of a python file, comments and docstrings blanked.
+
+    The global-path scan must judge what code DOES, not what documentation
+    SAYS: a module docstring line such as "No test touches the real ~/.sps"
+    states an absence and is not a reference. Comments and docstrings are
+    therefore blanked before matching. Ordinary string literals are NOT
+    blanked — a literal is how code names the path it opens, so blanking
+    strings would hide exactly the violation this check exists to catch
+    (e.g. open(os.path.expanduser("~/.sps/x")) inside a test body).
+
+    Docstrings are located with ast (module, class and function docstrings
+    only); a file that cannot be parsed falls back to its raw lines rather
+    than silently escaping the scan, so an unparseable file is still scanned
+    in full.
+    """
+    try:
+        with open(path, encoding="utf-8") as fh:
+            src = fh.read()
+        lines = src.splitlines()
+        blanked = list(lines)
+        tree = ast.parse(src)
+        spans = []            # (first_line, first_col, last_line, last_col)
+
+        def doc_span(node):
+            body = getattr(node, "body", None) or []
+            if body and isinstance(body[0], ast.Expr) and \
+                    isinstance(body[0].value, ast.Constant) and \
+                    isinstance(body[0].value.value, str):
+                v = body[0].value
+                spans.append((v.lineno, v.col_offset,
+                              v.end_lineno, v.end_col_offset))
+
+        doc_span(tree)
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.ClassDef, ast.FunctionDef,
+                                 ast.AsyncFunctionDef)):
+                doc_span(node)
+        for f, c0, l, c1 in spans:
+            for row in range(f - 1, min(l, len(blanked))):
+                line = blanked[row]
+                start_col = c0 if row == f - 1 else 0
+                end_col = c1 if row == l - 1 else len(line)
+                if 0 <= start_col <= end_col <= len(line):
+                    blanked[row] = (line[:start_col]
+                                    + " " * (end_col - start_col)
+                                    + line[end_col:])
+        for tok in tokenize.generate_tokens(io.StringIO(src).readline):
+            if tok.type == tokenize.COMMENT:
+                row = tok.start[0] - 1
+                if 0 <= row < len(blanked):
+                    line = blanked[row]
+                    c0, c1 = tok.start[1], tok.end[1]
+                    blanked[row] = (line[:c0] + " " * (c1 - c0)
+                                    + line[c1:])
+        return blanked
+    except (OSError, UnicodeDecodeError, SyntaxError, tokenize.TokenError,
+            IndentationError):
+        try:
+            return open(path, encoding="utf-8", errors="replace").readlines()
+        except OSError:
+            return []
+
+
 def s9(r):
     r.sect("9. Nothing installed, nothing global, P7 not started")
     offenders = []
@@ -395,11 +464,16 @@ def s9(r):
             if f == "validate-bootstrap.py":
                 continue
             try:
-                body = open(os.path.join(root, f)).read()
+                # Comments and docstrings are blanked before matching: a
+                # line that SAYS tests avoid ~/.sps is documentation, not a
+                # machine-global reference. Code that actually opens a
+                # global path still triggers the check (see the negative
+                # control in the T-22 record).
+                body_lines = _code_lines(os.path.join(root, f))
             except (OSError, UnicodeDecodeError):
                 continue
             for pat in ("~/.sps", "/usr/local", "site-packages"):
-                if pat in body:
+                if any(pat in line for line in body_lines):
                     offenders.append("%s references %s" % (f, pat))
     if offenders:
         for o in offenders[:5]:
@@ -599,4 +673,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-    r.ok("all %d P6 requirements pending User approval" % pending)

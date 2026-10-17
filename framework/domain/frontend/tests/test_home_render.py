@@ -358,12 +358,19 @@ class HomeBuildShapeTests(unittest.TestCase):
         self.assertIsNotNone(rep.to_dict().get("audited_artifacts_digest"))
 
     def test_build_writes_nothing_outside_declared_dir(self):
-        out = self._tmp()
-        parent = out.parent
+        # Snapshot a DEDICATED, freshly-created empty parent rather than the
+        # shared /tmp root: the shared parent is mutated concurrently by other
+        # processes, which made the before/after comparison flaky. A private
+        # parent isolates the snapshot to writes attributable to this build.
+        parent = Path(tempfile.mkdtemp())
+        self._tmps.append(str(parent))
+        out = parent / "out"
+        out.mkdir()
         before = sorted(p.name for p in parent.iterdir())
         self._build(out)
         after = sorted(p.name for p in parent.iterdir())
         self.assertEqual(before, after)
+        self.assertTrue(out.is_dir())
 
 
 class HomeNoNetworkNoBackendTests(unittest.TestCase):
@@ -375,7 +382,7 @@ class HomeNoNetworkNoBackendTests(unittest.TestCase):
         # legitimately states that it uses NO such primitive).
         import ast
         import framework.domain.frontend.home_render as hr
-        tree = ast.parse(open(hr.__file__, encoding="utf-8").read())
+        tree = ast.parse(Path(hr.__file__).read_text(encoding="utf-8"))
         banned_modules = {"socket", "subprocess", "http", "urllib", "ftplib",
                           "telnetlib", "smtplib", "asyncio", "multiprocessing"}
         banned_attrs = {"socket", "HTTPServer", "system", "popen", "urlopen"}

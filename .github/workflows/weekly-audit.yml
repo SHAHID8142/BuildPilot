@@ -1,0 +1,147 @@
+name: weekly-audit
+
+# T-37: Weekly self-audit. Recurs the 2026-10-18 manual audit: every Monday
+# the full validator battery + docs-drift + hygiene + provenance + secret-scan
+# run against the default branch. Green means silence (no issue, no noise);
+# any drift opens (first failure) or comments on (subsequent failures) a
+# single GitHub Issue titled "Weekly self-audit: drift detected".
+
+"on":
+  schedule:
+    # Mondays 06:17 UTC. Off-minute on purpose: :00/:30 crons across GitHub
+    # Actions are a fleet-wide stampede and get delayed or dropped; 17 past
+    # the hour keeps the run scheduled and predictable.
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  # One audit at a time; a queued run waits instead of double-filing issues.
+  group: weekly-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Weekly self-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # fetch-depth: 0 for parity with sps-ci.yml's validator-battery: the
+      # validators and law checks read tracked history and pinned baselines.
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      # Each audit step tees its full output to $RUNNER_TEMP so the
+      # drift-issue step below can quote the failing step's output verbatim.
+      - name: Validator battery (P2..P4 shell validators)
+        run: |
+          set -euo pipefail
+          bash framework/sps2/tools/validate-p2.sh 2>&1 | tee "$RUNNER_TEMP/audit-validators.log"
+          bash framework/sps2/tools/validate-p3.sh 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+          bash framework/sps2/tools/validate-p4.sh 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+
+      - name: Validator battery (P5..P7 + bootstrap Python validators)
+        run: |
+          set -euo pipefail
+          python3 framework/sps2/tools/validate-p5.py 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+          python3 framework/sps2/tools/validate-p6.py 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+          python3 framework/sps2/tools/validate-p7-readiness.py 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+          python3 framework/sps2/tools/validate-bootstrap.py 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+
+      - name: Validator battery (sps2 validator + law + generated-test guards)
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          bash framework/sps2/tools/validate-sps2.sh 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+          python3 framework/sps2/tools/check_laws.py 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+          python3 framework/sps2/tools/check_generated_tests.py 2>&1 | tee -a "$RUNNER_TEMP/audit-validators.log"
+
+      - name: Docs drift (commands in docs must exist)
+        run: |
+          set -euo pipefail
+          python3 framework/sps2/tools/check_docs_drift.py 2>&1 | tee "$RUNNER_TEMP/audit-docs-drift.log"
+
+      - name: Directory hygiene check
+        run: |
+          set -euo pipefail
+          bash scripts/sps-hygiene.sh check 2>&1 | tee "$RUNNER_TEMP/audit-hygiene.log"
+
+      # Provenance on a fresh runner: ~/.sps/provenance.json does not exist
+      # there, and sps-provenance.sh handles that state deliberately — the
+      # missing store reads as {} and every third-party skill is reported
+      # UNPINNED (report-only); --strict exits 1 on PROVENANCE-DRIFT only, so
+      # this step exits 0 (with UNPINNED warnings) on a fresh runner and
+      # still catches tampering once a pin exists. No pre-pin step, by
+      # design: pinning on the runner would always self-verify as clean.
+      - name: Provenance check (strict)
+        run: |
+          set -euo pipefail
+          bash scripts/sps-provenance.sh check --strict 2>&1 | tee "$RUNNER_TEMP/audit-provenance.log"
+
+      - name: Secret scan
+        run: |
+          set -euo pipefail
+          bash scripts/secret-scan.sh 2>&1 | tee "$RUNNER_TEMP/audit-secret-scan.log"
+
+      # --- drift issue: open once, then comment (no spam) -------------------
+      # Stock gh CLI + GITHUB_TOKEN (no third-party action). If an OPEN issue
+      # with the exact title exists, append a comment; otherwise create one.
+      # Closed issues are not reused — a new week of drift gets a new issue.
+      - name: Open or update drift issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "Weekly self-audit: drift detected"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          BODY="$(mktemp)"
+          {
+            echo "Weekly self-audit failed."
+            echo ""
+            echo "Run: ${RUN_URL}"
+            echo "Commit: ${GITHUB_SHA}"
+            echo ""
+            for LOG in "$RUNNER_TEMP"/audit-*.log; do
+              [ -f "$LOG" ] || continue
+              echo "<details><summary>$(basename "$LOG" .log) (tail)</summary>"
+              echo ""
+              echo '```'
+              tail -n 100 "$LOG"
+              echo '```'
+              echo ""
+              echo "</details>"
+            done
+          } > "$BODY"
+
+          # Ensure the label exists; ignore failure if we cannot create it.
+          gh label create audit-drift --color D93F0B --description "Weekly self-audit drift" 2>/dev/null || true
+
+          EXISTING="$(gh issue list --state open --search "\"${TITLE}\" in:title" --json number --jq '.[0].number' || true)"
+          if [ -n "${EXISTING}" ]; then
+            gh issue comment "${EXISTING}" --body-file "$BODY"
+            gh issue edit "${EXISTING}" --add-label audit-drift || true
+            echo "Commented on existing drift issue #${EXISTING}"
+          else
+            gh issue create --title "${TITLE}" --label audit-drift --body-file "$BODY"
+            echo "Opened new drift issue"
+          fi
+          rm -f "$BODY"
+
+      - name: Audit summary
+        if: success()
+        run: echo "Weekly self-audit clean — no drift, no issue filed."

@@ -2205,9 +2205,9 @@ class TestDec7112EvidenceAuthenticity(GateFixtureCase):
 
     def test_control_never_writes_anything(self) -> None:
         """The authenticity cross-check is read-only over the claimed paths."""
-        before = open(self.artifact, "rb").read()
+        before = Path(self.artifact).read_bytes()
         self._run(self._record())
-        self.assertEqual(open(self.artifact, "rb").read(), before)
+        self.assertEqual(Path(self.artifact).read_bytes(), before)
 
     def test_demoted_control_permits_pass_but_still_blocks_the_overall_verdict(self) -> None:
         """required=False makes a single control non-blocking on its own, but the

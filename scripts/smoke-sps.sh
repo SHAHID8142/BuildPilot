@@ -27,6 +27,40 @@ bash -n "$REPO/scripts/sps-doctor.sh" && pass "bash -n sps-doctor.sh" || fail "b
 bash -n "$REPO/scripts/sps-update.sh" && pass "bash -n sps-update.sh" || fail "bash -n sps-update.sh"
 bash -n "$REPO/scripts/check-update.sh" && pass "bash -n check-update.sh" || fail "bash -n check-update.sh"
 
+# bash -n over ALL scripts/*.sh (catches a new script nobody lint-checked)
+for sh in "$REPO"/scripts/*.sh; do
+  bash -n "$sh" && pass "bash -n $(basename "$sh")" || fail "bash -n $(basename "$sh")"
+done
+
+# Happy-path calls: sps-status.sh in a scratch git repo
+rm -rf "$TMP/status-repo"
+mkdir -p "$TMP/status-repo"
+git -C "$TMP/status-repo" init -q
+git -C "$TMP/status-repo" -c user.email=smoke@example.com -c user.name=smoke commit -q --allow-empty -m init
+if bash "$REPO/scripts/sps-status.sh" > "$TMP/status.out" 2>&1 && grep -q "SPS Status" "$TMP/status.out"; then
+  pass "sps-status.sh happy path"
+else
+  fail "sps-status.sh happy path"
+fi
+
+# sps-lawlog.sh show on an empty ledger
+rm -rf "$TMP/lawlog-repo"
+mkdir -p "$TMP/lawlog-repo/.sps"
+git -C "$TMP/lawlog-repo" init -q
+: > "$TMP/lawlog-repo/.sps/law-rejections.jsonl"
+if bash "$REPO/scripts/sps-lawlog.sh" show > "$TMP/lawlog.out" 2>&1; then
+  pass "sps-lawlog.sh show (empty ledger)"
+else
+  fail "sps-lawlog.sh show (empty ledger)"
+fi
+
+# sps-hygiene.sh check at the real repo root (report-only, always rc 0)
+if bash "$REPO/scripts/sps-hygiene.sh" > "$TMP/hygiene.out" 2>&1; then
+  pass "sps-hygiene.sh check"
+else
+  fail "sps-hygiene.sh check"
+fi
+
 # check-update.sh must terminate with a valid exit code even offline
 rc=0
 HOME="$TMP/home-nonet" bash "$REPO/scripts/check-update.sh" --force >/dev/null 2>&1 || rc=$?

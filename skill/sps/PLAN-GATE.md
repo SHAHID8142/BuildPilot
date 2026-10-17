@@ -24,7 +24,9 @@ is approved.** No scaffolding, no "quick prototype", no "just a folder".
 - Deploy target + readiness steps
 - Mobile behavior policy (low-end dual path when needed)
 - Subagent plan per section (which agents run in parallel)
-- Verification plan per section (tests, round-trips, Lighthouse)
+- Verification plan per section (tests, round-trips, Lighthouse) — every
+  section plan declares HOW it will be verified (the proof method) at plan
+  time ([SECTION-DOD.md](SECTION-DOD.md) product proof).
 
 ## Abort conditions
 

@@ -150,9 +150,12 @@ import os, sys, re
 pat = re.compile('[\U0001F300-\U0001FAFF\u2600-\u27BF\u2B00-\u2BFF\uFE0F]')
 hits = []
 for root, dirs, files in os.walk(sys.argv[1]):
-    dirs[:] = [d for d in dirs if d not in {'.git', 'node_modules'}]
+    dirs[:] = [d for d in dirs if d not in {'.git', 'node_modules', '__pycache__'}]
     for f in files:
         p = os.path.join(root, f)
+        if f.endswith(('.pyc', '.pyo', '.png', '.jpg', '.jpeg', '.gif',
+                       '.ico', '.pdf', '.zip')):
+            continue
         try:
             t = open(p, encoding='utf-8', errors='replace').read()
         except Exception:

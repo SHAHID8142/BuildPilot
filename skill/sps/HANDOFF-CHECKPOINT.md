@@ -14,6 +14,10 @@ handoff. An unchecked handoff is an incomplete task.
    repo: the full pytest/unittest sweep — not a subset — plus
    validate-sps2/p2/p3 and the P10 gate). All green, or every red item is
    either fixed or explicitly explained as pre-existing with proof.
+   Client/lifecycle projects: handoff requires
+   `python3 framework/sps2/tools/check_kickoff.py <project>` to pass —
+   proof the kickoff questionnaire was answered before any build
+   (COMPANY-LIFECYCLE.md Phase 0).
 3. **Live verification.** Exercise the changed behavior for real — run the
    command, load the page, do the install/uninstall round-trip, whatever
    proves the change works outside of unit tests. A fix that was never
@@ -29,12 +33,21 @@ handoff. An unchecked handoff is an incomplete task.
    agent (or a fresh self-review pass with refutation instructions)
    attempts to find flaws. Findings are fixed or refuted with evidence
    before the handoff.
+4b. **Self-verification loop.** Before any "task complete" claim, the agent
+   runs the relevant machine checks itself — the law checker
+   (`check_laws.py`), the validators affected by the change, and the local
+   test battery — and ATTACHES the output to the handoff. Claiming done
+   with unverified work violates this checkpoint; "it should pass" is not
+   evidence.
 5. **Honesty audit.** Every claim in the summary/report must be traceable
    to a command output, a file, or a commit. Claims written from intent
    instead of evidence are the defect class to hunt here.
 6. **Checkpoint record.** Append to `./.sps/handoff.md` (or the task's
    todo entry): what was verified, with what command, and the result.
    Format: `CHECKPOINT <date>: <verdict PASS/FAIL> — <what ran> — <result>`.
+6b. **Backup before hand-back.** Run `bash scripts/sps-backup.sh snapshot`
+   at every G1, G2, section approval, and handoff, so `.sps/` state at each
+   gate is recoverable (restore: `sps-backup.sh restore <snapshot> --yes`).
 
 ## Gating rule
 

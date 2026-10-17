@@ -35,7 +35,7 @@ tell the user to run `/sps`, then continue.
 4. Use plain-markdown discovery and approval packets.
 5. CMS coupling, design gate, hygiene, context-efficiency, skill router still apply.
 6. If skills are missing, give exact install commands:
-   `curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash -s -- --yes`
+   `curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash -s -- --yes`
 7. Write `./.sps/agent.md` with Host: Antigravity / Gemini CLI and VERSION every session.
 8. After every design pivot, update `./.sps/design-system.md` + `changelog-sps.md`.
 9. On session start, run `scripts/check-update.sh`; auto-apply updates with

@@ -30,8 +30,12 @@ for arg in "$@"; do
   esac
 done
 
-GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'
-BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+if [ -t 1 ]; then
+  GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'
+  BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+else
+  GREEN=''; YELLOW=''; RED=''; BOLD=''; DIM=''; NC=''
+fi
 ok()   { echo -e "  ${GREEN}✓${NC} $*"; }
 warn() { echo -e "  ${YELLOW}!${NC} $*"; }
 bad()  { echo -e "  ${RED}✗${NC} $*" >&2; }

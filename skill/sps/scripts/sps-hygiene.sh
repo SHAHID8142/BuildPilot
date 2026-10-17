@@ -22,7 +22,7 @@ if [ -z "$REPO" ]; then
   echo "sps-hygiene: not inside a git repository" >&2
   exit 0
 fi
-cd "$REPO"
+cd "$REPO" || exit 1
 
 VIOLATIONS=0      # count of reported problems
 MOVED_N=0
@@ -61,10 +61,10 @@ suggest_home() {
   case "$1" in
     *REPORT*.md|SPS2-*.md|CODEX-*.md|CLAUDE-*-REVIEW*.md|SPS2-PROJECT-COMPLETION-RECORD*) echo "reports/" ;;
     *.sh|*.ps1) echo "scripts/ (+ byte-identical mirror in skill/sps/scripts/)" ;;
+    test_*.py) echo "framework/sps2/tests/" ;;
     *.py) echo "framework/sps2/tools/ (validator) or framework/sps2/tests/ (test)" ;;
     *LESSON-*.md) echo "lessons/inbox/" ;;
     *DEC-*.md|*-DECISIONS*.json|*DECISION*.md) echo "framework/sps2/decisions/" ;;
-    test_*.py) echo "framework/sps2/tests/" ;;
     *.md) echo "docs/ (or skill/sps/ if it is a skill rule)" ;;
     *) echo "" ;;
   esac

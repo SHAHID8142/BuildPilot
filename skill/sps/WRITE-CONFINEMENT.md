@@ -24,6 +24,10 @@ project — except the explicit allowlist below.
    - Temporary files: use the system temp directory (`/tmp` or equivalent)
      for throwaway artifacts, and delete them when done. Never store
      anything in `/tmp` that the project needs later.
+   - `~/.sps/personal-defaults.md` — the single permitted personal write,
+     per [MISTAKE-PROMOTION.md](MISTAKE-PROMOTION.md) (read by
+     [PROFILE-SCOPING.md](PROFILE-SCOPING.md)). Everything else under
+     `~/.sps/` stays forbidden.
 4. **Reads are unrestricted.** This law confines WRITES, not reads.
 5. **Cross-session knowledge.** Anything the next session must know goes
    into `./.sps/handoff.md` (or `./.sps/` docs) — not into agent memory.

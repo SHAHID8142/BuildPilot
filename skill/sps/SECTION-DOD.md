@@ -49,7 +49,7 @@ For JSX / TypeScript components:
 8. A11y AA standards + `prefers-reduced-motion` compliance.
 9. SEO/meta when page-level applicable:
    - title, meta description, canonical, Open Graph, structured data where relevant
-   - SEO routed via `ai-seo` skill (or SPS `seo` fallback) per SKILL-ROUTER.md
+   - SEO routed via `sps-seo` skill (fallback: `ai-seo`) per SKILL-ROUTER.md
 10. **Lighthouse gate** (run on the live section):
     - Performance: >= 90
     - SEO: 100
@@ -187,3 +187,11 @@ For JSX / TypeScript components:
 50. **Manual check loop:** the user checks the section live (storefront + CMS admin).
     - On feedback: fix items, re-run verification, resubmit.
     - Only after the user confirms OK does the next section start.
+51. **Product proof — the section must demonstrate it runs:** backend/API →
+    run the tests or boot the app and attach output; UI → screenshot or
+    rendered-HTML evidence attached to the approval packet; docs-only →
+    not applicable. A section is not done until the proof exists. The
+    approval packet includes the proof, not a claim about it.
+52. **Fresh-context review:** every section gets a review by an agent that
+    did not author it (second opinion) before the approval packet is
+    presented.
