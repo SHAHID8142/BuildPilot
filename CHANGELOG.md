@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.1.0
+
+- **Robust legacy-skill handling (T-17)**: `install.sh` now backs up existing
+  `sps`/`sps-cms`/`sps-seo` skill dirs to `~/.sps/backups/<skill>/` (last 3 kept)
+  before replacing them; detects the previously installed VERSION; writes an
+  upgrade report to `~/.sps/last-upgrade.txt` (printed at the end of the run);
+  backup stamps include a per-host hash so concurrent host syncs never collide;
+  restore path printed with the report. Applies to both fresh installs and
+  `sps-update.sh` (which delegates to `install.sh`).
+- **Machine law-checker in CI**: `framework/sps2/tools/check_laws.py` turns the
+  prose laws (context budgets, rolling log, DoD gap items, hard-law core,
+  design-gate craft laws, G1/G2 gates, hardcoded-config ban) into CI gates with
+  a non-vacuous negative test suite (`test_law_checker.py`).
+- **Design craft laws**: DESIGN-GATE absorbed the Gemini UI/UX deep-research
+  list (typography/color/space/components/motion/forms/power-user laws +
+  anti-slop ban list), machine-checked by the law-checker.
+- **Context-budget law**: `.sps/` hot files have size budgets (CONTEXT-BUDGET.md),
+  doctor-enforced and law-checker-enforced; rolling conversation log.
+- **Company lifecycle + Tool Consent law (17)** + session-4 audit-gap items in
+  SECTION-DOD / HANDOFF-CHECKPOINT / VERIFICATION-RECIPES.
 ## 4.0.0
 
 - **Single unified installer**: one command installs the complete stack — no

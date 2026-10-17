@@ -86,11 +86,11 @@
     },
     {
       "path": "install.sh",
-      "expected_blob": "c6c860b0be9a868c40af097a473b7c9df277c2fc",
+      "expected_blob": "29c18f97f11c17c7b1ba2fb379e08f554955de88",
       "expected_mode": "100755",
-      "sha256": "eb5185eccdf5114e6d2750a9c6f685cbc8df425a3881cf8f95ffd56fffb2d050",
+      "sha256": "d6e240478a72d2282df10d221e2c3d60cfd91bffdf97342e1c0e464fa2458835",
       "authorization": "DEC-7305",
-      "reason": "Package 2 (SSH host-key verification, StrictHostKeyChecking=accept-new) + sps-seo registration; content and mode pinned by DEC-7305."
+      "reason": "T-17: backup-before-replace, version detection and upgrade report in sync_core_skill; pinned by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "install.ps1",
@@ -134,19 +134,19 @@
     },
     {
       "path": "CHANGELOG.md",
-      "expected_blob": "62a430516957eabb69cf783a10d6e82e3cf973aa",
+      "expected_blob": "f159f85baf95ab8b7feb133d75c13009ffc71e9a",
       "expected_mode": "100644",
-      "sha256": "1c349aa5f6d5a0de49754ecd93be1c51bed5013956294c1c6704749459b7cdda",
+      "sha256": "2fb1ca60f9707cb0a64600f1783dd93e7caa0747619d82d95d191a0f68c636cb",
       "authorization": "DEC-7305",
-      "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305."
+      "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "README.md",
-      "expected_blob": "6b8b1fa51043f25362123b79bef6e7b006c85627",
+      "expected_blob": "bc9b85bd4631f4e39a06236d8d3b1854b069b684",
       "expected_mode": "100644",
-      "sha256": "2f9d7d5c9975c3ee2efd2ce31a18405b8467dc8712b7ce2c6fb2cbaf1faa7ed2",
+      "sha256": "8d8330c1bb482cbdc8fe73fd9f29eee32eccac65830a11bce33b55c89ca82391",
       "authorization": "DEC-7305",
-      "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305."
+      "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "skill/sps/scripts/check-update.sh",

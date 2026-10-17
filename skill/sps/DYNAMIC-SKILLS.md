@@ -23,6 +23,9 @@ newer skill exists, it installs the update.
    a newer upstream version:
    - **Bundled SPS skills** (`sps`, `sps-cms`, `sps-seo`): refresh through the
      repo's own updater (`scripts/sps-update.sh --yes`) — pre-approved, no gate.
+     The installer backs up the previous skill dirs to `~/.sps/backups/<skill>/`
+     (last 3 kept) and writes `~/.sps/last-upgrade.txt`; a bad update is
+     restored with `cp -R ~/.sps/backups/<skill>/<stamp> <dest>/<skill>`.
    - **Third-party skills**: these are global installs of external code, so the
      Tool Consent gate applies ([TOOL-CONSENT.md](TOOL-CONSENT.md)) — disclose
      what/why/install-scope, get explicit consent, WAIT, then run:

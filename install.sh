@@ -243,6 +243,37 @@ SPS_VERSION=$VERSION
 EOF
 }
 
+# Back up an existing managed skill dir before replacing it. Keeps the last
+# N=3 backups per skill in ~/.sps/backups/<skill>/<timestamp>/ so a bad update
+# (or a user-customized skill) can always be restored. Returns 0 if a backup
+# was made, 1 if there was nothing to back up.
+backup_existing_skill() {
+  local dest_root="$1" name="$2"
+  local existing="$dest_root/$name"
+  [ -d "$existing" ] || return 1
+  local backup_root="$HOME/.sps/backups/$name"
+  # Stamp includes a dest-root hash so two hosts synced in the same second
+  # never overwrite each other's backups.
+  local stamp
+  stamp="$(date +%Y%m%d-%H%M%S)-$(printf '%s' "$dest_root" | shasum | cut -c1-6)-$$"
+  mkdir -p "$backup_root" || { warn "backup dir unreachable: $backup_root"; return 1; }
+  cp -R "$existing" "$backup_root/$stamp" || { warn "backup failed for $name"; return 1; }
+  # Prune to the 3 most recent backups.
+  local old
+  while [ "$(ls -1 "$backup_root" 2>/dev/null | wc -l | tr -d ' ')" -gt 3 ]; do
+    old="$(ls -1dt "$backup_root"/* 2>/dev/null | tail -1)"
+    [ -n "$old" ] && rm -rf "$old"
+  done
+  ok "backed up existing $name → ~/.sps/backups/$name/$stamp"
+  return 0
+}
+
+# Read the VERSION of an already-installed skill (empty if absent/unknown).
+installed_skill_version() {
+  local vfile="$1/sps/VERSION"
+  [ -f "$vfile" ] && tr -d '[:space:]' < "$vfile" || true
+}
+
 sync_core_skill() {
   local src="$REPO/skill/sps"
   local cms_src="$REPO/skill/sps-cms"
@@ -251,8 +282,21 @@ sync_core_skill() {
     warn "skills/sps not found - run from repo root"
     return
   fi
+  local upgrade_report="$HOME/.sps/last-upgrade.txt"
+  mkdir -p "$HOME/.sps"
+  : > "$upgrade_report"
+  local had_existing=false
   for dest_root in "${SYNC_PATHS[@]}"; do
     if mkdir -p "$dest_root" 2>/dev/null; then
+      # Version detection + backup BEFORE the destructive replace.
+      local prev_ver=""
+      if [ -d "$dest_root/sps" ]; then
+        had_existing=true
+        prev_ver="$(installed_skill_version "$dest_root")"
+        backup_existing_skill "$dest_root" sps
+        backup_existing_skill "$dest_root" sps-cms
+        backup_existing_skill "$dest_root" sps-seo
+      fi
       rm -rf "$dest_root/sps"
       cp -R "$src" "$dest_root/"
       if [ -d "$REPO/scripts" ]; then
@@ -267,11 +311,24 @@ sync_core_skill() {
         rm -rf "$dest_root/sps-seo"
         cp -R "$seo_src" "$dest_root/"
       fi
+      if [ -n "$prev_ver" ] && [ "$prev_ver" != "$VERSION" ]; then
+        printf 'upgraded %s: %s → %s\n' "${dest_root/#$HOME/\~}" "$prev_ver" "$VERSION" >> "$upgrade_report"
+      elif [ -z "$prev_ver" ]; then
+        printf 'installed %s: %s (fresh)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
+      else
+        printf 'reinstalled %s: %s (same version)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
+      fi
       ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
     else
       warn "could not sync → ${dest_root/#$HOME/\~}"
     fi
   done
+  if [ "$had_existing" = true ] && [ -s "$upgrade_report" ]; then
+    section "Upgrade report"
+    cat "$upgrade_report"
+    note "previous versions kept in ~/.sps/backups/<skill>/ (last 3 per skill)"
+    note "restore: rm -rf <dest>/<skill> && cp -R ~/.sps/backups/<skill>/<stamp> <dest>/<skill>"
+  fi
 }
 
 add_context7() {

@@ -11,7 +11,7 @@ description: >
   Codex, Antigravity, OpenCode, Windsurf, and other agents.
 ---
 
-# /sps (v4.0.0 Master Orchestrator)
+# /sps (v4.1.0 Master Orchestrator)
 
 `/sps` is a capability-aware master workflow for **skills-compatible coding agents** (Claude, Cursor, Codex, Antigravity/Gemini, Windsurf, OpenCode).
 
