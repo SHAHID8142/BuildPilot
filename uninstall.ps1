@@ -50,6 +50,7 @@ function Test-SafeUninstallTarget([string]$Path) {
     $parentItem = Get-Item -LiteralPath (Split-Path -Parent $Path) -ErrorAction SilentlyContinue -Force
     if ($parentItem -and ($parentItem.LinkType)) { return $false }
     $candidate = [IO.Path]::GetFullPath($Path)
+    # Covers every installer sync root plus the rules dirs.
     $roots = @(
         (Join-Path $env:USERPROFILE ".agents\skills"),
         (Join-Path $env:USERPROFILE ".config\agents\skills"),
@@ -63,7 +64,14 @@ function Test-SafeUninstallTarget([string]$Path) {
         (Join-Path $env:USERPROFILE ".gemini\antigravity\skills"),
         (Join-Path $env:USERPROFILE ".gemini\antigravity-cli\skills"),
         (Join-Path $env:USERPROFILE ".windsurf\skills"),
-        (Join-Path $env:USERPROFILE ".antigravity\skills")
+        (Join-Path $env:USERPROFILE ".antigravity\skills"),
+        (Join-Path $env:USERPROFILE ".codeium\windsurf\skills"),
+        (Join-Path $env:USERPROFILE ".config\opencode\skills"),
+        (Join-Path $env:USERPROFILE ".cline\skills"),
+        (Join-Path $env:USERPROFILE ".roo\skills"),
+        (Join-Path $env:USERPROFILE ".kiro\skills"),
+        (Join-Path $env:USERPROFILE ".amp\skills"),
+        (Join-Path $env:USERPROFILE ".github\skills")
     )
     foreach ($root in $roots) {
         $fullRoot = [IO.Path]::GetFullPath($root + [IO.Path]::DirectorySeparatorChar)
@@ -106,7 +114,14 @@ function Remove-AgentSkill($name) {
         "$env:USERPROFILE\.windsurf\skills\$name",
         ".\.windsurf\skills\$name",
         "$env:USERPROFILE\.antigravity\skills\$name",
-        ".\.antigravity\skills\$name"
+        ".\.antigravity\skills\$name",
+        "$env:USERPROFILE\.codeium\windsurf\skills\$name",
+        "$env:USERPROFILE\.config\opencode\skills\$name",
+        "$env:USERPROFILE\.cline\skills\$name",
+        "$env:USERPROFILE\.roo\skills\$name",
+        "$env:USERPROFILE\.kiro\skills\$name",
+        "$env:USERPROFILE\.amp\skills\$name",
+        "$env:USERPROFILE\.github\skills\$name"
     )
     $found = $false
     foreach ($p in $paths) {

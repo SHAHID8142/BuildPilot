@@ -17,8 +17,8 @@ EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged).
-EXPECTED_MANIFEST_SHA256 = "2f4ab3d876ddd2020123c19f6c9be39bd7c75da711d2b3bf213ecd79a75b4101"
-EXPECTED_EXCEPTION_COUNT = 14  # DEC-7301 as amended by DEC-7305 (sps-seo registration)
+EXPECTED_MANIFEST_SHA256 = "a42ad4054d3672d464244ca2e49d0ace20fbe65d722573e046c9c7b3d66c1095"
+EXPECTED_EXCEPTION_COUNT = 18  # DEC-7301 as amended by DEC-7305 (sps-seo registration)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",

@@ -28,8 +28,8 @@ bash -n "$REPO/scripts/sps-update.sh" && pass "bash -n sps-update.sh" || fail "b
 bash -n "$REPO/scripts/check-update.sh" && pass "bash -n check-update.sh" || fail "bash -n check-update.sh"
 
 # check-update.sh must terminate with a valid exit code even offline
-HOME="$TMP/home-nonet" bash "$REPO/scripts/check-update.sh" --force >/dev/null 2>&1
-rc=$?
+rc=0
+HOME="$TMP/home-nonet" bash "$REPO/scripts/check-update.sh" --force >/dev/null 2>&1 || rc=$?
 if [[ $rc -eq 0 || $rc -eq 1 || $rc -eq 2 ]]; then
   pass "check-update.sh exited with valid code ($rc)"
 else

@@ -2,7 +2,7 @@
  "schema": "sps2.legacy-exception-manifest/v1",
  "decision_id": "DEC-7301",
  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
- "exception_count": 14,
+ "exception_count": 18,
  "exceptions": [
   {
    "path": "get-sps.ps1",
@@ -70,9 +70,9 @@
   },
   {
    "path": "scripts/smoke-sps.sh",
-   "expected_blob": "4198ba10d15ea6a5adcd309522c660352eda4acd",
+   "expected_blob": "083e36f6728a0ba0e83458393e14a1cbda884687",
    "expected_mode": "100755",
-   "sha256": "8580eb142dea2e568193d60a7d62694c585e1be2d581f23dded66f9599464662",
+   "sha256": "c7bdd39af5f991cfccb2803cbca6fcae8764c2cee74db75b44097d993191f618",
    "authorization": "DEC-7305",
    "reason": "sps-seo skill registration in install/uninstall smoke checks; content and mode pinned by DEC-7301."
   },
@@ -102,19 +102,51 @@
   },
   {
    "path": "uninstall.sh",
-   "expected_blob": "c0ec46f344c44ad998ccf63f3df59a4e905075b4",
+   "expected_blob": "5fdf9725ca1bef1e615e0e641696262ae1d1f11a",
    "expected_mode": "100755",
-   "sha256": "7cd418a0c98d1e5bcd511aca2c51718f1d6fec1135cc27c47dfb04c0d0d45942",
+   "sha256": "afc8177c6601e3cf9f28b72cbcb88488ee067a393f20babfb0dcc266426b9697",
    "authorization": "DEC-7305",
    "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305."
   },
   {
    "path": "uninstall.ps1",
-   "expected_blob": "8a58c46b098643351c328b8e062275ef01ce47f3",
+   "expected_blob": "24ad7a177078a997c27381e66261709b5ba542f5",
    "expected_mode": "100644",
-   "sha256": "690d6e0e0b4fe0804d4fe50f13fd696c61787a020a8a5ec64dfeb21e5fb8a8b3",
+   "sha256": "c574b992aa68b15150a2319efd2f041c735c3fea5269822565bd714cb17f4c44",
    "authorization": "DEC-7305",
    "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305."
+  },
+  {
+   "path": ".github/expected-test-modules.txt",
+   "expected_blob": "6e8aaea387928459b5818daa68d1730a2a9e47b5",
+   "expected_mode": "100644",
+   "sha256": "80143cca62bbdfd07e5b5551351f76c00fd62c9cdb4c0c432341c496fb52329d",
+   "authorization": "DEC-7305",
+   "reason": "test_learning.py module registered (29 modules); content and mode pinned by DEC-7305."
+  },
+  {
+   "path": "CATALOG.md",
+   "expected_blob": "6400a4b58abfe855669ee020500e70fb8aa19bd8",
+   "expected_mode": "100644",
+   "sha256": "0112317a90f1737b0ed68758b071479e1bb3f1c01955b05b7e2a64de63f45ddf",
+   "authorization": "DEC-7305",
+   "reason": "profile-conflict resolution (unified install model); content and mode pinned by DEC-7305."
+  },
+  {
+   "path": "CHANGELOG.md",
+   "expected_blob": "62a430516957eabb69cf783a10d6e82e3cf973aa",
+   "expected_mode": "100644",
+   "sha256": "1c349aa5f6d5a0de49754ecd93be1c51bed5013956294c1c6704749459b7cdda",
+   "authorization": "DEC-7305",
+   "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305."
+  },
+  {
+   "path": "README.md",
+   "expected_blob": "6b8b1fa51043f25362123b79bef6e7b006c85627",
+   "expected_mode": "100644",
+   "sha256": "2f9d7d5c9975c3ee2efd2ce31a18405b8467dc8712b7ce2c6fb2cbaf1faa7ed2",
+   "authorization": "DEC-7305",
+   "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305."
   }
  ],
  "related_test_artifacts": [

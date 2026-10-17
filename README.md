@@ -66,8 +66,9 @@ bash ~/.sps/src/BuildPilot/uninstall.sh --keep-personal --yes
 Windows: `uninstall.ps1` / `uninstall.ps1 -KeepPersonal -Yes`
 
 > **Trust note:** the installer fetches ~27 third-party skills via `npx skills add`
-> with auto-yes, sets `StrictHostKeyChecking=no` for its git operations, and
-> refreshes the managed `sps`/`sps-cms` skill directories (overwriting local edits
+> with auto-yes, uses `StrictHostKeyChecking=accept-new` for its git operations
+> (unknown hosts accepted on first use; changed host keys rejected), and
+> refreshes the managed `sps`/`sps-cms`/`sps-seo` skill directories (overwriting local edits
 > in those paths). Review `install.sh` before running it in a sensitive environment.
 
 ---

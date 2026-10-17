@@ -41,10 +41,10 @@
    "title": "Amend DEC-7301 legacy-exception manifest: register sps-seo skill work in legacy scripts",
    "decided_at": "2026-10-17",
    "decided_by": "BuildPilot build manager under User mandate 'finish all task make it fully ready to use ASAP'; standing second-opinion verification applies",
-   "context": "User-directed work: (a) addition of the sps-seo skill requires registration in scripts/smoke-sps.sh, scripts/sps-doctor.sh and all four installers/uninstallers; (b) remediation Packages 2/3 (installer SSH host-key verification; uninstaller path confinement) were executed under the User's 'finish all task' mandate. The legacy-diff-zero control correctly flagged all six edits.",
+   "context": "User-directed work: (a) sps-seo skill addition and its registration across installers, smoke, doctor, router and README; (b) remediation Packages 2/3 (installer SSH host-key verification; uninstaller path confinement with installer-root parity); (c) profile-conflict documentation resolution (CATALOG/CHANGELOG); (d) smoke set -e fix and test-module registration. The legacy-diff-zero control correctly flagged all ten edits.",
    "decision": [
-    "Add exactly six exceptions to the DEC-7301 manifest: scripts/smoke-sps.sh, scripts/sps-doctor.sh, install.sh, install.ps1, uninstall.sh, uninstall.ps1 — content+mode pinned to worktree.",
-    "EXPECTED_EXCEPTION_COUNT becomes 14; authorized authorizations set becomes {DEC-7201, DEC-7305}.",
+    "Add exactly ten exceptions to the DEC-7301 manifest: scripts/smoke-sps.sh, scripts/sps-doctor.sh, install.sh, install.ps1, uninstall.sh, uninstall.ps1, .github/expected-test-modules.txt, CATALOG.md, CHANGELOG.md, README.md — content+mode pinned to worktree.",
+    "EXPECTED_EXCEPTION_COUNT becomes 18; authorized authorizations set becomes {DEC-7201, DEC-7305}.",
     "The manifest self-hash is re-pinned in legacy_exceptions.py under the amended canonical form.",
     "No check is weakened: the legacy-diff-zero invariant remains 'empty violations'; the two new exceptions are content-pinned like the prior eight."
    ],

@@ -69,10 +69,12 @@ section "Removing globally installed skills"
 
 # Confinement guard: a deletion target must resolve inside an allowlisted
 # agent-skill root. Manifest-controlled values are never trusted directly.
+# Covers every installer SYNC_PATHS root (install.sh) plus the rules dirs.
 UNINSTALL_ROOTS=(
   "$HOME/.agents/skills"
   "$HOME/.config/agents/skills"
   "$HOME/.claude/skills"
+  "$HOME/.claude/rules"
   "$HOME/.cursor/skills"
   "$HOME/.cursor/rules"
   "$HOME/.codex/skills"
@@ -82,6 +84,13 @@ UNINSTALL_ROOTS=(
   "$HOME/.gemini/antigravity-cli/skills"
   "$HOME/.windsurf/skills"
   "$HOME/.antigravity/skills"
+  "$HOME/.codeium/windsurf/skills"
+  "$HOME/.config/opencode/skills"
+  "$HOME/.cline/skills"
+  "$HOME/.roo/skills"
+  "$HOME/.kiro/skills"
+  "$HOME/.amp/skills"
+  "$HOME/.github/skills"
 )
 is_safe_uninstall_target() {
   local candidate="$1"
@@ -138,6 +147,13 @@ remove_agent_skill() {
     "./.windsurf/skills/$name"
     "$HOME/.antigravity/skills/$name"
     "./.antigravity/skills/$name"
+    "$HOME/.codeium/windsurf/skills/$name"
+    "$HOME/.config/opencode/skills/$name"
+    "$HOME/.cline/skills/$name"
+    "$HOME/.roo/skills/$name"
+    "$HOME/.kiro/skills/$name"
+    "$HOME/.amp/skills/$name"
+    "$HOME/.github/skills/$name"
   )
   for p in "${paths[@]}"; do
     if [ -e "$p" ]; then
