@@ -72,3 +72,10 @@
   flags drift on later runs (upstream tamper detection).
 - Lower priority until third-party skills are actually installed, but the
   mechanism lands now. User-approved 2026-10-18 (8-item hardening list).
+
+---
+
+## T-30 (queued): Docs-drift checker
+- Machine check that every command in USER-GUIDE.md / README.md / SKILL.md
+  exists in scripts/ with matching flags (docs can silently rot otherwise).
+- Found in hardening gap-scan 2026-10-18.
