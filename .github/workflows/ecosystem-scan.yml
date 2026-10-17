@@ -1,0 +1,126 @@
+name: ecosystem-scan
+
+# Nightly skill-ecosystem scan (scripts/ecosystem-scan.sh). Read-only over the
+# ecosystem: it never installs, modifies, or removes skills. Proposals land in
+# a tracking issue; every proposal still requires the Tool Consent gate
+# (skill/sps/TOOL-CONSENT.md) before any install. Conflict bans
+# (skill/sps/SKILL-ROUTER.md) apply to every proposal regardless of popularity.
+
+"on":
+  schedule:
+    # 03:17 UTC daily — off the :00 bulk-schedule spike
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: ecosystem-scan
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    name: Scan + report
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run ecosystem scan
+        id: scan
+        env:
+          GITHUB_API_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p scan-output
+          bash scripts/ecosystem-scan.sh scan-output | tee scan-stdout.log
+          REPORT_FILE="$(sed -n 's/^REPORT_FILE=//p' scan-stdout.log)"
+          PROPOSALS_COUNT="$(sed -n 's/^PROPOSALS_COUNT=//p' scan-stdout.log)"
+          if [ -z "$REPORT_FILE" ] || [ ! -f "$REPORT_FILE" ]; then
+            echo "::error::scan produced no report file"
+            exit 1
+          fi
+          echo "report=$REPORT_FILE" >> "$GITHUB_OUTPUT"
+          echo "basename=$(basename "$REPORT_FILE")" >> "$GITHUB_OUTPUT"
+          echo "proposals=${PROPOSALS_COUNT:-0}" >> "$GITHUB_OUTPUT"
+
+      - name: Commit report
+        run: |
+          REPORT="${{ steps.scan.outputs.report }}"
+          if [ ! -f "$REPORT" ]; then
+            echo "no report to commit"; exit 0
+          fi
+          git add -f "$REPORT"
+          if git diff --cached --quiet; then
+            echo "report unchanged; nothing to commit"; exit 0
+          fi
+          git config user.name "sps-ecosystem-scan"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "ecosystem-scan report $(date -u +%Y-%m-%d) [skip ci]"
+          git push
+
+      - name: File proposals (max 3 issues per run, tracking issue included)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          REPORT="${{ steps.scan.outputs.report }}"
+          PROPOSALS="${{ steps.scan.outputs.proposals }}"
+          [ "$PROPOSALS" != "0" ] || { echo "no proposals"; exit 0; }
+
+          LABEL="ecosystem-scan"
+          # Existing open tracking issue?
+          TRACKING="$(gh issue list --label "$LABEL" --state open --json number,title \
+            --jq '.[] | select(.title | startswith("skill-ecosystem-scan: proposals")) | .number' | head -1 || true)"
+
+          # Proposals section of the report (from "## Proposals" to next "## ")
+          PROPOSALS_BODY="$(awk '/^## Proposals$/{f=1;next} /^## /{f=0} f' "$REPORT")"
+          if [ -z "$PROPOSALS_BODY" ] || [ "$PROPOSALS_BODY" = "None." ]; then
+            echo "empty proposals section"; exit 0
+          fi
+
+          NEW_ISSUES=0
+          if [ -z "$TRACKING" ]; then
+            gh issue create --title "skill-ecosystem-scan: proposals" \
+              --label "$LABEL" \
+              --body "$(printf 'Tracking issue for nightly ecosystem-scan proposals.\n\n%s' "$PROPOSALS_BODY")"
+            NEW_ISSUES=1
+            TRACKING="$(gh issue list --label "$LABEL" --state open --json number \
+              --jq '.[0].number')"
+          else
+            gh issue comment "$TRACKING" --body "$PROPOSALS_BODY"
+          fi
+
+          # Per-candidate issues: only for candidate repos not already named in
+          # ANY open ecosystem-scan issue (simple mention check), max 3 total.
+          KNOWN="$(gh issue list --label "$LABEL" --state open --json body,title --jq '.[].body; .[].title' || true)"
+          if [ -n "$TRACKING" ]; then
+            KNOWN="$KNOWN
+          $(gh issue view "$TRACKING" --comments 2>/dev/null || true)"
+          fi
+
+          while IFS= read -r line; do
+            [ "$NEW_ISSUES" -lt 3 ] || break
+            REPO="$(printf '%s' "$line" | sed -nE 's/^### .* -> ([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)$/\1/p')"
+            [ -n "$REPO" ] || continue
+            if printf '%s' "$KNOWN" | grep -qF "$REPO"; then
+              echo "$REPO already named in an open issue; skipping"; continue
+            fi
+            SECTION="$(awk -v pat="### .* -> $REPO" 'BEGIN{f=0} $0 ~ pat {f=1} f && /^### / && $0 !~ pat {f=0} f' "$REPORT")"
+            gh issue create --title "ecosystem-scan proposal: $REPO" \
+              --label "$LABEL" --body "$SECTION"
+            KNOWN="$KNOWN
+          $REPO"
+            NEW_ISSUES=$((NEW_ISSUES+1))
+          done < <(awk '/^### /' "$REPORT")
+
+          echo "issues created this run: $NEW_ISSUES (tracking issue counts as one)"
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.scan.outputs.basename }}
+          path: ${{ steps.scan.outputs.report }}
+          retention-days: 90

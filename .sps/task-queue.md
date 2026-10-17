@@ -4,6 +4,7 @@
 - [ ] id: T-19 task: Nightly skill-ecosystem scan — build per delivered design (GitHub Actions cron 03:17 UTC, report-only, [skip ci], deduped tracking issue, 6 vetting gates) — started: 2026-10-18
 
 ## queued (oldest first)
+- [x] id: T-21 task: Write proper README.md for the repo — finished: 2026-10-18 (already delivered in PR #4: README refreshed to live facts + USER-GUIDE.md linked; no further work)
 - [ ] id: T-20 task: Lessons→validators automation — when check_laws.py rejects the same doc mistake twice, auto-generate the negative test (user-approved next build, 2026-10-18)
 
 ## queued (oldest first)
