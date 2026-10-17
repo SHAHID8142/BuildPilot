@@ -70,3 +70,8 @@ Read this to understand the current project context, completed tasks, and next s
 - LESSONS.md + scripts/sps-lesson.sh (capture/send/review) shipped; law-checked
 - Manifest now 25 exceptions (sps-lesson.sh pinned), self-hash a384b6a8…
 - Commit d37942d — battery 1105 OK, sps2 80/80
+
+## 2026-10-18 — Session 6c: P3 branch merged to main (PR #1)
+- PR #1 merged (30534ba): 123 commits — hard laws, legal gate, lesson channel, universal hosts, T-17
+- main branch protection enabled: 4 required CI checks, force-push/deletion blocked
+- Local main synced to 30534ba; build/roadmap-p3-completion retained for future work
