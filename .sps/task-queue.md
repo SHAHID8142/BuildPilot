@@ -36,3 +36,31 @@
 
 ---
 
+---
+
+## T-24 (queued): Client .sps/ backup + unpushed-main warning
+- Auto-snapshot .sps/ at every gate (G1, G2, section approvals, handoff) into
+  a rolling backup (last N kept) inside the project.
+- sps-doctor warns loudly when local main has unpushed commits older than 1 day.
+- User-approved 2026-10-18 (roadmap hardening discussion).
+
+## T-25 (queued): Secrets-leak CI gate
+- CI job scans every push for key patterns (sk_live_, AKIA, ghp_, xoxb-, -----BEGIN
+  PRIVATE KEY-----, etc.); blocks merge on hit; allowlist for test fixtures.
+- User-approved 2026-10-18.
+
+## T-26 (queued): sps-restore one-command rollback
+- Pick from ~/.sps/backups/ (last 3 kept) and restore bundled skills; verify
+  restored state with doctor. 
+- User-approved 2026-10-18.
+
+## T-27 (queued): Real Windows CI smoke job
+- GitHub Actions windows-latest job actually RUNS install.sh flow via pwsh
+  (get-sps.ps1 + install.ps1) in a sandboxed HOME, not just syntax-check.
+- User-approved 2026-10-18.
+
+## T-28 (queued): Kickoff-proof check + user cheat sheet
+- Handoff/doctor verifies .sps/ contains recorded kickoff answers before
+  Phase 4 starts (proves questions were asked, not just gates trusting it).
+- One-page cheat sheet of user commands linked from kickoff first message.
+- User-approved 2026-10-18.
