@@ -1,5 +1,9 @@
 # SPS Governance — Canonical Project State
 
+> **[STALE 2026-10-17]** This file reflects the PHASE-05 era (2026-10-03) and is
+> no longer maintained. Live state lives in `.sps/handoff.md` (context-budgeted)
+> and `reports/`. Kept for governance history; do not read as current state.
+>
 > **This repository is the source of truth for SPS project state.**
 > Agents are *clients* of this repository. Project-critical state must never live
 > only in an agent's hidden memory, global memory, or machine-local planning dir.
