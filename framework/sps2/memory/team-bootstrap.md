@@ -8,25 +8,25 @@ Purpose: Mechanical checklist for fresh-agent onboarding. Based on repository st
 
 ### Step 1: Read the memory layout
 
-Load sps2/memory/memory-layout.json and verify its sha256 entries against the repository.
+Load framework/sps2/memory/memory-layout.json and verify its sha256 entries against the repository.
 
 **Expected:** All sha256 hashes match the files they reference.
 
 ### Step 2: Verify phase index
 
-Check sps2/decisions/ROADMAP-P3-DECISIONS.json completion block is APPROVED with User attribution.
+Check framework/sps2/decisions/ROADMAP-P3-DECISIONS.json completion block is APPROVED with User attribution.
 
 **Expected:** P3 completion state is APPROVED, decided_by is User, decided_on is a date.
 
 ### Step 3: Verify capability registry
 
-Load sps2/capability/registry.json and confirm 4 EVALUATED capabilities and CAP-P03-005 DEFERRED.
+Load framework/sps2/capability/registry.json and confirm 4 EVALUATED capabilities and CAP-P03-005 DEFERRED.
 
 **Expected:** 4 EVALUATED, CAP-P03-005 DEFERRED / NOT_PROMOTED.
 
 ### Step 4: Verify P7 boundaries
 
-Load sps2/decisions/P7-DECISIONS.json and confirm D-P7-IMPLEMENTATION is User-approved with named scope and forbidden scope.
+Load framework/sps2/decisions/P7-DECISIONS.json and confirm D-P7-IMPLEMENTATION is User-approved with named scope and forbidden scope.
 
 **Expected:** D-P7-IMPLEMENTATION approved by User, scope and forbidden scope match G1-G8.
 
@@ -38,7 +38,7 @@ Run validate-p7-readiness.py and confirm 0 P7 implementation artefacts outside t
 
 ### Step 6: Verify CONF-001 and LCP/INP
 
-Check sps2/research/cache.json for CONF-001 UNRESOLVED and LCP/INP NOT_OBSERVED.
+Check framework/sps2/research/cache.json for CONF-001 UNRESOLVED and LCP/INP NOT_OBSERVED.
 
 **Expected:** CONF-001 UNRESOLVED; LCP/INP NOT_OBSERVED.
 

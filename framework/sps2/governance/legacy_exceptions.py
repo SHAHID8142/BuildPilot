@@ -17,9 +17,15 @@ EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged). Amended same day by
-# DEC-7305: 22 exceptions, then 23 (skill-search.sh + its scripts/ mirror).
-EXPECTED_MANIFEST_SHA256 = "5d1111a46e602ddb562f4bbf076324ce8aa8a69734916f2ef02b3634b14bcd5c"
-EXPECTED_EXCEPTION_COUNT = 37  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow)
+# DEC-7305: 22 exceptions, then 23 (skill-search.sh + its scripts/ mirror). Re-pinned
+# 2026-10-18 (tests/CI audit fix, T-20): expected-test-modules.txt regenerated (39
+# modules), sps-ci.yml gains validator-battery + permissions/concurrency + MIN_TESTS
+# 1000, smoke-sps.sh (+ mirror) gains shell-tool smoke coverage. Re-pinned again
+# 2026-10-18 (shell-scripts audit fixes): installer arg-loop/symlink/color fixes in
+# install.sh, uninstall.sh, get-sps.sh, sps-status.sh, sps-doctor.sh, sps-update.sh,
+# sps-hygiene.sh, bootstrap-sps.sh (+ mirrors).
+EXPECTED_MANIFEST_SHA256 = "1383427f79732dc8ae8a9a1bd52ab333bc63f8c011d4bcbc4d55ded074f8ee1c"
+EXPECTED_EXCEPTION_COUNT = 57  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",

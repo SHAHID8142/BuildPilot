@@ -12,7 +12,11 @@ set -uo pipefail
 export npm_config_cache="${HOME}/.sps/npm-cache"
 export NPX_NO_UPDATE_NOTIFIER=1
 
-GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BOLD='\033[1m'; NC='\033[0m'
+if [ -t 1 ]; then
+  GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; BOLD='\033[1m'; NC='\033[0m'
+else
+  GREEN=''; YELLOW=''; RED=''; BOLD=''; NC=''
+fi
 ok()      { echo -e "${GREEN}✓${NC} $*"; }
 info()    { echo -e "${YELLOW}→${NC} $*"; }
 removed() { echo -e "${RED}−${NC} $*"; }
@@ -34,6 +38,7 @@ while [[ $# -gt 0 ]]; do
       ;;
     --agents|-a)
       AGENTS="${2:-}"
+      if [[ $# -lt 2 || -z "$AGENTS" ]]; then echo "missing value for --agents" >&2; exit 1; fi
       shift 2
       ;;
     --all)
@@ -60,7 +65,7 @@ echo ""
 echo -e "${RED}This will remove /sps and everything installed by the SPS installer.${NC}"
 $KEEP_PERSONAL || echo -e "${RED}It will also remove ~/.sps/ personal data and the install manifest.${NC}"
 if ! $ASSUME_YES; then
-  read -p "Are you sure? (yes/no): " confirm
+  read -r -p "Are you sure? (yes/no): " confirm
   [[ "$confirm" != "yes" ]] && echo "Aborted." && exit 0
 fi
 
@@ -201,10 +206,11 @@ build_agent_args
 
 if command -v npx >/dev/null 2>&1; then
   section "Removing skills via Skills CLI"
-  npx skills remove "${MANAGED_SKILLS[@]}" -g -y "${REMOVE_AGENT_ARGS[@]}" >/dev/null 2>&1 || true
+  npx skills remove "${MANAGED_SKILLS[@]:-}" -g -y "${REMOVE_AGENT_ARGS[@]:-}" >/dev/null 2>&1 || true
 fi
 
-for skill in "${MANAGED_SKILLS[@]}"; do
+for skill in "${MANAGED_SKILLS[@]:-}"; do
+  [ -n "$skill" ] || continue
   remove_agent_skill "$skill"
 done
 remove_agent_skill "universal-build-orchestrator"
@@ -225,7 +231,7 @@ DEFAULT_SYNC_PATHS=(
 if ((${#SYNC_PATHS[@]} == 0)); then
   SYNC_PATHS=("${DEFAULT_SYNC_PATHS[@]}")
 fi
-for dest_root in "${SYNC_PATHS[@]}" "${DEFAULT_SYNC_PATHS[@]}"; do
+for dest_root in "${SYNC_PATHS[@]:-}" "${DEFAULT_SYNC_PATHS[@]}"; do
   [[ -z "$dest_root" ]] && continue
   if [ -e "$dest_root/sps" ] && safe_rm "$dest_root/sps"; then
     removed "${dest_root/#$HOME/\~}/sps"
@@ -240,14 +246,14 @@ section "Removing Claude plugins"
 
 if command -v claude >/dev/null 2>&1; then
   if ((${#CLAUDE_PLUGINS[@]})); then
-    for plugin in "${CLAUDE_PLUGINS[@]}"; do
+    for plugin in "${CLAUDE_PLUGINS[@]:-}"; do
       claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1 && removed "$plugin" || true
     done
   fi
 
   # Remove marketplaces
   if ((${#CLAUDE_MARKETPLACES[@]})); then
-    for mkt in "${CLAUDE_MARKETPLACES[@]}"; do
+    for mkt in "${CLAUDE_MARKETPLACES[@]:-}"; do
       claude plugin marketplace remove "$mkt" >/dev/null 2>&1 && removed "marketplace: $mkt" || true
     done
   fi

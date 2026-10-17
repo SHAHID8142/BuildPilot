@@ -48,7 +48,7 @@ rm -rf "$TMP/lawlog-repo"
 mkdir -p "$TMP/lawlog-repo/.sps"
 git -C "$TMP/lawlog-repo" init -q
 : > "$TMP/lawlog-repo/.sps/law-rejections.jsonl"
-if bash "$REPO/scripts/sps-lawlog.sh show" > "$TMP/lawlog.out" 2>&1; then
+if bash "$REPO/scripts/sps-lawlog.sh" show > "$TMP/lawlog.out" 2>&1; then
   pass "sps-lawlog.sh show (empty ledger)"
 else
   fail "sps-lawlog.sh show (empty ledger)"

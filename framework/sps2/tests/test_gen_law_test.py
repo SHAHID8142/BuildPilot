@@ -176,6 +176,42 @@ class GenLawTestSubprocessTests(unittest.TestCase):
                 )
                 shutil.rmtree(scratch, ignore_errors=True)
 
+    def test_f_hostile_check_id_refused(self):
+        # A check_id containing '"""' would be interpolated into the
+        # generated test's docstring; the tool must refuse it (unsafe
+        # check_id error) and write nothing.
+        hostile = 'dod"""-inject'
+        scratch = Path(tempfile.mkdtemp(
+            prefix="gen-law-test-hostile-cid-", dir=self._tmp))
+        repo = scratch / "repo"
+        shutil.copytree(
+            REPO_ROOT,
+            repo,
+            ignore=shutil.ignore_patterns(".git", "node_modules", "__pycache__"),
+        )
+        _write_ledger(
+            repo,
+            [
+                {"check_id": hostile, "target_file": LEDGER_PAIR[1],
+                 "message": LEDGER_MESSAGE},
+                {"check_id": hostile, "target_file": LEDGER_PAIR[1],
+                 "message": LEDGER_MESSAGE},
+            ],
+        )
+        proc = _run_gen(
+            repo, "--check", hostile, "--file", LEDGER_PAIR[1],
+            "--approved-by", "test-fixture",
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("unsafe check_id", proc.stderr)
+        self.assertEqual(
+            list((repo / "framework" / "sps2" / "tests").glob(
+                "test_law_regress_*.py")),
+            [],
+            "hostile check_id produced a test file",
+        )
+        shutil.rmtree(scratch, ignore_errors=True)
+
 
 if __name__ == "__main__":
     unittest.main()

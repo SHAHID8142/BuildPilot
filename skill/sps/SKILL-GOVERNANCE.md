@@ -19,7 +19,7 @@ Prefer a small number of strong skills over a noisy pile.
 | UI review | `web-design-guidelines` | host a11y | |
 | React | `vercel-react-best-practices` | `vercel-composition-patterns` | |
 | Testing | `webapp-testing` | `agent-browser` live checks | |
-| SEO | `ai-seo` | SPS `seo` | |
+| SEO | `sps-seo` (bundled, synced by installer) | `ai-seo` | |
 | Content | `copywriting` | fact-check | SPS drafts, user edits |
 | Surgical behavior | Karpathy guidelines | CONTEXT-EFFICIENCY | |
 | Hallucination gate | `verification-before-completion` | fact-check | single skill only |

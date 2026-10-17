@@ -1,0 +1,98 @@
+name: windows-smoke
+
+# T-27: real Windows CI smoke job. Proves the PowerShell installer flow runs
+# on windows-latest and that the bash tooling survives a Windows checkout.
+#
+# install.ps1 (read-only audit, not edited here) with -Yes is non-interactive;
+# it requires node/npx (preinstalled on windows-latest) and writes only under
+# USERPROFILE (~/.sps, agent skill dirs) — safe on a disposable runner. Steps
+# that fail (npx skills add to a remote repo, missing claude CLI) are recorded
+# by the installer as "Skipped" and make it exit 1; this job treats the
+# installer's STRUCTURE as the gate (banner + manifest + core skill synced)
+# rather than requiring every remote skill download to succeed, because the
+# runner has no control over third-party repo availability. A genuine script
+# crash (exit before the final banner) still fails the job.
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Windows installer + doctor smoke
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python (doctor/tests tooling availability check)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run PowerShell installer (install.ps1 -Yes)
+        shell: pwsh
+        # -Yes skips the Read-Host confirm. The installer exits 1 when any
+        # step is Skipped (e.g. a third-party skills repo is down); that is a
+        # degraded install, not a broken script, so we capture the exit code
+        # and gate below on structural success instead. A pwsh-level crash
+        # (uncaught exception, syntax error) still fails this step outright.
+        id: install
+        continue-on-error: false
+        run: |
+          ./install.ps1 -Yes
+          exit $LASTEXITCODE
+
+      - name: Verify installer structure (manifest + core skill synced)
+        shell: pwsh
+        # Structural gate: the installer must have written its manifest and
+        # synced the core /sps skill to the Claude host dir. If install.ps1
+        # crashed before these were written, the job fails here.
+        run: |
+          $ErrorActionPreference = "Stop"
+          $manifest = Join-Path $env:USERPROFILE ".sps\install-manifest.env"
+          $coreSkill = Join-Path $env:USERPROFILE ".claude\skills\sps\SKILL.md"
+          if (-not (Test-Path $manifest)) {
+            Write-Host "::error::install.ps1 did not write ~/.sps/install-manifest.env"
+            exit 1
+          }
+          if (-not (Test-Path $coreSkill)) {
+            Write-Host "::error::install.ps1 did not sync /sps to ~/.claude/skills"
+            exit 1
+          }
+          Write-Host "install manifest + core skill present"
+          Get-Content $manifest | ForEach-Object { Write-Host "  $_" }
+
+      - name: Run sps-doctor.sh (bash via git-bash)
+        shell: bash
+        # Doctor is informational (always exits 0); running it on Windows
+        # proves the bash scripts at least execute under git-bash.
+        run: |
+          bash scripts/sps-doctor.sh
+
+      - name: Portability tripwire — bash -n all scripts
+        shell: bash
+        # Syntax-check every tracked .sh under bash on Windows. Catches
+        # bashisms-that-are-not-bash and CRLF/encoding breakage.
+        run: |
+          set -euo pipefail
+          fail=0
+          while IFS= read -r -d '' f; do
+            if ! bash -n "$f" 2>err.tmp; then
+              echo "::error::bash -n failed: $f"
+              cat err.tmp
+              fail=1
+            fi
+          done < <(git ls-files -z '*.sh')
+          rm -f err.tmp
+          exit $fail

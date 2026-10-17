@@ -43,3 +43,11 @@ available in the environment, and the pre-approved exceptions below.
    `.sps/installs.md` (tool, version, date, why, outcome) — a project file,
    not a session-refreshed one — so later sessions don't re-ask and can
    audit what entered the environment.
+
+## Hook installs (T-32)
+
+Wiring the SPS law hooks into Claude Code changes write-time behavior, so it
+falls under this law: `scripts/sps-hooks.sh install` refuses without the
+explicit `--yes` flag, and piped/EOF stdin never counts as consent. See
+`skill/sps/HOOKS.md` for what the hooks enforce and `status`/`remove` usage.
+

@@ -28,6 +28,7 @@ import sys
 import tempfile
 import time
 import unittest
+from pathlib import Path
 from contextlib import redirect_stderr, redirect_stdout
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -389,8 +390,7 @@ class TestProcessControl(P17TestCase):
             self.assertEqual(doc["execution"]["stdout_ref"], "stdout.log")
             self.assertEqual(doc["execution"]["stderr_ref"], "stderr.log")
             self.assertEqual(len(doc["digests"][key]), 64)
-        self.assertIn("stub-agent", open(os.path.join(task_dir, "stdout.log"),
-                                         encoding="utf-8").read())
+        self.assertIn("stub-agent", Path(os.path.join(task_dir, "stdout.log")).read_text(encoding="utf-8"))
 
     def test_shell_strings_are_never_executed(self):
         with self.assertRaises(execution.ExecutionError):

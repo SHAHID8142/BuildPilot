@@ -5,8 +5,12 @@
 
 set -euo pipefail
 
-GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'
-CYAN='\033[0;36m'; BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+if [ -t 1 ]; then
+  GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'
+  CYAN='\033[0;36m'; BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+else
+  GREEN=''; RED=''; YELLOW=''; CYAN=''; BOLD=''; DIM=''; NC=''
+fi
 PROJECT="${1:-}"
 FIX=false
 for arg in "$@"; do
@@ -20,6 +24,7 @@ echo ""
 
 ok()   { echo -e "  ${GREEN}✓${NC} $*"; }
 bad()  { echo -e "  ${RED}✗${NC} $*"; }
+warn() { echo -e "  ${YELLOW}!${NC} $*"; }
 info() { echo -e "  ${DIM}- $*${NC}"; }
 
 MISSING=0
@@ -146,6 +151,22 @@ if [[ -n "$PROJECT" && -d "$PROJECT" ]]; then
   if (( budget_fail > 0 )); then
     bad "$budget_fail .sps file(s) over context budget — archive per CONTEXT-BUDGET.md rule 2"
   fi
+fi
+
+# T-29: third-party skill provenance (scripts/sps-provenance.sh).
+# Optional content pinning of third-party skills (bundled sps/sps-cms/sps-seo are
+# manifest-governed and skipped). Report-only here: drift count when pinned,
+# an info hint when not pinned yet — never a failure.
+if [[ -f "$HOME/.sps/provenance.json" ]]; then
+  prov_out="$(bash "$SCRIPT_REPO/scripts/sps-provenance.sh" check 2>/dev/null || true)"
+  prov_drift="$(printf '%s\n' "$prov_out" | grep -c '^PROVENANCE-DRIFT:' || true)"
+  if [[ "$prov_drift" -gt 0 ]]; then
+    bad "skill provenance: $prov_drift third-party skill(s) changed since pin — review with scripts/sps-provenance.sh check"
+  else
+    ok "skill provenance: no drift in pinned third-party skills"
+  fi
+else
+  info "provenance not pinned yet — run scripts/sps-provenance.sh pin (optional)"
 fi
 
 echo ""

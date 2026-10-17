@@ -138,6 +138,10 @@ for root_file in AGENTS.md GEMINI.md CLAUDE.md; do
   target="$TARGET/$root_file"
   block="$LOCK_BLOCK"
   [[ "$root_file" == "GEMINI.md" ]] && block="$GEMINI_LOCK_BLOCK"
+  if [[ -L "$target" ]]; then
+    echo "Refusing symlinked root mirror: $target" >&2
+    exit 1
+  fi
   if [[ ! -f "$target" ]]; then
     printf '%s\n' "$block" > "$target"
     echo "write $target"

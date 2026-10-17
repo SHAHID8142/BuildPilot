@@ -59,6 +59,7 @@ This chunk covers:
 
 Evidence:
 - Known / Assumed / Unverified:
+- Product proof: test output / screenshot / boot log (per SECTION-DOD item)
 
 Memory updates after approval:
 - profile / handoff / content-model / section-todos / registry:

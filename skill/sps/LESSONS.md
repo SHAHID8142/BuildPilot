@@ -100,6 +100,17 @@ never silently return. **No auto-land**: generation proposes; only an explicit
 `--approved-by` writes, and the generated test stays invalid until its
 `# reviewed by:` header is filled (enforced by `check_generated_tests.py`).
 
+## Lesson proposals (T-33)
+
+At session end, the agent MAY draft lesson candidates via
+`python3 framework/sps2/tools/propose_lessons.py propose --pattern "<one line>" --confidence 0.8 --source "<where>"`.
+Proposals are inert data files in `lessons/inbox/` — never rules. Only the
+existing user-approval review flow (section 4 above) promotes one
+(`promote --file <name> --approved-by <you>`), and the tool then only moves
+the file and PRINTS the manual LESSONS.md edit the human must still make.
+The tool can never edit LESSONS.md or any rule file — the hard rules below
+are unchanged by T-33.
+
 ## Hard rules
 
 - **No auto-send**: lessons leave a client project only on explicit `send`.

@@ -85,8 +85,8 @@ if [ -f .sps/after-sale.md ]; then
     [ -z "$date_val" ] && continue
     remaining="$(days_until "$date_val")"
     case "$remaining" in
-      ?)  echo "  ${label}: ${date_val} (unknown days)";;
-      -*) echo "  ${label}: ${date_val} (${-remaining} day(s) past)";;
+      \?) echo "  ${label}: ${date_val} (unknown days)";;
+      -*) echo "  ${label}: ${date_val} ($(( -remaining )) day(s) past)";;
       *)  echo "  ${label}: ${date_val} (${remaining} day(s) remaining)";;
     esac
     found=1

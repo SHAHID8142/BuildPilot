@@ -4,6 +4,9 @@ You don't need to read the skill's internal docs to use BuildPilot. This guide
 covers everything a person actually does: install, start a project, approve
 work, and use the improvement loop.
 
+> In a hurry? The one-page phrasebook — every sentence you'll ever need — is
+> in the skill at `skill/sps/CHEAT-SHEET.md`.
+
 ---
 
 ## 1. Install (one command)

@@ -378,8 +378,9 @@ if not p5_authorised:
 #
 # STRONGER PHASE-AWARE REPLACEMENT: P6 artefacts are permitted only when a
 # P6 decision record exists and is attributable to an identifiable User. The
-# unconditional prohibitions below are retained and extended: P7 is now also
-# forbidden outright, and CAP-P03-005 must remain deferred and unpromoted.
+# unconditional: CAP-P03-005 must remain deferred and unpromoted, and P7
+# artefacts are admitted only under the recorded D-P7-IMPLEMENTATION
+# authorisation (gated below), never by default.
 _p6dec = os.path.join(B, 'decisions/P6-DECISIONS.json')
 _p6open = False
 if os.path.exists(_p6dec):
@@ -403,19 +404,123 @@ if not _p6open:
               'core/technology_readiness.py', 'tools/validate-p6.py'):
         if os.path.exists(os.path.join(B, p)):
             print("P6_ARTIFACT_WITHOUT_AUTHORISATION: %s" % p)
-# Unconditional: no phase beyond P6 may begin.
-# A P7 DECISION record is distinguished from a P7 DELIVERABLE. Deliverables are
-# forbidden outright. The readiness decision record is evidence that P7 did NOT
-# start, so it is admitted under a stricter rule: every approval inside it must
-# be attributable to an identifiable User, judged by the AGENT control already
-# defined in this script, and each decision must resolve the ambiguity it
-# claims to resolve. Admitting a decision record never admits a deliverable.
+# P7 boundary, revised after the User recorded D-P7-IMPLEMENTATION.
+#
+# OBSOLETE INVARIANT: the P7 paths below were forbidden outright. That encoded
+# "P7 has not started", which became false once the User explicitly authorised
+# P7 implementation (recorded in decisions/P7-DECISIONS.json, approval APPROVED
+# by the User on 2026-10-05). Two of the listed paths now exist legitimately.
+#
+# STRONGER FAIL-CLOSED REPLACEMENT: each P7 artefact is permitted only when a
+# valid authorisation record exists. The record itself is validated, not
+# trusted: schema sps2.decisions/v1, the D-P7-IMPLEMENTATION decision present,
+# its approval APPROVED and attributable to an identifiable User, and its
+# authorised_scope non-empty. An artefact whose authorisation is absent,
+# unreadable, or outside the recorded scope still FAILS — so tampering with
+# the record re-forbids the artefacts. The P7 readiness decision record
+# (admitted separately below, under its own stricter rule) and the P6
+# boundary above are unchanged.
+_p7dec_path = os.path.join(B, 'decisions/P7-DECISIONS.json')
+_p7_authorised = False
+if os.path.exists(_p7dec_path):
+    try:
+        _p7rec = json.load(open(_p7dec_path))
+    except (OSError, ValueError) as _e:
+        print("P7_AUTHORISATION_RECORD_UNREADABLE: %s" % type(_e).__name__)
+        _p7rec = None
+    if _p7rec is not None:
+        if _p7rec.get('schema') != 'sps2.decisions/v1':
+            print("P7_AUTHORISATION_SCHEMA_WRONG: %r" % _p7rec.get('schema'))
+        _p7ids = {x.get('decision_id'): x for x in
+                  (_p7rec.get('decisions') or [])}
+        _impl = _p7ids.get('D-P7-IMPLEMENTATION')
+        if _impl is None:
+            print("P7_AUTHORISATION_DECISION_MISSING: D-P7-IMPLEMENTATION")
+        else:
+            _a = _impl.get('approval') or {}
+            _w = (_a.get('decided_by') or '').strip()
+            _t = (_a.get('decided_on') or _a.get('decided_at') or '').strip()
+            if _a.get('state') != 'APPROVED' or not _w or not _t or \
+                    ATTR.AGENTISH.search(_w):
+                print("P7_AUTHORISATION_NOT_USER_ATTRIBUTABLE: "
+                      "D-P7-IMPLEMENTATION")
+            elif not (_impl.get('authorised_scope') or []):
+                print("P7_AUTHORISATION_SCOPE_EMPTY: D-P7-IMPLEMENTATION")
+            else:
+                # A wrong-schema record must not authorise anything even when
+                # its decision block looks valid (fail-closed on tampering).
+                _p7_authorised = (
+                    _p7rec.get('schema') == 'sps2.decisions/v1')
+# Artefact -> authorising scope entry in D-P7-IMPLEMENTATION.authorised_scope.
+# An artefact listed here is admitted ONLY while the record above validates;
+# anything P7-shaped NOT in this table is forbidden outright (fail-closed).
+P7_AUTHORISED_ARTEFACTS = (
+    ('decisions/P7-DECISIONS.json', 'documentation and validators'),
+    ('memory', 'project-local persistent memory layout'),
+    ('memory/memory-layout.json', 'project-local persistent memory layout'),
+    ('memory/team-bootstrap.md', 'team/bootstrap mechanism'),
+    ('memory/README.md', 'project-local persistent memory layout'),
+    ('memory/P7-IMPLEMENTATION-REPORT.md', 'documentation and validators'),
+    ('tools/validate-bootstrap.py', 'team/bootstrap mechanism'),
+    ('tools/isolation_validator.py', 'project-local isolation validator'),
+    ('tools/rollback-memory-layout.py', 'rollback/removal mechanisms'),
+)
+for _p, _scope_frag in P7_AUTHORISED_ARTEFACTS:
+    if not os.path.exists(os.path.join(B, _p)):
+        continue
+    if not _p7_authorised:
+        print("P7_ARTIFACT_WITHOUT_AUTHORISATION: %s" % _p)
+        continue
+    _sc = json.dumps(_p7ids.get('D-P7-IMPLEMENTATION', {})
+                     .get('authorised_scope') or []).lower()
+    if _scope_frag not in _sc:
+        print("P7_ARTIFACT_OUTSIDE_AUTHORISED_SCOPE: %s" % _p)
+# Anything P7-shaped outside the table stays forbidden outright. The readiness
+# decision record is admitted separately below (it is evidence P7 did NOT
+# start); requirements/evidence/tasks/handoff and a top-level bootstrap dir
+# are deliverables no authorisation covers.
 for p in ('requirements/P7-REQUIREMENTS.json', 'evidence/P7-EVIDENCE.json',
           'tasks/P7-TASKS.md', 'handoff/HANDOFF-P7.json',
-          'decisions/P7-DECISIONS.json', 'memory', 'bootstrap',
-          'isolation_validator.py'):
+          'handoff/HANDOFF-P7.md', 'bootstrap',
+          'requirements/P7-REQUIREMENTS.md'):
     if os.path.exists(os.path.join(B, p)):
         print("P7_ARTIFACT_CREATED: %s" % p)
+
+# Stray-P7 walk (fail-closed, mirrors validate-p5.py s14): EVERY path in the
+# repo whose basename starts with P7 must be in the known-authorised set, not
+# just the handful of paths the table above anticipated. A P7-shaped artefact
+# planted anywhere else (e.g. evidence/P7-X.json) is a violation.
+_p7_authorized_rels = frozenset({
+    # inside framework/sps2 (rel to B)
+    'decisions/P7-DECISIONS.json',
+    'decisions/P7-READINESS-DECISIONS.json',
+    'governance/P7-THREAT-MODEL.md',
+    'memory/P7-IMPLEMENTATION-REPORT.md',
+    'tools/isolation_validator.py',
+    'tools/validate-bootstrap.py',
+    'tools/rollback-memory-layout.py',
+    'tools/validate-p7-readiness.py',
+    'tools/test-p7-readiness-mutation.sh',
+    'tests/test_p7_zero_adapter_readiness.py',
+    # repo-relative (rel to REPO)
+    'docs/audits/AUDIT-P7-READINESS-AND-DECISION.md',
+})
+_p7_stray = []
+for _root, _dirs, _files in os.walk(R):
+    _dirs[:] = [d for d in _dirs if d not in (
+        '.git', '__pycache__', 'node_modules', '.tmp-smoke-sps')]
+    for _f in _files:
+        if not _f.startswith('P7'):
+            continue
+        _path = os.path.join(_root, _f)
+        _rel_sp = os.path.relpath(_path, B)
+        _rel_repo = os.path.relpath(_path, R)
+        if _rel_sp in _p7_authorized_rels or _rel_repo in _p7_authorized_rels:
+            continue
+        _p7_stray.append(_rel_repo)
+for _rel in sorted(_p7_stray):
+    print("P7_STRAY_ARTEFACT: %s" % _rel)
+
 _p7d = os.path.join(B, 'decisions/P7-READINESS-DECISIONS.json')
 if os.path.exists(_p7d):
     _p7ids = {x.get('decision_id'): x for x in

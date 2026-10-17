@@ -17,8 +17,12 @@ REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/BuildPilot.git}"
 REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/BuildPilot}"
 BRANCH="${SPS_BRANCH:-main}"
 
-CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
-BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+if [ -t 1 ]; then
+  CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+  BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
+else
+  CYAN=''; GREEN=''; YELLOW=''; BOLD=''; DIM=''; NC=''
+fi
 
 banner() {
   echo ""

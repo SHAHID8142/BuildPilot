@@ -108,12 +108,12 @@ npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y
 
 sps-cms (mandatory CMS engine — bundled in this repo, synced by installer):
 ```bash
-npx skills add SHAHID8142/Shahid-Personal-SkillSet --skill sps-cms -g -y
+bash ~/.sps/src/BuildPilot/scripts/sps-update.sh --yes
 ```
 
 sps-seo (technical SEO standard — bundled in this repo, synced by installer):
 ```bash
-npx skills add SHAHID8142/Shahid-Personal-SkillSet --skill sps-seo -g -y
+bash ~/.sps/src/BuildPilot/scripts/sps-update.sh --yes
 ```
 
 Karpathy:

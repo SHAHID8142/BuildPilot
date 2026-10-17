@@ -44,6 +44,21 @@ LEDGER = REPO / ".sps" / "law-rejections.jsonl"
 TESTS_DIR = REPO / "framework" / "sps2" / "tests"
 GEN_LINE = "GEN_LAW_TEST: preview only — pass --approved-by to write"
 
+# check_id is interpolated into the generated test's docstring and module
+# filename (via snake()), so a hostile ledger value containing e.g. `"""`
+# could break out of the string literal and inject code. Spaces are allowed
+# because real ledger ids contain them (e.g. "dod-22 junk file").
+CHECK_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._-]*$")
+
+
+def _check_check_id(check_id: str) -> str:
+    if not CHECK_ID_RE.match(check_id):
+        raise ValueError(
+            f"unsafe check_id in ledger: {check_id!r} — must match "
+            f"^[A-Za-z0-9][A-Za-z0-9 ._-]*$"
+        )
+    return check_id
+
 
 def read_ledger(path: Path) -> list[dict]:
     """Parse the JSONL ledger; skip blank/corrupt lines gracefully."""
@@ -292,6 +307,12 @@ def main(argv: list[str] | None = None) -> int:
 
     if not (args.check and args.target_file):
         ap.error("--check and --file are required (or use --list)")
+
+    try:
+        _check_check_id(args.check)
+    except ValueError as exc:
+        print(f"gen_law_test: {exc}", file=sys.stderr)
+        return 1
 
     key = (args.check, args.target_file)
     seen = counts.get(key, 0)
