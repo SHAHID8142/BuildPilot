@@ -111,7 +111,17 @@ skill = REPO / "skill" / "sps" / "SKILL.md"
 if skill.is_file():
     st = skill.read_text(encoding="utf-8", errors="replace")
     for law in ("Task Queue", "Write Confinement", "Handoff Checkpoint",
-                "Deploy Budget", "Tool Consent", "Auto-Update Awareness"):
+                "Deploy Budget", "Tool Consent", "Auto-Update Awareness",
+                "Step-by-Step User Guidance"):
+        if f"**{law}" not in st:
+            v(f"hard-law core: SKILL.md missing law '{law}'")
+
+    # FILE-SPLITTING: hard cap present and wired
+    fs = REPO / "skill" / "sps" / "FILE-SPLITTING.md"
+    if not fs.is_file():
+        v("file-splitting: FILE-SPLITTING.md missing")
+    elif "500 lines" not in fs.read_text(encoding="utf-8", errors="replace"):
+        v("file-splitting: hard cap (500 lines) missing from FILE-SPLITTING.md")
         if f"**{law}" not in st:
             v(f"hard-law core: SKILL.md missing law '{law}'")
 
@@ -151,6 +161,20 @@ if cl.is_file():
     ct = cl.read_text(encoding="utf-8", errors="replace")
     if "GATE 1 (G1" not in ct or "GATE 2 (G2" not in ct:
         v("company-lifecycle: G1/G2 gate definitions missing")
+    if "LEGAL-COMPLIANCE.md" not in ct:
+        v("company-lifecycle: Phase 4 missing LEGAL-COMPLIANCE gate reference")
+
+# ── LEGAL-COMPLIANCE: gate doc present with all 8 sections ───────────────────
+lg = REPO / "skill" / "sps" / "LEGAL-COMPLIANCE.md"
+if lg.is_file():
+    lt = lg.read_text(encoding="utf-8", errors="replace")
+    for sec in ("Legal agreements", "Consent architecture", "Data privacy",
+                "Payments & subscriptions", "Communications & marketing",
+                "IP, open source", "AI governance", "Accessibility, sector"):
+        if sec not in lt:
+            v(f"legal-compliance: section missing: {sec}")
+else:
+    v("legal-compliance: LEGAL-COMPLIANCE.md missing")
 
 def main() -> int:
     for msg in sorted(set(VIOLATIONS)):

@@ -80,6 +80,12 @@ Full battery green + live deploy smoke + client-acceptance walkthrough.
 The handoff checkpoint (HANDOFF-CHECKPOINT.md) records PASS on the final
 deployed state — not just on the local build.
 
+**Legal & compliance gate:** walk [LEGAL-COMPLIANCE.md](LEGAL-COMPLIANCE.md)
+section by section; every applicable item is PASS or N/A-with-reason. The
+applicable sections were scoped at kickoff (Phase 0); new surfaces added
+during the build extend the scope. Legal documents are drafted as templates
+and flagged for the client's counsel — never presented as legal advice.
+
 ## Phase 5 — Delivery
 
 - Deployment live on the client's target, verified by URL.

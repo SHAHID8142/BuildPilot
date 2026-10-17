@@ -28,6 +28,10 @@ first use; conflict bans below still apply regardless of origin.
      record it in `.sps/installs.md`.
    - If the user declines or install fails, stop and give the user exact manual
      install steps; use the table's Fallback column meanwhile and say so.
+4b. **User-action chunks** (anything requiring the user to act on an external
+    platform — API keys, DNS, OAuth, dashboard settings) follow the
+    step-by-step law ([USER-GUIDANCE.md](USER-GUIDANCE.md)): one step at a
+    time, wait for confirmation, never ask for full secrets in chat.
 5. Invoke only the selected skills
 6. If unavailable, use SPS fallback docs + expert persona and say so
 

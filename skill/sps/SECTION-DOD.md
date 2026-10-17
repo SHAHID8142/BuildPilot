@@ -72,7 +72,10 @@ For JSX / TypeScript components:
 
 ## 5. Engineering & Workspace Hygiene
 
-17. Components split (modular, focused, single concern).
+17. Components split (modular, focused, single concern); source files
+    respect the split limits ([FILE-SPLITTING.md](FILE-SPLITTING.md)) —
+    300-line soft / 500-line hard cap; files over the soft limit carry a
+    written reason in the approval packet.
 18. Standard agent markers present (`SPS:SECTION`, `SPS:CMS_FIELDS`, `SPS:READS_FROM`).
 19. Code cleanup gate: dead code removed, imports organized.
 20. Todos closed or explicitly deferred with reasons.
