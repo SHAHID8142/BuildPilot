@@ -1,0 +1,103 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P7-READINESS-DECISIONS",
+  "phase": "P7 readiness",
+  "generated": "2026-10-04",
+  "author": "implementation agent (recording decisions given by the User)",
+  "note": "These are READINESS decisions taken BEFORE P7 begins. They authorise no P7 implementation, create no P7 deliverable, and approve no phase. They resolve the ambiguities in REC-PHASES-0001 and convert them into explicit, testable prerequisites.",
+  "precedent": "D-P6-1 established that the authoritative roadmap defines phase meaning. D-P7-A applies that rule to dependencies rather than reinterpreting them.",
+  "decisions": [
+    {
+      "decision_id": "D-P7-A",
+      "title": "P7 dependencies refer to authoritative roadmap phase numbers",
+      "decision": "Roadmap P7 'Dependencies: P2, P3' is interpreted as the authoritative roadmap phase numbers, not the executed-phase numbers.",
+      "rationale": "The roadmap is the authoritative definition of phase meaning, per D-P6-1. Executed numbering diverges from the roadmap for P2 through P5 and must not be used to satisfy a roadmap dependency.",
+      "consequence": "P7 prerequisites are roadmap P2 and roadmap P3 as the roadmap defines them, evaluated against the roadmap's own acceptance criteria.",
+      "resolves_ambiguity": "AMB-PHASE-1",
+      "bounded_scope": "Interpretation only. Authorises no work and waives nothing.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P7-A: Interpret P7 Dependencies: P2, P3 as the authoritative roadmap phase numbers, not executed-phase numbers.'"
+      }
+    },
+    {
+      "decision_id": "D-P7-B",
+      "title": "Roadmap P3 is not waived and must be satisfied before P7",
+      "decision": "Roadmap P3 (Agent Interoperability) is NOT waived. It must be satisfied before P7 begins.",
+      "rationale": "Roadmap P3 is a stated P7 prerequisite under D-P7-A. Its acceptance is unmet: one DECLARED generic adapter and no portability conformance test. Waiving a stated prerequisite without an explicit rationale would silently reduce the roadmap's guarantees.",
+      "required_before_p7": [
+        "real adapters beyond the single DECLARED 'generic' adapter",
+        "a portability conformance test proving that deleting all adapters leaves the core validators passing",
+        "roadmap P3 acceptance: a fresh agent can resume the project from repository state alone"
+      ],
+      "resolves_ambiguity": "AMB-PHASE-2",
+      "bounded_scope": "Roadmap P3 satisfaction only. Does not authorise starting roadmap P3 work, which needs its own User authorisation.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P7-B: Do not waive roadmap P3. Record that Roadmap P3 must be satisfied before P7 begins, including the required real adapters and portability test.'"
+      }
+    },
+    {
+      "decision_id": "D-P7-C",
+      "title": "Retire global memory is narrowed to the SPS 2.0 project-local boundary",
+      "decision": "Roadmap P7's 'retire global memory' objective is narrowed to the SPS 2.0 project-local boundary ONLY.",
+      "rationale": "Retiring a global mechanism broadly would require modifying or removing the legacy installers that perform it. Legacy SPS modification is prohibited and the legacy-diff-zero invariant must be preserved. The objective is narrowed rather than waived, so it stays meaningful without breaching that boundary.",
+      "explicitly_narrowed": [
+        "in scope: global-memory references and mechanisms inside SPS 2.0 project-local artefacts",
+        "out of scope: legacy install.sh, uninstall.sh, get-sps.sh and every other legacy artefact",
+        "out of scope: any change that would make the legacy diff non-zero"
+      ],
+      "required_assertion": "No claim may be made that legacy global memory has been retired.",
+      "resolves_ambiguity": "AMB-PHASE-3",
+      "bounded_scope": "SPS 2.0 project-local artefacts only. Legacy remains untouched; legacy diff must remain 0.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P7-C: Narrow retire global memory to the SPS 2.0 project-local boundary only. Do not modify legacy install.sh, uninstall.sh, get-sps.sh, or any other legacy artefact. Preserve the legacy-diff-zero invariant. Do not claim legacy global memory has been retired.'"
+      }
+    },
+    {
+      "decision_id": "D-P7-D",
+      "title": "A threat model is required before P7 implementation begins",
+      "decision": "A threat model MUST exist before P7 implementation begins.",
+      "rationale": "Roadmap P4 lists a threat model as a deliverable and it is absent. P7 introduces persistent project state, the first phase whose primary output is durable state. Introducing state without a threat model defers the security review to the point where it is most expensive.",
+      "required_before_p7": [
+        "a written threat model covering persistent project-local state",
+        "explicit treatment of isolation between two projects",
+        "explicit treatment of rollback of the memory layout"
+      ],
+      "resolves_ambiguity": "AMB-PHASE-4",
+      "bounded_scope": "Threat model content only. Authoring it requires its own User authorisation; this decision only makes it a prerequisite.",
+      "approval": {
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "basis": "Explicit User decision: 'D-P7-D: Require a threat model before P7 implementation begins, because P7 introduces persistent project state.'"
+      }
+    }
+  ],
+  "carried_forward_unchanged": {
+    "CONF-001": "UNRESOLVED. LCP and INP thresholds remain NOT_OBSERVED. No value may be invented or inferred.",
+    "runtime_activation": "NOT_APPROVED (D-P6-2 remains binding)",
+    "CAP-P03-005": "DEFERRED / NOT_PROMOTED",
+    "production_capability_count": 4,
+    "legacy_diff": "must remain 0"
+  },
+  "what_these_decisions_do_not_authorise": [
+    "starting P7 implementation",
+    "creating any P7 implementation artefact",
+    "installing any dependency, skill, MCP, CLI or package",
+    "runtime activation of any kind",
+    "promoting any capability, including CAP-P03-005",
+    "modifying the production capability registry",
+    "modifying any legacy artefact",
+    "closing CONF-001",
+    "beginning roadmap P3 work or any phase beyond P7",
+    "pushing to the public repository"
+  ]
+}

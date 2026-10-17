@@ -1,0 +1,20 @@
+{
+  "schema": "sps2.p17-allowlist/v1",
+  "purpose": "production",
+  "generated": "2026-10-10",
+  "note": "Authoritative executable allowlist (data, never a code path). Initial membership is exactly one entry, recorded as D-P17-4 by explicit User approval of .sps/plan.md (GATE-P17-2). Purpose 'production' means agents from this allowlist may be neither probed nor invoked while real-agent execution is disabled: GATE-P17-4 is OPEN and no reviewed preventive isolation mechanism exists. Extending this allowlist is a User decision recorded as a new decision record.",
+  "evidence": "opencode is the only executable that is both repository-declared (sps2/core/adapters/registry.json, EXPERIMENTAL, detection.cli [\"opencode\"]) and present in the environment by PATH resolution only. codex is repository-declared but absent; claude and copilot are present but repository-undeclared; generic is a declarative descriptor with no executable. Observation of availability is not authorization.",
+  "agents": [
+    {
+      "agent_id": "opencode",
+      "display_name": "OpenCode",
+      "probe_method": "VERSION_FLAG",
+      "capabilities": [
+        "repository-state-reading",
+        "markdown",
+        "json"
+      ],
+      "notes": "NOT invocable while GATE-P17-4 is OPEN. Slice 1 exercises repository-local test doubles instead."
+    }
+  ]
+}

@@ -14,11 +14,14 @@ every skill at once.
 
 Portable across skills-compatible coding agents. Not identical everywhere.
 
-## Install profiles
+## Install model
 
-- `core` — recommended
-- `full` — core + host extras
-- `minimal` — `/sps` only
+One unified install — no `core`/`full`/`minimal` profiles (README and both
+installers are authoritative; installer manifests use `PROFILE=all`). Every
+documented skill is installed; `/sps` routes specialists per task.
+
+Historical note: this catalog previously described `core`/`full`/`minimal`
+profiles; that vocabulary is retired as of 4.0.0 (see CHANGELOG.md).
 
 ## Domain router (summary)
 
@@ -29,8 +32,8 @@ Portable across skills-compatible coding agents. Not identical everywhere.
 | UI review | `web-design-guidelines` | a11y host skill |
 | React | `vercel-react-best-practices` | `vercel-composition-patterns` |
 | Testing | `webapp-testing` | Playwright |
-| Surgical/token | `karpathy-guidelines` (core) | SPS CONTEXT-EFFICIENCY |
-| Security | Trail of Bits (full profile) | host security review |
+| Surgical/token | `karpathy-guidelines` | SPS CONTEXT-EFFICIENCY |
+| Security | Trail of Bits | host security review |
 | CMS | SPS CMS-COUPLING + `/sps sync` | — |
 | Logos | `theSVG` | official assets |
 

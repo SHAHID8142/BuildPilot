@@ -67,6 +67,60 @@ fi
 # ── Remove npx-installed skills (from ~/.agents/skills/) ─────────────────────
 section "Removing globally installed skills"
 
+# Confinement guard: a deletion target must resolve inside an allowlisted
+# agent-skill root. Manifest-controlled values are never trusted directly.
+# Covers every installer SYNC_PATHS root (install.sh) plus the rules dirs.
+UNINSTALL_ROOTS=(
+  "$HOME/.agents/skills"
+  "$HOME/.config/agents/skills"
+  "$HOME/.claude/skills"
+  "$HOME/.claude/rules"
+  "$HOME/.cursor/skills"
+  "$HOME/.cursor/rules"
+  "$HOME/.codex/skills"
+  "$HOME/.gemini/skills"
+  "$HOME/.gemini/config/skills"
+  "$HOME/.gemini/antigravity/skills"
+  "$HOME/.gemini/antigravity-cli/skills"
+  "$HOME/.windsurf/skills"
+  "$HOME/.antigravity/skills"
+  "$HOME/.codeium/windsurf/skills"
+  "$HOME/.config/opencode/skills"
+  "$HOME/.cline/skills"
+  "$HOME/.roo/skills"
+  "$HOME/.kiro/skills"
+  "$HOME/.amp/skills"
+  "$HOME/.github/skills"
+)
+is_safe_uninstall_target() {
+  local candidate="$1"
+  # Reject if the target itself or its immediate parent is a symlink:
+  # a symlinked skill dir must not be followed out of the root.
+  if [ -L "$candidate" ] || [ -L "$(dirname "$candidate")" ]; then
+    return 1
+  fi
+  local real
+  real="$(cd "$(dirname "$candidate")" 2>/dev/null && pwd -P)" || return 1
+  [ -n "$real" ] || return 1
+  local root real_root
+  for root in "${UNINSTALL_ROOTS[@]}"; do
+    real_root="$(cd "$root" 2>/dev/null && pwd -P)" || continue
+    case "$real/" in
+      "$real_root/"|"$real_root"/*) return 0 ;;
+    esac
+  done
+  return 1
+}
+safe_rm() {
+  local target="$1"
+  if is_safe_uninstall_target "$target"; then
+    rm -rf "$target"
+    return 0
+  fi
+  info "refusing non-conforming delete target: $target"
+  return 1
+}
+
 remove_agent_skill() {
   local name="$1"
   local found=false
@@ -93,10 +147,17 @@ remove_agent_skill() {
     "./.windsurf/skills/$name"
     "$HOME/.antigravity/skills/$name"
     "./.antigravity/skills/$name"
+    "$HOME/.codeium/windsurf/skills/$name"
+    "$HOME/.config/opencode/skills/$name"
+    "$HOME/.cline/skills/$name"
+    "$HOME/.roo/skills/$name"
+    "$HOME/.kiro/skills/$name"
+    "$HOME/.amp/skills/$name"
+    "$HOME/.github/skills/$name"
   )
   for p in "${paths[@]}"; do
     if [ -e "$p" ]; then
-      rm -rf "$p" && found=true
+      safe_rm "$p" && found=true
     fi
   done
   $found && removed "$name" || true
@@ -116,7 +177,7 @@ build_agent_args() {
 }
 
 MANIFEST="$HOME/.sps/install-manifest.env"
-MANAGED_SKILLS=(sps hallmark impeccable design-taste-frontend sps-cms webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman taste-skill)
+MANAGED_SKILLS=(sps hallmark impeccable design-taste-frontend sps-cms sps-seo webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman taste-skill)
 CLAUDE_PLUGINS=(universal-build-orchestrator@shahid-personal-skillset ui-ux-pro-max@ui-ux-pro-max-skill engineering-skills@claude-code-skills engineering-advanced-skills@claude-code-skills marketing-skills@claude-code-skills a11y-audit@claude-code-skills docker-development@claude-code-skills)
 CLAUDE_MARKETPLACES=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-skills)
 USE_CONTEXT7=0
@@ -166,11 +227,11 @@ if ((${#SYNC_PATHS[@]} == 0)); then
 fi
 for dest_root in "${SYNC_PATHS[@]}" "${DEFAULT_SYNC_PATHS[@]}"; do
   [[ -z "$dest_root" ]] && continue
-  if [ -e "$dest_root/sps" ]; then
-    rm -rf "$dest_root/sps" && removed "${dest_root/#$HOME/\~}/sps"
+  if [ -e "$dest_root/sps" ] && safe_rm "$dest_root/sps"; then
+    removed "${dest_root/#$HOME/\~}/sps"
   fi
-  if [ -e "$dest_root/sps-cms" ]; then
-    rm -rf "$dest_root/sps-cms" && removed "${dest_root/#$HOME/\~}/sps-cms"
+  if [ -e "$dest_root/sps-cms" ] && safe_rm "$dest_root/sps-cms"; then
+    removed "${dest_root/#$HOME/\~}/sps-cms"
   fi
 done
 
@@ -208,12 +269,19 @@ elif command -v pip >/dev/null 2>&1; then
 fi
 # Remove graphify skill file
 if [ -e "$HOME/.claude/skills/graphify" ] || [ -e "$HOME/.config/agents/skills/graphify" ]; then
-  rm -rf "$HOME/.claude/skills/graphify" "$HOME/.config/agents/skills/graphify"
+  safe_rm "$HOME/.claude/skills/graphify"
+  safe_rm "$HOME/.config/agents/skills/graphify"
   removed "graphify skill"
 fi
 
 # ── Remove personal data ──────────────────────────────────────────────────────
 if ! $KEEP_PERSONAL; then
+  # Preserve skill backups by default: install.sh promises a restore path in
+  # ~/.sps/backups/<skill>/, so a full uninstall must not silently destroy it.
+  if [ -d "$HOME/.sps/backups" ]; then
+    mv "$HOME/.sps/backups" "$HOME/.sps-backups-uninstalled" \
+      && info "skill backups preserved at ~/.sps-backups-uninstalled (delete manually if unwanted)"
+  fi
   section "Removing personal data (~/.sps/)"
   rm -rf "$HOME/.sps" && removed "~/.sps/ (profile, mistakes, learned)" || true
 else

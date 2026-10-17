@@ -5,14 +5,18 @@
 #   bash install.sh                 # interactive confirm when TTY
 #   bash install.sh --yes           # non-interactive
 #   bash install.sh --agents claude-code,cursor --yes
+#   bash install.sh --agents '*' --yes   # every host in the skills CLI registry
+#                                        # (claude-code, cursor, codex, antigravity,
+#                                        # windsurf, opencode, goose, crush, trae,
+#                                        # junie, zed, openclaw, droid, qoder, …)
 #
 # Prefer one-command bootstrap:
-#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
 
 set -uo pipefail
 
 export GIT_TERMINAL_PROMPT=0
-export GIT_SSH_COMMAND="ssh -oBatchMode=yes -oStrictHostKeyChecking=no"
+export GIT_SSH_COMMAND="ssh -oBatchMode=yes -oStrictHostKeyChecking=accept-new"
 export GIT_CLONE_PROTECTION_ACTIVE=false
 export npm_config_yes=true
 export CI="${CI:-1}"
@@ -24,7 +28,7 @@ AGENTS="*"
 ASSUME_YES=false
 INTERACTIVE=false
 MANIFEST="$HOME/.sps/install-manifest.env"
-MANAGED_SKILLS=("sps" "sps-cms")
+MANAGED_SKILLS=("sps" "sps-cms" "sps-seo")
 CLAUDE_PLUGINS=()
 CLAUDE_MARKETPLACES=()
 USE_CONTEXT7=0
@@ -47,6 +51,24 @@ SYNC_PATHS=(
   "$HOME/.kiro/skills"
   "$HOME/.amp/skills"
   "$HOME/.github/skills"
+  "$HOME/.config/goose/skills"
+  "$HOME/.goose/skills"
+  "$HOME/.crush/skills"
+  "$HOME/.config/trae/skills"
+  "$HOME/.trae/skills"
+  "$HOME/.junie/skills"
+  "$HOME/.config/junie/skills"
+  "$HOME/.zed/skills"
+  "$HOME/.openclaw/skills"
+  "$HOME/.droid/skills"
+  "$HOME/.config/opencode/skills"
+  "$HOME/.qoder/skills"
+  "$HOME/.kilocode/skills"
+  "$HOME/.warp/plugins/skills"
+  "$HOME/.grok/skills"
+  "$HOME/.hermes/skills"
+  "$HOME/.autohand/skills"
+  "$HOME/.zeroclaw/skills"
 )
 
 CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -56,7 +78,7 @@ LOG_DIR="$HOME/.sps"
 LOG="$LOG_DIR/install.log"
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSION="unknown"
-[[ -f "$REPO/skills/sps/VERSION" ]] && VERSION="$(tr -d '[:space:]' < "$REPO/skills/sps/VERSION")"
+[[ -f "$REPO/skill/sps/VERSION" ]] && VERSION="$(tr -d '[:space:]' < "$REPO/skill/sps/VERSION")"
 START_TS=$SECONDS
 
 usage() {
@@ -68,7 +90,7 @@ Single unified install: /sps orchestrator + complete curated skill stack
 token efficiency) for every detected agent host.
 
 One-command (clone/pull + install):
-  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
 
 Update:
   bash scripts/sps-update.sh --yes     (or: get-sps.sh, which pulls + reinstalls)
@@ -142,11 +164,19 @@ compute_total_steps() {
 build_agent_args() {
   AGENT_ARGS=()
   if [[ "$AGENTS" == "*" ]]; then
+    # Full registry of the `skills` CLI (vercel-labs/skills). `universal`
+    # last: it copies into ~/.agents/skills, which every other agent also
+    # reads, so per-agent links take precedence.
     AGENT_ARGS=(
       --agent "claude-code" --agent "cursor" --agent "codex"
       --agent "antigravity" --agent "antigravity-cli"
       --agent "windsurf" --agent "github-copilot" --agent "opencode"
       --agent "cline" --agent "roo" --agent "kiro-cli" --agent "amp"
+      --agent "goose" --agent "crush" --agent "trae" --agent "junie"
+      --agent "zed" --agent "openclaw" --agent "droid" --agent "qoder"
+      --agent "kilo" --agent "warp" --agent "devin" --agent "replit"
+      --agent "adal" --agent "augment" --agent "continue" --agent "grok"
+      --agent "openhands" --agent "rovodev" --agent "zcode"
       --agent "universal"
     )
     return
@@ -243,15 +273,73 @@ SPS_VERSION=$VERSION
 EOF
 }
 
+# Back up an existing managed skill dir before replacing it. Keeps the last
+# N=3 backups per skill in ~/.sps/backups/<skill>/<timestamp>/ so a bad update
+# (or a user-customized skill) can always be restored. Returns 0 if a backup
+# was made, 1 if there was nothing to back up.
+backup_existing_skill() {
+  local dest_root="$1" name="$2"
+  local existing="$dest_root/$name"
+  [ -d "$existing" ] || return 1
+  local backup_root="$HOME/.sps/backups/$name"
+  # Stamp includes a dest-root hash so two hosts synced in the same second
+  # never overwrite each other's backups.
+  local stamp
+  stamp="$(date +%Y%m%d-%H%M%S)-$(printf '%s' "$dest_root" | shasum | cut -c1-6)-$$"
+  while [ -e "$backup_root/$stamp" ]; do   # collision => suffix, never nest
+    stamp="${stamp}-x"
+  done
+  mkdir -p "$backup_root" || { warn "backup dir unreachable: $backup_root"; return 1; }
+  cp -R "$existing" "$backup_root/$stamp" || { warn "backup failed for $name"; return 1; }
+  # Prune to the 3 most recent backups.
+  local old
+  while [ "$(ls -1 "$backup_root" 2>/dev/null | wc -l | tr -d ' ')" -gt 3 ]; do
+    old="$(ls -1dt "$backup_root"/* 2>/dev/null | tail -1)"
+    [ -n "$old" ] && rm -rf "$old"
+  done
+  ok "backed up existing $name → ~/.sps/backups/$name/$stamp"
+  return 0
+}
+
+# Read the VERSION of an already-installed skill (empty if absent/unknown).
+installed_skill_version() {
+  local vfile="$1/sps/VERSION"
+  [ -f "$vfile" ] && tr -d '[:space:]' < "$vfile" || true
+}
+
 sync_core_skill() {
-  local src="$REPO/skills/sps"
-  local cms_src="$REPO/skills/sps-cms"
+  local src="$REPO/skill/sps"
+  local cms_src="$REPO/skill/sps-cms"
+  local seo_src="$REPO/skill/sps-seo"
   if [ ! -d "$src" ]; then
     warn "skills/sps not found - run from repo root"
     return
   fi
+  local upgrade_report="$HOME/.sps/last-upgrade.txt"
+  mkdir -p "$HOME/.sps"
+  : > "$upgrade_report"
+  local had_existing=false
   for dest_root in "${SYNC_PATHS[@]}"; do
     if mkdir -p "$dest_root" 2>/dev/null; then
+      # Version detection + backup BEFORE the destructive replace.
+      # Per-skill gate: a missing sps dir must not skip backups of
+      # sps-cms/sps-seo (they'd be wiped unbacked below).
+      # Only roots that had sps BEFORE this install started count as an
+      # upgrade path — the npx skills-add step creates sps copies in agent
+      # dirs mid-run, and treating those as "existing installs" would churn
+      # backups on a fresh machine.
+      local prev_ver=""
+      local is_pre_existing=false
+      for _pre in "${PRE_EXISTING_SPS[@]:-}"; do
+        [ -n "$_pre" ] && [ "$_pre" = "$dest_root" ] && is_pre_existing=true
+      done
+      if [ "$is_pre_existing" = true ] || [ -d "$dest_root/sps-cms" ] || [ -d "$dest_root/sps-seo" ]; then
+        had_existing=true
+        prev_ver="$(installed_skill_version "$dest_root")"
+        backup_existing_skill "$dest_root" sps
+        backup_existing_skill "$dest_root" sps-cms
+        backup_existing_skill "$dest_root" sps-seo
+      fi
       rm -rf "$dest_root/sps"
       cp -R "$src" "$dest_root/"
       if [ -d "$REPO/scripts" ]; then
@@ -262,11 +350,28 @@ sync_core_skill() {
         rm -rf "$dest_root/sps-cms"
         cp -R "$cms_src" "$dest_root/"
       fi
-      ok "synced /sps & /sps-cms → ${dest_root/#$HOME/\~}"
+      if [ -d "$seo_src" ]; then
+        rm -rf "$dest_root/sps-seo"
+        cp -R "$seo_src" "$dest_root/"
+      fi
+      if [ -n "$prev_ver" ] && [ "$prev_ver" != "$VERSION" ]; then
+        printf 'upgraded %s: %s → %s\n' "${dest_root/#$HOME/\~}" "$prev_ver" "$VERSION" >> "$upgrade_report"
+      elif [ -z "$prev_ver" ]; then
+        printf 'installed %s: %s (fresh)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
+      else
+        printf 'reinstalled %s: %s (same version)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
+      fi
+      ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
     else
       warn "could not sync → ${dest_root/#$HOME/\~}"
     fi
   done
+  if [ "$had_existing" = true ] && [ -s "$upgrade_report" ]; then
+    section "Upgrade report"
+    cat "$upgrade_report"
+    note "previous versions kept in ~/.sps/backups/<skill>/ (last 3 per skill)"
+    note "restore: rm -rf <dest>/<skill> && cp -R ~/.sps/backups/<skill>/<stamp> <dest>/<skill>"
+  fi
 }
 
 add_context7() {
@@ -307,6 +412,14 @@ print_success_card() {
 # ── main ─────────────────────────────────────────────────────────────────────
 mkdir -p "$LOG_DIR/learned"
 : > "$LOG"
+
+# Snapshot which dest roots already carry a real SPS install BEFORE the npx
+# skills-add step runs — otherwise sync_core_skill mistakes the npx-created
+# copy for a previous install and "backs it up" on a fresh machine.
+PRE_EXISTING_SPS=()
+for _root in "${SYNC_PATHS[@]}"; do
+  [ -d "$_root/sps" ] && PRE_EXISTING_SPS+=("$_root")
+done
 
 banner
 detect_hosts

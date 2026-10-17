@@ -1,0 +1,8 @@
+[
+  {
+    "slice_id": "SLICE-P10-01",
+    "issued": "2026-10-13",
+    "status": "ACTIVE",
+    "note": "First P10 vertical slice: Home section, route /, layout home-default. Authored under D-P10-6/D-P10-8 planning approvals; implementation authorized by the User's 2026-10-17 build-manager grant. Authoritative history for REQ-P10-09 c.9: entries are appended, never rewritten or pruned; a rolled-back slice_id is never reused."
+  }
+]

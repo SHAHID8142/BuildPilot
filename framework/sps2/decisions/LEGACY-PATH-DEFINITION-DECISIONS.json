@@ -1,0 +1,165 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "LEGACY-PATH-DEFINITION-DECISIONS",
+  "phase": "cross-cutting governance (not phase-scoped)",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes a proposed definition only, it originates no approval and grants none)",
+  "note": "Contains DEC-0030, a PROPOSED decision with approval.state PENDING_USER_APPROVAL that would DEFINE the term 'legacy paths' for the SPS2 legacy-protection controls. It is NOT approved. It changes no file: no validator, no pathspec, no requirement text, no approval state and no verification state is modified by this record, and it is not authority to change any validator. It records a genuine normative tension rather than asserting that defining the term is unambiguously permitted: DEC-0028 states the term is currently defined operatively only by the script pathspecs, so defining it outside those pathspecs raises a question this record does not resolve. UQ-ATT-1 therefore REMAINS OPEN for the enumeration/implementation question. Each entry in decisions[] conforms to sps2/governance/SCHEMAS/decision.schema.json ($id sps2/decision/v1): required decision_id/title/decision/reason/evidence/alternatives/approval, additionalProperties false, evidence an array of strings, alternatives an array of objects, approval requiring only state. Validate with: python3 sps2/tools/check_sps2.py decision sps2/decisions/LEGACY-PATH-DEFINITION-DECISIONS.json - note that command always exits 0 and does NOT enforce evidence item types, so its clean output is not by itself proof of schema conformance.",
+
+  "decisions": [
+    {
+      "decision_id": "DEC-0030",
+      "title": "Definition of \"legacy paths\" for the SPS2 legacy-protection controls",
+      "decision": "TERM DEFINITION ONLY, AND PROPOSED ONLY - NOT AN APPROVED RULE. For the purposes of the SPS2 legacy-protection controls, \"legacy paths\" means the following paths and no others: the directories skills/, scripts/, plugins/, .github/, templates/, and .sps/tools/; the files README.md, CHANGELOG.md and CATALOG.md; and the installer scripts install.sh, install.ps1, uninstall.sh, uninstall.ps1, get-sps.sh and get-sps.ps1. This definition deliberately names .sps/tools/ rather than .sps/ wholesale: measured against the current working tree, enumerating .sps/ would cover nine paths instead of three, sweeping in six unrelated governance files whose protection status remains undecided - .sps/architecture/SPS2-ROADMAP.md, .sps/audits/README.md, .sps/changelog-sps.md, .sps/handoff.md, .sps/p17/real-agent-execution.json and .sps/plan.md - and this record makes no determination about any of them, including whether .sps/audits/README.md is protected. This definition also names the six installer scripts explicitly because the directory list alone reaches none of them: omitting them would drop prospective protection for nine files, six of which are real legacy installers that REQ-P1-06 explicitly treats as legacy. This record DEFINES A TERM ONLY. It changes no file: no validator, no pathspec, no control behaviour, no acceptance criterion, no requirement text, no approval state and no verification state is modified; it creates and modifies no requirement; and it makes no validator pass. REQ-P3-08's criterion text, its APPROVED status and its VERIFIED verification state are UNCHANGED, and its implementation continues to use its current pathspec. DEC-0028 remains in force and nothing here weakens the P3/P4 legacy-protection controls. DEC-0029 remains PROPOSED and is not contradicted or relied upon as authorization; this definition is consistent with that record's scope direction. Normative tension, stated honestly: this record does NOT claim that defining the term outside REQ-P3-08 is unambiguously permitted. DEC-0028 records that 'legacy paths' is currently defined operatively only by the script pathspecs and warns that redefining the meaning of an approved and verified criterion is a normative change. Defining the term in this record therefore raises a genuine normative question. This record does not resolve that question, does not settle it in its own favour, and does not authorize any implementation. Until this proposal is explicitly approved by the User, the definition above must NOT be treated as an approved governance rule, and it must not be cited as authority to change any validator or pathspec. Changing a validator's pathspec to match this definition is a SEPARATE decision, is NOT taken here, and would require its own explicit authorization. UQ-ATT-1 is NOT resolved by this record: the remaining enumeration/implementation question stays OPEN.",
+      "reason": "The term \"legacy paths\" is defined in no approved artifact. It exists operatively only in validator script pathspecs, and those pathspecs disagree about its extent. Measured against the current working tree: the three controls at sps2/tools/validate-p2.sh:194, sps2/tools/validate-p3.sh:297-299 and sps2/tools/validate-p4.sh:482-484 use the identical pathspec 'skills scripts plugins .github templates README.md CHANGELOG.md CATALOG.md *.sh *.ps1' piped through grep -v '^sps2/', and the unanchored '*.sh'/'*.ps1' glob reaches .sps/tools/ at any depth, so they currently report exactly three modified legacy governance files; the two controls at sps2/tools/validate-sps2.sh:198-199 and sps2/tools/validate-p5.py:281-283 use glob-free explicit enumerations and currently report an empty diff. The directory list alone provably cannot reach .sps/ at all, so the glob is the sole cause of the divergence. The unanchored glob is also wider than the stated legacy intent, because it additionally covers three repo-root files that .sps/audits/README.md:45 classifies as orphan debug artifacts (KI-05) rather than legacy files. REQ-P1-06's approved criterion refers to \"installers\", which matches an explicit list rather than a shell glob. DEC-0028 recorded explicit enumeration as the correct long-term remedy, called it the minimum outstanding decision, and identified the undefined term as the reason the current pathspec cannot be narrowed unilaterally. Recording the definition disambiguates the term without editing an approved requirement, which requirement.schema.json provides no mechanism to amend because it sets additionalProperties false and has no amendment, version or supersession field. The definition is deliberately behaviour-preserving against the current working tree: measured with the current tree it flags exactly the same three .sps/tools/ validator files as the status-quo glob. This record is PROPOSED rather than ACTIVE because the normative tension above is real and requires a distinct User approval before the definition can be relied upon as a governance rule.",
+      "evidence": [
+        "sps2/governance/SCHEMAS/decision.schema.json defines $id sps2/decision/v1, requires decision_id, title, decision, reason, evidence, alternatives and approval, sets additionalProperties false at the top level and inside approval, defines evidence as an array of strings with minItems 1, defines alternatives as an array of objects, requires only state inside approval, and defines supersedes as string or null; it provides no amendment or version field",
+        "sps2/governance/SCHEMAS/requirement.schema.json sets additionalProperties false and its properties are acceptance_criteria, approval, dependencies, description, evidence_refs, implementation, objective, requirement_id, risk, scope, status, title and verification; it contains no amendment, version, supersedes, revision or history property, so the acceptance criterion text of an approved requirement cannot be amended in place without violating the schema",
+        "sps2/requirements/P3-REQUIREMENTS.json REQ-P3-08 has status APPROVED and verification.state VERIFIED, and its first acceptance criterion is the literal string 'git diff against c11da27 over legacy paths is empty'",
+        "sps2/requirements/P1-REQUIREMENTS.json REQ-P1-06 has status APPROVED and verification.state VERIFIED, and its first acceptance criterion is the literal string 'git diff over skills, scripts, plugins and installers is empty', which names installers rather than using a shell glob",
+        "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json DEC-0028 has status ACTIVE with approval decided by the User on 2026-10-15, and its reason records that REQ-P3-08's first acceptance criterion is 'git diff against c11da27 over legacy paths is empty', that the term 'legacy paths' is defined nowhere in the requirement and only in the script pathspec, and that narrowing that pathspec would silently redefine the meaning of an approved and verified criterion and would be a normative change outside its authorization",
+        "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json DEC-0028 lists as its third alternative 'Amend REQ-P3-08 to enumerate the legacy paths explicitly' with why_not_chosen 'This is the correct long-term remedy but it changes the acceptance criteria of a User-approved requirement and is not authorised by this instruction. Recorded as the minimum outstanding decision.'",
+        "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json envelope key explicitly_not_approved_by_this_record begins 'Any change to REQ-P3-08 or to the P3/P4 legacy-protection controls (DEC-0028 preserves them unchanged)'; this record makes none of those changes",
+        "sps2/decisions/LEGACY-SCOPE-DECISIONS.json DEC-0029 is status PROPOSED with approval.state PENDING_USER_APPROVAL and no decider, date or basis, and its resolved_portion records the exclusion half of UQ-ATT-1 only; this record does not rely on it as authorization",
+        "sps2/tools/validate-p2.sh:194, sps2/tools/validate-p3.sh:297-299 and sps2/tools/validate-p4.sh:482-484 use the identical pathspec 'skills scripts plugins .github templates README.md CHANGELOG.md CATALOG.md *.sh *.ps1' piped through grep -v '^sps2/'",
+        "Measured: git diff --name-only c11da27 -- '*.sh' '*.ps1' filtered by grep -v '^sps2/' yields exactly .sps/tools/validate-capability.sh, .sps/tools/validate-control.sh and .sps/tools/validate-governance.sh, a count of 3",
+        "Measured: git diff --name-only c11da27 -- skills scripts plugins .github templates README.md CHANGELOG.md CATALOG.md yields an empty result, proving the directory list cannot reach .sps/ at all and that the unanchored glob is the sole path by which the .sps/tools/ files are reached",
+        "Measured: git diff --name-only c11da27 -- .sps/tools/ yields exactly the same 3 files, so naming .sps/tools/ preserves the intended scope exactly",
+        "Measured: git diff --name-only c11da27 -- .sps/ yields 9 files, the 3 validators plus 6 unrelated governance files: .sps/architecture/SPS2-ROADMAP.md, .sps/audits/README.md, .sps/changelog-sps.md, .sps/handoff.md, .sps/p17/real-agent-execution.json and .sps/plan.md; enumerating .sps/ wholesale would over-protect these 6 and is rejected for that reason",
+        "Measured: the full definition recorded here, evaluated against the current working tree as 'git diff --name-only c11da27 -- skills scripts plugins .github templates README.md CHANGELOG.md CATALOG.md install.sh install.ps1 uninstall.sh uninstall.ps1 get-sps.sh get-sps.ps1 .sps/tools', yields exactly 3 files, the same .sps/tools/ validators as the status-quo glob, so the definition is behaviour-preserving today",
+        "Measured: of 38 tracked .sh and .ps1 files at c11da27, none are under sps2/. Omitting the six installer scripts from the definition would drop prospective protection for nine files: get-sps.sh, get-sps.ps1, install.sh, install.ps1, uninstall.sh, uninstall.ps1, test_claude.sh, test_timeout.sh and test_uiux.sh; naming the six installers reduces that residual to exactly three",
+        ".sps/audits/README.md:45 records KI-05 classifying test_claude.sh, test_timeout.sh and test_uiux.sh as orphan debug artifacts at repo root, status OPEN; they are not legacy files, so the definition's prospective coverage excluding them is consistent with the stated legacy intent while the unanchored glob additionally covers them",
+        "sps2/tools/validate-sps2.sh:198-199 uses HEAD with an explicit list of ten path arguments and sps2/tools/validate-p5.py:281-283 uses c11da27 with eight explicit paths; both are glob-free and both currently produce an empty diff, so explicit enumeration is already an established pattern in this repository",
+        "sps2/decisions/P10-DECISIONS.json D-P10-8 is precedent for recording a determination about an artifact in a decision record while explicitly leaving that artifact unmodified, stating that the determination is recorded in the decision record and that the artifact file is not modified by the decision; it is precedent for that pattern only, and it uses a 'D-' identifier namespace that the DEC-[0-9]{4} decision schema pattern does not accept",
+        "sps2/legacy/MANIFEST.md:38 documents the scope as 'git diff --name-only HEAD -- skills scripts plugins .github <installers>', an explicit placeholder with no glob, but MANIFEST.md is an unapproved document and its rules list omits both templates/ and .sps/tools/, so it is not a definition of record and this definition does not merely transcribe it"
+      ],
+      "alternatives": [
+        {
+          "option": "Leave the term undefined and keep the status-quo unanchored glob pathspecs unchanged",
+          "why_not_chosen": "It preserves the ambiguity DEC-0028 identified as the reason the pathspec cannot be narrowed unilaterally, and the glob is provably wider than the stated legacy intent because it also covers three KI-05 orphan debug artifacts. It remains the only option that changes nothing whatsoever, and it stays available if the User prefers the term to remain undefined."
+        },
+        {
+          "option": "Define \"legacy paths\" by enumerating .sps/ wholesale rather than .sps/tools/",
+          "why_not_chosen": "Measured, it would cover 9 paths instead of 3, sweeping in six unrelated governance files whose protection status is undecided: .sps/architecture/SPS2-ROADMAP.md, .sps/audits/README.md, .sps/changelog-sps.md, .sps/handoff.md, .sps/p17/real-agent-execution.json and .sps/plan.md. It would also appear to decide the .sps/audits/README.md question that this record deliberately leaves open."
+        },
+        {
+          "option": "Define \"legacy paths\" using the directory list only, without naming the installer scripts",
+          "why_not_chosen": "Measured, it would drop prospective protection for nine files, six of which are real legacy installer scripts that REQ-P1-06 explicitly treats as legacy: install.sh, install.ps1, uninstall.sh, uninstall.ps1, get-sps.sh and get-sps.ps1. Naming them is required for the definition to be faithful to the approved criterion's wording."
+        },
+        {
+          "option": "Amend REQ-P3-08's acceptance criterion to enumerate the paths in place",
+          "why_not_chosen": "requirement.schema.json sets additionalProperties false and provides no amendment, version or supersession mechanism, so the criterion text cannot be amended without violating the schema, and .sps/GOVERNANCE.md directs that history not be silently edited. DEC-0028 also recorded that amending an approved requirement's acceptance criteria is not authorised by its instruction."
+        },
+        {
+          "option": "Treat this record as authorizing the validators' pathspecs to be changed to match the definition",
+          "why_not_chosen": "Expressly not taken here. The envelopes of ATTRIBUTION-POLICY-DECISIONS.json and LEGACY-SCOPE-DECISIONS.json bar changes to REQ-P3-08 and to validator, pathspec or control behaviour, and any narrowing that excludes .sps/tools/. Changing a pathspec would require separate explicit authorization, and this record is not that authorization."
+        },
+        {
+          "option": "Create this record as ACTIVE and treat the definition as an approved governance rule immediately",
+          "why_not_chosen": "It would fabricate approval. DEC-0028 states that the term is currently defined operatively only by the script pathspecs and that redefining the meaning of an approved and verified criterion is a normative change; that tension is real and unresolved. Treating the definition as approved without explicit User approval would misrepresent the governance state, so this record is PROPOSED with approval.state PENDING_USER_APPROVAL and states that the definition must not be relied upon as a rule until the User approves it."
+        },
+        {
+          "option": "Assert in this record that defining the term is unambiguously permitted because it changes no file",
+          "why_not_chosen": "The position is genuinely two-sided and must not be overstated. Every existing bar is worded by effect, and a definition changes no file, byte, behaviour or state, which supports treating it as outside those bars. But DEC-0028 states the term is defined only in the script pathspec, which makes the pathspec the sole operative definition in force, so defining the term elsewhere can equally be read as the same normative move DEC-0028 called outside its authorization. This record therefore states the tension explicitly and depends on a distinct User approval rather than claiming the question is settled."
+        }
+      ],
+      "status": "PROPOSED",
+      "supersedes": null,
+      "approval": {
+        "required": true,
+        "state": "PENDING_USER_APPROVAL"
+      }
+    }
+  ],
+
+  "unresolved_questions": [
+    {
+      "id": "UQ-ATT-1",
+      "question": "Should REQ-P3-08's acceptance criterion 'git diff against c11da27 over legacy paths is empty' enumerate the legacy paths explicitly, and should the validator pathspecs be changed to match?",
+      "status": "PARTIALLY RESOLVED - EXCLUSION HALF ONLY; ENUMERATION/IMPLEMENTATION QUESTION REMAINS OPEN",
+      "resolved_portion": "The exclusion half is settled by the confirmed scope direction recorded in DEC-0029: 'legacy' does NOT exclude .sps/tools/, and the three .sps/tools/ validator files remain within the protected legacy scope for now.",
+      "proposed_but_unapproved_input": "DEC-0030 proposes a definition of the term 'legacy paths' that would include .sps/tools/ and name the installer scripts explicitly. That definition is PROPOSED and PENDING_USER_APPROVAL and is NOT an approved governance rule. It does not resolve this question.",
+      "remaining_portion": "OPEN. Whether the term should be defined outside the requirement at all, whether REQ-P3-08's criterion should enumerate the paths explicitly, and whether the validator pathspecs should be changed to match any definition. DEC-0028 called enumeration the correct long-term remedy and the minimum outstanding decision. No approved decision resolves it, and DEC-0030 does not authorize implementation.",
+      "blocked_by": "REQ-P3-08 is APPROVED with verification.state VERIFIED. Redefining or re-expressing its criterion is a normative change to an approved requirement and requires a distinct explicit User decision. DEC-0029 is only PROPOSED and cannot supply that authorization."
+    },
+    {
+      "id": "UQ-LEGACY-01",
+      "question": "Should the separate .sps/ protection control at sps2/tools/validate-p3.sh:312-316 be retained as-is, re-scoped, or removed?",
+      "status": "UNRESOLVED AND UNCHANGED",
+      "effect_if_unresolved": "That control continues to report its failure on four files: .sps/audits/README.md plus the three .sps/tools validate-*.sh files. DEC-0030 changes it in no way, does not dispose of it, and authorizes no change to it."
+    },
+    {
+      "id": "UQ-LEGACY-02",
+      "question": "Does .sps/audits/README.md fall within the protected legacy scope?",
+      "status": "UNRESOLVED - DEC-0030 makes no determination",
+      "effect_if_unresolved": "The .sps/ control continues to flag .sps/audits/README.md, whose current working-tree change is purely additive. DEC-0030 explicitly declines to decide this: it names .sps/tools/ rather than .sps/ precisely so that this file's status is not silently determined, and enumerating .sps/ wholesale was rejected partly for that reason."
+    },
+    {
+      "id": "UQ-LEGACY-03",
+      "question": "Do P2 and/or P4 require governing legacy-protection requirements equivalent to REQ-P3-08?",
+      "status": "UNRESOLVED - DEC-0030 creates and modifies no requirement",
+      "effect_if_unresolved": "sps2/tools/validate-p2.sh:194 and sps2/tools/validate-p4.sh:482-484 both exercise legacy-protection controls, but only P3 has a governing requirement. No requirement is created here; that is a separate User decision."
+    },
+    {
+      "id": "UQ-LEGACY-04",
+      "question": "Does the historical .sps/tools/ migration require a separate authorization record?",
+      "status": "UNRESOLVED - EVIDENCE GAP REPORTED, NO AUTHORIZATION INFERRED",
+      "evidence_gap": "No decision record located in sps2/decisions/ or .sps/decisions/ authorizes editing the three .sps/tools/ validators. DEC-0028 disposes only of the resulting control failures. However sps2/decisions/OPEN-DECISION-ATTRIBUTION-TOKEN-SET.json:86 refers to 'the authorized shell migration', so the migration is treated as authorized somewhere while the granting instrument is locatable nowhere. DEC-0030 neither grants nor denies retroactive authorization."
+    },
+    {
+      "id": "UQ-ATT-2",
+      "question": "What mechanism should establish the identity of an approver, given that approval.decided_by must not name an agent, model or automation?",
+      "status": "UNRESOLVED AND UNTOUCHED",
+      "effect_if_unresolved": "Not addressed by DEC-0030 in any way. DEC-0030 omits decided_by, decided_at and approval.basis deliberately and asserts no approver identity."
+    }
+  ],
+
+  "explicitly_not_approved_by_this_record": [
+    "The governance decision recorded here (DEC-0030) itself: its approval.state is PENDING_USER_APPROVAL and no User approval, decider, date or basis is asserted or implied",
+    "Treating the definition of \"legacy paths\" recorded here as an approved governance rule; it is PROPOSED and requires explicit User approval before it may be relied upon",
+    "Any change to REQ-P3-08, its acceptance criteria, its approval state or its verification state",
+    "Any change to REQ-P1-06, its acceptance criteria, its approval state or its verification state",
+    "Any change to any validator, any pathspec, or any control behaviour, including the unanchored '*.sh' and '*.ps1' glob variants and the separate .sps/ control at sps2/tools/validate-p3.sh:312-316",
+    "Any narrowing of a pathspec that excludes .sps/tools/, and any widening that protects .sps/ wholesale",
+    "Any change to the separate .sps/ protection control at sps2/tools/validate-p3.sh:312-316, including its retention, re-scoping or removal",
+    "Any revert of the .sps/tools migration",
+    "Any determination that .sps/audits/README.md is or is not protected, or any determination about the protection status of .sps/architecture/SPS2-ROADMAP.md, .sps/changelog-sps.md, .sps/handoff.md, .sps/p17/real-agent-execution.json or .sps/plan.md",
+    "Any creation, amendment or re-verification of a P2 or P4 requirement, or of any other requirement",
+    "Any retroactive authorization of the historical .sps/tools migration",
+    "Any resolution of UQ-ATT-1 in full, or of the remaining enumeration and implementation question within it",
+    "Any resolution of UQ-ATT-2, or any establishment of an approver identity mechanism",
+    "Any change to any test, audit record, evidence record or tracker, including KI-15 and KI-16",
+    "Any CI enforcement change",
+    "Any change to the token set, the attribution policy or matching semantics",
+    "Any change to the git remote, git config, history, branches, tags, or any push",
+    "Any staging, commit or deployment"
+  ],
+
+  "non_goals": [
+    "Not an implementation change. This record changes no file and makes no validator pass; the three glob-bearing controls continue to report three modified legacy governance files, which is an accurate report.",
+    "Not an approval mechanism and not an identity or provenance mechanism.",
+    "Not an amendment to REQ-P3-08, and not a substitute for the enumeration remedy DEC-0028 recorded as the minimum outstanding decision.",
+    "Not a resolution of UQ-ATT-1, which remains open for the enumeration and implementation question.",
+    "Not authority to change any validator, and not to be cited as such.",
+    "Not a determination about the six unrelated .sps/ governance files, whose protection status remains undecided."
+  ],
+
+  "related": [
+    "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json (DEC-0025..DEC-0028; DEC-0028 is the source of the normative tension this record reports)",
+    "sps2/decisions/LEGACY-SCOPE-DECISIONS.json (DEC-0029, PROPOSED; records the confirmed .sps/tools/ scope direction)",
+    "sps2/decisions/OPEN-DECISION-ATTRIBUTION-TOKEN-SET.json",
+    "sps2/decisions/P10-DECISIONS.json (D-P10-8, precedent for recording a determination without modifying the referenced artifact)",
+    "sps2/requirements/P3-REQUIREMENTS.json (REQ-P3-08)",
+    "sps2/requirements/P1-REQUIREMENTS.json (REQ-P1-06)",
+    "sps2/governance/SCHEMAS/decision.schema.json",
+    "sps2/governance/SCHEMAS/requirement.schema.json",
+    "sps2/tools/validate-p2.sh",
+    "sps2/tools/validate-p3.sh",
+    "sps2/tools/validate-p4.sh",
+    "sps2/tools/validate-sps2.sh",
+    "sps2/tools/validate-p5.py",
+    "sps2/legacy/MANIFEST.md",
+    ".sps/audits/README.md (KI-05 and KI-16)",
+    ".sps/GOVERNANCE.md"
+  ]
+}

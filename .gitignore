@@ -121,3 +121,12 @@ Desktop.ini
 # the tool's own local .git/info/exclude entry. (Note: .kilo/.gitignore is
 # ignored by the tool's OWN rule, not by this one.)
 .kilo/worktrees/
+
+# --- 9. Python bytecode ----------------------------------------------------------
+# Category review: this repo is Python standard library only, but the test
+# suites import sps2/ and domain/ in place, so the interpreter writes
+# __pycache__/ bytecode next to the sources. sps2/.gitignore already covered
+# its own tree; these root rules cover domain/ and any future package, so
+# machine- and Python-version-specific .pyc files cannot enter a commit.
+__pycache__/
+*.py[cod]

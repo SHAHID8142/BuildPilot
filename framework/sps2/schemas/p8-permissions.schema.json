@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p8-permissions/v1",
+  "title": "P8 CMS Permission Matrix Schema",
+  "description": "Machine-validatable permission matrix for P8 CMS roles. All permissions are explicit and testable.",
+  "type": "object",
+  "required": ["roles", "permissions", "invariants"],
+  "properties": {
+    "roles": {
+      "type": "array",
+      "items": {"enum": ["super_admin", "admin"]},
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "permissions": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["role", "content_create", "content_edit", "content_delete", "content_publish", "content_preview", "section_create", "section_edit", "section_delete", "layout_modify", "media_upload", "media_select", "media_external_import", "revision_view", "revision_rollback", "user_admin", "role_admin", "audit_view", "audit_export"],
+        "properties": {
+          "role": {"enum": ["super_admin", "admin"]},
+          "content_create": {"type": "boolean"},
+          "content_edit": {"type": "boolean"},
+          "content_delete": {"type": "boolean"},
+          "content_publish": {"type": "boolean"},
+          "content_preview": {"type": "boolean"},
+          "section_create": {"type": "boolean"},
+          "section_edit": {"type": "boolean"},
+          "section_delete": {"type": "boolean"},
+          "layout_modify": {"type": "boolean"},
+          "media_upload": {"type": "boolean"},
+          "media_select": {"type": "boolean"},
+          "media_external_import": {"type": "boolean"},
+          "revision_view": {"type": "boolean"},
+          "revision_rollback": {"type": "boolean"},
+          "user_admin": {"type": "boolean"},
+          "role_admin": {"type": "boolean"},
+          "audit_view": {"type": "boolean"},
+          "audit_export": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 6,
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "additionalProperties": false
+}

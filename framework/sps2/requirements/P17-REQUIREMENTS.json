@@ -1,0 +1,552 @@
+{
+  "schema": "sps2.requirements/v1",
+  "phase": "P17",
+  "phase_definition": "Master Agent Execution Backbone",
+  "generated": "2026-10-10",
+  "note": "GOVERNANCE FOUNDATION ONLY. This document establishes the phase, its requirements, and the binding execution security contract. Nothing in this phase is implemented or verified: every requirement below carries implementation.state NOT_STARTED and verification.state NOT_STARTED, and the Task Runner does not exist. The User's authorization of 2026-10-10 (recorded in sps2/decisions/P17-DECISIONS.json as D-P17-APPROVAL) approves the governance foundation only. Task Runner implementation is prohibited until GATE-P17-2 passes, and no real task may execute until GATE-P17-3 passes. No agent CLI was executed to produce this document.",
+  "roadmap_source": ".sps/architecture/SPS2-ROADMAP.md (P17 section)",
+  "roadmap_objective": "Accept a task, prepare an ordered plan, discover authorized agents at runtime, select one deterministically with recorded rationale, execute locally under a controlled security contract, verify the result independently, and preserve auditable evidence.",
+  "roadmap_dependencies": "P2, P3, P4, P5, P7",
+  "roadmap_forbidden": "public deployment; public network exposure; unrestricted autonomous execution; invoking any CLI outside the explicit authorized allowlist; circumventing provider limits, account restrictions, or terms; automatic account rotation intended to bypass quotas; exposing credentials in plans, logs, transcripts, or evidence; bypassing existing approval gates; installing dependencies",
+  "roadmap_deliverables": "task-record schema (sps2/schemas/p17-task-record.schema.json); execution security contract; Task Runner implementation (only after GATE-P17-2); negative security suite; per-task evidence records",
+  "roadmap_acceptance": "a real task executes end-to-end with a recorded ordered plan, runtime agent discovery, deterministic selection with rationale, bounded and captured execution, independent objective verification, and a complete evidence record; every failure mode (missing authorization, invalid task input, unavailable agent, timeout, execution failure, failed acceptance) produces an explicit auditable outcome",
+  "roadmap_verification": "end-to-end demonstration with captured evidence plus the negative security suite (timeout kill, confinement violation attempt, secret-scrubbing, fail-closed paths, allowlist enforcement)",
+  "roadmap_approval": "user, per gate (GATE-P17-1, GATE-P17-2, GATE-P17-3)",
+  "roadmap_rollback": "remove the Task Runner; the governance foundation, schemas, and decision records remain additive and inert",
+  "standing_bounds": {
+    "three_axis_rule": "IMPLEMENTED != VERIFIED != APPROVED (sps2/core/SPEC.md; .sps/GOVERNANCE.md §1-§2). No artifact of this phase may collapse the three axes.",
+    "P8/P9": "APPROVED and must not be modified by P17 work",
+    "P10": "APPROVED requirements/schema only (D-P10-APPROVAL); P10 inventory population remains blocked on UQ-P10-05 and is untouched by this phase",
+    "CONF-001": "UNRESOLVED - no LCP or INP numeric threshold may appear in any P17 artifact",
+    "stack_constraint": "Python standard library only; project-local; no dependency installation (REQ-P17-12)",
+    "security_boundary": "Local-only execution. No public server, no public network exposure, no deployment (REQ-P17-05, SEC-P17-01)"
+  },
+  "dependency_state": {
+    "P2": "COMPLETE - governance core and validators present and green (sps2/tools/validate-sps2.sh)",
+    "P3": "COMPLETE - adapter registry present (sps2/core/adapters/); adapters are declarative capability descriptors and define no invocation contract; P17 must not rely on them for execution semantics",
+    "P4": "GOVERNANCE COMPLETE - capability model and registry schema present; the registry itself is EMPTY (0 capabilities, AWAITING_USER_APPROVAL); runtime discovery under REQ-P17-03 probes authorized CLI executables directly and does not depend on registry population",
+    "P5": "GOVERNANCE COMPLETE - deterministic selection engine present (sps2/core/selection.py) with fingerprinted, auditable selection records; REQ-P17-04 reuses this pattern for agent selection",
+    "P7": "COMPLETE - project-local state layout; all P17 state is project-local (.sps/tasks/, .sps/evidence/)",
+    "P11": "NOT_STARTED - security controls phase; the P17 execution security contract (SEC-P17-01..11) is adopted now as the binding contract for the first implementation and does not replace or pre-empt P11"
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-P17-01",
+      "title": "Task intake",
+      "objective": "Accept a task from a local interface (CLI argument or task file) with a unique task identifier, goal, required capabilities, and an objective acceptance command; reject malformed input fail-closed.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "A task record conforming to sps2.p17-task-record/v1 is created with a unique TASK-P17-NNNN identifier before any work begins",
+        "Malformed or incomplete task input is rejected with an explicit error and a non-zero exit; no partial record is created",
+        "Task input containing credential-like material is rejected, not stored"
+      ],
+      "dependencies": [],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Intake is the trust boundary: invalid input must never reach plan generation or execution"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-02",
+      "title": "Ordered plan generation",
+      "objective": "Decompose an accepted task into an ordered plan of steps, persist it to project-local state, and gate execution on explicit approval of the plan (plan-first, zero-execution-before-approval).",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every task carries an ordered plan with at least one step before execution",
+        "The plan is persisted to project-local state (.sps/tasks/) and is human-readable",
+        "Execution does not begin until the plan is approved, and the approval is recorded in the task record",
+        "Each plan step names its required agent capabilities so selection can be deterministic"
+      ],
+      "dependencies": ["REQ-P17-01"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "The plan gate is the primary control against autonomous execution; an unapproved plan must never execute"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-03",
+      "title": "Runtime agent discovery",
+      "objective": "Discover which authorized CLI agents are available at runtime by probing an explicit allowlist; never assume availability from documentation, configuration, or prior runs.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Availability is determined by an executed runtime probe (executable present on PATH and responsive to a version or help invocation), not by documentation or configuration claims",
+        "The discovery snapshot (agent id, availability, version, probe method, probed-at timestamp) is recorded in the task record",
+        "An agent documented in the repository but absent at runtime is reported unavailable and is never selected",
+        "Discovery fails closed with an explicit auditable outcome when no authorized agent is available"
+      ],
+      "dependencies": ["REQ-P17-01"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Assuming availability is how unreviewed or absent tooling silently enters the execution path"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-04",
+      "title": "Deterministic agent selection",
+      "objective": "Select an agent deterministically from the discovery snapshot against the task's required capabilities, with a recorded rationale and a reproducible selection fingerprint.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The same requirement and discovery snapshot always yield the same selected agent and the same selection fingerprint",
+        "The selection rationale records why the selected agent was chosen and why the alternatives were not",
+        "Selection never falls back to an agent outside the authorized allowlist",
+        "When no available agent satisfies the required capabilities, selection is an explicit auditable failure, never an arbitrary choice"
+      ],
+      "dependencies": ["REQ-P17-03"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Non-deterministic selection is an unauditable choice of executor; determinism is the control"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-05",
+      "title": "Controlled local subprocess execution",
+      "objective": "Execute the selected agent as a local subprocess under a bounded timeout with captured stdout/stderr, a recorded exit status, and an auditable execution record; the harness itself creates no network exposure.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every execution has an explicit bounded timeout; a timed-out process is terminated and recorded with outcome TIMEOUT",
+        "stdout and stderr are captured to transcript files referenced by path and SHA-256 digest in the task record",
+        "The exit status is recorded verbatim; a non-zero exit is an explicit auditable outcome, never silently treated as success",
+        "The harness opens no listening socket and makes no network request of its own; it only spawns the authorized local CLI"
+      ],
+      "dependencies": ["REQ-P17-04"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Unbounded execution and lost output are how runaway or destructive agent behaviour becomes undetectable"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-06",
+      "title": "Directory confinement",
+      "objective": "Restrict every execution to the authorized project boundary using a tested containment mechanism, not merely a working-directory setting.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The containment mechanism is defined in the implementation and covered by a negative test that attempts to write outside the project boundary and fails closed",
+        "The working directory alone is never the only containment control",
+        "A confinement violation produces an explicit auditable failure and no partial state outside the boundary"
+      ],
+      "dependencies": ["REQ-P17-05"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "A working-directory setting is a convention, not a boundary; containment must be enforced and tested"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-07",
+      "title": "Credential safety",
+      "objective": "Never expose API keys, environment secrets, or credentials in task plans, logs, transcripts, or evidence; grant no unrestricted credential access.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Task records, plans, transcripts, and evidence contain no secret values; secrets are referenced by location only (.sps/GOVERNANCE.md §7)",
+        "The execution environment is constructed with an explicit, minimal policy; inherited secrets are not passed through by default",
+        "A credential-scrubbing check is part of the negative suite and fails when a secret pattern appears in any recorded artefact"
+      ],
+      "dependencies": ["REQ-P17-05"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "A single leaked credential in a transcript is a permanent disclosure; scrubbing is a control, not a cleanup"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-08",
+      "title": "Independent objective verification",
+      "objective": "Verify task results independently of the executing agent: a successful agent exit code or the agent's own claim is never proof that the task passed.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Acceptance is judged by an objective acceptance command or an independent verifier structurally separate from the executor",
+        "The verification result (PASS, FAIL, or BLOCKED) with its evidence reference is recorded in the task record",
+        "A task whose acceptance command fails is recorded as failed with a non-zero overall outcome, even if the agent exited 0",
+        "The verifier's independence from the executor is stated in the task record"
+      ],
+      "dependencies": ["REQ-P17-05"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Executor self-attestation is the exact failure mode the three-axis rule exists to prevent"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-09",
+      "title": "Fail-closed behavior",
+      "objective": "Missing authorization, invalid task input, unavailable agents, timeout, execution failure, or failed acceptance checks must produce explicit, auditable outcomes; the system never defaults to pass.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Each enumerated failure mode has a defined outcome state and an explicit record",
+        "No failure path continues to the next step or returns success by default",
+        "Failure records name the failing stage, matching the ordered-stage failure behaviour required by REQ-P10-11"
+      ],
+      "dependencies": ["REQ-P17-01", "REQ-P17-05", "REQ-P17-08"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "A silent default-to-pass is an unbounded authorization grant"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-10",
+      "title": "Auditable task status and evidence",
+      "objective": "Preserve a complete, auditable task record: task identifiers, ordered plan, selected agent, selection rationale, execution status, verification result, timestamps, and integrity digests - never secrets.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The task record conforms to sps2.p17-task-record/v1",
+        "Every state transition is timestamped, and the record carries SHA-256 digests of the plan and of the execution transcripts",
+        "Evidence follows .sps/GOVERNANCE.md §4: real captured output, never reconstructed; SKIP and BLOCKED state their reason",
+        "A task with no evidence record is at best IMPLEMENTED, never VERIFIED (three-axis rule, .sps/GOVERNANCE.md §1)"
+      ],
+      "dependencies": ["REQ-P17-02", "REQ-P17-05", "REQ-P17-08"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Undigested, untimestamped records are how an audited artifact diverges from the shipped one"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-11",
+      "title": "Failure handling and recovery",
+      "objective": "Handle execution failures with bounded retry, explicit failure records, and resume from project-local state without corrupting other tasks.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "A failed task may be retried only within a recorded bound, and retries are visible in the task record",
+        "Task state is persisted to project-local state so an interrupted run resumes without re-executing completed steps",
+        "Failure of one task never alters the records of other tasks"
+      ],
+      "dependencies": ["REQ-P17-09", "REQ-P17-10"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Unbounded retry is a denial-of-service vector against the user's own machine and provider quotas"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-12",
+      "title": "Standard-library-only initial implementation",
+      "objective": "Implement the initial Task Runner in the Python standard library only; introduce no third-party dependency.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The implementation imports only standard-library and intra-repository modules, machine-checked by the project isolation validator",
+        "No dependency installation occurs, and the standing stack constraint is not weakened"
+      ],
+      "dependencies": [],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "The stdlib-only policy removes the third-party supply-chain surface entirely"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-13",
+      "title": "No premature autonomy",
+      "objective": "Grant no unrestricted command execution, no automatic deployment, and no bypass of existing approval gates; autonomy is bounded by the explicit allowlist and the gate structure.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Only executables in the explicit authorized allowlist may be invoked, and the allowlist is data, not code paths",
+        "No automatic deployment or publish action exists in the initial implementation",
+        "Removing or bypassing a gate is a negative-tested violation, not a configuration option"
+      ],
+      "dependencies": ["REQ-P17-02", "REQ-P17-03"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Premature autonomy is how an orchestrator becomes an unreviewed actor on the user's machine"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P17-14",
+      "title": "Provider compliance",
+      "objective": "Use only authorized providers and supported API/CLI access; do not circumvent provider limits, account restrictions, or terms, and do not introduce automatic account rotation intended to bypass quotas.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The execution contract names the authorized provider access mode (the user's own CLI sessions and accounts) and records it in the task record",
+        "No account rotation, credential sharing, or quota-circumvention mechanism exists anywhere in the implementation",
+        "Provider-side limits are respected; hitting a limit is an explicit auditable outcome (BLOCKED), never a trigger for evasion"
+      ],
+      "dependencies": ["REQ-P17-05"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "PENDING"},
+      "security_implications": [
+        "Quota circumvention violates the terms under which the authorized access exists and would revoke it"
+      ]
+    }
+  ],
+  "execution_security_contract": {
+    "status": "ADOPTED_BY_USER_2026-10-10",
+    "binding_on": "The first Task Runner implementation and every execution it performs. Adoption is recorded as D-P17-2 in sps2/decisions/P17-DECISIONS.json.",
+    "note": "Each boundary below lists its rule, the requirement that implements it, the acceptance criteria, and the evidence required to demonstrate compliance. JSON Schema cannot enforce any of these at record level; they are runtime obligations verified by the negative security suite before GATE-P17-2 can pass.",
+    "boundaries": [
+      {
+        "boundary_id": "SEC-P17-01",
+        "title": "Local-only execution",
+        "rule": "No public server, no public network exposure, and no deployment. The harness opens no listening socket and makes no network request of its own; it only spawns the authorized local CLI.",
+        "implements": "REQ-P17-05",
+        "acceptance_criteria": [
+          "The implementation contains no socket binding and no outbound network call of its own",
+          "A negative test asserts the harness fails closed if invoked with any network or deployment flag"
+        ],
+        "required_evidence": "negative test output; code reference for the absence of network APIs"
+      },
+      {
+        "boundary_id": "SEC-P17-02",
+        "title": "Authorized executables",
+        "rule": "Invoke only explicitly authorized CLI tools from an explicit allowlist. Discover availability at runtime by probing. Never assume a tool is available merely because it is documented in the repository.",
+        "implements": "REQ-P17-03, REQ-P17-13",
+        "acceptance_criteria": [
+          "The allowlist is data, and every invocation resolves against it",
+          "Runtime probing determines availability; a documented-but-absent tool is reported unavailable and never selected",
+          "A negative test asserts an off-allowlist executable is rejected"
+        ],
+        "required_evidence": "discovery snapshot in the task record; negative test output"
+      },
+      {
+        "boundary_id": "SEC-P17-03",
+        "title": "Provider compliance",
+        "rule": "Do not circumvent provider limits, account restrictions, or terms. Do not introduce automatic account rotation intended to bypass quotas. Use only the user's own authorized CLI sessions and accounts.",
+        "implements": "REQ-P17-14",
+        "acceptance_criteria": [
+          "The authorized provider access mode is named and recorded per task",
+          "No account rotation, credential sharing, or quota-circumvention mechanism exists",
+          "Hitting a provider limit yields an explicit BLOCKED outcome"
+        ],
+        "required_evidence": "task record access-mode field; code reference for the absence of rotation logic"
+      },
+      {
+        "boundary_id": "SEC-P17-04",
+        "title": "Process control",
+        "rule": "Every execution must have a bounded timeout, captured stdout/stderr, a recorded exit status, and an auditable execution record.",
+        "implements": "REQ-P17-05",
+        "acceptance_criteria": [
+          "A timed-out process is terminated and recorded as TIMEOUT",
+          "stdout/stderr are captured to transcript files with SHA-256 digests",
+          "Exit status is recorded verbatim; non-zero is an explicit outcome"
+        ],
+        "required_evidence": "execution record with outcome, exit status, and transcript digests; timeout negative test"
+      },
+      {
+        "boundary_id": "SEC-P17-05",
+        "title": "Directory confinement",
+        "rule": "Restrict the execution working directory to the authorized project boundary. Define and test the containment mechanism rather than relying on a working-directory setting alone.",
+        "implements": "REQ-P17-06",
+        "acceptance_criteria": [
+          "Containment is enforced by a defined mechanism, not only by cwd",
+          "A negative test attempts to write outside the project boundary and fails closed"
+        ],
+        "required_evidence": "containment mechanism code reference; confinement negative test output"
+      },
+      {
+        "boundary_id": "SEC-P17-06",
+        "title": "Credentials",
+        "rule": "Do not expose API keys, environment secrets, or credentials in task plans, logs, transcripts, or evidence. Do not introduce unrestricted credential access.",
+        "implements": "REQ-P17-07",
+        "acceptance_criteria": [
+          "No secret value appears in any recorded artefact; secrets are referenced by location only",
+          "The execution environment is constructed with an explicit minimal policy",
+          "A credential-scrubbing negative test fails when a secret pattern appears in any recorded artefact"
+        ],
+        "required_evidence": "scrubbing negative test output; environment-construction code reference"
+      },
+      {
+        "boundary_id": "SEC-P17-07",
+        "title": "Independent verification",
+        "rule": "Separate execution results from acceptance verification. A successful agent exit code or an agent's own claim is not proof that the task passed.",
+        "implements": "REQ-P17-08",
+        "acceptance_criteria": [
+          "Acceptance is judged by an objective acceptance command or a structurally independent verifier",
+          "A task whose acceptance command fails is recorded as failed even when the agent exited 0",
+          "The verifier's independence from the executor is stated in the record"
+        ],
+        "required_evidence": "verification record with independence statement and evidence reference; negative test where agent exits 0 but acceptance fails"
+      },
+      {
+        "boundary_id": "SEC-P17-08",
+        "title": "Fail-closed behavior",
+        "rule": "Missing authorization, invalid task input, unavailable agents, timeout, execution failure, or failed acceptance checks must produce explicit, auditable outcomes.",
+        "implements": "REQ-P17-09",
+        "acceptance_criteria": [
+          "Each enumerated failure mode has a defined outcome state and record",
+          "No failure path defaults to pass or continues silently"
+        ],
+        "required_evidence": "one negative test per enumerated failure mode"
+      },
+      {
+        "boundary_id": "SEC-P17-09",
+        "title": "No dependency installation",
+        "rule": "Use the Python standard library only for the initial implementation.",
+        "implements": "REQ-P17-12",
+        "acceptance_criteria": [
+          "Imports are standard-library and intra-repository only, machine-checked by the isolation validator",
+          "No dependency installation occurs"
+        ],
+        "required_evidence": "isolation validator output over the P17 surface"
+      },
+      {
+        "boundary_id": "SEC-P17-10",
+        "title": "No premature autonomy",
+        "rule": "Do not add unrestricted command execution, automatic public deployment, or bypasses around existing approval gates.",
+        "implements": "REQ-P17-13",
+        "acceptance_criteria": [
+          "Only allowlist executables are invocable",
+          "No automatic deployment or publish action exists",
+          "Gate removal or bypass is a negative-tested violation"
+        ],
+        "required_evidence": "negative test output for allowlist enforcement and gate bypass"
+      },
+      {
+        "boundary_id": "SEC-P17-11",
+        "title": "Evidence integrity",
+        "rule": "Define required task identifiers, plan, selected agent, selection rationale, execution status, verification result, timestamps, and appropriate integrity digests. Never record secrets.",
+        "implements": "REQ-P17-10",
+        "acceptance_criteria": [
+          "Task records conform to sps2.p17-task-record/v1",
+          "Plan and transcripts carry SHA-256 digests",
+          "No secret value appears in any field of any record"
+        ],
+        "required_evidence": "schema validation record; digest verification output; scrubbing negative test"
+      }
+    ]
+  },
+  "approval_gates": {
+    "note": "Three explicit gates separate governance approval from implementation from execution. No gate may be skipped, and no gate may be self-approved by an agent.",
+    "GATE-P17-1": {
+      "title": "Governance foundation approval",
+      "state": "APPROVED",
+      "approved_by": "User",
+      "decided_at": "2026-10-10",
+      "what_it_approved": "Phase establishment (roadmap amendment), the requirements and execution security contract (this document), the decision record (sps2/decisions/P17-DECISIONS.json), and the task-record schema (sps2/schemas/p17-task-record.schema.json)",
+      "what_it_did_not_approve": "Task Runner implementation, any execution of an agent CLI, any real task, deployment, network exposure, dependency installation",
+      "evidence": "D-P17-APPROVAL in sps2/decisions/P17-DECISIONS.json"
+    },
+    "GATE-P17-2": {
+      "title": "Security review and implementation-plan approval",
+      "state": "APPROVED",
+      "approved_by": "User",
+      "decided_at": "2026-10-10",
+      "approved_artifact": ".sps/plan.md (PLAN-P17-001, Revision 2 - post security-review remediation)",
+      "decision_record": "D-P17-GATE-P17-2-APPROVAL in sps2/decisions/P17-DECISIONS.json",
+      "scope_of_approval": "Implementation of Slice 1 within the exact boundaries of the approved revised plan. This approval does NOT authorize real-agent execution (GATE-P17-4 remains OPEN), does NOT satisfy GATE-P17-3, and does NOT mark any Slice 1 component implemented, verified, or approved as an outcome.",
+      "required_before": "Any Task Runner implementation",
+      "requirements": [
+        "The Task Runner implementation plan is written and presented (plan-gate convention: zero code before approval)",
+        "The negative security suite for SEC-P17-01 through SEC-P17-11 is defined",
+        "A security review of the implementation against the execution security contract is performed",
+        "Explicit User approval of the implementation plan"
+      ],
+      "approver": "User (with security review)",
+      "evidence_required": "implementation plan, negative suite definition, security review record, explicit User approval"
+    },
+    "GATE-P17-3": {
+      "title": "Per-task execution approval",
+      "state": "OPEN",
+      "required_before": "The first real task execution, and every HIGH or CRITICAL task thereafter",
+      "requirements": [
+        "The specific task, its ordered plan, and its acceptance command are presented",
+        "Explicit User approval of that specific task execution (approval-packet convention)"
+      ],
+      "approver": "User",
+      "evidence_required": "approval record in the task record (approval.state = APPROVED, decided_by_role = USER)"
+    }
+  },
+  "unresolved_questions": [
+    {
+      "id": "UQ-P17-01",
+      "question": "What is the authoritative initial membership of the authorized agent allowlist?",
+      "context": "Runtime probing in this environment observes the claude, opencode, and copilot CLIs present on PATH, but observation of availability is not authorization: the authoritative allowlist is a security decision, not an engineering default. REQ-P17-03/SEC-P17-02 define the mechanism; the membership must be fixed explicitly.",
+      "options": [
+        "The three observed CLIs (claude, opencode, copilot)",
+        "A single CLI for the first slice, extended by later User decision",
+        "Allowlist fixed per task by the User at GATE-P17-3"
+      ],
+      "decision_required": "User (at GATE-P17-2)",
+      "status": "RESOLVED",
+      "resolved_by": "User",
+      "resolved_at": "2026-10-10",
+      "decision": "Initial authoritative allowlist is exactly [\"opencode\"] (D-P17-4). Production-purpose allowlist entries are neither probed nor invoked while GATE-P17-4 is OPEN.",
+      "decision_ref": "D-P17-4 in sps2/decisions/P17-DECISIONS.json"
+    },
+    {
+      "id": "UQ-P17-02",
+      "question": "What may verify agent work for HIGH or CRITICAL tasks?",
+      "context": "P12 (planned) forbids agent self-sign-off for HIGH/CRITICAL work. Whether an independent second agent may verify, or only objective acceptance commands may judge, is unresolved and changes the verification verifier enum usage in the task record.",
+      "options": [
+        "Objective acceptance commands only",
+        "Objective commands plus an independent second agent",
+        "User review of every HIGH/CRITICAL verification"
+      ],
+      "decision_required": "User",
+      "status": "RESOLVED",
+      "resolved_by": "User",
+      "resolved_at": "2026-10-10",
+      "decision": "Slice 1 verification is by OBJECTIVE acceptance commands only, executed by a structurally separate verifier whose executable may not be an allowlisted agent (D-P17-5). An independent second agent for HIGH/CRITICAL verification remains a later User decision.",
+      "decision_ref": "D-P17-5 in sps2/decisions/P17-DECISIONS.json"
+    },
+    {
+      "id": "UQ-P17-03",
+      "question": "Does P17 orchestrate multiple concurrent agent processes (parallel specialist lanes) or single-agent execution only?",
+      "context": "skills/sps/SUBAGENT-PLAYBOOK.md defines four parallel lanes at prompt level. Whether the executable backbone runs concurrent agent processes in P17, or starts single-agent and adds fan-out later, is a scope decision with security implications (concurrent subprocess control).",
+      "options": [
+        "Single-agent execution only in P17; fan-out as a later increment",
+        "Parallel lanes from the first implementation"
+      ],
+      "decision_required": "User",
+      "status": "RESOLVED",
+      "resolved_by": "User",
+      "resolved_at": "2026-10-10",
+      "decision": "Slice 1 is single-agent execution only; parallel fan-out is a later increment requiring a new User decision record (D-P17-6).",
+      "decision_ref": "D-P17-6 in sps2/decisions/P17-DECISIONS.json"
+    },
+    {
+      "id": "UQ-P17-04",
+      "question": "How is provider usage and cost observed?",
+      "context": "Provider compliance (SEC-P17-03) requires visibility into usage. Whether usage reporting lives in the task record, a separate project-local log, or is delegated to the provider's own tooling is unresolved.",
+      "options": [
+        "Usage fields in the task record",
+        "A separate project-local usage log",
+        "Delegated to provider-side reporting"
+      ],
+      "decision_required": "User",
+      "status": "RESOLVED",
+      "resolved_by": "User",
+      "resolved_at": "2026-10-10",
+      "decision": "Project-local append-only usage log: agent id, resolved path, probed version, duration, outcome; no provider API calls (D-P17-7).",
+      "decision_ref": "D-P17-7 in sps2/decisions/P17-DECISIONS.json"
+    }
+  ],
+  "files_changed": [
+    ".sps/architecture/SPS2-ROADMAP.md (P17 section added; sequencing diagram extended)",
+    "sps2/requirements/P17-REQUIREMENTS.json (new)",
+    "sps2/decisions/P17-DECISIONS.json (new)",
+    "sps2/schemas/p17-task-record.schema.json (new)"
+  ]
+}

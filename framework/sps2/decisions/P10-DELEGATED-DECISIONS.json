@@ -1,0 +1,282 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P10-DELEGATED-DECISIONS",
+  "phase": "Roadmap P10 (Vertical-Slice Frontend/Backend)",
+  "generated": "2026-10-12",
+  "author": "OpenCode coding agent (recording ChatGPT's delegated technical direction, issued at the User's explicit request). Neither the delegate (ChatGPT) nor the recording agent (OpenCode) is the human User, and neither is recorded anywhere in this artifact as an approver.",
+  "note": "Records ten delegated P10 technical decisions issued by ChatGPT acting as the User's delegated technical decision-maker, for PLANNING ONLY. All five previously-pending decisions (DEC-7101 through DEC-7104 and DEC-7110) were ratified by the human User on 2026-10-16 in the Round 12 decision message (transcribed verbatim in sps2/decisions/P10-ROUND12-USER-DECISIONS.json) and are now approval.state=APPROVED with decided_by='User' and decided_at='2026-10-16'. Five decisions (DEC-7105 through DEC-7109) were ratified by the human User to approval.state=APPROVED with decided_by='User' and decided_at='2026-10-13'. All ten are now human-User approvals. None of the ten authorizes implementation, inventory population, CMS records, a slice contract, the runtime gate, or runtime activation. Each decision entry conforms to sps2/decision/v1 (sps2/governance/SCHEMAS/decision.schema.json) so that this artifact validates clean under sps2/tools/check_sps2.py decision. Delegation attribution is confined to the phase-envelope fields permitted by sps2.decisions/v1 (author, note, delegation, standing_bounds, explicitly_not_approved_by_this_record); no delegation marker is placed inside any approval block.",
+  "delegation": {
+    "authority": "DELEGATED_TECHNICAL",
+    "delegated_by": "User",
+    "delegate": "ChatGPT (technical decision analyst)",
+    "recorded_by": "OpenCode coding agent",
+    "delegation_effective_on": "2026-10-12",
+    "scope": "Technical direction for P10 planning only. Does not authorize implementation, inventory population, CMS records, a layout registry, a slice contract, the runtime gate, tests, or runtime activation.",
+    "human_approval": "NOT GRANTED AT DELEGATION (2026-10-12). The User approved the delegation as TECHNICAL DIRECTION ONLY; no decision was APPROVED at delegation time. Subsequently, on 2026-10-13, the human User ratified DEC-7105, DEC-7106, DEC-7107, DEC-7108, and DEC-7109 to approval.state=APPROVED (decided_by='User', decided_at='2026-10-13'); those five are now human-User approvals, and the remaining five decisions are not APPROVED. Per sps2/decision/v1, approval.decided_by 'MUST NOT name an agent, model or automation. Only the user may approve.' Per sps2/governance/attribution.py, the AGENTISH matcher rejects 'chatgpt', 'gpt', 'agent' and 'model'. [SPEC-2 CORRECTION 2026-10-15: the previous wording here also claimed it rejects 'self'; that was false - no agent-token list in the repository has ever contained 'self', and the canonical policy deliberately omits it because 'Self' is a human surname. The original sentence is preserved in this record's correction log. The matcher is a heuristic denylist, not an authoritative registry, and a non-match establishes nothing about the approver's identity.] This artifact therefore records no agent name in any approval field and fabricates no decider or date.",
+    "ratification": "Moving a decision to approval.state=APPROVED is a distinct human-User act requiring decided_by='User' and a decision date. That act was performed by the human User on 2026-10-13 for DEC-7105, DEC-7106, DEC-7107, DEC-7108, and DEC-7109, and on 2026-10-16 for DEC-7101, DEC-7102, DEC-7103, DEC-7104, and DEC-7110 (the Round 12 decision message, transcribed verbatim in sps2/decisions/P10-ROUND12-USER-DECISIONS.json). All ten decisions are now APPROVED. Per sps2/decision/v1, approval.decided_by 'MUST NOT name an agent, model or automation. Only the user may approve.' Per sps2/governance/attribution.py, the AGENTISH matcher rejects 'chatgpt', 'gpt', 'agent' and 'model'. [SPEC-2 CORRECTION 2026-10-15: the previous wording here also claimed it rejects 'self'; that was false - no agent-token list in the repository has ever contained 'self', and the canonical policy deliberately omits it because 'Self' is a human surname. The original sentence is preserved in this record's correction log. The matcher is a heuristic denylist, not an authoritative registry, and a non-match establishes nothing about the approver's identity.] This artifact therefore records no agent name in any approval field and fabricates no decider or date.",
+    "spec2_correction": {
+      "date": "2026-10-15",
+      "what_was_wrong": "human_approval asserted that AGENTISH rejects 'self'.",
+      "evidence": "sps2/governance/attribution_policy.json tokens[] contains no 'self'; attribution.AGENTISH.search('self') is False.",
+      "original_sentence": "Per sps2/governance/attribution.py, the AGENTISH matcher explicitly rejects 'chatgpt', 'gpt', 'agent', 'model' and 'self'.",
+      "what_changed": "Only the factual description of the matcher. No approval state, decision state, or scope was altered by this correction."
+    }
+  },
+  "standing_bounds": {
+    "CONF-001": "UNRESOLVED \u2014 no LCP or INP threshold invented (DEC-7110)",
+    "D-P10-1": "PRESERVED \u2014 initial slice is LOCAL_NON_NETWORK_EXPOSED and purely in-process; no socket or network exposure (DEC-7101)",
+    "D-P10-4": "PRESERVED \u2014 no legacy Lighthouse numeric gates, no 320-1440px viewport range, and no blanket WCAG AA level (DEC-7102, DEC-7103, DEC-7110)",
+    "REQ-P10-02": "IMPLEMENTED \u2014 the P10 layout registry now exists (domain/frontend/layout_registry.py) and registers home-default with field slots heading, body; home-default membership is VERIFIED. DEC-7106 is ratified APPROVED by the human User (2026-10-13). Runtime validity still requires the REQ-P10-09 gate, which is not implemented.",
+    "REQ-P10-17": "Records delegated technical direction for the first section, all ten decisions of which are now ratified APPROVED by the human User (five on 2026-10-13, five on 2026-10-16); the authoritative inventory is NOT populated by this record and its state is governed by its own file",
+    "REQ-P10-09": "Runtime validation gate NOT implemented and NOT activated by this record"
+  },
+  "decisions": [
+    {
+      "decision_id": "DEC-7101",
+      "title": "UQ-P10-01 \u2014 Pure in-process execution for the initial slice",
+      "decision": "The initial P10 slice executes purely in-process: no HTTP socket, no loopback bind, and no network-exposed backend surface. backend.exposure_class is LOCAL_NON_NETWORK_EXPOSED. No authentication, CSRF, or rate-limiting control implementation is triggered by this choice.",
+      "reason": "Static in-process output satisfies the P9 audit contract without any socket, giving the narrowest blast radius for the first slice. Matches the UQ-P10-01 recommended option and preserves the D-P10-1 boundary.",
+      "evidence": [
+        "sps2/requirements/P10-REQUIREMENTS.json: unresolved_questions[UQ-P10-01]",
+        "sps2/decisions/P10-DECISIONS.json: decisions[D-P10-1]",
+        "sps2/schemas/p10-slice.schema.json: axis_contracts.backend.exposure_class"
+      ],
+      "alternatives": [
+        {
+          "option": "Loopback HTTP bind for local preview, still LOCAL_NON_NETWORK_EXPOSED",
+          "why_not_chosen": "Wider local blast radius than a static slice requires; unnecessary for the P9 audit contract."
+        },
+        {
+          "option": "Defer the backend-surface decision until the first section's needs are known",
+          "why_not_chosen": "Unnecessary delay; static in-process output already satisfies the first slice."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "Explicit human User authorization, 2026-10-16, in the Round 12 decision message: 'DEC-7101: OPTION A'. Ratifies this delegated technical direction (pure in-process execution; no HTTP socket, no loopback bind, no network-exposed backend surface; backend.exposure_class is LOCAL_NON_NETWORK_EXPOSED). The verbatim Round 12 decision message is transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json. The ratification applies only to this decision; it does not authorize implementation, publication, or any git stage/commit/push."
+      }
+    },
+    {
+      "decision_id": "DEC-7102",
+      "title": "UQ-P10-02 \u2014 No fixed viewport width range adopted",
+      "decision": "No fixed viewport width range is imposed as a P10 requirement at this stage. Responsive behaviour is expressed through objective, machine-checkable structural assertions (a viewport meta tag is present; no document relies on a single fixed pixel width) rather than an inherited numeric range.",
+      "reason": "Any numeric range adopted now would be inherited from the legacy 320-1440px range without repository evidence, which D-P10-4 forbids. Matches the UQ-P10-02 recommended option.",
+      "evidence": [
+        "sps2/requirements/P10-REQUIREMENTS.json: unresolved_questions[UQ-P10-02]",
+        "sps2/decisions/P10-DECISIONS.json: decisions[D-P10-4]",
+        "sps2/requirements/P10-REQUIREMENTS.json: per_slice_dod.accessibility_and_responsive"
+      ],
+      "alternatives": [
+        {
+          "option": "Adopt the legacy 320-1440px range with per-bound assertions",
+          "why_not_chosen": "Imports an unevidenced legacy range; forbidden by D-P10-4."
+        },
+        {
+          "option": "Adopt a set of named design breakpoints",
+          "why_not_chosen": "No design contract exists yet to justify them."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "Explicit human User authorization, 2026-10-16, in the Round 12 decision message: 'DEC-7102: OPTION A'. Ratifies this delegated technical direction (no fixed viewport width range; responsive behaviour expressed through objective, machine-checkable structural assertions). The verbatim Round 12 decision message is transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json. The ratification applies only to this decision; it does not authorize implementation, publication, or any git stage/commit/push."
+      }
+    },
+    {
+      "decision_id": "DEC-7103",
+      "title": "UQ-P10-03 \u2014 Evidence-based accessibility checks; no blanket WCAG AA",
+      "decision": "Accessibility is evaluated through objective, evidence-backed, machine-checkable checks retained under P10 (documents declare their language; a viewport meta tag is present; exactly one h1 with no heading-level jumps; images carry CMS-authored alt text or are explicitly marked decorative). No blanket WCAG AA conformance level is asserted at this stage.",
+      "reason": "A blanket AA claim is not verifiable from repository evidence here and was recorded in the baseline audit as asserted without citation; D-P10-4 forbids importing the legacy AA level. Matches the UQ-P10-03 recommended option.",
+      "evidence": [
+        "sps2/requirements/P10-REQUIREMENTS.json: unresolved_questions[UQ-P10-03]",
+        "sps2/requirements/P10-REQUIREMENTS.json: requirements[REQ-P10-12]",
+        "sps2/decisions/P10-DECISIONS.json: decisions[D-P10-4]",
+        "sps2/requirements/P10-REQUIREMENTS.json: per_slice_dod.accessibility_and_responsive"
+      ],
+      "alternatives": [
+        {
+          "option": "Adopt a formal conformance level such as WCAG AA",
+          "why_not_chosen": "Unverifiable blanket claim imported from legacy; forbidden by D-P10-4."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "Explicit human User authorization, 2026-10-16, in the Round 12 decision message: 'DEC-7103: OPTION A'. Ratifies this delegated technical direction (evidence-based, machine-checkable accessibility checks; no blanket WCAG AA conformance level asserted). The verbatim Round 12 decision message is transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json. The ratification applies only to this decision; it does not authorize implementation, publication, or any git stage/commit/push."
+      }
+    },
+    {
+      "decision_id": "DEC-7104",
+      "title": "UQ-P10-04 \u2014 Design-system implementation is not a prerequisite for the first slice",
+      "decision": "A separate design-system implementation is not a prerequisite for producing the first P10 slice. Structural, content-safety, output-safety and security criteria are sufficient to judge the first slice; any design-system criteria apply forward and are not retroactively imposed on it.",
+      "reason": "Keeps the first slice unblocked while no design contract exists, without lowering the machine-checkable bar. Matches the UQ-P10-04 recommended option.",
+      "evidence": [
+        "sps2/requirements/P10-REQUIREMENTS.json: unresolved_questions[UQ-P10-04]",
+        "sps2/requirements/P10-REQUIREMENTS.json: per_slice_dod"
+      ],
+      "alternatives": [
+        {
+          "option": "Require a design-system contract before any slice is produced",
+          "why_not_chosen": "Blocks the first slice without repository pressure to do so."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "Explicit human User authorization, 2026-10-16, in the Round 12 decision message: 'DEC-7104: OPTION A'. Ratifies this delegated technical direction (a design-system implementation is not a prerequisite for the first slice; design criteria apply forward only). The verbatim Round 12 decision message is transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json. The ratification applies only to this decision; it does not authorize implementation, publication, or any git stage/commit/push."
+      }
+    },
+    {
+      "decision_id": "DEC-7105",
+      "title": "Home section identity \u2014 id, purpose and route",
+      "decision": "The first P10 section is fixed as section_id=home, purpose='The application's primary entry point.', route=/. These three values are User-chosen product decisions, recorded as delegated technical direction (DEC-7105) and ratified by the human User as APPROVED on 2026-10-13.",
+      "reason": "REQ-P10-17 criterion 4 reserves the choice of the first section to the User; the values were supplied as delegated technical direction and are now ratified by the human User. Ratification fixes the section identity only; it does not authorize populating the inventory.",
+      "evidence": [
+        "sps2/requirements/P10-REQUIREMENTS.json: requirements[REQ-P10-17].acceptance_criteria criterion 4",
+        "sps2/requirements/P10-SECTION-INVENTORY.json: notes (first section is a User decision)"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit human User authorization, 2026-10-13, of the Home identity decisions: section_id=home, purpose='The application's primary entry point.', route=/. The authorization applies only to these decisions and does not approve a completed inventory entry, Home copy, CMS records, publication, or the Home slice contract."
+      }
+    },
+    {
+      "decision_id": "DEC-7106",
+      "title": "Home layout identifier \u2014 home-default, registry membership verified",
+      "decision": "The Home layout identifier is home-default, recorded as intended technical direction and ratified by the human User as APPROVED on 2026-10-13. It satisfies the layout identifier pattern used by sps2.p10-slice/v1, and it is now registered in the REQ-P10-02 P10 layout registry (domain/frontend/layout_registry.py) with field slots heading and body; registry membership is VERIFIED. Runtime validity still requires the REQ-P10-09 runtime validation gate, which is not implemented.",
+      "reason": "home-default is format-valid and is now registered in the REQ-P10-02 layout registry with field slots heading, body (membership verified by resolve() returning RESOLVED against the Home ContentType shape). Ratification approves the layout identifier and its two field slots; it does not assert runtime validity, which remains gated on the unimplemented REQ-P10-09 runtime validation gate.",
+      "evidence": [
+        "sps2/schemas/p10-slice.schema.json: properties.layout_id pattern",
+        "sps2/schemas/p10-section-inventory.schema.json: $defs.section.properties.layout_id (runtime check)",
+        "sps2/requirements/P10-REQUIREMENTS.json: requirements[REQ-P10-02]",
+        "domain/frontend/layout_registry.py: REQ-P10-02 layout registry registers home-default with field_slots ('heading', 'body'); resolve('home-default', Home ContentType) returns RESOLVED"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit human User authorization, 2026-10-13, of the Home layout decision: layout_id=home-default with layout field slots heading, body. The authorization applies only to this decision and does not approve a completed inventory entry, Home copy, CMS records, publication, or the Home slice contract."
+      }
+    },
+    {
+      "decision_id": "DEC-7107",
+      "title": "Home requires no media assets \u2014 explicit empty asset list intended",
+      "decision": "The initial Home slice declares an explicitly empty asset list. This is a deliberate scope decision for the initial Home slice only, representing 'none by decision' and distinct from 'unknown/undecided'; it is not a claim that no assets exist anywhere in the CMS. Recorded as delegated technical direction and ratified by the human User as APPROVED on 2026-10-13.",
+      "reason": "Delegated technical direction for the initial slice scope, ratified by the human User. An explicit empty asset list is only valid when the meaning is explicitly decided; ratification fixes the initial Home slice's asset list as empty without asserting anything about assets elsewhere in the CMS.",
+      "evidence": [
+        "sps2/schemas/p10-slice.schema.json: axis_contracts.assets.asset_references",
+        "sps2/schemas/p10-section-inventory.schema.json: $defs.user_decision_list_field (empty array means none, decided)",
+        "sps2/schemas/p8-asset.schema.json"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit human User authorization, 2026-10-13, of DEC-7107: the initial Home slice declares an explicitly empty asset list. This is a deliberate scope decision for the initial Home slice only, not a claim that no assets exist anywhere in the CMS. The authorization applies only to this decision and does not approve a completed inventory entry, Home copy, CMS records, publication, or the Home slice contract."
+      }
+    },
+    {
+      "decision_id": "DEC-7108",
+      "title": "Home has no backend/data dependencies \u2014 explicit empty declarations intended",
+      "decision": "The initial Home slice declares no backend or data dependencies. The intended slice contract carries an explicit empty backend.state_changing_operations declaration and an explicit empty data.data_dependencies list, with backend.exposure_class=LOCAL_NON_NETWORK_EXPOSED per DEC-7101. An omission is never treated as equivalent to an empty declaration. This declaration must still be reconciled against the Home slice contract and applicable runtime validation requirements; it does not waive or bypass those requirements. Recorded as delegated technical direction and ratified by the human User as APPROVED on 2026-10-13.",
+      "reason": "Delegated technical direction consistent with DEC-7101, ratified by the human User; the slice schema requires state_changing_operations to be present as an explicit empty array when there are none. Ratification declares no initial backend/data dependencies only; it does not waive contract reconciliation (REQ-P10-07) or the runtime validation gate (REQ-P10-09).",
+      "evidence": [
+        "sps2/schemas/p10-slice.schema.json: axis_contracts.backend.state_changing_operations",
+        "sps2/schemas/p10-slice.schema.json: axis_contracts.data.data_dependencies",
+        "DEC-7101 (pure in-process, LOCAL_NON_NETWORK_EXPOSED)",
+        "sps2/requirements/P10-REQUIREMENTS.json: requirements[REQ-P10-07]"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit human User authorization, 2026-10-13, of DEC-7108: the initial Home slice declares no backend or data dependencies. This declaration must still be reconciled against the Home slice contract and applicable runtime validation requirements; it does not waive or bypass those requirements. The authorization applies only to this decision and does not approve a completed inventory entry, Home copy, CMS records, publication, or the Home slice contract."
+      }
+    },
+    {
+      "decision_id": "DEC-7109",
+      "title": "Home SEO references existing P9 contracts; P9 retains ownership",
+      "decision": "The Home slice's SEO requirements reference these four existing P9-owned contracts by their authoritative identifiers: sps2.p9-audit/v1, sps2.p9-metadata/v1, sps2.p9-sitemap/v1, and sps2.p9-structured-data/v1. Each referenced contract was verified to exist with the stated $id before ratification. P9 retains ownership of SEO behavior; P10 references these contracts and does not restate or reimplement any SEO logic. Recorded as delegated technical direction and ratified by the human User as APPROVED on 2026-10-13.",
+      "reason": "Aligns with the P10-to-P9 handoff boundary: the four referenced P9 contracts were each verified to exist with the stated $id (sps2/schemas/p9-audit.schema.json, p9-metadata.schema.json, p9-sitemap.schema.json, p9-structured-data.schema.json), so P10 references rather than duplicates SEO validation. Ratification selects exactly these four contracts and no others.",
+      "evidence": [
+        "sps2/schemas/p9-audit.schema.json: $id=sps2.p9-audit/v1 (verified)",
+        "sps2/schemas/p9-metadata.schema.json: $id=sps2.p9-metadata/v1 (verified)",
+        "sps2/schemas/p9-sitemap.schema.json: $id=sps2.p9-sitemap/v1 (verified)",
+        "sps2/schemas/p9-structured-data.schema.json: $id=sps2.p9-structured-data/v1 (verified)",
+        "sps2/requirements/P10-REQUIREMENTS.json: p10_to_p9_contract"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit human User authorization, 2026-10-13, of DEC-7109: the Home slice references exactly these four existing P9-owned contracts \u2014 sps2.p9-audit/v1, sps2.p9-metadata/v1, sps2.p9-sitemap/v1, and sps2.p9-structured-data/v1 \u2014 each verified to exist with the stated $id. The authorization applies only to this decision and does not approve a completed inventory entry, Home copy, CMS records, publication, or the Home slice contract."
+      }
+    },
+    {
+      "decision_id": "DEC-7110",
+      "title": "No invented performance thresholds or rejected legacy gates",
+      "decision": "No LCP or INP threshold is invented; no fixed viewport range is imposed; no blanket WCAG AA requirement is asserted; and no legacy Lighthouse numeric gates are imported. P10 uses P9 for SEO verification, keeps CONF-001 unresolved, and preserves the D-P10-4 boundary.",
+      "reason": "Reaffirms the existing approved decisions as delegated technical direction so the initial slice cannot regress into unevidenced performance, viewport, or accessibility thresholds.",
+      "evidence": [
+        "sps2/decisions/P10-DECISIONS.json: decisions[D-P10-4]",
+        "sps2/decisions/P10-DECISIONS.json: decisions[D-P10-5]",
+        "sps2/requirements/P10-REQUIREMENTS.json: requirements[REQ-P10-19]",
+        "sps2/decisions/P10-DECISIONS.json: standing_bounds CONF-001"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "Explicit human User authorization, 2026-10-16, in the Round 12 decision message: 'DEC-7110: OPTION A'. Ratifies this reaffirmation decision (no LCP or INP threshold invented; no fixed viewport range; no blanket WCAG AA requirement; no legacy Lighthouse numeric gates; P9 retains SEO; CONF-001 remains unresolved; the D-P10-4 boundary is preserved). Decided together with DEC-7102 and DEC-7103, whose outcomes this decision's text presupposes. The verbatim Round 12 decision message is transcribed in sps2/decisions/P10-ROUND12-USER-DECISIONS.json. The ratification applies only to this decision; it does not authorize implementation, publication, or any git stage/commit/push."
+      }
+    }
+  ],
+  "explicitly_not_approved_by_this_record": [
+    "Any P10 implementation of any kind (renderer, layout registry, backend, or integration harness)",
+    "Populating or editing sps2/requirements/P10-SECTION-INVENTORY.json",
+    "Creating P8 CMS records, a P10 layout registry, or a slice contract",
+    "Implementing or activating the runtime validation gate (REQ-P10-09)",
+    "Adding or modifying any test or validator",
+    "Modifying approved requirements, schemas, decision records, P8, P9, or portability.py",
+    "Revising REQ-P10-17, REQ-P10-02, or any unresolved-question text",
+    "Treating home-default as runtime-valid (registry membership is verified, but runtime validity requires the REQ-P10-09 gate, which is not implemented)",
+    "Enabling real-agent execution or changing P17 gates",
+    "Promoting any capability or asserting production readiness",
+    "Installing any dependency, skill, MCP, CLI, or package",
+    "Any git stage, commit, push, publish, or deploy",
+    "Final human-User approval of the completed inventory or of any slice"
+  ]
+}

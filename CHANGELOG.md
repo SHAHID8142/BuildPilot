@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.1.0
+
+- **Robust legacy-skill handling (T-17)**: `install.sh` now backs up existing
+  `sps`/`sps-cms`/`sps-seo` skill dirs to `~/.sps/backups/<skill>/` (last 3 kept)
+  before replacing them; detects the previously installed VERSION; writes an
+  upgrade report to `~/.sps/last-upgrade.txt` (printed at the end of the run);
+  backup stamps include a per-host hash so concurrent host syncs never collide;
+  restore path printed with the report. Applies to both fresh installs and
+  `sps-update.sh` (which delegates to `install.sh`).
+- **Machine law-checker in CI**: `framework/sps2/tools/check_laws.py` turns the
+  prose laws (context budgets, rolling log, DoD gap items, hard-law core,
+  design-gate craft laws, G1/G2 gates, hardcoded-config ban) into CI gates with
+  a non-vacuous negative test suite (`test_law_checker.py`).
+- **Design craft laws**: DESIGN-GATE absorbed the Gemini UI/UX deep-research
+  list (typography/color/space/components/motion/forms/power-user laws +
+  anti-slop ban list), machine-checked by the law-checker.
+- **Context-budget law**: `.sps/` hot files have size budgets (CONTEXT-BUDGET.md),
+  doctor-enforced and law-checker-enforced; rolling conversation log.
+- **Company lifecycle + Tool Consent law (17)** + session-4 audit-gap items in
+  SECTION-DOD / HANDOFF-CHECKPOINT / VERIFICATION-RECIPES.
 ## 4.0.0
 
 - **Single unified installer**: one command installs the complete stack — no
@@ -9,10 +29,9 @@
 - **One-Section-One-Go delivery**: `SECTION-DOD.md` rewritten (29 checks) — UI + CMS + content + SEO + Lighthouse (Perf ≥90, SEO/A11y/BP 100) + deploy-readiness + manual check loop per section
 - **`sps-cms` mandatory CMS engine** (no fallback); CMS-COUPLING law updated
 - **Skill Router v2**: `design-taste-frontend` (taste-skill v2) as primary taste skill; old taste family (`gpt-taste`, `high-end-visual-design`, `minimalist-ui`, `industrial-brutalist-ui`, `image-to-code`, `redesign-existing-projects`, `stitch-design-taste`, `full-output-enforcement`) de-routed; `verification-before-completion` single-skill only
-- **Core profile +5 skills**: `agent-browser`, `ai-seo`, `copywriting`, `deploy-to-vercel`, `verification-before-completion`
-- **Full profile +8 skills**: `firecrawl`, `supabase`, `supabase-postgres-best-practices`, `prisma-database-setup`, `prisma-client-api`, `prisma-cli`, `vercel-react-native-skills`, `sleek-design-mobile-apps`, `fact-check`
+- **+13 catalog skills** (single unified stack — profile vocabulary retired): `agent-browser`, `ai-seo`, `copywriting`, `deploy-to-vercel`, `verification-before-completion`, `firecrawl`, `supabase`, `supabase-postgres-best-practices`, `prisma-database-setup`, `prisma-client-api`, `prisma-cli`, `vercel-react-native-skills`, `sleek-design-mobile-apps`, `fact-check`
 - **Parallel subagent playbook**: `SUBAGENT-PLAYBOOK.md` — CMS/UI/content/test lanes, write serialization, evidence-before-claims, review agent
-- **Auto-update system**: `scripts/check-update.sh` (24h-cached, offline-safe, semver compare) + rewritten `scripts/sps-update.sh` (preserves install profile/agents from manifest, `--check/--yes/--force`) + PowerShell mirrors `check-update.ps1` / `update-sps.ps1`; session-start auto-apply; CI version-sanity job (VERSION stamp, mirror sync, PS1 array balance)
+- **Auto-update system**: `scripts/check-update.sh` (24h-cached, offline-safe, semver compare) + rewritten `scripts/sps-update.sh` (preserves selected agents from manifest, `--check/--yes/--force`) + PowerShell mirrors `check-update.ps1` / `update-sps.ps1`; session-start auto-apply; CI version-sanity job (VERSION stamp, mirror sync, PS1 array balance)
 - **Doctor v2**: `sps-doctor.sh` checks managed skills + update status; new `--fix` auto-repair via forced reinstall
 - **Antigravity hardening**: boot refusal now 7 checks incl. plan gate; Karpathy behavioral block injected into `GEMINI.md`
 - fix: `install.ps1` unbalanced array literal; version drift between README/templates/`.sps`

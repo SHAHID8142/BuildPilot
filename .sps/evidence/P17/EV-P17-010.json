@@ -1,0 +1,13 @@
+{
+  "actual": "acceptance command exited 0 as expected",
+  "command": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -c print('acceptance: objective command satisfied')",
+  "commit": "UNCOMMITTED_WORKING_TREE",
+  "expected": "exit status 0",
+  "file": "sps2/p17/verification.py, sps2/p17/execution.py",
+  "id": "EV-P17-010",
+  "note": "Objective evidence only. This record does not establish real-agent isolation: real-agent execution is disabled (GATE-P17-4 OPEN).",
+  "result": "PASS",
+  "task": "TASK-P17-0013",
+  "test": "p17 run (test doubles only)",
+  "timestamp": "2026-10-10T13:08:08Z"
+}

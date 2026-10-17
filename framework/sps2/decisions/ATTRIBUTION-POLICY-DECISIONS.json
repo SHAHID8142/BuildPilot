@@ -1,0 +1,214 @@
+{
+  "schema": "sps2/decision/v1",
+  "record_id": "ATTRIBUTION-POLICY-DECISIONS",
+  "phase": "cross-cutting governance (not phase-scoped)",
+  "generated": "2026-10-15",
+  "author": "implementation agent (not a User; this record transcribes a User instruction, it does not originate one)",
+  "note": "Ratifies the canonical agent-name attribution token set and records the disposition of the four open questions raised by the SPEC-2 consolidation. Each entry in decisions[] conforms to sps2/governance/SCHEMAS/decision.schema.json (decision_id ^DEC-[0-9]{4}$, required title/decision/reason/evidence/alternatives/approval). Validate with: python3 sps2/tools/check_sps2.py decision sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json — that command ALWAYS exits 0, so inspect stdout for ERR lines.",
+
+  "canonical_token_set": [
+    "agent", "ai", "assistant", "model", "bot", "claude", "cursor", "codex",
+    "gemini", "opencode", "cline", "copilot", "windsurf", "aider",
+    "chatgpt", "gpt", "antigravity"
+  ],
+  "canonical_token_set_note": "17 tokens. Ordering preserves the pre-existing 16 exactly as they appeared in sps2/governance/attribution_policy.json; 'antigravity' is appended. Ordering is behaviourally irrelevant under \\b(...)\\b but was not churned without cause.",
+
+  "decisions": [
+    {
+      "decision_id": "DEC-0025",
+      "title": "Antigravity admitted to the canonical agent-name attribution token set",
+      "decision": "The canonical approved attribution token set is ratified at 17 tokens: the pre-existing 16 plus 'antigravity'. sps2/governance/attribution_policy.json tokens[] gains 'antigravity'; the compiled matcher becomes \\b(agent|ai|assistant|model|bot|claude|cursor|codex|gemini|opencode|cline|copilot|windsurf|aider|chatgpt|gpt|antigravity)\\b with re.I. No other token is added or removed. Matching semantics are otherwise unchanged: still case-insensitive, still word-boundary anchored, still no Unicode normalization, no separator joining, no substring matching, no confusable handling and no exception registry. Every consumer continues to read the single policy file; no consumer maintains a duplicate list.",
+      "reason": "Antigravity is a real, actively supported agent host in this repository, not a stray string. It shipped a host adapter with boot-refusal enforcement, an install target, and a HIGH risk rating in the architecture document, yet between commit 94d23e1 and the SPEC-2 consolidation it was judged by sps2/tools/check_sps2.py as an approver identity and was dropped when that consumer adopted the canonical policy. Leaving it out means an approval attributed to 'Antigravity' is accepted by every validator, which contradicts the approved criterion 'An agent-attributed approval must be rejected' (REQ-P5-03). Restoration also carries no false-positive risk: 'antigravity' is a proper noun, not an ordinary English word, and no approved text requires it to be accepted.",
+      "evidence": [
+        "sps2/tools/check_sps2.py at commit 94d23e1 listed 'antigravity' in an approver denylist judging approval.decided_by and global_installation_authorized_by; an 'Antigravity' approver was rejected before consolidation and is not rejected without this decision",
+        "skills/sps/hosts/antigravity.md and skills/sps-cms/hosts/antigravity.md - first-class host adapters with boot-refusal enforcement",
+        "skills/sps-cms/package.json and install.sh:147 (--agent \"antigravity\") - a real install target",
+        ".sps/architecture/SPS2-AGENT-INTEROPERABILITY.md:104 - Gemini/Antigravity rated HIGH risk",
+        "sps2/requirements/P5-REQUIREMENTS.json:88 - approved criterion 'An agent-attributed approval must be rejected'",
+        "sps2/tools/validate-sps2.sh:189 lists antigravity beside claude, cursor, codex, gemini, opencode and cline, six of which are already canonical",
+        "Exhaustive walk of every decided_by/approved_by/authorised_by/approval_decided_by/promoted_by/licence_decided_by value in the repository: 198 values across 51 files, the single distinct value 'User'. No record contains 'antigravity', so no existing record changes verdict",
+        "Substring analysis: no canonical token is a substring of 'antigravity' and 'antigravity' is a substring of no canonical token; \\b prevents matching inside 'AntigravityHost', 'antigravityx' and 'anti-gravity'"
+      ],
+      "alternatives": [
+        {
+          "option": "Leave antigravity excluded and accept the gap",
+          "why_not_chosen": "It leaves a detected agent name acceptable as an approver, contradicting an approved requirement criterion, for a vendor this repository actively supports. No approved text requires it to be accepted."
+        },
+        {
+          "option": "Merge the core-neutrality vendor lists into the attribution policy instead",
+          "why_not_chosen": "Those lists use substring matching over sps2/core source text. Merging them would match 'ai' inside availability, raised and contains, and flag every core module. They answer a different question."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-15",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'DECISION T1 - ANTIGRAVITY / Admit \"antigravity\" into the canonical approved attribution-token set. The intended canonical set is the existing 16 tokens plus antigravity: agent, ai, aider, assistant, bot, chatgpt, claude, codex, cline, copilot, cursor, gemini, gpt, model, opencode, windsurf, antigravity.' and 'Verify the actual current policy list and ordering before editing. Do not introduce duplicate tokens or unrelated additions.'"
+      }
+    },
+    {
+      "decision_id": "DEC-0026",
+      "title": "Autonomous remains excluded from the canonical attribution token set",
+      "decision": "'autonomous' is not a member of the canonical token set and is not added by DEC-0025. Its exclusion is ratified explicitly, rather than left as an unstated consequence of the canonical list not containing it.",
+      "reason": "No directly applicable approved requirement makes admission possible or necessary. REQ-P5-03 requires only that agent-attributed approval be rejected; 'autonomous' is an ordinary English adjective, not an agent identifier, and admitting it would reject organisation-style names such as 'Autonomous Council' with no approved basis for doing so. Provenance is thin: at HEAD the token appeared at exactly one of the ten pre-consolidation shell approver-token sites (sps2/tools/validate-p4.sh) and in none of the five hardcoded Python denylists, so it was never a cross-validator invariant. This decision is made on that evidence and not on the historical absence alone.",
+      "evidence": [
+        "sps2/requirements/P5-REQUIREMENTS.json:85-89 - REQ-P5-03 acceptance criteria name no token and do not require admission",
+        "git grep over sps2/requirements, sps2/decisions, sps2/evidence, .sps/decisions and sps2/governance/SCHEMAS returns no occurrence of 'autonomous' in any normative position",
+        "Pre-consolidation occurrence census: 1 of 10 shell approver-token sites (sps2/tools/validate-p4.sh:246), 0 of 5 hardcoded Python denylists",
+        "\\bautonomous\\b does not collide with any canonical token"
+      ],
+      "alternatives": [
+        {
+          "option": "Admit 'autonomous'",
+          "why_not_chosen": "It would reject ordinary human-style names with no approved requirement demanding it. Admitting an ordinary English word to a denylist needs an affirmative approved reason, and none exists."
+        },
+        {
+          "option": "Leave it unstated, relying on its absence from the canonical list",
+          "why_not_chosen": "Absence from a list is not a decision. This record makes the exclusion explicit and auditable."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-15",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'DECISION T2 - AUTONOMOUS / Keep \"autonomous\" excluded from the canonical token set unless a directly applicable existing approved requirement makes that decision impossible. Document the provenance and rationale without claiming that historical absence is equivalent to formal approval.'"
+      }
+    },
+    {
+      "decision_id": "DEC-0027",
+      "title": "Ratification of the removal of self and script from the canonical attribution token set",
+      "decision": "Neither 'self' nor 'script' is a member of the canonical token set. This record ratifies the removal performed during the SPEC-2 consolidation, which until now had no decision record and was therefore unratified by the repository's own stated rule. The removal is NOT the basis for any new control: the token denylist is a heuristic, and the binding User-attribution checks are the exact-equality 'User' checks in the P3/P4 validators, which are untouched and remain the operative control.",
+      "reason": "No approved requirement, decision, evidence record or schema names either token in either direction. At HEAD each appeared in three of the ten pre-consolidation shell approver-token sites and in none of the five hardcoded Python denylists, so the pre-consolidation behaviour was already inconsistent and was never a cross-validator invariant. Admitting them would reject legitimate human identities such as 'Jane Self', 'Marcus Self', 'Nora Script' and 'Mr Script'. The approved criterion 'An agent-attributed approval must be rejected' is fully satisfied without them, because agent identity is enforced separately and more strictly by exact-equality checks. Recording the removal here closes the governance gap identified as T3.",
+      "evidence": [
+        "sps2/requirements/P5-REQUIREMENTS.json:85-89 - REQ-P5-03 acceptance criteria name no token",
+        "Pre-consolidation occurrence census: 'self' 3 of 10 shell sites (validate-p3.sh:206, validate-p4.sh:246, validate-p4.sh:459); 'script' the same 3; both 0 of 5 hardcoded Python denylists",
+        "sps2/requirements/P4-REQUIREMENTS.json contains no occurrence of 'self', 'script' or 'autonomous' at all, despite being the requirement governing validate-p4.sh",
+        "sps2/tools/validate-p3.sh:113-114, :118-119 - jq 'all(. == \"User\")' whitelists; sps2/tools/validate-p3.sh:153-154 and validate-p4.sh:276, :296, :321, :623, :696, :744, :751 - exact-equality 'User' checks. All untouched by the consolidation",
+        "sps2/tools/validate-p4.sh:455 POSCTRL-G injects 'Agent (self-approved)' and still rejects it on the token 'Agent', which is canonical; the control is non-vacuous without 'self'"
+      ],
+      "alternatives": [
+        {
+          "option": "Re-add 'self' and 'script' to the canonical set to preserve pre-consolidation behaviour",
+          "why_not_chosen": "No approved requirement requires it and it would reject ordinary human surnames. Preserving an implementation detail that contradicted an approved criterion is not preservation, it is a defect."
+        },
+        {
+          "option": "Leave the removal unratified and record it only as an observation",
+          "why_not_chosen": "The repository's own policy states that adding OR REMOVING a token is a governed change requiring a User decision record. Leaving it unratified keeps that gap open and permits any future agent to reverse or ratify it unilaterally."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-15",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'DECISION T3 - SELF AND SCRIPT / Formalize the intended treatment of \"self\" and \"script\" consistently with the canonical policy and the existing approved governance rules. Do not silently infer that removing these tokens from legacy controls is authorized merely because the canonical list does not contain them. If the repository's governance model permits recording the user's current authorization as a formal decision, record it with accurate provenance.'"
+      }
+    },
+    {
+      "decision_id": "DEC-0028",
+      "title": "KI-16 disposition: P3/P4 legacy-untouched controls are preserved unchanged",
+      "decision": "The three P3/P4 legacy-protection controls are NOT modified. No pathspec is narrowed, no control is weakened, and no approved requirement is amended. The agent-attribution behaviour of those validators is already reconciled with the canonical policy because they consume it; the residual failures reported by validate-p3.sh and validate-p4.sh are correct reports that legacy governance files were modified, and they remain red until the underlying requirement question is settled by a separate User decision.",
+      "reason": "The User instruction for this area is to preserve approved control behaviour unless an existing approved decision explicitly authorises a change, and to choose the smallest implementation consistent with the approved governance model. No existing approved decision authorises changing these controls. REQ-P3-08 is APPROVED with verification.state VERIFIED and its first acceptance criterion is 'git diff against c11da27 over legacy paths is empty'; the term 'legacy paths' is defined nowhere in the requirement, only in the script pathspec, so narrowing that pathspec would silently redefine the meaning of an approved and verified criterion. That is a normative change and is outside this authorization. Reporting the discrepancy accurately is therefore the correct outcome, not a workaround.",
+      "evidence": [
+        "sps2/tools/validate-p3.sh:296-299 and sps2/tools/validate-p4.sh:480-483 - identical pathspec 'skills scripts plugins .github templates README.md CHANGELOG.md CATALOG.md *.sh *.ps1' filtered by grep -v '^sps2/'; the unanchored '*.sh' matches .sps/tools/ at any depth. Currently trips on exactly .sps/tools/validate-capability.sh, .sps/tools/validate-control.sh and .sps/tools/validate-governance.sh",
+        "sps2/tools/validate-p3.sh:311-315 - 'git diff HEAD -- .sps/' trips on those three plus .sps/audits/README.md",
+        "sps2/requirements/P3-REQUIREMENTS.json REQ-P3-08 - status APPROVED, verification.state VERIFIED, acceptance criterion 'git diff against c11da27 over legacy paths is empty'; 'legacy paths' is not enumerated in any approved artifact",
+        "The controls are unrelated to attribution: they compare paths, not identity. The operative User-attribution controls are the exact-equality 'User' checks listed in DEC-0027, which remain in force",
+        "Validating the three migrated .sps/tools validators at HEAD produced an identical failure count, confirming these failures are caused by the .sps to sps2 migration and not by any token change"
+      ],
+      "alternatives": [
+        {
+          "option": "Narrow the pathspec to exclude .sps/tools/",
+          "why_not_chosen": "It would redefine 'legacy paths' in an APPROVED and VERIFIED requirement without an approved decision to do so, and it would remove a real protection: these controls would no longer notice a modification to legacy shell governance."
+        },
+        {
+          "option": "Revert the .sps/tools migration so the controls pass",
+          "why_not_chosen": "It would reintroduce three independent agent-token lists, restoring exactly the divergence DEC-0025 exists to end, and would restore an inert '(?!User)' POSIX-ERE control that could never fail."
+        },
+        {
+          "option": "Amend REQ-P3-08 to enumerate the legacy paths explicitly",
+          "why_not_chosen": "This is the correct long-term remedy but it changes the acceptance criteria of a User-approved requirement and is not authorised by this instruction. Recorded as the minimum outstanding decision."
+        }
+      ],
+      "status": "ACTIVE",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-15",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'DECISION KI-16 - P3/P4 LEGACY CONTROLS / Reconcile the P3/P4 legacy validators with the newly formalized canonical policy. First inspect the actual semantics of each control. Preserve the explicit User-attribution checks and their intended fail-closed behavior. Do not weaken P3/P4 validation merely to make tests pass.' and 'If a distinct formal approval is required by an existing schema or governance rule and cannot be satisfied by this instruction, STOP behavior-changing edits. Create or update only an advisory/open decision record, report the exact missing authorization, and continue only independent read-only verification.'"
+      }
+    }
+  ],
+
+  "non_goals": [
+    "Not an identity, authentication or provenance mechanism. A match is evidence of agent attribution and nothing further follows from it; a NON-match does not establish that decided_by is a real, authorized User.",
+    "No Unicode normalization, no separator stripping or joining, no substring matching, no confusable-character handling and no exception registry is introduced. Matcher semantics are unchanged except for the single authorised token addition in DEC-0025.",
+    "No vendor token beyond 'antigravity' is added. grok, devin, replit and kiro are not admitted.",
+    "The core-neutrality vocabularies (sps2/tools/validate-p5.py AGENT_NAMES, sps2/tools/test-portability.py VENDORS, sps2/tests/test_p5.py AGENTS, sps2/tools/validate-sps2.sh BRAND) are NOT merged. They scan sps2/core source text by substring and answer a different question.",
+    "REQ-P10-09 acceptance criterion 6, including the word 'fabricated', is not altered.",
+    "REQ-P5-03 approval and verification state are not altered and it is not re-verified by mutating the working tree.",
+    "No P10 inventory approval state, no P17 execution check, and no CI configuration is changed.",
+    "KI-15, the git remote and push discrepancy, is untouched; no remote, git config, history, branch or tag operation is performed."
+  ],
+
+  "unresolved_questions": [
+    {
+      "id": "UQ-ATT-1",
+      "question": "Should REQ-P3-08's acceptance criterion 'git diff against c11da27 over legacy paths is empty' enumerate the legacy paths explicitly, so that 'legacy' excludes .sps/tools/ governance tooling?",
+      "blocked_by": "REQ-P3-08 is APPROVED with verification.state VERIFIED. Redefining its criterion is a normative change to an approved requirement and requires a distinct User decision. DEC-0028 preserves the control rather than weakening it.",
+      "effect_if_unresolved": "validate-p3.sh continues to report 2 failures and validate-p4.sh 3. These are accurate reports, not regressions."
+    },
+    {
+      "id": "UQ-ATT-2",
+      "question": "Should the heuristic denylist be supplemented by any mechanism that establishes approver identity?",
+      "blocked_by": "No identity provider, account registry or signature mechanism exists in this repository. Creating one is a separate architecture task and is not implied by this record.",
+      "effect_if_unresolved": "REQ-P5-03's 'attributable to an identifiable User' remains satisfied only in the weak sense that an approval is not agent-named."
+    }
+  ],
+
+  "affected_consumers": {
+    "note": "No consumer required an edit to consume the new token. All of the following already read the single policy file, so DEC-0025 propagates automatically.",
+    "python": [
+      "sps2/governance/attribution.py (sole reader; compiles AGENTISH from tokens[])",
+      "sps2/capability/engine.py", "sps2/capability/promotion_gates.py",
+      "sps2/tools/check_p2.py", "sps2/tools/check_sps2.py", "sps2/tools/check_p3.py (aliases engine)",
+      "sps2/tools/validate-p5.py", "sps2/tools/validate-p6.py", "sps2/tools/validate-p7-readiness.py",
+      "sps2/tools/sps5.py", "sps2/tools/test-portability.py", "sps2/tools/p10_runtime_gate.py"
+    ],
+    "shell": [
+      "sps2/tools/validate-p3.sh", "sps2/tools/validate-p4.sh",
+      ".sps/tools/validate-capability.sh", ".sps/tools/validate-control.sh", ".sps/tools/validate-governance.sh"
+    ],
+    "behaviour_change_from_this_record": "None beyond the matcher gaining one token. All 198 attribution values in the repository are the literal 'User', which matches nothing, so no record, fixture or validator verdict changes."
+  },
+
+  "supersedes": null,
+  "supersedes_note": "This record does not supersede or amend any existing decision. It supplies the missing decision records for the SPEC-2 token-set changes. No existing decision record, requirement, schema or evidence record was edited to accommodate it.",
+
+  "explicitly_not_approved_by_this_record": [
+    "Any change to REQ-P3-08 or to the P3/P4 legacy-protection controls (DEC-0028 preserves them unchanged)",
+    "Any change to REQ-P5-03 approval or verification state, or any re-verification of it",
+    "Any change to REQ-P10-09 acceptance criterion 6",
+    "Any P10 inventory approval state change, P10 Phase B work, or P17 decided_by execution check",
+    "Any CI enforcement change",
+    "Any remediation of KI-15 (git remote, config, history, identity or pushes)",
+    "Any admission of a token other than 'antigravity'",
+    "Any matching-semantics change beyond the single token addition"
+  ],
+
+  "related": [
+    "sps2/governance/attribution_policy.json",
+    "sps2/governance/attribution.py",
+    "sps2/decisions/OPEN-DECISION-ATTRIBUTION-TOKEN-SET.json",
+    "sps2/requirements/P5-REQUIREMENTS.json",
+    "sps2/requirements/P3-REQUIREMENTS.json",
+    ".sps/audits/README.md (KI-16)",
+    "AUDIT-SPEC2-GIT-REMOTE-AND-PUSH-DISCREPANCY.md (KI-15, untouched)"
+  ]
+}

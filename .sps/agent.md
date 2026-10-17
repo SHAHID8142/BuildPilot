@@ -2,7 +2,7 @@
 Last updated:
 
 ## SPS version
-- Skill version: 4.0.0
+- Skill version: 4.1.0
 
 ## Active agent
 - Host: Cursor | Claude Code | Codex | Antigravity / Gemini CLI | Other
@@ -33,3 +33,6 @@ Last updated:
 - [ ] Read `./.sps/handoff.md`
 - [ ] Read this file and refresh host identity + version stamp
 - [ ] Reaffirm `/sps` is required for this project
+
+## Continuation log
+- 2026-10-17 16:56 +06: C5 updater/bootstrap corrections implemented; focused suites 47 passed, 1 PowerShell skip; Codexx CLI review PASS. Claude gateway model selection failed, so no Claude verdict. Report: `reports/SPS2-C5-IMPLEMENTATION-REVIEW-20261017-1656.md`. P10/release NOT READY; preserve protected decisions, baselines, and CI.

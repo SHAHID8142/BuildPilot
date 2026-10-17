@@ -1,0 +1,65 @@
+{
+  "$comment": "Authoritative agent-name token policy for SPS2 approval attribution. This is DATA, not code: sps2/governance/attribution.py is the single consumer and owns the matching implementation. No validator may hardcode its own agent-token list; shell validators consume this file through attribution.py via python3, never by duplicating tokens. Req-P5-04 requires the detector to live in governance/, not core/. Membership is governed by sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json (DEC-0025 antigravity admitted, DEC-0026 autonomous excluded, DEC-0027 self and script ratified as excluded, DEC-0028 P3/P4 legacy controls preserved). Adding or removing a token requires a User decision record; this file records provenance so a token is never added silently.",
+  "$id": "sps2.governance.attribution-policy/v1",
+  "schema_note": "Matching is a case-insensitive, word-boundary-anchored search for any token below. Adding or REMOVING a token changes matcher behaviour everywhere and is a governed change requiring a User decision record. REORDERING tokens does not change behaviour: with \\b(...)\\b a shorter token that is a prefix of a longer one fails the trailing \\b and the regex backtracks. Reordering is therefore not a governed change.",
+  "non_goals": [
+    "A non-match does NOT establish that decided_by is a real, authorized human User.",
+    "A match is evidence of agent attribution and nothing further follows from it.",
+    "This policy does NOT establish identity, provenance or authorization.",
+    "This policy does NOT handle Unicode cross-script confusables, interior separators or invisible characters."
+  ],
+  "matching": {
+    "method": "regex_word_boundary_case_insensitive",
+    "case_sensitive": false,
+    "anchored": true,
+    "substring_matching": false
+  },
+  "tokens": [
+    "agent",
+    "ai",
+    "assistant",
+    "model",
+    "bot",
+    "claude",
+    "cursor",
+    "codex",
+    "gemini",
+    "opencode",
+    "cline",
+    "copilot",
+    "windsurf",
+    "aider",
+    "chatgpt",
+    "gpt",
+    "antigravity"
+  ],
+  "excluded_tokens": {
+    "$comment": "Words a pre-consolidation validator rejected that this policy also rejects. Each entry states its own verified provenance; they are not interchangeable. 'self' and 'script' are ordinary English words that can denote a human surname, so admitting them would reject legitimate identities. 'autonomous' is likewise excluded, and DEC-0026 ratified that exclusion explicitly rather than leaving it as an unstated consequence of absence.",
+    "self": "EXCLUDED, ratified by DEC-0027. At HEAD it appeared in 3 of the 10 pre-consolidation shell approver-token sites (validate-p3.sh:206, validate-p4.sh:246, validate-p4.sh:459) and in NONE of the 5 hardcoded Python denylists. Within validate-p4.sh the site at line 459 contained 'self' and 'script' but omitted 'autonomous', which the site at line 246 did contain - a 213-line separation within one file. No approved requirement, decision, evidence record or schema names 'self' in either direction. Admitting it would reject 'Jane Self', 'Ma Self' and 'Marcus Self'. This exclusion is a heuristic; the binding User-attribution controls are the exact-equality 'User' checks in validate-p3.sh and validate-p4.sh, which are unaffected.",
+    "script": "EXCLUDED, ratified by DEC-0027. Same provenance as 'self': 3 of the 10 pre-consolidation shell approver-token sites and NONE of the 5 hardcoded Python denylists. Admitting it would reject 'Nora Script', 'Mr Script' and 'Script Smith'. No approved requirement, decision, evidence record or schema names 'script' in either direction.",
+    "autonomous": "EXCLUDED, ratified by DEC-0026. Weakest provenance of the three: at HEAD it appeared in exactly 1 of the 10 pre-consolidation shell approver-token sites (validate-p4.sh:246 only) and in NONE of the 5 hardcoded Python denylists, so it was never a cross-validator invariant. No approved text required or forbade it. It is an ordinary English adjective rather than a surname; admitting it would reject an organisation-style name such as 'Autonomous Council' with no approved basis."
+  },
+  "out_of_scope_vocabularies": {
+    "$comment": "These look like agent-name lists but answer a different question and MUST NOT be merged into this policy.",
+    "core_neutrality_scans": [
+      "sps2/tools/validate-p5.py:AGENT_NAMES",
+      "sps2/tools/test-portability.py:VENDORS",
+      "sps2/tests/test_p5.py:AGENTS",
+      "sps2/tools/validate-sps2.sh:BRAND"
+    ],
+    "why": "They scan sps2/core/ source TEXT for vendor references using SUBSTRING matching. Merging this policy's tokens into them would match 'ai' inside 'availability', 'raised', 'contains', 'chain', 'against', 'maintainer' and flag every core module. This policy answers 'whose name is on this approval'; they answer 'does this file mention a vendor'."
+  },
+  "known_divergences": {
+    "$comment": "Behaviour that changed as a direct result of adopting one canonical policy. Entries are historical: 'check_sps2.py' describes the SPEC-2 gap that DEC-0025 has since closed.",
+    "check_sps2.py": "HISTORICAL - RESOLVED BY DEC-0025. SPEC-2 adoption had caused this consumer to LOSE 'antigravity', which it carried before consolidation, while gaining 'aider', 'chatgpt', 'gpt' and 'windsurf' from the canonical set. It did NOT gain 'ai' - 'ai' was already in its pre-consolidation denylist. DEC-0025 restored 'antigravity', so this consumer now rejects a superset of what it rejected before consolidation and its detection coverage is fully restored. No repository record changed verdict at any point: every decided_by value in the repository is the literal 'User'.",
+    "capability/engine.py": "Gained 'ai', 'chatgpt', 'gpt'. Strictness increased; no fixture changed.",
+    "promotion_gates.py": "Gained 'ai', 'chatgpt', 'gpt'. Strictness increased; no fixture changed.",
+    "check_p2.py": "Gained 'ai', 'aider', 'chatgpt', 'gpt', 'windsurf'. Strictness increased; no fixture changed.",
+    "shell validators": "validate-p3.sh rejected 'self' and 'script' (site :206); validate-p4.sh rejected both at :246 and :459 and additionally 'autonomous' at :246 only. None of the three appears in any of the 5 hardcoded Python denylists at HEAD. All three exclusions are now explicitly ratified by DEC-0027 (self, script) and DEC-0026 (autonomous). No approved control was weakened: the operative User-attribution checks are the exact-equality 'User' assertions in validate-p3.sh (all(. == \"User\") whitelists at :113-114 and :118-119) and validate-p4.sh (!= 'User' at :276, :296, :321, :623, :696, :744, :751), all untouched by the consolidation.",
+    "not_a_regression": "No real repository record changed verdict. Exhaustive walk of every decided_by / approved_by / authorised_by / approval_decided_by / promoted_by / licence_decided_by value: 198 values across 51 files, with 'User' the single distinct value; the only non-'User' strings anywhere are synthetic negative fixtures inside the validators themselves."
+  },
+  "admitted_tokens": {
+    "$comment": "Tokens added to this policy by an explicit User decision. Kept so an admitted token carries its provenance in the same file as the policy it belongs to.",
+    "antigravity": "ADMITTED by DEC-0025 (User, 2026-10-15). Provenance: sps2/tools/check_sps2.py at commit 94d23e1 listed it in an approver denylist judging approval.decided_by and global_installation_authorized_by, so an approval attributed to 'Antigravity' was rejected before the SPEC-2 consolidation and was not rejected after it. Antigravity is a real agent host in this repository - skills/sps/hosts/antigravity.md, skills/sps-cms/package.json, install.sh --agent antigravity, and .sps/architecture/SPS2-AGENT-INTEROPERABILITY.md which rates Gemini/Antigravity HIGH risk. No approved requirement, decision, evidence record or schema ever named it, so the canonical 16 had no stronger provenance than this token; the admission rests on the User's decision, not on a pre-existing approval. Matching notes: no canonical token is a substring of 'antigravity' and vice versa; \\b correctly rejects 'AntigravityHost', 'antigravityx' and 'anti-gravity', and matches 'antigravity-cli' and 'Antigravity CLI'."
+  }
+}

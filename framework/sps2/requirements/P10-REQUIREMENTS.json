@@ -1,0 +1,881 @@
+{
+  "schema": "sps2.requirements/v1",
+  "phase": "P10",
+  "phase_definition": "Vertical-Slice Frontend/Backend (authoritative roadmap definition)",
+  "generated": "2026-10-09",
+  "note": "P10 Phase 1 — Requirements Definition ONLY. No implementation is authorised by this document. IMPLEMENTED, VERIFIED and APPROVED remain three independent axes and nothing here is self-approved. Every requirement is a definition with machine-checkable acceptance criteria; not one line of renderer, backend, harness or domain/ code is authorised by it. This file is offered for User review, not closure.",
+  "roadmap_source": ".sps/architecture/SPS2-ROADMAP.md",
+  "roadmap_objective": "Every completed section is functional, editable, connected, tested, SEO-aware.",
+  "roadmap_dependencies": ["P8", "P9"],
+  "roadmap_forbidden": [
+    "\"frontend now, CMS later\" sequencing",
+    "third-party rendering or template dependencies (Python standard library only)",
+    "inventing LCP or INP numeric thresholds (CONF-001)",
+    "modifying legacy artefacts outside the eight content-and-mode-pinned files authorized by DEC-7301 (legacy diff otherwise remains 0)",
+    "writing machine-global state or external state outside the project",
+    "network exposure before the D-P10-1 security controls exist and are authorised",
+    "importing the legacy Lighthouse numeric gates (D-P10-4)"
+  ],
+  "roadmap_deliverables": [
+    "slice schema",
+    "per-slice DoD",
+    "integration harness"
+  ],
+  "roadmap_acceptance": [
+    "a section is not done until frontend + CMS + backend + data + validation + assets + SEO + tests pass together"
+  ],
+  "roadmap_verification": ["slice conformance suite"],
+  "roadmap_approval": "user per slice",
+  "roadmap_rollback": "per-slice revert",
+  "standing_bounds": {
+    "P5": "PARTIALLY_SATISFIED — tracked partial dependency; no runtime capability installation",
+    "CONF-001": "UNRESOLVED — strictly no LCP or INP thresholds invented; CWV verified via CLS <= 0.1 good / > 0.25 poor only",
+    "P8": "APPROVED and headless; P10 consumes content through the P8 output-safety boundary and duplicates no CMS ownership",
+    "P9": "APPROVED and CLOSED; P10 integrates with the P9 audit and duplicates no SEO engine"
+  },
+  "dependency_state": {
+    "P8": {
+      "status": "APPROVED",
+      "p10_dependency": "P8 owns Content, Section, ContentType, persistence, authorisation semantics, publishing workflow, asset semantics and the output-safety boundary. P10 consumes published content only through that boundary and owns the presentation meaning of Section.layout (D-P10-2)."
+    },
+    "P9": {
+      "status": "APPROVED",
+      "p10_dependency": "P9 owns the SEO engine and the pre-deployment audit. P10 must produce the rendered-output artifact the P9 audit consumes and must not reimplement SEO checks."
+    },
+    "P5": {
+      "status": "PARTIALLY_SATISFIED",
+      "p10_dependency": "Dynamic selection remains a partial dependency. No capability installation or activation is implied by P10 requirements."
+    }
+  },
+  "technology_assessment": {
+    "selected": {
+      "technology_id": "TECH-FE-STRING-COMPOSITION",
+      "selection_decision": "D-P10-5",
+      "readiness": "SUFFICIENT",
+      "selectable": true,
+      "relevance": "P10 rendering technology: project-local plain string composition producing static/server-rendered HTML with mandatory per-sink output encoding.",
+      "evidence": "sps2/research/cache.json — all 10 coverage areas COVERED, strongest source rank 1 (official documentation), plus repository observation of the approved P8/P9 output-safety implementations."
+    },
+    "not_selected": [
+      {"technology_id": "TECH-FE-STRING-TEMPLATE", "readiness": "PARTIAL", "selectable": false, "reason": "No escaping mechanism; two coverage areas UNKNOWN."},
+      {"technology_id": "TECH-FE-ELEMENTTREE-HTML", "readiness": "PARTIAL", "selectable": false, "reason": "No escaping hook for raw-text script elements; script-breakout path observed empirically under CPython 3.14.7."},
+      {"technology_id": "TECH-FE-3RD-PARTY-TEMPLATE-ENGINE", "readiness": "INSUFFICIENT", "selectable": false, "reason": "Blocked by the standing STACK-CONSTRAINT (stdlib-only, project-local, no third-party dependencies)."}
+    ]
+  },
+  "decisions_recorded": {
+    "D-P10-1": "P10 backend may proceed as project-local, non-network-exposed. No production/public/network-facing API until authentication, CSRF protection, rate limiting and other required controls are implemented and authorised through the security phase. P10 requirements and architecture MUST preserve this boundary; the exact local/network boundary must be made machine-enforceable.",
+    "D-P10-2": "P8 owns CMS/content semantics and remains headless. P10 owns presentation, rendering, composition, rendered HTML output, the serving surface, domain/backend/ within the D-P10-1 boundary, domain/shared/ for shared vertical-slice contracts, and the interpretation and registry of Section.layout values.",
+    "D-P10-4": "Legacy Lighthouse numeric gates are NOT authoritative. The mobile 320-1440px range and Accessibility AA are not automatically imported. Useful principles survive only as objective machine-checkable requirements. P10 uses P9 for SEO verification and preserves CONF-001.",
+    "D-P10-5": "TECH-FE-STRING-COMPOSITION is selected, with binding conditions: stdlib only, project-local, no third-party rendering dependency, per-sink output encoding, HTMLParser reparse validation, structural HTML testing, the P9 output contract, no network exposure, CONF-001 unchanged, and no invented LCP/INP thresholds."
+  },
+  "requirements": [
+    {
+      "requirement_id": "REQ-P10-01",
+      "title": "P8 content consumption boundary",
+      "objective": "Consume P8 CMS content only through the approved P8 output-safety boundary, so raw CMS content never reaches an HTML sink.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every CMS-derived value entering an HTML sink passes domain/cms/output_safety.py encode_for_html() or the P9 per-sink escapers; a scan of the renderer surface finds no path that interpolates a raw content field into markup",
+        "Content.body is treated as plain text only, matching the P8 contract; no renderer path interprets it as HTML, Markdown or rich text",
+        "A negative test that interpolates raw content into markup is detected and rejected by the validation suite",
+        "Only content with status 'published' contributes to a production build; draft, preview and archived content produce no published route, and every CMS content reference in the slice contract carries an explicit required_status field whose value is exactly 'published' (a mandatory field, not an optional or defaulted one)"
+      ],
+      "dependencies": ["P8"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "renderer boundary scan + negative test asserting raw interpolation is rejected"},
+      "security_implications": [
+        "Stored XSS is the primary threat: raw content reaching a sink executes in the browser context",
+        "The boundary must be enforced structurally, not by convention, because string composition has no DOM to sanitise after the fact"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-02",
+      "title": "Section.layout presentation registry and contract",
+      "objective": "Define the allowed layout identifier contract, its validation rules, unknown-layout behaviour and fallback/error behaviour, and the relationship between the CMS-stored identifier and the renderer implementation.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "A registry enumerates every layout identifier the renderer knows how to render",
+        "A Section.layout value absent from the registry is never silently rendered as a guess; it produces a defined fallback document and a recorded error",
+        "The registry is the single source of presentation meaning; P8 continues to store Section.layout unchanged and defines no presentation semantics for it",
+        "Each layout identifier documents which content field slots it consumes, and every slot resolves to a field present in the P8 ContentType definition",
+        "A negative test asserting that an unknown layout identifier yields the defined fallback and error, not an exception or an arbitrary render, is included"
+      ],
+      "dependencies": ["P8", "D-P10-2"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "registry conformance test + unknown-layout negative test"},
+      "security_implications": [
+        "A layout identifier is renderer-selected, not user content, so it is not an XSS vector; but it selects rendering behaviour and must not be a channel for unreviewed markup"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-03",
+      "title": "Rendered-output and build artifact contract (P10 to P9 handoff)",
+      "objective": "Produce a deterministic build directory whose shape is exactly what the P9 deployment audit consumes, with a deterministic route-to-file mapping.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "A build emits HTML documents discoverable by the P9 audit's '**/*.html' scan plus robots.txt and sitemap.xml at the build root",
+        "Route-to-file mapping is deterministic and matches the P9 audit's own derivation, observed in domain/seo/audit.py audit_directory(): a route '/x/' maps to 'x/index.html' (the index form retains its trailing slash), and a route '/y' maps to 'y.html' only; the index form 'y/index.html' derives the distinct route '/y/' (trailing slash), never '/y'. The flat form '{name}.html' and the index form '{name}/index.html' therefore produce different routes ('/{name}' and '/{name}/' respectively) and must never both be claimed as the mapping for a single route",
+        "No two slices map to the same output path; a collision fails the build",
+        "Building the same CMS state twice yields byte-identical output, so audit digests are reproducible",
+        "robots.txt and sitemap.xml are generated through the P9 engines, not by P10-local duplicates",
+        "The build writes only inside the declared build directory and touches nothing machine-global"
+      ],
+      "dependencies": ["P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "build determinism test (two builds, compared digests) + P9 audit_directory() run over the build"},
+      "security_implications": [
+        "Output is written to a declared directory only; path traversal from a content slug into the output path must be rejected",
+        "Deterministic output is a security-relevant property: it makes the audited artifact provably the shipped artifact"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-04",
+      "title": "Rendering engine: string composition with mandatory per-sink encoding",
+      "objective": "Render HTML by project-local plain string composition, with output encoding applied at every sink according to its sink type.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The renderer imports no third-party module; a dependency scan of the rendering surface finds only standard-library and intra-repository imports",
+        "Text and attribute sinks use html.escape with quote=True, reusing the P8-approved encode_for_html boundary",
+        "Header metadata sinks reuse the P9 _safe_attr discipline (control-character stripping plus html.escape with quote=True)",
+        "Script/JSON-LD sinks reuse the P9 escape_json_ld_for_html boundary, neutralising '</' and '<!--' sequences",
+        "Sink types are enumerated in the rendering contract, and each named sink has exactly one mandated encoder",
+        "A negative test that routes a value through a sink without its mandated encoder is detected and rejected"
+      ],
+      "dependencies": ["P8", "P9", "D-P10-5"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "stdlib-only isolation validation + sink-encoder conformance test + negative test"},
+      "security_implications": [
+        "String composition has no DOM to enforce escaping after the fact, so the encoder is the entire XSS control and must be machine-enforced wherever practical",
+        "Per-sink rather than global encoding matters because script sinks require different rules from text sinks; a single pass cannot serve both"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-05",
+      "title": "Rendered-output reparse and structural validation",
+      "objective": "Because string composition has no native DOM or tree model, validate every rendered document by reparsing it with the project's approved stdlib HTMLParser and asserting structural correctness.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every emitted HTML document is reparsed with html.parser.HTMLParser, the same parser family the P9 audit uses, and yields a fully closed element structure",
+        "Void elements are emitted in HTML, not XHTML, form (for example '<br>' rather than '<br />') and reparsed identically",
+        "Script and style blocks round-trip without the serializer breaking out of the element, and a '</script>' sequence in embedded data is neutralised before emission",
+        "The reparse asserts exactly one h1, no heading-level jumps, and no unclosed elements, reusing the on-page structural rules P9 already enforces",
+        "A negative test feeding malformed composed output is detected and rejected by the structural assertions"
+      ],
+      "dependencies": ["P9", "D-P10-5"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "reparse structural test suite over every emitted document, plus negative cases"},
+      "security_implications": [
+        "Reparse validation is the compensating control for the absence of a DOM: it catches both malformed markup and the script-breakout class of defect",
+        "It also guarantees the P9 audit parses the same document the renderer believes it emitted"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-06",
+      "title": "Security boundary: local/non-network-exposed versus network-exposed/production",
+      "objective": "Encode D-P10-1 as a machine-checkable boundary that prevents accidental public exposure before the required security controls exist.",
+      "scope": "IN_SCOPE",
+      "risk": "CRITICAL",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Each P10 backend surface carries a declared exposure class that is one of LOCAL_NON_NETWORK_EXPOSED or NETWORK_EXPOSED_PRODUCTION",
+        "A surface is classifiable as LOCAL_NON_NETWORK_EXPOSED only if it binds to a loopback address, a project-local file socket, or no socket at all (pure in-process)",
+        "Any bind to a non-loopback address is classified NETWORK_EXPOSED_PRODUCTION, and that classification requires authentication, authorisation, CSRF protection and rate limiting to be implemented and authorised through the security phase",
+        "A validator compares the declared exposure class against the observed bind configuration and fails on any mismatch, so the declaration cannot drift from reality",
+        "The default class for any new P10 backend surface is LOCAL_NON_NETWORK_EXPOSED; network exposure is opt-in and requires an explicit recorded authorisation",
+        "A negative test asserting that a network bind without the required controls is detected and rejected is included"
+      ],
+      "dependencies": ["D-P10-1"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "exposure-class validator comparing declaration against observed bind + negative test"},
+      "security_implications": [
+        "The entire point of the boundary is that P10 being separately listed in the roadmap authorises no network exposure whatsoever",
+        "Default-deny classification is the control that makes accidental exposure a detected failure rather than an oversight"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-07",
+      "title": "State-changing operation control sequencing",
+      "objective": "Enumerate every state-changing operation the P10 backend surface offers and the security controls each requires, so no such operation becomes reachable before its controls exist.",
+      "scope": "IN_SCOPE",
+      "risk": "CRITICAL",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every applicable slice/backend contract MUST explicitly declare state_changing_operations; the declaration is present even when no state-changing operations exist, in which case its value is an explicit empty list ([]), and a missing declaration is rejected as an omission, never treated as equivalent to an empty list",
+        "Every state-changing operation in the backend contract is enumerated with its required controls from the set AUTHENTICATION, AUTHORIZATION, CSRF_PROTECTION, RATE_LIMITING",
+        "An operation requiring a control is unreachable while that control is unimplemented or unauthorised, and this is asserted by a negative test rather than assumed",
+        "The enumeration is complete: a validator fails if a state-changing route exists in the backend contract without an entry in the enumeration",
+        "A mandatory, fail-closed runtime check compares the declared state_changing_operations against the actual backend contract/operations and rejects any omission (a missing declaration) and any mismatch (a declared operation absent from the backend, or an actual state-changing operation left undeclared); a missing declaration is treated as an error, never as an empty list",
+        "Local development and test operation are defined as their own exposure context, subject to the same classification, and are not a bypass of the production controls"
+      ],
+      "dependencies": ["D-P10-1", "P8"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "completeness validator over the backend contract + per-control negative tests"},
+      "security_implications": [
+        "CSRF specifically is meaningless without a browser session, so under the static-first rendering model the CSRF boundary is scoped to the state-changing surface only and must not be assumed away by the absence of a frontend",
+        "Authorisation semantics are owned by P8 (actor_role); P10 does not redefine them, only honours them"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-08",
+      "title": "Vertical-slice contract across all eight roadmap axes",
+      "objective": "Define the machine-checkable contract that a section is incomplete unless frontend, CMS, backend, data, validation, assets, SEO and tests are all satisfied together.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Each of the eight axes has a required artifact, a validation method, a failure condition, required evidence and a dependency boundary recorded in the slice contract",
+        "A slice fails acceptance if any single axis fails, regardless of the other seven; partial acceptance is not a state the contract permits",
+        "The contract forbids 'frontend now, CMS later' sequencing: a slice with no CMS content reference is invalid by construction, not merely incomplete",
+        "The eight-axis contract is machine-validatable, so compliance is computed rather than narrated"
+      ],
+      "dependencies": ["P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "slice contract validation"},
+      "security_implications": [
+        "Splitting implementation across time is how security controls get deferred past launch; the all-eight-together rule is itself a security control"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-09",
+      "title": "Machine-validatable slice schema",
+      "objective": "Define and validate the schema for one P10 slice, so a slice is a structured artefact rather than a narrative claim.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The slice schema is expressed as a JSON Schema with a declared $id and a required-fields set",
+        "A slice document that validates is provably complete on the STRUCTURAL axes only; a document that fails validation names the failing property",
+        "JSON Schema validation validates document structure and applicable field constraints ONLY: schema validity alone MUST NOT establish that a slice is complete, approved, or safe to expose, and no acceptance, approval or exposure decision may be derived from schema validity alone",
+        "A mandatory, fail-closed runtime validation gate enforces substantive completion across all eight axes (frontend, cms, backend, data, validation, assets, seo, tests); it is distinct from and additional to the structural schema check, a passing schema check never satisfies it, and the gate never treats structural validity as evidence of substantive completion",
+        "The runtime gate verifies actual evidence and cross-references, actual test execution results, successful P9 audit results where applicable, and the observed backend exposure/security boundary; it rejects evidence that is missing, invalid, or contradictory",
+        "The runtime gate rejects missing, null, fabricated, or agent-attributed User approval; approval must represent explicit approval by the User and never an agent's assertion, and the slice contract carries a required decided_by_role of USER so agent attribution is structurally impossible",
+        "Production/network exposure remains blocked unless the D-P10-1 required security controls (authentication, authorisation, CSRF protection, rate limiting) have been implemented and explicitly authorised in accordance with the existing decisions",
+        "Schema fields are limited to those justified by the vertical-slice model; no field exists that no axis of the roadmap contract requires",
+        "Slice identifiers are unique and are never reused after a rollback",
+        "Approval is a separate recorded act by the User and is never a field an agent may set"
+      ],
+      "dependencies": ["P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": ["sps2/schemas/p10-slice.schema.json"]},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "schema validation of a positive slice document plus negative cases for each required property"},
+      "security_implications": [
+        "The schema records the exposure class and the state-changing operation enumeration, making the security boundary part of the artefact rather than a side document"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-10",
+      "title": "Per-slice Definition of Done",
+      "objective": "Define the objective, machine-checkable Definition of Done for one slice, replacing the legacy 29-item checklist and its Lighthouse score gates.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The DoD is expressed entirely as predicates that a machine can evaluate; it contains no score thresholds and no criterion whose satisfaction is a matter of opinion",
+        "Every criterion traces to a roadmap axis, a governance decision or an existing P8/P9 verified check",
+        "The DoD requires the P9 audit to exit 0 over the built slice output",
+        "The DoD requires explicit User approval of the slice before the next slice begins, and approval is never agent-attributable",
+        "Each criterion records its evidence artefact, so 'done' is a pointer to evidence rather than an assertion"
+      ],
+      "dependencies": ["P8", "P9", "D-P10-4", "D-P10-5"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "DoD evaluation over a completed slice, with each criterion traced to its evidence artefact"},
+      "security_implications": [
+        "A DoD that can be satisfied narratively is how insecure slices ship; machine-checkability is the control"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-11",
+      "title": "Integration harness contract",
+      "objective": "Define what the integration harness must verify across the full slice, from CMS edit to P9 audit, without implementing it.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The harness contract names its inputs: the CMS state, the declared exposure class, the slice contract and the asset set",
+        "The harness contract names its outputs: the built directory, the P9 audit report with its exit code and digest, the reparse structural report, and a per-slice evidence record",
+        "The harness drives a full round trip: an edit through the P8 boundary changes CMS state, the build is produced, and the rendered output demonstrably reflects the edit",
+        "The harness is deterministic: identical inputs produce identical outputs and identical audit digests across runs",
+        "Validation stages are ordered and each stage has a defined failure behaviour that aborts the run and names the failing stage rather than continuing",
+        "The harness interacts with rollback by recording the revert reference for the slice and by failing cleanly if the revert cannot be verified",
+        "No network is required to run the harness, and the harness itself creates no network exposure"
+      ],
+      "dependencies": ["P8", "P9", "REQ-P10-03", "REQ-P10-06"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "harness conformance test once implemented; until then the contract is validated by inspection against this requirement"},
+      "security_implications": [
+        "The round trip is the evidence that the output boundary is real: it proves a content change actually reaches the rendered, audited page",
+        "Requiring no network keeps the harness consistent with the D-P10-1 default-deny exposure class"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-12",
+      "title": "Accessibility requirements",
+      "objective": "Define accessibility criteria that are objectively validatable, on repository evidence, without importing an unsupported conformance level or inventing thresholds.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every emitted img element either carries meaningful alt text sourced from a CMS field or is explicitly marked decorative, reusing the distinction P9 already enforces",
+        "Every emitted document has exactly one h1 and no heading-level jumps, reusing the structural rule the P9 on-page check already enforces",
+        "Every emitted document carries a viewport meta tag, as P9 metadata generation already requires",
+        "Documents declare their language, so assistive technology is not left to guess",
+        "No criterion asserts a conformance level (such as AA) unless the User has separately decided to adopt one; the conformance-level question is recorded as an unresolved User decision, not silently resolved here"
+      ],
+      "dependencies": ["P9", "D-P10-4"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "P9 audit over built output for the already-enforced checks; a dedicated structural check for the language declaration"},
+      "security_implications": [
+        "Accessibility criteria are expressed on rendered output, so they are checkable without any browser or runtime"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-13",
+      "title": "Responsive-behaviour requirements",
+      "objective": "Determine which responsive-behaviour requirements can be objectively validated, and record the viewport-range question as a User decision rather than importing the legacy range.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "No criterion adopts a numeric viewport range until the User decides one; the legacy 320-1440px range is recorded as an unresolved User decision, not a requirement",
+        "Rendered documents do not assume a single fixed viewport width; a layout that renders correctly only at one pixel width fails its structural criteria",
+        "Any responsive behaviour the User adopts is expressed as a concrete design or behaviour requirement with a machine-checkable assertion on the rendered output, never as a Lighthouse score",
+        "Any image whose dimensions affect layout stability carries explicit dimension attributes, which is the layout-shift prevention P9 already requires for CLS verification"
+      ],
+      "dependencies": ["P9", "D-P10-4", "CONF-001"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "rendered-output structural assertions plus the P9 media checks"},
+      "security_implications": [
+        "No LCP or INP numeric threshold is introduced by this requirement; CONF-001 remains UNRESOLVED"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-14",
+      "title": "Asset requirements",
+      "objective": "Define how slice assets are referenced, stored and validated under the P8 asset semantics and the P9 media checks.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every asset a slice renders is registered through the P8 asset boundary; no asset is referenced by an ad-hoc path the CMS does not know about",
+        "Every image carries alt text from a CMS field or is marked decorative, and the distinction is machine-checkable on the rendered output",
+        "No duplicate asset content is left in the workspace; asset digests are compared and duplicates fail the slice",
+        "External URLs are validated, fetched, optimised and stored locally rather than hotlinked, matching the P8 asset picker contract",
+        "Asset paths written into rendered output cannot escape the build directory"
+      ],
+      "dependencies": ["P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "asset registry cross-check against the slice contract + P9 media analysis over rendered output"},
+      "security_implications": [
+        "Hotlinking leaks the canonical host to third parties and lets an external resource change the rendered page; local storage is both an SEO and a security control",
+        "Asset path traversal is the file-system analogue of the output-encoding boundary"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-15",
+      "title": "Validation and testing requirements",
+      "objective": "Define the validation and testing contract for a slice, including the repository convention that no control is claimed without a negative test.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every security or acceptance control the slice claims has a negative test that fails when the control is violated",
+        "A negative test is not vacuous: it must demonstrably fail against a slice with the control removed or weakened",
+        "Zero lint, type-check or build blockers across the slice surface",
+        "No dead code and no unresolved TODO without a recorded deferral reason",
+        "Verification of a HIGH or CRITICAL item cannot be agent-only; independent verification is required, matching the standing governance rule",
+        "The suite runs with no network and no machine-global writes"
+      ],
+      "dependencies": ["P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "negative-suite audit confirming each negative test fails when its control is removed"},
+      "security_implications": [
+        "A control without a negative test is an assertion; the negative test is what makes it evidence"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-16",
+      "title": "Per-slice rollback requirements",
+      "objective": "Define the rollback contract so each slice is independently revertible without affecting the core or other slices.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Each slice records its rollback method, scope and whether the rollback itself was verified, matching the ROLLBACK_CONTRACT convention in the SPS2 data flow",
+        "Reverting one slice leaves the core validators passing and other slices untouched",
+        "Reverting a slice removes its routes and built output completely, leaving no orphan references in the remaining project",
+        "Rollback is rehearsalable: a dry run in an isolated copy proves the revert is safe before it is needed",
+        "A slice id is never reused after rollback"
+      ],
+      "dependencies": ["P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "rollback rehearsal in an isolated project copy, as already proven for the P9 advisory rollback"},
+      "security_implications": [
+        "A rollback that cannot be verified is not a rollback; an incomplete revert that leaves routes live is worse than no revert"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-17",
+      "title": "Section inventory requirement",
+      "objective": "Require an authoritative section inventory to be created and approved before any section is implemented, without inventing the first section here.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "No slice may enter implementation before an authoritative section inventory exists and has been approved by the User",
+        "The inventory records, per section: section id, purpose, route, CMS content types, layout, assets, backend/data dependencies, SEO requirements and acceptance/test requirements",
+        "The inventory is produced from the CMS state and the slice contracts, not maintained as a free-standing narrative that can drift from what is actually built",
+        "The first section is chosen by the User; nothing in this requirements document names, implies or presupposes one"
+      ],
+      "dependencies": ["P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "inventory existence and User-approval check as a precondition gate on any slice entering implementation"},
+      "security_implications": [
+        "An inventory that drifts from the build is how unmapped, unaudited routes reach production; deriving it from CMS state keeps the two locked"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-18",
+      "title": "Stack constraint enforcement",
+      "objective": "Keep the P10 surface inside the standing stack constraint: Python standard library only, project-local, no third-party rendering or template dependency.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "The renderer and backend surfaces import only standard-library and intra-repository modules, as machine-verified by the project isolation validator",
+        "No third-party rendering or template dependency is introduced for any reason, including developer convenience",
+        "All P10 state lives inside the project repository; nothing is written machine-global",
+        "The constraint is not reinterpreted or weakened to admit a convenience dependency; weakening it is a recorded User decision, never an implementation choice"
+      ],
+      "dependencies": ["D-P10-5"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "isolation validator over the P10 surface plus a negative test asserting a third-party import is detected"},
+      "security_implications": [
+        "The stdlib-only policy removes the third-party supply-chain surface entirely, which is the basis of the dependency policy; a single convenience import reinstates it"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-19",
+      "title": "CONF-001 preservation and no invented thresholds",
+      "objective": "Keep CONF-001 unresolved and keep P10 free of invented Core Web Vitals or performance thresholds.",
+      "scope": "IN_SCOPE",
+      "risk": "HIGH",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "No LCP or INP numeric threshold appears anywhere in P10 requirements, configuration or output",
+        "Where a Core Web Vitals check is needed, the verified CLS thresholds are used (0.1 good, 0.25 poor) and LCP/INP carry an explicit machine-readable N/A rationale, exactly as P9 does",
+        "Performance is addressed only through objective structural properties, such as explicit image dimensions for layout-shift prevention, never through an invented numeric gate",
+        "CONF-001 remains recorded as UNRESOLVED in all P10 documentation"
+      ],
+      "dependencies": ["P9", "CONF-001"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "threshold scan over P10 artefacts asserting no LCP/INP numeric value appears"},
+      "security_implications": [
+        "An invented threshold is a false measurement: it either blocks work arbitrarily or, worse, passes work that is not actually verified"
+      ]
+    },
+    {
+      "requirement_id": "REQ-P10-20",
+      "title": "Legacy Section Definition of Done reconciliation",
+      "objective": "Reconcile the legacy 29-item Section DoD item by item, retaining what is evidence-supported, rejecting what the governance decisions exclude, and leaving ambiguous items unresolved rather than silently resolved.",
+      "scope": "IN_SCOPE",
+      "risk": "MEDIUM",
+      "status": "REQUIREMENTS_ONLY",
+      "acceptance_criteria": [
+        "Every one of the 29 legacy items is classified as RETAIN, REFACTOR, REJECT, RESEARCH REQUIRED or USER DECISION REQUIRED, with no item skipped",
+        "Every RETAIN and REFACTOR item records an evidence-based reason, citing governance decisions, roadmap text or existing P8/P9 verified behaviour",
+        "Every REJECT item records the governance decision or policy that excludes it",
+        "The four legacy Lighthouse numeric gates remain excluded by name, per D-P10-4",
+        "Every ambiguous item is surfaced as an unresolved User decision rather than resolved by assumption"
+      ],
+      "dependencies": ["D-P10-4", "P8", "P9"],
+      "implementation": {"state": "NOT_STARTED", "refs": []},
+      "verification": {"state": "NOT_STARTED", "method": "PENDING", "verifier": "reconciliation completeness check: 29 items classified, each with a reason or an explicit User decision reference"},
+      "security_implications": [
+        "Wholesale import of the legacy checklist would import gates that are not evidence-supported and would re-introduce excluded numeric thresholds by the back door"
+      ]
+    }
+  ],
+  "p8_to_p10_contract": {
+    "boundary": "P10 reads P8 content only through the approved output-safety boundary. Content.body is plain text; encode_for_html() / get_content_with_safe_output() are the sanctioned paths into any HTML context. Raw CMS content is never interpolated into markup.",
+    "p8_owns": [
+      "Content, Section and ContentType models",
+      "CMS persistence",
+      "authorisation semantics (actor_role based)",
+      "publishing workflow (draft, preview, published, archived)",
+      "asset semantics and the asset picker",
+      "the output-safety boundary"
+    ],
+    "p10_owns": [
+      "presentation and rendering",
+      "frontend composition",
+      "rendered HTML output",
+      "the serving/presentation surface",
+      "the interpretation and registry of Section.layout values",
+      "domain/backend/ within the D-P10-1 exposure boundary",
+      "domain/shared/ for shared vertical-slice contracts"
+    ],
+    "p8_remains": "headless. P10 adds no rendering to P8 and duplicates no CMS ownership inside P10.",
+    "published_state_only": "Only content with status 'published' contributes to a production build. The slice contract records required_status as 'published' for every content reference.",
+    "section_layout": "P8 continues to store Section.layout as an unconstrained string and defines no presentation meaning for it. P10 owns the registry that interprets it: the allowed identifiers, the field slots each consumes, the unknown-layout fallback and error behaviour, and the mapping from identifier to renderer implementation.",
+    "p8_model_not_modified": "The existing P8 Section model is unchanged. No requirement here authorises a modification to domain/cms/."
+  },
+  "p10_to_p9_contract": {
+    "handoff": "P10 produces a build directory; P9 audits it. P10 defines the artifact contract the P9 deployment audit consumes and integrates with the P9 engine rather than duplicating it.",
+    "build_artifacts": {
+      "html_documents": "Every emitted page is an HTML file discoverable by the audit's '**/*.html' scan of the build directory.",
+      "robots_txt": "Present at the build root, generated through the P9 robots engine.",
+      "sitemap_xml": "Present at the build root, generated through the P9 sitemap engine.",
+      "canonical_route_mapping": "Each build path maps to exactly one canonical route and the mapping is deterministic and identical to the P9 audit's own derivation: a flat '{name}.html' path derives route '/{name}' (no trailing slash) and an index '{name}/index.html' path derives route '/{name}/' (trailing slash); the two forms never derive the same route, so the P9 audit and the build cannot disagree."
+    },
+    "determinism": {
+      "output_location": "A single declared build directory; the build writes nothing outside it.",
+      "reproducibility": "Identical CMS state yields byte-identical output across builds, so the audit digest is reproducible and the audited artifact is provably the shipped one.",
+      "collision_freedom": "No two slices map to the same output path; a collision fails the build rather than silently overwriting."
+    },
+    "audit_interface": {
+      "entry_point": "domain/seo/audit.py audit_directory(target_dir, mode, canonical_domain, ...)",
+      "modes": "advisory (exit 0) and deployment (exit 1 on CRITICAL defects); a slice is not complete while the deployment-mode audit is non-zero.",
+      "evidence": "The audit produces a report with an exit code and a SHA-256 digest of the audited artifacts; the slice evidence record references that report.",
+      "ingestion_boundary": "P9 takes rendered HTML at Trust Boundary 3 (audit ingestion) and parses it with its stdlib HTMLParser. P10's reparse validation uses the same parser family, so the audit parses exactly what the renderer believes it emitted."
+    },
+    "no_duplication": "P10 implements no SEO check of its own. Metadata, canonical, robots, sitemap, structured data, on-page structure and media analysis all remain P9-owned; P10 emits their output and consumes their verdict."
+  },
+  "security_boundary": {
+    "governing_decision": "D-P10-1",
+    "classes": {
+      "LOCAL_NON_NETWORK_EXPOSED": "The default for every P10 backend surface. Satisfied by binding to a loopback address, a project-local file socket, or no socket at all (pure in-process or library operation).",
+      "NETWORK_EXPOSED_PRODUCTION": "Any bind to a non-loopback address. Requires authentication, authorisation, CSRF protection and rate limiting to be implemented AND authorised through the appropriate security phase before it may exist."
+    },
+    "default_deny": "A new surface is LOCAL_NON_NETWORK_EXPOSED unless an explicit recorded authorisation says otherwise. No amount of roadmap listing authorises network exposure.",
+    "control_boundaries": {
+      "authentication": "Required for any NETWORK_EXPOSED_PRODUCTION state-changing operation. Not implemented under this authorisation; defined only as a sequencing requirement.",
+      "authorization": "Actor roles arrive through the P8 authorisation semantics; P10 honours them and redefines none.",
+      "csrf_protection": "Required for state-changing operations once a browser session exists. Scoped to the state-changing surface only, because the static-first rendering model has no session to forge against by itself.",
+      "rate_limiting": "Required for any NETWORK_EXPOSED_PRODUCTION operation, defined as a sequencing requirement only."
+    },
+    "operation_contexts": {
+      "local_development": "An exposure context like any other; classified and validated, never a bypass of the production controls.",
+      "test": "Runs with no network and no machine-global writes; the harness itself creates no exposure.",
+      "production": "Held by D-P10-1 until the security phase authorises it. Nothing in P10 Phase 1 reaches this context."
+    },
+    "enforcement": "A validator compares the declared exposure class against the observed bind configuration and fails on mismatch, so the declaration cannot drift from reality. A negative test asserting a network bind without the required controls is rejected is mandatory."
+  },
+  "slice_schema": {
+    "artifact": "sps2/schemas/p10-slice.schema.json",
+    "id": "sps2.p10-slice/v1",
+    "identity": ["slice_id", "section_id", "route"],
+    "content": ["cms_content_references", "layout_id"],
+    "content_reference_contract": "Every entry in cms_content_references MUST carry a required_status field whose value is exactly 'published'. The schema lists required_status in each content reference's required array and constrains it to the single enum value 'published', so a content reference without it, or with any other value, is invalid. Draft, preview and archived content never contributes to a production build (REQ-P10-01). VALUE AUTHORITY: the permitted value is taken from the authoritative P8 status contract rather than invented: 'published' is declared as a valid status by sps2/schemas/p8-content.schema.json (status enum) and by domain/cms/model.py (VALID_STATUSES). UNRESOLVED SOURCE DISAGREEMENT, RECORDED NOT RESOLVED: P8 sources do not agree on the complete status vocabulary. sps2/schemas/p8-content.schema.json and domain/cms/model.py declare exactly (draft, published, archived), whereas domain/cms/validation.py declares (draft, preview, published, archived), adding 'preview'. This conflict is in P8, is outside this authorization, and is NOT resolved here. It does not affect this contract, which permits exactly one value: because 'published' is agreed by every P8 source, constraining required_status to 'published' invents no status and weakens no publishing boundary. RESIDUAL LIMIT: what the schema establishes is only the declared value. Whether the referenced Content document exists, is actually published, and exposes the named field slots is a runtime resolution check (REQ-P10-01, REQ-P10-09), not a schema guarantee.",
+    "axis_contracts": ["frontend", "cms", "backend", "data", "validation", "assets", "seo", "tests"],
+    "state_changing_operations_contract": "axis_contracts.backend.state_changing_operations is a REQUIRED field, listed in the backend object's required array alongside exposure_class. It must be declared explicitly on every applicable slice/backend contract, including when the slice has no state-changing operations, in which case its value is an explicit empty list ([]). A missing declaration is an omission and is rejected by the schema and by the runtime gate; it is NEVER treated as equivalent to an empty list, and an omission is never treated as proof that the backend has no state-changing operations. STRUCTURAL CONSTRAINTS on each enumerated entry: 'operation' must be a non-empty string, and 'required_controls' must be a non-empty unique array drawn from AUTHENTICATION, AUTHORIZATION, CSRF_PROTECTION, RATE_LIMITING, so a declared operation can never carry an empty control list. A malformed entry (empty or whitespace-only operation, empty controls, duplicate controls, an unknown control, or any additional property) is rejected structurally. EMPTY-CASE REPRESENTATION, ALREADY DEFINED: the explicit empty array [] is the intended representation of 'no state-changing operations'. This representation is already defined by these two authorized files (REQ-P10-07 and this contract), so no new decision is required to adopt it and none is invented here. A richer discriminated form, for example an explicit {\"kind\": \"none\"} marker, would be an alternative representation rather than a correction to a gap; it is NOT adopted, because changing the contract representation is a User decision and no evidence in the repository establishes a preference for it. A mandatory, fail-closed runtime check (REQ-P10-07) compares the declaration against the actual backend contract/operations and rejects any omission or mismatch; that comparison is runtime work and is not expressible in JSON Schema.",
+    "acceptance": ["acceptance_state", "evidence_references", "rollback_reference", "user_approval"],
+    "structural_enforcement_boundary": {
+      "principle": "JSON Schema enforces document structure and applicable field constraints only. A slice document that satisfies sps2.p10-slice/v1 is STRUCTURALLY VALID; that is a necessary and non-sufficient condition for acceptance and is never a claim that the slice is complete, approved or safe to expose.",
+      "enforced_structurally": [
+        "required-property presence, including every cms_content_references[].required_status and axis_contracts.backend.state_changing_operations",
+        "enumerated and constant values: exposure_class, required_status, acceptance_state, user_approval.decided_by_role, seo.audit_mode, frontend.produces, cms.consumption_boundary",
+        "string patterns for slice_id, route and layout_id, and non-empty minimums for named operations, tests and negative cases",
+        "object and array types, array minItems, and additionalProperties false on every axis contract",
+        "the conditional rule that acceptance_state APPROVED requires a present, non-null user_approval record",
+        "the conditional rule that exposure_class NETWORK_EXPOSED_PRODUCTION requires a present security_authorization declaration carrying controls, a USER authorised_by_role, an authorisation date and an authorisation reference"
+      ],
+      "requires_runtime_validation_or_explicit_user_action": [
+        "evidence authenticity: that every evidence_references entry resolves to a real, genuine evidence record",
+        "content authenticity: that every referenced P8 Content document exists, is actually published, and actually exposes the named field_slots",
+        "integration reality: that the CMS round trip through the P8 boundary observably changes rendered output",
+        "test execution: that the named suite actually ran and passed, and that each named negative case genuinely fails when its control is removed rather than passing vacuously",
+        "SEO verification: that the P9 deployment audit actually ran over the built output and really exited 0, with its real digest recorded",
+        "all-eight-axes completion: that frontend, cms, backend, data, validation, assets, seo and tests were verified together, not merely that eight contract objects were supplied",
+        "security reality: that declared controls are implemented and effective, that they were authorised through the established security/governance process, and that the observed bind configuration matches the declared exposure class",
+        "approval authenticity: that user_approval reflects an actual explicit User decision and not an agent's assertion, a well-formed record or a passing gate"
+      ],
+      "assertion_fields_are_declarations": "Booleans and counts in the slice contract that record outcomes (validation.schema_validation, validation.reparse_validation, seo.expected_exit_code, tests.negative_cases, backend.observed_bind_address) are DECLARATIONS of what the runtime gate must verify. They are not results. observed_bind_address is runtime-populated and never author-supplied.",
+      "approval_rule": "Acceptance is an explicit User act. An agent-generated approval is never equivalent to User approval, and APPROVED is never inferred from an agent assertion, from a passing schema validation, or from a passing runtime gate alone.",
+      "network_exposure_rule": "A network-exposed surface must declare its controls and an explicit User authorisation, and per D-P10-1 those controls must additionally be implemented and authorised through the established security/governance process before the surface may exist. The declaration is structural completeness only: it is not proof that the controls exist, work, or were authorised. Because no such authorisation exists under the current decisions, every network-exposed slice remains blocked at the runtime gate regardless of what its document declares. The default for any new surface remains LOCAL_NON_NETWORK_EXPOSED and the local boundary stays fail-closed."
+    },
+    "structural_conditionals": {
+      "approved_requires_approval_record": "acceptance_state APPROVED requires a present, non-null user_approval record. This closes the gap where a slice could declare itself approved with no approval record at all. It does not make the record genuine; the runtime gate and the User remain the authority.",
+      "network_exposure_requires_security_authorization": "exposure_class NETWORK_EXPOSED_PRODUCTION requires a present security_authorization object whose controls are a non-empty unique subset of AUTHENTICATION, AUTHORIZATION, CSRF_PROTECTION, RATE_LIMITING, and which names a USER authorised_by_role, an authorisation date and a non-empty authorisation reference. This closes the gap where a network-exposed surface could be declared with zero security declarations. It does not weaken D-P10-1 and does not authorise any exposure."
+    },
+    "validation_strategy": [
+      "JSON Schema validation of the slice document itself (STRUCTURAL ONLY: it validates document structure and applicable field constraints; it does not establish that the slice is complete, approved, or safe to expose)",
+      "the mandatory, fail-closed runtime validation gate (SUBSTANTIVE), specified below, which is additional to and never satisfied by the structural schema check",
+      "referential checks that every content reference and asset reference resolves to a persisted P8 record",
+      "layout registry check that layout_id is a known identifier whose field slots all exist in the P8 ContentType",
+      "route uniqueness and collision-freedom across all slice documents",
+      "state-changing operations declaration check that axis_contracts.backend.state_changing_operations is present (an explicit empty list is a declaration; a missing declaration is not) and that it matches the actual backend contract/operations",
+      "approval-provenance check that user_approval, where present, is attributable to a User and never to an agent"
+    ],
+    "runtime_validation_gate": {
+      "nature": "Mandatory, fail-closed and executed at runtime. It is distinct from, and additional to, the structural JSON Schema check. Schema validity alone never satisfies this gate and never establishes that a slice is complete, approved, or safe to expose.",
+      "scope": "All eight roadmap axes together: frontend, cms, backend, data, validation, assets, seo, tests. The gate passes only if every axis passes; partial pass is not a state the gate permits.",
+      "verifies": [
+        "actual evidence and cross-references: every content and asset reference resolves to a persisted P8 record, every content reference carries required_status 'published', every layout field slot exists in the P8 ContentType, and every evidence reference resolves to a real artefact",
+        "actual test execution results: the slice test suite was executed and its real results are recorded rather than asserted",
+        "successful P9 audit results where applicable: the P9 deployment-mode audit over the built slice output exited 0 and its report digest is recorded",
+        "the observed backend exposure/security boundary: the declared exposure class matches the observed bind configuration, and the declared state_changing_operations matches the actual backend contract/operations"
+      ],
+      "rejects": [
+        "missing, invalid, or contradictory evidence",
+        "missing, null, fabricated, or agent-attributed User approval; approval must be an explicit act by the User, never an agent's assertion",
+        "an omitted state_changing_operations declaration, which is never treated as an empty list, and any mismatch between the declaration and the actual backend operations",
+        "any production or network exposure not backed by the D-P10-1 required security controls (authentication, authorisation, CSRF protection, rate limiting) implemented and explicitly authorised through the security phase"
+      ],
+      "fail_closed": "If the gate cannot obtain or verify the required evidence for any axis it fails the slice. It never defaults to pass, never continues on the output of a failed stage, and never falls back to schema validity alone.",
+      "exposure_default": "Production and network exposure remain blocked unless the required security controls have been implemented and explicitly authorised in accordance with the existing decisions (D-P10-1). The default classification for any new backend surface is LOCAL_NON_NETWORK_EXPOSED."
+    },
+    "field_discipline": "Every field is justified by an axis of the roadmap vertical-slice contract. No field was added for convenience or anticipated future use; where a genuine modelling question existed it was recorded as an unresolved User decision instead of being resolved by guesswork."
+  },
+  "per_slice_dod": {
+    "principle": "A slice is done when every criterion below evaluates true and the User has approved the slice; passing the structural schema check alone never completes a slice. No criterion is a score, an opinion or a proxy for one. Each criterion names its evidence artefact.",
+    "structural": [
+      {"criterion": "The slice document validates against sps2.p10-slice/v1 (a STRUCTURAL check only: it establishes document structure and applicable field-constraint validity, not completion, approval, or safety to expose)", "evidence": "schema validation record"},
+      {"criterion": "Every content and asset reference in the slice resolves to a persisted, published P8 record, and every content reference carries an explicit required_status of 'published'", "evidence": "referential resolution report"},
+      {"criterion": "layout_id is a registry-known identifier and every field slot it consumes exists in the P8 ContentType", "evidence": "layout registry conformance record"}
+    ],
+    "runtime_validation_gate": [
+      {"criterion": "The mandatory, fail-closed runtime validation gate passed across all eight axes together (frontend, cms, backend, data, validation, assets, seo, tests); schema validity alone did not satisfy it and the gate never fell back to structural validity", "evidence": "runtime gate record"},
+      {"criterion": "The gate verified actual evidence and cross-references, actual test execution results, the successful P9 deployment-mode audit result where applicable, and the observed backend exposure/security boundary", "evidence": "runtime gate evidence bundle"},
+      {"criterion": "No evidence was missing, invalid or contradictory, and the slice carries no missing, null, fabricated or agent-attributed approval", "evidence": "runtime gate rejection log"},
+      {"criterion": "The declared state_changing_operations was present (an explicit empty list counts as a declaration, an omission does not) and matched the actual backend contract/operations with no mismatch", "evidence": "state-changing operations declaration-vs-actual check record"},
+      {"criterion": "No production or network exposure exists unless the D-P10-1 required security controls are implemented and explicitly authorised", "evidence": "exposure authorisation record"}
+    ],
+    "frontend_and_encoding": [
+      {"criterion": "Every emitted document is reparsed by the approved stdlib HTMLParser with a fully closed element structure, exactly one h1 and no heading-level jumps", "evidence": "reparse structural report"},
+      {"criterion": "Every value reaching an HTML sink passed its mandated per-sink encoder; no raw content path exists", "evidence": "sink-encoder conformance record"},
+      {"criterion": "Script and JSON-LD blocks round-trip without element breakout", "evidence": "reparse structural report"}
+    ],
+    "cms_and_data": [
+      {"criterion": "The integration harness drove an edit through the P8 boundary and the rendered output demonstrably changed as a result", "evidence": "round-trip harness record"},
+      {"criterion": "No rendered final copy is hardcoded; every rendered string traces to a CMS field", "evidence": "content provenance scan"},
+      {"criterion": "Unpublished content produces no published route, and empty/error states render deterministically", "evidence": "state coverage test output"}
+    ],
+    "backend_and_security": [
+      {"criterion": "The backend surface carries a declared exposure class that matches its observed bind configuration", "evidence": "exposure-class validation record"},
+      {"criterion": "state_changing_operations is explicitly declared (an explicit empty list when the surface has none, never an omission) and matches the actual backend contract/operations", "evidence": "state-changing operations declaration-vs-actual check record"},
+      {"criterion": "No state-changing operation is reachable without its enumerated required controls", "evidence": "control completeness negative-test record"},
+      {"criterion": "The surface imports no third-party module and writes nothing machine-global", "evidence": "isolation validation record"}
+    ],
+    "assets": [
+      {"criterion": "Every image carries CMS-authored alt text or is explicitly marked decorative", "evidence": "P9 media analysis over the built output"},
+      {"criterion": "No duplicate asset content exists in the workspace", "evidence": "asset digest comparison report"},
+      {"criterion": "Every image whose dimensions affect layout stability carries explicit dimension attributes", "evidence": "P9 media analysis over the built output"}
+    ],
+    "seo": [
+      {"criterion": "The P9 deployment-mode audit over the built slice output exits 0", "evidence": "P9 audit report with digest"},
+      {"criterion": "robots.txt and sitemap.xml are present at the build root and generated through the P9 engines", "evidence": "P9 audit report"}
+    ],
+    "tests_and_quality": [
+      {"criterion": "Every claimed control has a negative test that fails when the control is removed", "evidence": "negative-suite audit"},
+      {"criterion": "Zero lint, type-check or build blockers across the slice surface", "evidence": "CI run"},
+      {"criterion": "No dead code and no unresolved TODO without a recorded deferral reason", "evidence": "code-quality scan"}
+    ],
+    "accessibility_and_responsive": [
+      {"criterion": "Documents declare their language", "evidence": "structural check over rendered output"},
+      {"criterion": "Documents carry a viewport meta tag", "evidence": "P9 metadata check"},
+      {"criterion": "No layout renders correctly only at a single fixed pixel width", "evidence": "structural assertion over rendered output"}
+    ],
+    "rollback": [
+      {"criterion": "The slice records its rollback method, scope and whether the rollback was verified", "evidence": "ROLLBACK_CONTRACT record"},
+      {"criterion": "A rollback rehearsal in an isolated copy proved the revert is clean and leaves no orphan references", "evidence": "rollback rehearsal report"}
+    ],
+    "approval": [
+      {"criterion": "The User has approved the slice; approval is attributable to the User and never to an agent", "evidence": "slice approval record"},
+      {"criterion": "No later slice has begun before this approval", "evidence": "slice state sequence check"}
+    ],
+    "explicitly_excluded": [
+      "Lighthouse Performance >= 90 (excluded by D-P10-4)",
+      "Lighthouse SEO = 100 (excluded by D-P10-4)",
+      "Lighthouse Accessibility = 100 (excluded by D-P10-4)",
+      "Lighthouse Best Practices = 100 (excluded by D-P10-4)",
+      "The legacy mobile 320-1440px range (pending UQ-P10-02)",
+      "An Accessibility conformance level such as AA (pending UQ-P10-03)",
+      "Any LCP or INP numeric threshold (CONF-001)",
+      "Any requirement that the slice work on a public preview or deploy URL (held by D-P10-1)"
+    ]
+  },
+  "integration_harness_contract": {
+    "purpose": "Verify the entire vertical slice together, so that a slice cannot pass by excelling on some axes and silently failing others.",
+    "pipeline": [
+      {"stage": "1. fixture load", "input": "CMS state and slice contract", "output": "persisted P8 records", "failure": "abort; name the fixture that would not persist"},
+      {"stage": "2. CMS edit", "input": "an edit through the P8 boundary", "output": "changed CMS state", "failure": "abort; report the rejected transition"},
+      {"stage": "3. build", "input": "CMS state and slice contract", "output": "build directory of HTML, robots.txt and sitemap.xml", "failure": "abort; report the failing build stage"},
+      {"stage": "4. reparse validation", "input": "built HTML", "output": "structural report", "failure": "abort; name the structural assertion that failed"},
+      {"stage": "5. P9 SEO audit", "input": "build directory", "output": "audit report with exit code and digest", "failure": "abort; non-zero exit fails the slice"},
+      {"stage": "6. exposure validation", "input": "declared exposure class and observed bind", "output": "exposure validation record", "failure": "abort; report the class mismatch"},
+      {"stage": "7. negative suite", "input": "slice with each control removed in turn", "output": "negative-test results", "failure": "abort if any negative test passes vacuously"},
+      {"stage": "8. evidence assembly", "input": "all stage outputs", "output": "per-slice evidence record", "failure": "abort; a slice with incomplete evidence is not done"},
+      {"stage": "9. rollback rehearsal", "input": "the completed slice in an isolated copy", "output": "rollback rehearsal report", "failure": "abort; an unverifiable revert blocks the slice"}
+    ],
+    "determinism": "Identical inputs produce identical build output and identical audit digests across runs. The harness records the digest so the audited artifact is provably the one under review.",
+    "failure_behaviour": "Stages are ordered and each failure aborts and names its stage. No stage runs on the output of a failed stage, and no partial result is reported as success.",
+    "rollback_interaction": "The harness drives the rollback rehearsal in an isolated copy and records whether the revert was verified. An unverified revert blocks the slice; it does not block the harness from reporting.",
+    "no_network": "The harness requires no network and creates no exposure. It runs entirely inside the project.",
+    "not_implemented": "This is a contract. No harness code is authorised or created by this requirements document."
+  },
+  "legacy_dod_reconciliation": {
+    "source": "skills/sps/SECTION-DOD.md (legacy, REFERENCE ONLY per sps2/legacy/MANIFEST.md; not modified)",
+    "migration_matrix_disposition": "SPS2-MIGRATION-MATRIX.md classifies the Section DoD / vertical slice as REFACTOR: 'Right philosophy; make it a per-slice schema.'",
+    "count": 29,
+    "classification": {
+      "1": {"item": "Storefront UI matches approved direction.", "class": "REFACTOR", "reason": "'Approved direction' is not machine-checkable, but the underlying principle is: the slice renders from the approved CMS state rather than a hardcoded approximation. That becomes the content-provenance criterion, and the visual judgement remains the User's at the per-slice approval gate, which the roadmap sets as 'user per slice'."},
+      "2": {"item": "Content inventory complete in content-model.md.", "class": "REFACTOR", "reason": "P8 owns content modelling (REQ-P8-02: content types defined in schema, not hardcoded). The legacy content-model.md narrative is replaced by the P8 ContentType/Section models plus the P10 section inventory required by REQ-P10-17, which is derived from CMS state and so cannot drift from what is built."},
+      "3": {"item": "CMS fields + admin UI cover that inventory (100% surface coverage).", "class": "REFACTOR", "reason": "Coverage becomes referential and machine-checkable: every field slot the slice's layout consumes must exist in the P8 ContentType definition, asserted by the slice schema validation. '100%' stops being a claim and becomes a resolution check."},
+      "4": {"item": "Demo/seed/media replace/hide/delete works.", "class": "REFACTOR", "reason": "P8 already provides the mechanisms: the asset picker and registry (REQ-P8-03), publishing transitions draft/preview/published/archived, and Super-Admin-only structural operations (REQ-P8-01). The SPS2 form is that seeded demo content is identifiable and removable without touching renderer code, verified by the integration harness."},
+      "5": {"item": "Round-trip proof: admin edit -> database layer -> live storefront.", "class": "RETAIN", "reason": "This is the roadmap P10 objective verbatim ('functional, editable, connected'). It is retained essentially unchanged and becomes the integration-harness round trip in REQ-P10-11, with the P9 audit confirming the rendered result."},
+      "6": {"item": "Empty / loading / error / unpublished states handled.", "class": "REFACTOR", "reason": "P8's publishing statuses and the P9 audit's handling of missing pages give this objective footing. It is refactored from a UI-state list into two machine-checkable predicates: unpublished content produces no published route, and empty/error states render deterministically."},
+      "7": {"item": "Mobile-first responsive (320px -> 1440px) + MOBILE-LOW-END.md.", "class": "USER_DECISION_REQUIRED", "reason": "D-P10-4 forbids automatically importing the legacy mobile range, and no repository evidence establishes a SPS2 viewport range. Recorded as UQ-P10-02 rather than resolved. The parts that ARE evidenced survive independently under REQ-P10-13: no fixed-single-width assumption, and explicit image dimensions for CLS stability."},
+      "8": {"item": "A11y AA standards + prefers-reduced-motion compliance.", "class": "USER_DECISION_REQUIRED", "reason": "D-P10-4 forbids automatically importing the AA level, and the baseline forensic audit records that 'A11y AA' is asserted without citation. The conformance level is recorded as UQ-P10-03. The sub-criteria that P9 already verifies objectively are retained separately under REQ-P10-12 (alt text, single h1, heading order, viewport)."},
+      "9": {"item": "SEO/meta when page-level applicable: title, meta description, canonical, Open Graph, structured data; SEO routed via the ai-seo skill.", "class": "REJECT", "reason": "P9 owns all of this: REQ-P9-01 metadata and canonical, REQ-P9-03 structured data and social graph, and the P9 audit that verifies them. Requiring P10 to re-specify SEO would duplicate the P9 engine, which the governing instruction forbids. P10's obligation survives as a contract obligation, not a DoD item: emit P9-generated metadata (REQ-P10-03). The legacy skill-router reference is itself superseded by the SPS2 skill architecture."},
+      "10": {"item": "Lighthouse gate: Performance >= 90, SEO = 100, Accessibility = 100, Best Practices = 100, with screenshot evidence.", "class": "REJECT", "reason": "D-P10-4 excludes all four numeric gates by name. CONF-001 forbids inventing the LCP/INP thresholds such a score implies. No Lighthouse runner exists, and a third-party runner is excluded by the stdlib-only stack constraint. The per-slice DoD lists these four gates as explicitly excluded."},
+      "11": {"item": "Zero lint/typecheck/build blockers.", "class": "RETAIN", "reason": "Objective, machine-checkable, and already the operating convention of this repository's validator-based governance. Retained unchanged under REQ-P10-15."},
+      "12": {"item": "Design gate laws respected (no fake dummy buttons, curated palette).", "class": "RESEARCH_REQUIRED", "reason": "The design gate laws live in legacy files held REFERENCE ONLY by sps2/legacy/MANIFEST.md, and no SPS2 design-system requirement or token contract exists yet. Nothing can be validated against a contract that does not exist; recorded as UQ-P10-04 pending a design contract."},
+      "13": {"item": "All section copy is drafted (headlines, body, CTAs, alt text).", "class": "REFACTOR", "reason": "P8 holds copy as plain-text content fields and alt text as an asset attribute that P9 already validates. Refactored into a content-provenance predicate: every copy slot the slice renders resolves to a populated CMS field, or its empty state is explicitly recorded."},
+      "14": {"item": "Content inventory for this section complete in content-model.md.", "class": "REJECT", "reason": "Verbatim duplicate of item 2 in the legacy file. Consolidated once under REQ-P10-17 and the referential coverage check; carrying it twice would duplicate a requirement inside the very checklist being reconciled."},
+      "15": {"item": "Drafted copy is loaded through the CMS/content layer (no hardcoded final copy).", "class": "RETAIN", "reason": "Directly serves the roadmap objective 'editable' and matches the P2 CMS-first policy recorded in sps2/research/P2-CMS-SEO-AUDIT.md: a frontend must never be built such that adding a CMS requires rewriting page components. Retained as the content-provenance criterion under REQ-P10-01."},
+      "16": {"item": "Empty / loading / error / unpublished states handled.", "class": "REJECT", "reason": "Verbatim duplicate of item 6 in the legacy file. Consolidated once."},
+      "17": {"item": "Components split (modular, focused, single concern).", "class": "REFACTOR", "reason": "'Component' is framework vocabulary that does not exist under the selected string-composition rendering technology. The underlying principle survives as a machine-checkable proxy: renderer entry points with bounded responsibility per slice, enforced by a complexity threshold in the same style as the existing repository controls."},
+      "18": {"item": "Standard agent markers present (SPS:SECTION, SPS:CMS_FIELDS, SPS:READS_FROM).", "class": "REFACTOR", "reason": "The migration matrix records the data-sps-key marker convention as KEEP, calling it a reasonable coupling mechanism. Refactored into a SPS2 marker/attribute contract that is machine-checkable on rendered HTML, binding each rendered region to the CMS field that supplies it."},
+      "19": {"item": "Code cleanup gate: dead code removed, imports organized.", "class": "RETAIN", "reason": "Objective and machine-checkable, and consistent with the dead-code and complexity thresholds in the roadmap P11 scope. Retained unchanged under REQ-P10-15."},
+      "20": {"item": "Todos closed or explicitly deferred with reasons.", "class": "RETAIN", "reason": "Objective and machine-checkable, and it is this repository's own operating convention: the repaired roadmap leaves P5/P6/P7 Scope absent rather than invented, and P9 records explicit N/A rationales for unretrieved metrics. Retained under REQ-P10-15."},
+      "21": {"item": "Security basics verified (input validation, traversal guards, auth check).", "class": "RETAIN", "reason": "Retained, and split across two living requirements. The input-validation half is evidenced by the P8 output-safety boundary and the P9 threat model (REQ-P10-01, REQ-P10-04); the auth half is sequenced by D-P10-1 through the security phase (REQ-P10-06, REQ-P10-07) rather than assumed."},
+      "22": {"item": "Workspace hygiene: zero duplicate assets left behind.", "class": "RETAIN", "reason": "Objective and machine-checkable by asset digest comparison, with the P8 asset registry supplying the set to compare against. Retained under REQ-P10-14."},
+      "23": {"item": "Build passes for the deploy target (e.g. vercel build / framework build).", "class": "REJECT", "reason": "Names a specific third-party build provider, which the stdlib-only project-local policy excludes; the selected rendering technology needs no build toolchain. Replaced by REQ-P10-03: the build produces a deterministic local directory consumable by the P9 audit, with no external build service."},
+      "24": {"item": "Env vars used are documented in ./.sps/handoff.md (never committed).", "class": "REFACTOR", "reason": "P7 owns project-local memory and the handoff contract (roadmap P7 deliverables include memory layout and team bootstrap). Refactored to the P7 memory contract; the no-secrets half is already enforced by REQ-P8-07 (KI-01: no hardcoded secrets)."},
+      "25": {"item": "Section works on a preview/deploy URL, not only localhost.", "class": "REJECT", "reason": "A public preview or deploy URL is network-exposed, which D-P10-1 withholds until the security controls are implemented and authorised. It cannot be a DoD gate. Replaced by REQ-P10-03 and REQ-P10-05: the slice is verified as a static build directory through the P9 audit, locally."},
+      "26": {"item": "handoff.md, content-model.md, section-registry.md updated.", "class": "REFACTOR", "reason": "P7 owns the project-local memory layout, and the section registry becomes the P10 section inventory required by REQ-P10-17, derived from CMS state so it cannot drift. Refactored to those two contracts rather than a list of legacy filenames."},
+      "27": {"item": "Any design pivots written to design-system.md + changelog-sps.md.", "class": "RESEARCH_REQUIRED", "reason": "Depends on a design-system contract that does not yet exist in SPS2, the same gap as item 12. Changelog provenance is already a repository convention. Recorded as UQ-P10-04 rather than resolved."},
+      "28": {"item": "Send the appropriate Tier 1 or Tier 2 approval packet before proceeding to the next section.", "class": "REFACTOR", "reason": "The tiered packet scheme is legacy. The SPS2 equivalent is already authoritative: roadmap P10 Approval is 'user per slice' and data-flow step [9] is explicit User approval with the invariant that no state is skipped. Refactored into the per-slice approval record in the evidence store."},
+      "29": {"item": "Manual check loop: the user checks the section live, gives feedback, the agent fixes, and only then does the next section start.", "class": "RETAIN", "reason": "This is the governance invariant itself: DELIVERED is reachable only via APPROVED, and approval is explicit and attributable. Retained essentially unchanged as the per-slice User approval gate in the per-slice DoD, with the added SPS2 guarantee that approval can never be attributed to an agent."}
+    },
+    "summary": {
+      "RETAIN": [5, 11, 15, 19, 20, 21, 22, 29],
+      "REFACTOR": [1, 2, 3, 4, 6, 13, 17, 18, 24, 26, 28],
+      "REJECT": [9, 10, 14, 16, 23, 25],
+      "RESEARCH_REQUIRED": [12, 27],
+      "USER_DECISION_REQUIRED": [7, 8]
+    },
+    "note": "8 + 11 + 6 + 2 + 2 = 29. No item was skipped or silently merged except the two verbatim duplicates (14 of 2, and 16 of 6), which are rejected as duplicates and their substance consolidated once. No ambiguous item was resolved by assumption."
+  },
+  "unresolved_questions": [
+    {
+      "id": "UQ-P10-01",
+      "question": "Should the P10 backend surface include a local HTTP serving boundary at all, or remain purely in-process with no socket?",
+      "context": "D-P10-1 permits a project-local, non-network-exposed backend. A loopback HTTP bind and a pure in-process library are both classified LOCAL_NON_NETWORK_EXPOSED under REQ-P10-06, but they have very different blast radii: a socket can be reached by any local process, an in-process call cannot. The roadmap names domain/backend/ in P10 scope without choosing between them.",
+      "options": [
+        "Pure in-process: no socket anywhere; the build is produced by a library call and served only as static files. Simplest and narrowest.",
+        "Loopback HTTP bind for local preview only, classified LOCAL_NON_NETWORK_EXPOSED and validated as such.",
+        "Defer the choice to P10 architecture once the first section's needs are known."
+      ],
+      "recommended": "Option 1 for the first slices, because static output satisfies the P9 audit contract without any socket; revisit if a slice genuinely needs a local service boundary.",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P10-02",
+      "question": "Should any viewport width range be adopted as a P10 requirement, and if so which?",
+      "context": "Legacy item 7 specifies 320px to 1440px. D-P10-4 forbids automatically importing that range, and no repository evidence establishes a SPS2 range. REQ-P10-13 deliberately adopts no numeric range.",
+      "options": [
+        "Adopt an explicit range such as the legacy 320-1440px, with a machine-checkable assertion at each bound.",
+        "Adopt no range; express responsive behaviour purely as 'no fixed single-width assumption' and rely on the structural assertions.",
+        "Adopt a smaller set of named breakpoints justified by the design contract once one exists."
+      ],
+      "recommended": "Option 2 until a design contract exists, because any range adopted now would be inherited from legacy without evidence.",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P10-03",
+      "question": "Should P10 adopt a formal web accessibility conformance level, and if so at which level?",
+      "context": "Legacy item 8 asserts AA. D-P10-4 forbids automatic import, and the baseline forensic audit records that 'A11y AA' appears asserted without citation. The objectively evidenced checks (alt text, single h1, heading order, viewport, language) are retained under REQ-P10-12 regardless of this answer, because P9 already verifies them.",
+      "options": [
+        "Adopt a named conformance level (e.g. WCAG 2.1 AA), which then requires a means of verifying it without a browser or third-party tooling.",
+        "Adopt no named level; grow the objective criterion list as each new check is evidenced.",
+        "Adopt a subset of specific success criteria chosen individually, each with its own machine-checkable assertion."
+      ],
+      "recommended": "Option 3, because it keeps every criterion evidenced and testable while avoiding an unverifiable blanket claim.",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P10-04",
+      "question": "Is a design-system contract a prerequisite for P10 implementation?",
+      "context": "Legacy items 12 and 27 both depend on design gate laws and a design-system document. The migration matrix holds the underlying legacy files as REFERENCE ONLY, and no SPS2 design contract or token system exists. Without one, criteria such as 'curated palette' and 'no fake dummy buttons' cannot be machine-checked.",
+      "options": [
+        "Make a design-system contract a precondition of the first slice; no slice enters implementation until it exists.",
+        "Proceed with the first slice under the structural criteria only, and add design criteria as they become evidenced.",
+        "Treat the design contract as its own phase of work before P10 implementation begins."
+      ],
+      "recommended": "Option 2 for the first slice, because the structural and security criteria are already sufficient to judge a slice, and design criteria added later apply forward rather than retroactively.",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P10-05",
+      "question": "What is the authoritative section inventory, and which section is first?",
+      "context": "There is currently no authoritative P10 section inventory. REQ-P10-17 makes its existence and User approval a precondition of any slice entering implementation, and this requirements document deliberately names no section.",
+      "options": [
+        "Derive the inventory from the current CMS state and propose a first section for User approval.",
+        "Wait for the User to name the first section, then derive the inventory around it.",
+        "Define the inventory format now and populate it during P10 architecture."
+      ],
+      "recommended": "Option 2, because the first section is a product decision, and deriving an inventory around a User-chosen section avoids inventing scope.",
+      "decision_required": "User"
+    },
+    {
+      "id": "UQ-P10-06",
+      "question": "How should per-slice User approval be recorded and verified?",
+      "context": "The roadmap requires 'user per slice' approval and the data flow requires approval to be explicit and attributable. The mechanism is not yet fixed: a decision record, an evidence-store entry, or a field on the slice document.",
+      "options": [
+        "A per-slice approval record in the evidence store, referenced by the slice document.",
+        "An approval field on the slice document itself, validated for User attribution.",
+        "A dedicated decision record per slice in sps2/decisions/."
+      ],
+      "recommended": "Option 1 with the slice schema carrying a reference to it, keeping the approval artefact in the evidence store where the governance tooling already enforces attribution.",
+      "decision_required": "User"
+    }
+  ],
+  "phase_1_boundary": {
+    "status": "COMPLETE_FOR_REVIEW",
+    "artefacts_produced": [
+      "sps2/requirements/P10-REQUIREMENTS.json",
+      "sps2/schemas/p10-slice.schema.json"
+    ],
+    "next_phase_required": "User approval of these P10 Phase 1 requirements before any P10 architecture, schema implementation or slice implementation may begin. Under the roadmap the approval gate is per slice; the requirements themselves require their own approval first.",
+    "approval_required": "User must approve: (1) the 20 P10 requirements, (2) the eight-axis vertical-slice contract and the slice schema, (3) the per-slice DoD and its explicitly excluded gates, (4) the machine-checkable D-P10-1 exposure boundary, (5) the six unresolved questions remaining open, and (6) the standing governance bounds.",
+    "explicitly_not_authorised_by_this_phase": [
+      "any implementation, including renderer, backend, harness or domain/ code",
+      "P10 architecture beyond what is required to express a requirement",
+      "any slice entering implementation",
+      "the section inventory being populated or a first section being chosen",
+      "any network exposure",
+      "any security control being implemented"
+    ]
+  },
+  "security_and_governance_implications": {
+    "mandatory_controls": [
+      "Per-sink output encoding at every HTML sink, reusing the P8 and P9 approved encoders",
+      "Declared and validated exposure class for every backend surface, default-deny to local",
+      "Published-only content in production builds",
+      "Reparse validation of every rendered document with the approved stdlib HTMLParser",
+      "Rollback rehearsal before a slice may be declared done"
+    ],
+    "deferred_controls": [
+      "authentication, authorisation beyond P8's actor-role semantics, CSRF protection and rate limiting are sequencing requirements only under D-P10-1 and are not implemented or authorised here"
+    ],
+    "governance_notes": [
+      "This document records requirements and contracts. It does not approve anything, and it does not close anything.",
+      "Every control claimed in this document has an associated negative-test requirement, per the repository convention.",
+      "The six unresolved questions are deliberately left open. Resolving them by assumption would convert uncertainty into requirement, which the governing instruction forbids."
+    ]
+  },
+  "files_changed": [
+    "sps2/requirements/P10-REQUIREMENTS.json",
+    "sps2/schemas/p10-slice.schema.json"
+  ]
+}

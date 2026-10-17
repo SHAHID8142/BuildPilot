@@ -1,0 +1,16 @@
+{
+  "agent_id": "generic",
+  "display_name": "Generic (any repository-reading agent)",
+  "maturity": "DECLARED",
+  "writes_global_state": false,
+  "capabilities": {"skills": false, "mcp": false, "shell": true,
+                   "subagents": false, "browser": false,
+                   "structured_questions": false},
+  "supports": ["repository-state-reading", "markdown", "json"],
+  "fallbacks": {
+    "structured_questions": "Use plain conversational questions and record the answer in project state.",
+    "subagents": "Execute sequentially in the primary agent.",
+    "browser": "Record verification as NOT RUN rather than claiming success."
+  },
+  "maintainer": "sps2-core"
+}

@@ -1,0 +1,47 @@
+# Goal and Conversation Record
+
+**Purpose:** Preserve the intent and material decisions discussed with the user so work can resume after terminal loss, power outage, or context reset. This is a chronological summary, not a word-for-word transcript. The linked ChatGPT conversation is `AI App Checkpoints` (`6abfef72-dfb4-83e8-89fe-c61a8073dc58`); its available recent turns were read from the Codex conversation record. Later turns are also represented from this active project conversation and repository reports.
+
+## Main goal
+
+The user wants the SPS2 project finished, built, checked, and made ready for actual use. They ask for comprehensive completion work, all tests/audits/verification, a TODO list, and coordinated work by Codexx and Claude. “Ready to use” means resolving the engineering backlog and verifying the real release/readiness requirements; it does not permit claiming false green gates or inventing approvals/evidence.
+
+## User intent and instructions
+
+- The user first asked for a full actionable backlog, with audits, fixes, tests, governance/baseline decisions, release-readiness checks, known blockers, and a clear split between autonomous work and explicit-authorization boundaries.
+- The user asked for Codex and Claude to communicate through a shared Markdown file that records what each agent is doing, what it fixed, findings, blockers, requested help/solutions, handoffs, test evidence, and cross-review responses.
+- The user wanted dedicated lightweight watcher agents that monitor only the Markdown communication file. They also described agents continuing until project completion. The workflow was therefore designed to be finite and checkpointed: bounded watchers, one package at a time, explicit stop conditions, and honest reporting of remaining items.
+- The user asked the assistant to make project decisions on their behalf and then emphasized “always make decision behalf of me.” This is delegated operational judgment, not permission to fabricate a User-authored approval, ratify disputed governance records, or bypass safeguards. A separate Codex-authored operating decision document records the choices actually made.
+- The user asked the assistant to use their computer and coordinate Claude/Codex in VS Code terminals. They said the conversation names on both agents are `river_SPS` and the CLI command for Codex is `codexx`, not `codex`.
+- The user asked whether they could use Adobe apps while the assistant used the computer. This was a coordination question; no project evidence establishes any Adobe-session restriction or a completed UI action.
+- The user asked to close the ERP for the Chalantika project in VS Code. The current record does not establish that the UI action was completed. Do not report it as done without checking.
+- The user asked why no terminal output was visible and asked to be shown the agents. In this resumed session, Codexx was launched through the agent-managed macOS shell using the `river` profile; that does not mean its output was shown in the user’s VS Code terminal. Claude Code could not use the configured gateway models. Do not claim a visible VS Code terminal session or live Claude work.
+- The user asked how long completion would take and what to do next. Any time estimate is uncertain until the remaining blocked items and platform/runtime checks are resolved.
+- Load-shedding power loss stopped the local agent processes. The user later reported internet interruption and asked whether the agents were alive. The resumed process check found the prior CLI work was no longer running; the user then directed work to resume.
+- The user most recently asked for a folder in the repository documenting everything discussed, done, remaining, planned, the main goal, and all relevant project information. This folder fulfills that documentation request, but is not itself proof that remaining tasks are complete.
+
+## Conversation and project history recorded
+
+1. **Packages 1 and 4 implementation report:** Codex reported scanner hardening and snapshot/rollback changes; focused/full offline tests were reported as passing, while P10 remained fail-closed. No commit, push, deployment, publication, merge, or release was reported.
+2. **Claude review of Packages 1 and 4:** Claude reported PASS, reproduced the test matrix and gate state, and noted residual scanner dataflow forms plus a regular-file snapshot-target edge case. Its report is `reports/SPS2-REMEDIATION-REVIEW-P1-P4-CLAUDE-20261017-111759.md`.
+3. **Planning and authorization:** The user asked for a plan and prompts for both agents. Reports documented Packages 2/3 and their validator/baseline consequences. The user authorized Packages 1/4 at that time; that narrow authorization was not itself authorization for other engineering or governance changes.
+4. **C0/C1 checkpoint:** A later Codex report documented a concurrent `.sps/plan.md` change and stopped to preserve it. A subsequent backlog notes that the plan delta came from user-directed P17 work. The dossier must not imply that the old baseline is still current or overwrite this plan.
+5. **Decision packet and audits:** Codex prepared a decision packet covering updater exception scope, Packages 2/3, DEC-7301/2/3, Round 26 provenance, P10 readiness, untracked tests/CI discovery, push history, attribution/P5 provenance, and `.claude/settings.json`. Claude later reported C4/C5/C8/C9/C10/C12 cross-reviews PASS for the audited versions and C11/C13 reviews PASS with a narrow correction. These reports do not approve governance proposals or make P10 ready.
+   - The user supplied Claude’s C11/C13 report in `/Users/maryamahad/.codex/attachments/6d069245-6cdf-4b06-9a4a-c511d426ffa7/Pasted text.txt`. Claude said both audits passed, with one narrow C11 correction: include DEC-0032’s single authorized push together with DEC-0001 and the other reflog entries. It confirmed backup-manifest 595/614 matches, a self-approval predicate accepting `Self (self-approved)`, 35 test modules (28 tracked/in the manifest, 7 untracked) with 486 test functions attributed across the seven by name-level count, stale P7/P10 documentation, and the `.claude/settings.json` difference. The report also cautioned that an initial backup-directory manifest check failed because paths were repo-relative; the valid rerun was from the repo root.
+6. **Delegated operational decisions:** After the user said to decide on their behalf, Codex recorded a bounded operating decision file. It permits code fixes for Packages 2/3 while keeping validators red and baselines unchanged, allows a P10 dynamic-import refactor only if behavior is preserved and tests prove it, and authorizes a narrow attribution fix. It explicitly keeps disputed decisions unapproved, prohibits CI/baseline/governance/release changes, and keeps P10/release NOT READY.
+7. **C4 correction cycle:** Claude’s review of a C4 patch found two defects: nonallowlisted Python under `domain/seo` could be deleted, and a fresh rollback restore process could not import its allowlist after rollback. Both were repaired by moving the shared allowlist to stable `sps2/core/p9_surface.py` and checking exact allowlist membership before deletion. Two regression tests were added. Focused tests passed 38 + 38; a separate Codex reviewer reran both new tests and returned PASS. Claude’s re-review could not be obtained through the current gateway.
+8. **C5 updater/bootstrap cycle:** C5 audit confirmed symlinked bootstrap destinations, unbounded prerelease numeric comparison, stale cached status, malformed installed-version arithmetic diagnostics, and missing mirror parity coverage. Fixes and regression tests were added. Primary focused suites passed 47 tests with one `pwsh`-dependent skip. The user’s `codexx` CLI independently reviewed the C5 changes and returned PASS; its own full test run was blocked by read-only sandbox restrictions on temporary test fixtures. Claude CLI model selection failed. Details: `reports/SPS2-C5-IMPLEMENTATION-REVIEW-20261017-1656.md`.
+9. **Resumption after load-shedding:** The user directed work to resume. Codex checked CLI availability, found `codexx` through the interactive zsh alias, and attempted Claude Code. Codexx was successfully invoked from the repository; Claude gateway model IDs were rejected. The current project dossier is being created in response to the user’s request.
+
+## What is not established
+
+- No evidence in this record shows the Chalantika ERP window was closed.
+- No evidence shows current agent terminals are visibly open in VS Code. Codexx ran in an agent-managed shell; Claude did not produce a review.
+- The historical full test matrix and validator counts have not been rerun after the latest C4/C5 changes.
+- No P10 approval, publication, deployment evidence, or release readiness has been created.
+- No User-authored approval for DEC-7301/7302/7303 is established. The user’s delegation to Codex for operating decisions is not the same thing as ratification of those records.
+- No staging, commit, push, merge, deployment, publication, or release was performed in the resumed checkpoint.
+
+## Scope of the dossier
+
+All facts in this file should be read with the evidence map and limitation labels in [02 — Current state and evidence](02-CURRENT-STATE-AND-EVIDENCE.md). If more transcript turns or evidence become available, append a dated correction with source rather than silently rewriting history.

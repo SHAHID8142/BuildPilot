@@ -1,0 +1,1307 @@
+{
+  "schema": "sps2.production-registry/v1",
+  "version": "0.2.0-p4",
+  "generated": "2026-10-03",
+  "gate": {
+    "implementation": "sps2/capability/engine.py :: promote()",
+    "rule": "A capability enters this registry only if promote() returns ok=True.",
+    "research_to_production": "A P2 research record is NOT a production capability. Promotion requires independent evidence and, for third-party material, a security assessment that P2 explicitly did not perform."
+  },
+  "selection_policy": {
+    "hardcoded_domain_mapping_forbidden": true,
+    "supports_multiple_candidates_per_domain": true,
+    "popularity_is_tie_breaker_only": true,
+    "forced_user_choice_overrides_automation": true,
+    "default_install_scope": "PROJECT_LOCAL"
+  },
+  "capabilities": [
+    {
+      "capability_id": "CAP-P03-001",
+      "name": "promotion-gate",
+      "type": "DEV_TOOL",
+      "domain": "GOVERNANCE",
+      "purpose": "Deterministically decide whether a capability record may enter the production registry",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "framework/sps2/capability/engine.py",
+        "commit": "702650be49dc4861d7ed549a5622590cdc988381",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ],
+        "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
+        "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review of engine.promote; negative cases enforced by validate-p3.sh",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only, no network calls",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-001",
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "EVALUATED",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "command": "sps2/tools/validate-p4.sh verification suite",
+        "expected_result": "engine.promote accepts a complete record and rejects a record with evidence removed",
+        "observed_result": "complete record accepted with zero reasons; record with evidence removed rejected with a MISSING or EVIDENCE reason",
+        "evidence": [
+          "EV-P4-012",
+          "EV-P4-026"
+        ],
+        "verified_by": "deterministic P4 verification harness",
+        "note": "Executed, not asserted."
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03",
+      "linked_requirements": [
+        "REQ-P4-01",
+        "REQ-P4-02"
+      ],
+      "acceptance_criteria": [
+        "engine.promote accepts a complete record",
+        "engine.promote rejects a record with evidence removed"
+      ],
+      "invalidated_by": [
+        "repository licence declaration changes",
+        "source file changes",
+        "schema contract changes",
+        "review_due reached",
+        "a failing negative test in any P4 validator"
+      ],
+      "licence_correction": "P3 recorded KNOWN_PERMISSIVE. P4 corrected this to UNDECLARED after verifying that no licence file exists. The P3 claim was an unverified assumption.",
+      "promotion_assessment": {
+        "assessed_phase": "P4",
+        "gates": {
+          "A": {
+            "gate": "IDENTITY",
+            "pass": true,
+            "reason": "id, type, version and lifecycle valid"
+          },
+          "B": {
+            "gate": "PROVENANCE",
+            "pass": true,
+            "reason": "origin, commit, fact class, evidence and a resolvable source"
+          },
+          "C": {
+            "gate": "SECURITY",
+            "pass": true,
+            "reason": "classified, evidenced, no secret, project-local"
+          },
+          "D": {
+            "gate": "LICENCE",
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
+          },
+          "E": {
+            "gate": "MAINTENANCE",
+            "pass": true,
+            "reason": "maintenance state, review date and triggers present"
+          },
+          "F": {
+            "gate": "VERIFICATION",
+            "pass": true,
+            "reason": "implementation exists and verification is fully evidenced"
+          },
+          "G": {
+            "gate": "REQUIREMENTS",
+            "pass": true,
+            "reason": "linked requirements and acceptance criteria present"
+          },
+          "H": {
+            "gate": "APPROVAL",
+            "pass": true,
+            "reason": "explicit User approval recorded"
+          },
+          "I": {
+            "gate": "SCOPE",
+            "pass": true,
+            "reason": "project-local scope honoured"
+          },
+          "J": {
+            "gate": "STALENESS",
+            "pass": true,
+            "reason": "no stale-as-active and no stale-without-review"
+          },
+          "K": {
+            "gate": "CONFLICTS",
+            "pass": true,
+            "reason": "no unresolved conflict touches this capability"
+          }
+        },
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 1,
+        "ranking_fingerprint": "9c32a5482a67496a"
+      }
+    },
+    {
+      "capability_id": "CAP-P03-002",
+      "name": "deterministic-ranking",
+      "type": "DEV_TOOL",
+      "domain": "GOVERNANCE",
+      "purpose": "Rank candidate capabilities for a requirement using evidence-weighted factors",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "framework/sps2/capability/engine.py",
+        "commit": "702650be49dc4861d7ed549a5622590cdc988381",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ],
+        "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
+        "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review of engine.rank; determinism proven over 24 input permutations",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only, no network calls",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-002",
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "EVALUATED",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "command": "sps2/tools/validate-p4.sh verification suite",
+        "expected_result": "40 input permutations yield one identical ranking fingerprint and the highest-starred candidate does not win",
+        "observed_result": "40 permutations produced exactly 1 distinct fingerprint; the top-ranked candidate had fewer stars than the maximum present in the candidate set",
+        "evidence": [
+          "EV-P4-013",
+          "EV-P4-020",
+          "EV-P4-027"
+        ],
+        "verified_by": "deterministic P4 verification harness",
+        "note": "Executed, not asserted."
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03",
+      "linked_requirements": [
+        "REQ-P4-03"
+      ],
+      "acceptance_criteria": [
+        "40 input permutations yield one ranking fingerprint",
+        "the most popular candidate does not win"
+      ],
+      "invalidated_by": [
+        "repository licence declaration changes",
+        "source file changes",
+        "schema contract changes",
+        "review_due reached",
+        "a failing negative test in any P4 validator"
+      ],
+      "licence_correction": "P3 recorded KNOWN_PERMISSIVE. P4 corrected this to UNDECLARED after verifying that no licence file exists. The P3 claim was an unverified assumption.",
+      "promotion_assessment": {
+        "assessed_phase": "P4",
+        "gates": {
+          "A": {
+            "gate": "IDENTITY",
+            "pass": true,
+            "reason": "id, type, version and lifecycle valid"
+          },
+          "B": {
+            "gate": "PROVENANCE",
+            "pass": true,
+            "reason": "origin, commit, fact class, evidence and a resolvable source"
+          },
+          "C": {
+            "gate": "SECURITY",
+            "pass": true,
+            "reason": "classified, evidenced, no secret, project-local"
+          },
+          "D": {
+            "gate": "LICENCE",
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
+          },
+          "E": {
+            "gate": "MAINTENANCE",
+            "pass": true,
+            "reason": "maintenance state, review date and triggers present"
+          },
+          "F": {
+            "gate": "VERIFICATION",
+            "pass": true,
+            "reason": "implementation exists and verification is fully evidenced"
+          },
+          "G": {
+            "gate": "REQUIREMENTS",
+            "pass": true,
+            "reason": "linked requirements and acceptance criteria present"
+          },
+          "H": {
+            "gate": "APPROVAL",
+            "pass": true,
+            "reason": "explicit User approval recorded"
+          },
+          "I": {
+            "gate": "SCOPE",
+            "pass": true,
+            "reason": "project-local scope honoured"
+          },
+          "J": {
+            "gate": "STALENESS",
+            "pass": true,
+            "reason": "no stale-as-active and no stale-without-review"
+          },
+          "K": {
+            "gate": "CONFLICTS",
+            "pass": true,
+            "reason": "no unresolved conflict touches this capability"
+          }
+        },
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 2,
+        "ranking_fingerprint": "9c32a5482a67496a"
+      }
+    },
+    {
+      "capability_id": "CAP-P03-003",
+      "name": "forced-user-choice",
+      "type": "DEV_TOOL",
+      "domain": "GOVERNANCE",
+      "purpose": "Honour an explicit user capability choice subject to mandatory safety constraints",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "framework/sps2/capability/engine.py",
+        "commit": "702650be49dc4861d7ed549a5622590cdc988381",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ],
+        "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
+        "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review of engine.apply_forced_choice; blocked for SUSPECTED_RISK and VULNERABLE",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-003",
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "EVALUATED",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "command": "sps2/tools/validate-p4.sh verification suite",
+        "expected_result": "a forced choice moves to rank 1 and a VULNERABLE candidate cannot be forced",
+        "observed_result": "forced choice moved the last-ranked candidate to rank 1; the VULNERABLE candidate was refused with MANDATORY_SAFECY_CONSTRAINT",
+        "evidence": [
+          "EV-P4-014",
+          "EV-P4-021",
+          "EV-P4-028"
+        ],
+        "verified_by": "deterministic P4 verification harness",
+        "note": "Executed, not asserted."
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03",
+      "linked_requirements": [
+        "REQ-P4-04"
+      ],
+      "acceptance_criteria": [
+        "an explicit forced choice moves to rank 1",
+        "a VULNERABLE candidate cannot be forced"
+      ],
+      "invalidated_by": [
+        "repository licence declaration changes",
+        "source file changes",
+        "schema contract changes",
+        "review_due reached",
+        "a failing negative test in any P4 validator"
+      ],
+      "licence_correction": "P3 recorded KNOWN_PERMISSIVE. P4 corrected this to UNDECLARED after verifying that no licence file exists. The P3 claim was an unverified assumption.",
+      "promotion_assessment": {
+        "assessed_phase": "P4",
+        "gates": {
+          "A": {
+            "gate": "IDENTITY",
+            "pass": true,
+            "reason": "id, type, version and lifecycle valid"
+          },
+          "B": {
+            "gate": "PROVENANCE",
+            "pass": true,
+            "reason": "origin, commit, fact class, evidence and a resolvable source"
+          },
+          "C": {
+            "gate": "SECURITY",
+            "pass": true,
+            "reason": "classified, evidenced, no secret, project-local"
+          },
+          "D": {
+            "gate": "LICENCE",
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
+          },
+          "E": {
+            "gate": "MAINTENANCE",
+            "pass": true,
+            "reason": "maintenance state, review date and triggers present"
+          },
+          "F": {
+            "gate": "VERIFICATION",
+            "pass": true,
+            "reason": "implementation exists and verification is fully evidenced"
+          },
+          "G": {
+            "gate": "REQUIREMENTS",
+            "pass": true,
+            "reason": "linked requirements and acceptance criteria present"
+          },
+          "H": {
+            "gate": "APPROVAL",
+            "pass": true,
+            "reason": "explicit User approval recorded"
+          },
+          "I": {
+            "gate": "SCOPE",
+            "pass": true,
+            "reason": "project-local scope honoured"
+          },
+          "J": {
+            "gate": "STALENESS",
+            "pass": true,
+            "reason": "no stale-as-active and no stale-without-review"
+          },
+          "K": {
+            "gate": "CONFLICTS",
+            "pass": true,
+            "reason": "no unresolved conflict touches this capability"
+          }
+        },
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 3,
+        "ranking_fingerprint": "9c32a5482a67496a"
+      }
+    },
+    {
+      "capability_id": "CAP-P03-004",
+      "name": "staleness-model",
+      "type": "DEV_TOOL",
+      "domain": "GOVERNANCE",
+      "purpose": "Track freshness and block a stale capability from remaining silently active",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "framework/sps2/capability/engine.py",
+        "commit": "702650be49dc4861d7ed549a5622590cdc988381",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ],
+        "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
+        "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "Static source review; STALE_AS_ACTIVE and STALE_WITHOUT_REVIEW enforced",
+        "fact_class": "EVIDENCE",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Pure-Python, standard library only",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-004"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "EVALUATED",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "APPROVED",
+        "required": true,
+        "decided_by": "User",
+        "decided_on": "2026-10-04",
+        "scope": "production promotion only",
+        "explicitly_not_approved": [
+          "P5, and the beginning of any P5 work.",
+          "Promotion of CAP-P03-005, which remains blocked by gates F and K.",
+          "Installing any skill, MCP, dependency or external software."
+        ],
+        "gates_passed_at_approval": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "I",
+          "J",
+          "K",
+          "H"
+        ],
+        "evidence": "User instruction: \"I explicitly approve production promotion under Gate H for the capabilities that already satisfy every other required gate.\""
+      },
+      "verification": {
+        "state": "VERIFIED",
+        "method": "AUTOMATED",
+        "command": "sps2/tools/validate-p4.sh verification suite",
+        "expected_result": "STALE_AS_ACTIVE and STALE_WITHOUT_REVIEW are rejected while a stale record with a review date is permissible",
+        "observed_result": "STALE_AS_ACTIVE rejected; STALE_WITHOUT_REVIEW rejected; a STALE record carrying review_due was accepted",
+        "evidence": [
+          "EV-P4-015",
+          "EV-P4-022",
+          "EV-P4-029"
+        ],
+        "verified_by": "deterministic P4 verification harness",
+        "note": "Executed, not asserted."
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03",
+      "linked_requirements": [
+        "REQ-P4-05"
+      ],
+      "acceptance_criteria": [
+        "STALE_AS_ACTIVE is rejected",
+        "STALE_WITHOUT_REVIEW is rejected",
+        "a STALE record with review_due is permissible"
+      ],
+      "invalidated_by": [
+        "repository licence declaration changes",
+        "source file changes",
+        "schema contract changes",
+        "review_due reached",
+        "a failing negative test in any P4 validator"
+      ],
+      "licence_correction": "P3 recorded KNOWN_PERMISSIVE. P4 corrected this to UNDECLARED after verifying that no licence file exists. The P3 claim was an unverified assumption.",
+      "promotion_assessment": {
+        "assessed_phase": "P4",
+        "gates": {
+          "A": {
+            "gate": "IDENTITY",
+            "pass": true,
+            "reason": "id, type, version and lifecycle valid"
+          },
+          "B": {
+            "gate": "PROVENANCE",
+            "pass": true,
+            "reason": "origin, commit, fact class, evidence and a resolvable source"
+          },
+          "C": {
+            "gate": "SECURITY",
+            "pass": true,
+            "reason": "classified, evidenced, no secret, project-local"
+          },
+          "D": {
+            "gate": "LICENCE",
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
+          },
+          "E": {
+            "gate": "MAINTENANCE",
+            "pass": true,
+            "reason": "maintenance state, review date and triggers present"
+          },
+          "F": {
+            "gate": "VERIFICATION",
+            "pass": true,
+            "reason": "implementation exists and verification is fully evidenced"
+          },
+          "G": {
+            "gate": "REQUIREMENTS",
+            "pass": true,
+            "reason": "linked requirements and acceptance criteria present"
+          },
+          "H": {
+            "gate": "APPROVAL",
+            "pass": true,
+            "reason": "explicit User approval recorded"
+          },
+          "I": {
+            "gate": "SCOPE",
+            "pass": true,
+            "reason": "project-local scope honoured"
+          },
+          "J": {
+            "gate": "STALENESS",
+            "pass": true,
+            "reason": "no stale-as-active and no stale-without-review"
+          },
+          "K": {
+            "gate": "CONFLICTS",
+            "pass": true,
+            "reason": "no unresolved conflict touches this capability"
+          }
+        },
+        "blocking_gates": [],
+        "recommendation": "PROMOTE",
+        "promotion_decision": "PROMOTED_TO_PRODUCTION"
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": true,
+        "promoted_on": "2026-10-04",
+        "promoted_by": "User",
+        "previous_lifecycle_state": "CANDIDATE",
+        "previous_approval_state": "PENDING_USER_APPROVAL",
+        "previous_blocking_gates": [
+          "H"
+        ],
+        "gate_results_at_promotion": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true,
+          "E": true,
+          "F": true,
+          "G": true,
+          "H": false,
+          "I": true,
+          "J": true,
+          "K": true
+        },
+        "gate_reasons": {
+          "A": "id, type, version and lifecycle valid",
+          "B": "origin, commit, fact class, evidence and a resolvable source",
+          "C": "classified, evidenced, no secret, project-local",
+          "D": "licence known, evidenced, and repository licence declared",
+          "E": "maintenance state, review date and triggers present",
+          "F": "implementation exists and verification is fully evidenced",
+          "G": "linked requirements and acceptance criteria present",
+          "H": "no explicit User approval; production promotion must await a User decision",
+          "I": "project-local scope honoured",
+          "J": "no stale-as-active and no stale-without-review",
+          "K": "no unresolved conflict touches this capability"
+        },
+        "basis": "Gate H satisfied by explicit User approval; every other gate A-K computed and passing at promotion time.",
+        "not_based_on": [
+          "popularity",
+          "recency",
+          "research interest",
+          "recency of verification"
+        ],
+        "gate_snapshot_declaration": {
+          "gate_results_at_promotion_is": "HISTORICAL_SNAPSHOT",
+          "captured_context": "PRE_APPROVAL",
+          "captured_at_phase": "P4",
+          "captured_before": "explicit User Gate H approval",
+          "preserved_unmodified": true,
+          "promotion_assessment_gates_is": "CURRENT_EVALUATION",
+          "current_evaluation_basis": "fresh recomputation at approval time",
+          "difference_is_expected_and_declared": true,
+          "differences_from_current": [
+            {
+              "gate": "H",
+              "at_promotion_snapshot": false,
+              "current": true,
+              "reason": "Gate H could not pass before the User approved it. The snapshot is the pre-approval state and is preserved unchanged as historical evidence. The User approval recorded in approval.decided_by is what later satisfied Gate H; the approval is not a gate result and does not retroactively alter the snapshot."
+            }
+          ],
+          "note": "The historical snapshot legitimately records Gate H as failing, because no User approval existed when it was taken. The capability was promoted only after that approval. The two representations therefore differ by design, not by contradiction. Neither the snapshot nor the approval has been edited."
+        }
+      },
+      "selection": {
+        "selection_id": "SELECTION-P5-0001",
+        "project_local": true,
+        "rank": 4,
+        "ranking_fingerprint": "9c32a5482a67496a"
+      }
+    },
+    {
+      "capability_id": "CAP-P03-005",
+      "name": "seo-cls-threshold-verifier",
+      "type": "SEO_TOOL",
+      "domain": "SEO",
+      "purpose": "Verify Cumulative Layout Shift against the verified CLS thresholds",
+      "version": "0.1.0",
+      "source": "SPS2_CORE",
+      "provenance": {
+        "origin": "SPS 2.0 repository, phase P3 implementation",
+        "repository_relative_path": "framework/sps2/research/P2-CMS-SEO-AUDIT.md",
+        "commit": "702650be49dc4861d7ed549a5622590cdc988381",
+        "fact_class": "FACT",
+        "research_refs": [
+          "CAP-027",
+          "CAP-025",
+          "CAP-021"
+        ],
+        "extraction_record": "sps2/research/P2-CAPABILITY-EXTRACTION.json",
+        "extraction_note": "Promoted from a P3 candidate record, not from a P2 research record. No P2 research id is used as a capability id."
+      },
+      "licence": "KNOWN_PERMISSIVE",
+      "licence_evidence": "The user selected the MIT licence for the SPS 2.0 repository on 2026-10-04. A LICENSE file exists at the repository root and is tracked. The applicable licence is MIT, classified KNOWN_PERMISSIVE. The licence prerequisite was satisfied by USER_ATTESTATION of skills/sps-cms provenance, which was NOT independently verified. No third-party code was identified and none was relicensed. This licence statement was not independently verified as legally valid.",
+      "security": {
+        "status": "VERIFIED_SAFE",
+        "evidence": "CLS good at or below 0.1 and poor above 0.25 confirmed verbatim in SRC-017 with stated derivation",
+        "fact_class": "FACT",
+        "permissions": [],
+        "note": "Static analysis of in-repository source only. No external code was executed or installed."
+      },
+      "compatibility": {
+        "status": "COMPATIBLE",
+        "agent_neutral": true,
+        "basis": "Framework-neutral; measures a browser metric from the public Core Web Vitals specification",
+        "framework": "SPS 2.0 foundation schemas"
+      },
+      "staleness": {
+        "state": "CURRENT",
+        "maintenance": "ACTIVE",
+        "last_checked": "2026-10-03",
+        "review_due": "2027-01-03",
+        "reevaluation_triggers": [
+          "source file changed",
+          "version bumped",
+          "schema contract changed",
+          "validator regression",
+          "review_due reached"
+        ]
+      },
+      "install_scope": "PROJECT_LOCAL",
+      "project_local_install_method": "Tracked in the repository; nothing is installed on the machine",
+      "rollback_method": "Revert the referencing commit; no machine state to undo",
+      "evidence": [
+        "EV-P3-005"
+      ],
+      "confidence": "HIGH",
+      "lifecycle_state": "DEFERRED",
+      "origin": "SPS_CORE",
+      "approval": {
+        "state": "PENDING_USER_APPROVAL",
+        "decided_by": null,
+        "note": "Explicitly NOT approved for promotion by the User on 2026-10-04. Gates F (no executable CLS verifier) and K (CONF-001 unresolved) are unsatisfied. Neither gate was bypassed and no LCP or INP evidence was invented."
+      },
+      "verification": {
+        "state": "UNVERIFIED",
+        "method": null,
+        "command": null,
+        "expected_result": null,
+        "observed_result": null,
+        "evidence": [],
+        "note": "No executable implementation exists. The CLS threshold fact is verified from SRC-017, but a verified FACT is not an implemented verifier, so this capability is not verified as a capability."
+      },
+      "selection_policy": {
+        "popularity_role": "TIE_BREAKER_ONLY"
+      },
+      "popularity": {
+        "stars": 0
+      },
+      "last_verified": "2026-10-03",
+      "linked_requirements": [
+        "REQ-P4-06"
+      ],
+      "acceptance_criteria": [
+        "only the retrieved CLS claim is represented",
+        "no LCP or INP threshold is asserted"
+      ],
+      "invalidated_by": [
+        "repository licence declaration changes",
+        "source file changes",
+        "schema contract changes",
+        "review_due reached",
+        "a failing negative test in any P4 validator"
+      ],
+      "licence_correction": "P3 recorded KNOWN_PERMISSIVE. P4 corrected this to UNDECLARED after verifying that no licence file exists. The P3 claim was an unverified assumption.",
+      "promotion_assessment": {
+        "assessed_phase": "P4",
+        "gates": {
+          "A": {
+            "gate": "IDENTITY",
+            "pass": true,
+            "reason": "id, type, version and lifecycle valid"
+          },
+          "B": {
+            "gate": "PROVENANCE",
+            "pass": true,
+            "reason": "origin, commit, fact class, evidence and a resolvable source"
+          },
+          "C": {
+            "gate": "SECURITY",
+            "pass": true,
+            "reason": "classified, evidenced, no secret, project-local"
+          },
+          "D": {
+            "gate": "LICENCE",
+            "pass": true,
+            "reason": "licence known, evidenced, and repository licence declared"
+          },
+          "E": {
+            "gate": "MAINTENANCE",
+            "pass": true,
+            "reason": "maintenance state, review date and triggers present"
+          },
+          "F": {
+            "gate": "VERIFICATION",
+            "pass": false,
+            "reason": "no executable implementation exists for this capability; a verified threshold fact is not an implemented verifier"
+          },
+          "G": {
+            "gate": "REQUIREMENTS",
+            "pass": true,
+            "reason": "linked requirements and acceptance criteria present"
+          },
+          "H": {
+            "gate": "APPROVAL",
+            "pass": false,
+            "reason": "no explicit User approval; production promotion must await a User decision"
+          },
+          "I": {
+            "gate": "SCOPE",
+            "pass": true,
+            "reason": "project-local scope honoured"
+          },
+          "J": {
+            "gate": "STALENESS",
+            "pass": true,
+            "reason": "no stale-as-active and no stale-without-review"
+          },
+          "K": {
+            "gate": "CONFLICTS",
+            "pass": false,
+            "reason": "unresolved research conflict(s): CONF-001"
+          }
+        },
+        "blocking_gates": [
+          "F",
+          "H",
+          "K"
+        ],
+        "recommendation": "DEFER",
+        "promotion_decision": "NOT_PROMOTED"
+      },
+      "licence_name": "MIT",
+      "licence_decided_by": "User",
+      "licence_decided_on": "2026-10-04",
+      "promotion_record": {
+        "promoted": false,
+        "state": "DEFER",
+        "reason": "Gates F and K unsatisfied: no executable CLS verifier exists, and CONF-001 is unresolved. Gate H approval was withheld by the User. Neither gate was bypassed.",
+        "classified_on": "2026-10-04"
+      },
+      "selection": {
+        "selection_id": null,
+        "project_local": true,
+        "excluded_reason": "not promoted: blocked by gate(s) F,H,K"
+      }
+    }
+  ],
+  "deferred": [
+    {
+      "candidate": "CAP-028 LCP and INP thresholds",
+      "source": "P2 CAP-028",
+      "reason": "LCP and INP numeric thresholds were never retrieved (CONF-001). A verifier cannot encode an unverified number.",
+      "state": "DEFERRED",
+      "decision_ref": "DEC-0014"
+    },
+    {
+      "candidate": "CMS content modelling",
+      "source": "P2 CAP-032",
+      "reason": "CMS content-modelling depth remains RESEARCH_FURTHER; the Contentful reference returned HTTP 429 in P2.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "Full SEO capability set",
+      "source": "P2 CAP-029",
+      "reason": "Only CLS thresholds are verified. hreflang, international, local and entity SEO were not researched.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "ECC domain skill library",
+      "source": "P2 CAP-014",
+      "reason": "Per-harness behavioural parity was never established; bulk adoption would import unverified assumptions.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "ECC continuous learning instincts",
+      "source": "P2 CAP-012",
+      "reason": "Self-reported confidence is not independent evidence. Requires a user-approved proposal mechanism first.",
+      "state": "DEFERRED",
+      "decision_ref": "DEC-0015"
+    },
+    {
+      "candidate": "ECC desktop dashboard",
+      "source": "P2 CAP-036",
+      "reason": "Tkinter GUI is incompatible with an agent-neutral, CLI-first architecture.",
+      "state": "REJECTED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "MCP registry as security control",
+      "source": "P2 CAP-024",
+      "reason": "The registry documents that it delegates security scanning and does not scan server code.",
+      "state": "REJECTED",
+      "decision_ref": "DEC-0013"
+    },
+    {
+      "candidate": "agency-agents persona catalogue",
+      "source": "P2 CAP-017",
+      "reason": "A persona corpus is not a runtime. Useful as requirement vocabulary only, not an installable capability.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    },
+    {
+      "candidate": "Gemini CLI agent adapter",
+      "source": "P2 research gap",
+      "reason": "Gemini CLI documentation was not retrieved (HTTP 404 on both URLs). No adapter may be built on an unread specification.",
+      "state": "DEFERRED",
+      "decision_ref": null
+    }
+  ],
+  "counts": {
+    "total": 5,
+    "promoted": 4,
+    "candidate": 1,
+    "deferred": 9
+  },
+  "promotion_gate": {
+    "implementation": "sps2/capability/promotion_gates.py",
+    "gates": [
+      "A_IDENTITY",
+      "B_PROVENANCE",
+      "C_SECURITY",
+      "D_LICENCE",
+      "E_MAINTENANCE",
+      "F_VERIFICATION",
+      "G_REQUIREMENTS",
+      "H_APPROVAL",
+      "I_SCOPE",
+      "J_STALENESS",
+      "K_CONFLICTS"
+    ],
+    "rule": "A capability enters production only when every gate passes. Any single failed gate blocks promotion. A gate is never weakened to admit a capability."
+  }
+}

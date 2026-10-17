@@ -1,0 +1,129 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "LEGACY-SCOPE-DECISIONS",
+  "phase": "cross-cutting governance (not phase-scoped)",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes a User direction, it does not originate one and grants no approval)",
+  "note": "Records one scope direction for the SPS2 legacy-protection controls: the three .sps/tools/ validator files remain within protected legacy scope for now. DEC-0029 is PROPOSED with approval.state=PENDING_USER_APPROVAL. It is NOT approved, it changes no control and no requirement text, and it deliberately leaves the remaining UQ-ATT-1 sub-questions unresolved. Nothing in this file may be read as User approval of the new governance decision itself. Each entry in decisions[] conforms to sps2/governance/SCHEMAS/decision.schema.json (sps2/decision/v1: decision_id ^DEC-[0-9]{4}$, required title/decision/reason/evidence/alternatives/approval; approval requires only state). Validate with: python3 sps2/tools/check_sps2.py decision sps2/decisions/LEGACY-SCOPE-DECISIONS.json - that command ALWAYS exits 0, so inspect stdout for ERR lines.",
+
+  "decisions": [
+    {
+      "decision_id": "DEC-0029",
+      "title": ".sps/tools/ validator files remain within the protected legacy scope",
+      "decision": "SCOPE DECLARATION ONLY. For the purposes of the legacy-protection controls exercised by sps2/tools/validate-p2.sh, sps2/tools/validate-p3.sh and sps2/tools/validate-p4.sh, the three files .sps/tools/validate-capability.sh, .sps/tools/validate-control.sh and .sps/tools/validate-governance.sh REMAIN WITHIN the protected legacy scope for now. They are legacy files tracked at commit c11da27; their modification is therefore correctly reported by those controls, and the residual failures are accurate reports of modified legacy files rather than regressions. This record changes nothing: no validator, no pathspec, no control behaviour, no requirement text, no approval state and no verification state is modified. DEC-0028 remains in force and its preservation of the P3/P4 legacy-protection controls is unaffected. This decision resolves ONLY the exclusion half of UQ-ATT-1, namely that 'legacy' does NOT exclude .sps/tools/. Everything else remains open and is enumerated in unresolved_questions below: whether REQ-P3-08's criterion should enumerate the legacy paths explicitly at all; whether the separate .sps/ protection control at sps2/tools/validate-p3.sh:312-316 is retained, re-scoped or removed; whether .sps/audits/README.md is protected; whether P2 and/or P4 require governing legacy-protection requirements equivalent to REQ-P3-08; and whether the historical .sps/tools/ migration requires a separate authorization record. No retroactive authorization for that migration is granted or inferred by this record.",
+      "reason": "The User has directed that the three .sps/tools/ validator files remain within the protected legacy scope for now. DEC-0028 already characterises these files as modified legacy governance files and states that the controls remain red until the underlying requirement question is settled by a separate User decision; this record supplies that decision for the scope question only. The term 'legacy paths' is defined nowhere in REQ-P3-08 or in any other approved artifact, and the validator scripts are mutually inconsistent about its extent, so recording the intended scope removes an ambiguity without editing the approved requirement. Preserving the controls is the conservative choice: each recommended alternative either weakens a real protection or reintroduces a divergence that DEC-0025 exists to end.",
+      "evidence": [
+        "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json DEC-0028 decision text states the residual failures are 'correct reports that legacy governance files were modified' and that they 'remain red until the underlying requirement question is settled by a separate User decision' - so this record supplies the anticipated separate decision for the scope question only",
+        "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json DEC-0028 evidence names the three files exactly: '.sps/tools/validate-capability.sh, .sps/tools/validate-control.sh and .sps/tools/validate-governance.sh'",
+        "git ls-tree c11da27 -- .sps/tools/ lists the three validators as tracked at the baseline: validate-capability.sh blob 93e5d7bc, validate-control.sh blob b17e92c4, validate-governance.sh blob 1b50a061 (a fourth file, .sps/tools/.cap-fixture.py blob 76fa1953, is also tracked but is currently UNMODIFIED and is not covered by this scope declaration)",
+        "git status --porcelain reports the three files as modified but uncommitted (' M'), which is why the legacy-protection controls currently report failures",
+        "The three controls are not uniform. The unanchored-glob variants at sps2/tools/validate-p2.sh:194, sps2/tools/validate-p3.sh:297-299 and sps2/tools/validate-p4.sh:482-484 use 'skills scripts plugins .github templates README.md CHANGELOG.md CATALOG.md *.sh *.ps1' filtered by grep -v '^sps2/', and the unanchored '*.sh' reaches .sps/tools/ at any depth: they currently fail on exactly the three files named above",
+        "The glob-free variants currently pass and show the control is expressible without the overreach: sps2/tools/validate-sps2.sh:198-199 uses HEAD with an explicit path list of ten arguments (skills, scripts, plugins, .github plus the six installers install.sh, install.ps1, uninstall.sh, uninstall.ps1, get-sps.sh, get-sps.ps1) and produces an empty diff; sps2/tools/validate-p5.py:281-286 uses c11da27 with eight explicit paths and no glob (skills, scripts, plugins, .github, templates, README.md, CHANGELOG.md, CATALOG.md) and also produces an empty diff",
+        "sps2/requirements/P1-REQUIREMENTS.json REQ-P1-06 (APPROVED) acceptance criterion 1 reads 'git diff over skills, scripts, plugins and installers is empty', which uses the word 'installers' rather than an unanchored shell glob",
+        "sps2/legacy/MANIFEST.md:38 documents the enforcement scope as 'git diff --name-only HEAD -- skills scripts plugins .github <installers>', an explicit placeholder with no glob",
+        "sps2/requirements/P3-REQUIREMENTS.json REQ-P3-08 is APPROVED with verification.state VERIFIED and its first acceptance criterion is the literal string 'git diff against c11da27 over legacy paths is empty'; the term 'legacy paths' is not enumerated in any approved artifact, only in validator scripts",
+        "sps2/tools/validate-p3.sh:312-316 is a SEPARATE control running 'git diff HEAD -- .sps/' that currently trips on four files (.sps/audits/README.md plus the three .sps/tools validators); sps2/tools/validate-p4.sh has no equivalent control",
+        "No decision record located in sps2/decisions/ or .sps/decisions/ authorizes the historical .sps/tools/ migration; DEC-0028 disposes only of the resulting control failures. Note that sps2/decisions/OPEN-DECISION-ATTRIBUTION-TOKEN-SET.json:86 refers to 'the authorized shell migration', so the authorization is asserted in one adjacent record but its granting instrument is locatable nowhere; this record therefore reports the gap and infers no retroactive authorization"
+      ],
+      "alternatives": [
+        {
+          "option": "Amend REQ-P3-08 to enumerate the legacy paths explicitly so that 'legacy' excludes .sps/tools/ (DEC-0028's third alternative)",
+          "why_not_chosen": "It is now contrary to the confirmed User direction, which keeps .sps/tools/ inside the protected scope. It would also change the acceptance criteria of an APPROVED and VERIFIED requirement and would require rewriting the criterion string, for which the requirement schema provides no amendment mechanism."
+        },
+        {
+          "option": "Narrow the pathspecs to exclude .sps/tools/ (DEC-0028's first alternative)",
+          "why_not_chosen": "DEC-0028 rejected it and the confirmed direction rejects it: the controls would no longer notice a modification to legacy .sps/ shell governance, removing a real protection. It would also leave the separate validate-p3.sh:312-316 .sps/ control untripped but undisposed."
+        },
+        {
+          "option": "Revert the .sps/tools migration so the controls pass (DEC-0028's second alternative)",
+          "why_not_chosen": "It would reintroduce three independent hardcoded agent-token lists, restoring exactly the divergence DEC-0025 exists to end. The pre-migration lists are verifiable at HEAD, e.g. git show HEAD:.sps/tools/validate-capability.sh line 180."
+        },
+        {
+          "option": "Defer recording the scope direction until every remaining UQ-ATT-1 sub-question is decided",
+          "why_not_chosen": "It would leave a point the User has already settled unrecorded, while the four unsettled sub-questions remain open indefinitely. It also invites a future agent to resolve the ambiguity unilaterally, which attribution_policy.json and .sps/GOVERNANCE.md both discourage."
+        },
+        {
+          "option": "Bundle the scope direction together with decisions on the .sps/ control, .sps/audits/README.md, P2/P4 requirements and migration authorization",
+          "why_not_chosen": "Those four questions are explicitly still unresolved and no User direction exists for them. Bundling them would either stall a settled point or imply decisions the User has not made, which would fabricate approval."
+        }
+      ],
+      "status": "PROPOSED",
+      "supersedes": null,
+      "approval": {
+        "required": true,
+        "state": "PENDING_USER_APPROVAL"
+      }
+    }
+  ],
+
+  "unresolved_questions": [
+    {
+      "id": "UQ-ATT-1",
+      "question": "Should REQ-P3-08's acceptance criterion 'git diff against c11da27 over legacy paths is empty' enumerate the legacy paths explicitly?",
+      "status": "PARTIALLY RESOLVED - EXCLUSION HALF ONLY",
+      "resolved_portion": "The exclusion half is answered by DEC-0029: 'legacy' does NOT exclude .sps/tools/, and the three .sps/tools/ validator files remain within the protected legacy scope for now.",
+      "remaining_portion": "Whether the criterion should enumerate the legacy paths explicitly at all REMAINS UNRESOLVED. DEC-0028 called enumeration 'the correct long-term remedy'. DEC-0029 does not enumerate them and does not amend REQ-P3-08.",
+      "blocked_by": "REQ-P3-08 is APPROVED with verification.state VERIFIED. Redefining its criterion is a normative change to an approved requirement and requires a distinct User decision. No such decision has been made."
+    },
+    {
+      "id": "UQ-LEGACY-01",
+      "question": "Should the separate .sps/ protection control at sps2/tools/validate-p3.sh:312-316 be retained as-is, re-scoped, or removed?",
+      "status": "UNRESOLVED AND UNCHANGED",
+      "effect_if_unresolved": "validate-p3.sh continues to report that control's failure on four files: .sps/audits/README.md plus the three .sps/tools validate-*.sh files. DEC-0029 changes it in no way and does not dispose of it. Note validate-p4.sh has no equivalent control."
+    },
+    {
+      "id": "UQ-LEGACY-02",
+      "question": "Does .sps/audits/README.md fall within the protected legacy scope?",
+      "status": "UNRESOLVED - DEC-0029 makes no determination",
+      "effect_if_unresolved": "The .sps/ control continues to flag .sps/audits/README.md. Its current working-tree change is purely additive (3 insertions, 0 deletions), consisting of a SPEC-2 report row and the KI-15 and KI-16 register rows authored by the standing governance rule in .sps/GOVERNANCE.md to record discovered issues."
+    },
+    {
+      "id": "UQ-LEGACY-03",
+      "question": "Do P2 and/or P4 require governing legacy-protection requirements equivalent to REQ-P3-08?",
+      "status": "UNRESOLVED - DEC-0029 creates and modifies no requirement",
+      "effect_if_unresolved": "sps2/tools/validate-p2.sh:194 and sps2/tools/validate-p4.sh:482-484 both exercise a legacy-protection control, but only P3 has a governing requirement (REQ-P3-08). No P4 requirement mentions 'untouched', 'c11da27' or 'git diff', so the P4 control has no approved criterion behind it. No requirement is created here; that is a separate User decision."
+    },
+    {
+      "id": "UQ-LEGACY-04",
+      "question": "Does the historical .sps/tools/ migration require a separate authorization record?",
+      "status": "UNRESOLVED - EVIDENCE GAP REPORTED, NO AUTHORIZATION INFERRED",
+      "evidence_gap": "No decision record located in sps2/decisions/ or .sps/decisions/ authorizes editing the three .sps/tools/ validators. DEC-0028 disposes only of the resulting control failures. However sps2/decisions/OPEN-DECISION-ATTRIBUTION-TOKEN-SET.json:86 refers to 'the authorized shell migration', so the migration is treated as authorized somewhere while the granting instrument is locatable nowhere. DEC-0029 neither grants nor denies retroactive authorization."
+    }
+  ],
+
+  "explicitly_not_approved_by_this_record": [
+    "The governance decision recorded here (DEC-0029) itself: its approval.state is PENDING_USER_APPROVAL and no User approval, decider, date or basis is asserted",
+    "Any change to REQ-P3-08, its acceptance criteria, its approval state or its verification state",
+    "Any change to any validator, pathspec or control behaviour, including the unanchored '*.sh' glob variants and the separate .sps/ control at validate-p3.sh:312-316",
+    "Any narrowing of a pathspec to exclude .sps/tools/",
+    "Any revert of the .sps/tools migration",
+    "Any creation, amendment or re-verification of a P2 or P4 requirement",
+    "Any determination that .sps/audits/README.md is or is not protected",
+    "Any retroactive authorization of the historical .sps/tools migration",
+    "Any resolution of UQ-ATT-2 (approver identity mechanism)",
+    "Any change to KI-15, KI-16, the git remote, git config, history, branches, tags, or any push",
+    "Any change to the token set, the attribution policy or matching semantics",
+    "Any CI enforcement change"
+  ],
+
+  "non_goals": [
+    "Not an identity, authentication or provenance mechanism.",
+    "This record does not make the repository's validators pass; it records why three of them legitimately report failures.",
+    "This record does not amend, supersede or reinterpret DEC-0028, which remains ACTIVE and in force.",
+    "This record does not resolve UQ-ATT-1 in full, and it does not silently close it."
+  ],
+
+  "related": [
+    "sps2/decisions/ATTRIBUTION-POLICY-DECISIONS.json (DEC-0025..DEC-0028)",
+    "sps2/decisions/OPEN-DECISION-ATTRIBUTION-TOKEN-SET.json",
+    "sps2/requirements/P3-REQUIREMENTS.json (REQ-P3-08)",
+    "sps2/requirements/P1-REQUIREMENTS.json (REQ-P1-06)",
+    "sps2/tools/validate-p2.sh",
+    "sps2/tools/validate-p3.sh",
+    "sps2/tools/validate-p4.sh",
+    "sps2/tools/validate-sps2.sh",
+    "sps2/tools/validate-p5.py",
+    "sps2/legacy/MANIFEST.md",
+    ".sps/audits/README.md (KI-16)"
+  ]
+}

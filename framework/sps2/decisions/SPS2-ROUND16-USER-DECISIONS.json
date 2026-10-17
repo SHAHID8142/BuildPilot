@@ -1,0 +1,130 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "SPS2-ROUND16-USER-DECISIONS",
+  "phase": "Roadmap P10 (Vertical-Slice Frontend/Backend) / Updater-Safety Workstream",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes the User's Round 16 decision message received 2026-10-16, verbatim between the BEGIN/END markers in DEC-7201's evidence array, and executes its two authorized actions; it decides nothing on its own)",
+  "note": "Executes exactly two of the User's Round 16 decisions: (1) UPDATER-SAFETY WORKSTREAM: RATIFY — recorded as DEC-7201, a transcription-plus-ratification record covering the eight updater-script files and sps2/tests/test_updater_safety.py; (2) INVENTORY DIGEST REGENERATION: AUTHORIZE — executed as DEC-7202, writing only the two independently verified digest values from the Round 15 audit report into sps2/requirements/P10-SECTION-INVENTORY.json provenance, changing no other inventory field. The remaining Round 16 lines (PUBLICATION: DEFER, USER APPROVAL: NOT GRANTED, COMMIT/PUSH: NOT AUTHORIZED, CI CHANGES: NOT AUTHORIZED) are transcribed as standing constraints and grant nothing.",
+  "decisions": [
+    {
+      "decision_id": "DEC-7201",
+      "title": "Ratify the updater-safety workstream (eight updater-script changes plus sps2/tests/test_updater_safety.py) as an authorized safety-hardening workstream",
+      "decision": "The User's Round 16 decision message, received 2026-10-16, is transcribed verbatim between the BEGIN/END markers in the evidence array below. Its line 'UPDATER-SAFETY WORKSTREAM: RATIFY' resolves audit finding G-1 (reports/SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md, §9/§10 finding 1): the eight modified tracked updater files (get-sps.ps1, get-sps.sh, scripts/bootstrap-sps.sh, scripts/sps-update.sh, scripts/update-sps.ps1, skills/sps/scripts/bootstrap-sps.sh, skills/sps/scripts/sps-update.sh, skills/sps/scripts/update-sps.ps1) and the untracked sps2/tests/test_updater_safety.py are hereby ratified as a safety-hardening workstream. Ratification covers the changes as they exist in the working tree at HEAD c49f385 — removal of bootstrap auto-update execution, removal of git reset --hard / rm -rf / Remove-Item -Recurse -Force destructive fallbacks, addition of dirty-worktree refusal and non-git-destination refusal, and the accompanying behavioral test module. This ratification authorizes the changes to stand; it does NOT authorize commit or push (the message says so explicitly, and COMMIT/PUSH: NOT AUTHORIZED is restated as its own line).",
+      "reason": "The Round 15 audit verified the changes are genuine safety hardening with behavioral test coverage, but found no governance record authorizing them. The User has now supplied that authorization. Recording it closes the governance gap without granting any publication or git action.",
+      "evidence": [
+        "BEGIN USER ROUND 16 DECISION MESSAGE (verbatim)",
+        "SPS2 — USER DECISIONS",
+        "UPDATER-SAFETY WORKSTREAM: RATIFY",
+        "- Ratify the eight updater-script changes and",
+        "  sps2/tests/test_updater_safety.py as a safety-hardening workstream.",
+        "- Record the decision in a new decision record.",
+        "- Do not overwrite existing reports or decisions.",
+        "- This ratification does not authorize commit or push.",
+        "INVENTORY DIGEST REGENERATION: AUTHORIZE",
+        "- Write only the independently verified cms_state_digest and",
+        "  p8_contract_digest values from the Round 15 report.",
+        "- Revalidate the inventory and rerun the relevant gate tests.",
+        "- Do not change any other inventory field.",
+        "- Do not publish content or set user_approval.",
+        "PUBLICATION: DEFER",
+        "USER APPROVAL: NOT GRANTED",
+        "COMMIT/PUSH: NOT AUTHORIZED",
+        "CI CHANGES: NOT AUTHORIZED",
+        "END USER ROUND 16 DECISION MESSAGE",
+        "reports/SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md §8: the audited content of the ratified changes (auto-update removal, destructive-fallback removal, dirty-tree/non-git-destination refusal, mirror parity, behavioral tests)",
+        "sps2/tests/test_updater_safety.py: the ratified regression module (8 tests)"
+      ],
+      "alternatives": [
+        "Revert the workstream instead of ratifying it — rejected by the User; the changes are desirable safety hardening.",
+        "Ratify without a decision record — rejected; the User explicitly required a new decision record."
+      ],
+      "status": "ACTIVE",
+      "supersedes": null,
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "The User's Round 16 decision line 'UPDATER-SAFETY WORKSTREAM: RATIFY', transcribed verbatim above. As with all User decisions, the attribution is self-declared (UQ-ATT-2 remains open); the record transcribes the message and does not authenticate a human."
+      }
+    },
+    {
+      "decision_id": "DEC-7202",
+      "title": "Authorize inventory digest regeneration: write only the two Round 15-verified digest values into P10-SECTION-INVENTORY.json provenance",
+      "decision": "The User's Round 16 decision line 'INVENTORY DIGEST REGENERATION: AUTHORIZE' authorizes writing exactly two values into sps2/requirements/P10-SECTION-INVENTORY.json: provenance.cms_state_digest = sha256:b35f7aba68eca4e7c9b688ae979891330f2f3d08c2b4250ce855c55943f7e38e and provenance.p8_contract_digest = sha256:ee6bb68f04f0eb468f0fd6eafaaea0b68639b88199e207c7a76ef57e10bbf217. Both values were independently recomputed in the Round 15 read-only audit (reports/SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md §7) by a from-scratch reimplementation of the DEC-7112 canonical scheme, cross-checked against the gate's own helper, and were recomputed a second time immediately before this write with identical results. No other inventory field is changed by this authorization: inventory_state, user_approval, section states, and every other key remain byte-identical. This authorization does NOT publish content and does NOT set user_approval (both explicitly withheld by the same message). This decision supersedes, for these two values only, the blanket 'writing inventory digest values is not approved' clause recorded at the time of the six-semantics adoption (DEC-7112's explicitly_not_approved_by_this_record list, entry 2).",
+      "reason": "The cms-state-digest and p8-contract-digest controls fail closed on null. The values are now independently verified; writing them lifts two of the gate's six honest failures and converts those controls from fail-closed placeholders into real, recomputable integrity claims over the CMS state and ContentType contract.",
+      "evidence": [
+        "BEGIN USER ROUND 16 DECISION MESSAGE (verbatim, shared with DEC-7201)",
+        "INVENTORY DIGEST REGENERATION: AUTHORIZE",
+        "- Write only the independently verified cms_state_digest and",
+        "  p8_contract_digest values from the Round 15 report.",
+        "- Revalidate the inventory and rerun the relevant gate tests.",
+        "- Do not change any other inventory field.",
+        "- Do not publish content or set user_approval.",
+        "END USER ROUND 16 DECISION MESSAGE",
+        "reports/SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md §7: cms_state_digest = sha256:b35f7aba68eca4e7c9b688ae979891330f2f3d08c2b4250ce855c55943f7e38e; p8_contract_digest = sha256:ee6bb68f04f0eb468f0fd6eafaaea0b68639b88199e207c7a76ef57e10bbf217 (independently recomputed, stable across runs, gate-helper agreement confirmed)"
+      ],
+      "alternatives": [
+        "Leave the digests null until full slice completion — rejected by the User; the values are verified and the fail-closed state no longer adds information.",
+        "Write additional provenance fields while editing the file — rejected; the authorization is scoped to exactly two values."
+      ],
+      "status": "ACTIVE",
+      "supersedes": "DEC-7112 explicitly_not_approved_by_this_record entry 'Writing digest values into sps2/requirements/P10-SECTION-INVENTORY.json' — superseded for these two values only, per the User's Round 16 authorization",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "The User's Round 16 decision line 'INVENTORY DIGEST REGENERATION: AUTHORIZE', transcribed verbatim in DEC-7201's evidence array. Self-declared attribution (UQ-ATT-2 applies)."
+      }
+    },
+    {
+      "decision_id": "DEC-7203",
+      "title": "Transcription of the Round 16 standing constraints (publication deferred, user approval not granted, commit/push not authorized, CI changes not authorized)",
+      "decision": "The Round 16 message's four remaining lines are transcribed as standing constraints of record: PUBLICATION: DEFER (unchanged from Rounds 12-15; domain/cms/data/ stays draft); USER APPROVAL: NOT GRANTED (user_approval remains null everywhere; no approval act has occurred); COMMIT/PUSH: NOT AUTHORIZED (nothing staged, committed, or pushed; HEAD remains c49f385); CI CHANGES: NOT AUTHORIZED (no CI file or workflow is modified). None of these lines grants anything; they constrain execution of the two authorizations above and all future rounds until separately changed.",
+      "reason": "Verbatim preservation of the User's constraint set, so the two authorizations above are read within their stated bounds.",
+      "evidence": [
+        "BEGIN USER ROUND 16 DECISION MESSAGE (verbatim, shared with DEC-7201)",
+        "PUBLICATION: DEFER",
+        "USER APPROVAL: NOT GRANTED",
+        "COMMIT/PUSH: NOT AUTHORIZED",
+        "CI CHANGES: NOT AUTHORIZED",
+        "END USER ROUND 16 DECISION MESSAGE"
+      ],
+      "alternatives": [],
+      "status": "ACTIVE",
+      "supersedes": null,
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16",
+        "basis": "The User's Round 16 decision message, transcribed verbatim in DEC-7201's evidence array."
+      }
+    }
+  ],
+  "non_goals": [
+    "Not a publication. domain/cms/data/ is untouched; content remains draft.",
+    "Not an approval act. user_approval remains null in the slice and inventory; APPROVAL-MECHANISM: OPTION A still requires a fresh explicit User approval act at actual completion.",
+    "Not a commit or push authorization. Nothing is staged or committed by this record.",
+    "Not a CI change.",
+    "Not an implementation round. The only file edits are this decision record and the two digest values in the inventory provenance block.",
+    "Not a ratification of any gate run, build, or slice state beyond what the transcribed lines state."
+  ],
+  "explicitly_not_approved_by_this_record": [
+    "Publishing Home content or any other CMS content",
+    "Setting user_approval in sps2/project/SLICE-P10-01.json or sps2/requirements/P10-SECTION-INVENTORY.json to any value",
+    "Any git state change: staging, committing, pushing, fetching, pulling, branching, stashing, resetting",
+    "Any CI modification",
+    "Writing any inventory value other than the two digest fields named in DEC-7202",
+    "Creating the backend operation manifest (domain/backend/operations.json)",
+    "Overwriting or editing any existing report or decision record"
+  ],
+  "unresolved_questions": null,
+  "related": [
+    "sps2/decisions/P10-GATE-SEMANTICS-ADOPTION.json (DEC-7112; whose digest-write prohibition is superseded for two values by DEC-7202)",
+    "reports/SPS2-ROUND15-READ-ONLY-VERIFICATION-20261016-175720.md (source of the verified digest values and of finding G-1 resolved by DEC-7201)",
+    "sps2/requirements/P10-SECTION-INVENTORY.json (the file the two digest values are written into)",
+    "sps2/tests/test_updater_safety.py and the eight updater-script files (the ratified workstream)"
+  ]
+}

@@ -1,0 +1,493 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P10-DECISIONS",
+  "phase": "Roadmap P10 (Vertical-Slice Frontend/Backend)",
+  "generated": "2026-10-08",
+  "author": "implementation agent (recording User decisions)",
+  "note": "Records the governance decisions the User made on 2026-10-08 to unblock P10 Phase 1, the frontend technology research authorization that accompanied them, and the frontend technology selection that followed the research. This is a User decision record, not a self-approval. P10 itself remains NOT AUTHORED: no P10 requirements, architecture, threat model, schemas, implementation, evidence or commit exists or is created by this record. D-P10-1 and D-P10-2 settle boundaries; D-P10-3 authorized research only; D-P10-4 retires the legacy definition-of-done; D-P10-5 selects a rendering technology and authorizes nothing further. The frontend technology research recorded under D-P10-3 is preserved unchanged in sps2/research/cache.json and MUST NOT be read as selecting a technology on its own — selection was a separate User decision, recorded as D-P10-5, and even that selection does not authorize implementation. LATER ADDITION: D-P10-6 was recorded on 2026-10-13, well after the 2026-10-08 decision set above. D-P10-6 binds the existing per_slice_dod baseline to the Home slice as HOME-ACC-01..24 with USER_DECISION provenance. It is scoped to the Home acceptance requirements alone: it does NOT populate, complete or approve the authoritative section inventory, which remains INCOMPLETE_PLANNING and UNAPPROVED, and it authorizes no Content publication, no slice implementation, no runtime-gate implementation, no deployment and no network exposure. FURTHER ADDITION: D-P10-7 was also recorded on 2026-10-13. D-P10-7 authorizes only the P10 section inventory's planning-state transition from INCOMPLETE_PLANNING to COMPLETE_AWAITING_USER_APPROVAL. It does NOT approve the inventory: user_approval remains null and COMPLETE_VERIFIED_USER_APPROVED remains unavailable until the REQ-P10-09 runtime gate is implemented and passes and the User separately approves. FURTHER ADDITION: D-P10-8 was also recorded on 2026-10-13. D-P10-8 records the human User's explicit approval of the CONTENTS of the P10 Home section inventory (the single logical Home section, its nine resolved fields, and their existing provenance). It is a genuine User approval recorded in this decision record and NOT inside the inventory artifact, which is left byte-identical. D-P10-8 does NOT establish that REQ-P10-09 runtime verification passed, does NOT authorize COMPLETE_VERIFIED_USER_APPROVED, and authorizes no implementation, publication, deployment or network exposure.",
+  "standing_bounds": {
+    "P5": "PARTIALLY_SATISFIED — tracked partial dependency; no runtime capability installation",
+    "CONF-001": "UNRESOLVED — strictly no LCP or INP thresholds invented; CWV verified via CLS <= 0.1 good / > 0.25 poor only",
+    "P9": "APPROVED and CLOSED by D-P9-APPROVAL (commit 9a16a9e); P9 must not be modified by P10 work",
+    "P8": "APPROVED and headless; P10 must not duplicate CMS ownership inside P10 (see D-P10-2)"
+  },
+  "decisions": [
+    {
+      "decision_id": "D-P10-1",
+      "title": "P10 / P11 Security Sequencing",
+      "decision": "P10 backend development may proceed later as a project-local, non-network-exposed application/service boundary. P10 MUST NOT expose a production/public/network-facing API or backend surface until the required authentication, CSRF protection, rate limiting, and other applicable security controls have been implemented and authorized through the appropriate security phase. P10 requirements and architecture MUST explicitly preserve this boundary. No assumption is authorized that P10 may expose an insecure public backend merely because P10 is independently listed from P11 in the roadmap. If the exact boundary between 'local/non-network-exposed' and 'network-exposed' needs machine enforcement, that requirement must be made explicit during P10 requirements/architecture. The security controls themselves are NOT implemented now.",
+      "scope": [
+        "Establishes a binding sequencing constraint on P10 backend work",
+        "Requires P10 requirements and architecture to preserve the boundary in writing",
+        "Defers all authentication, CSRF, rate limiting and related control implementation to the security phase"
+      ],
+      "strict_constraints": [
+        "No production, public or network-facing API or backend surface from P10 before security controls are implemented AND authorized through the appropriate security phase",
+        "No implementation of security controls under this decision",
+        "No assumption that independent listing of P10 from P11 implies any network exposure is permitted"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session: 'P10 backend development may proceed later as a project-local, non-network-exposed application/service boundary. P10 MUST NOT expose a production/public/network-facing API or backend surface until the required authentication, CSRF protection, rate limiting, and other applicable security controls have been implemented and authorized through the appropriate security phase. P10 requirements and architecture MUST explicitly preserve this boundary. No assumption is authorized that P10 may expose an insecure public backend merely because P10 is independently listed from P11 in the roadmap. If the exact boundary between \"local/non-network-exposed\" and \"network-exposed\" needs machine enforcement, that requirement must be made explicit during P10 requirements/architecture. Do not implement the security controls now.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-2",
+      "title": "P8 / P10 Presentation Ownership",
+      "decision": "P8 owns CMS/domain content semantics; the Content / Section / ContentType models; content persistence; authorization semantics; publishing workflow; asset semantics; and the CMS output-safety boundary. P8 remains headless and does not own the actual frontend rendering/presentation implementation. P10 owns domain/frontend/, actual presentation/rendering, frontend composition, rendered HTML output, the serving/presentation surface, domain/backend/ within the security boundary defined by D-P10-1, and domain/shared/ for shared vertical-slice contracts. P10 also owns the interpretation and registry of Section.layout values. P8 may continue storing Section.layout as CMS data, but P8 does not define the presentation meaning of those values. CMS ownership must not be duplicated inside P10.",
+      "scope": [
+        "Splits ownership: P8 owns content semantics and remains headless; P10 owns presentation and rendering",
+        "Assigns the Section.layout interpretation registry to P10 while leaving storage of the field with P8",
+        "Places domain/backend/ under P10 but confined by the D-P10-1 security boundary",
+        "Places domain/shared/ under P10 for shared vertical-slice contracts"
+      ],
+      "strict_constraints": [
+        "P8 remains headless: no frontend rendering implementation is added to P8",
+        "No duplication of CMS ownership (models, persistence, authorization, publishing, assets, output safety) inside P10",
+        "P8 does not define the presentation meaning of Section.layout values"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session, quoted in full in the decision field above: 'P8 owns: CMS/domain content semantics; Content / Section / ContentType models; content persistence; authorization semantics; publishing workflow; asset semantics; CMS output-safety boundary. P8 remains headless and does not own the actual frontend rendering/presentation implementation. P10 owns: domain/frontend/; actual presentation/rendering; frontend composition; rendered HTML output; the serving/presentation surface; domain/backend/ within the security boundary defined by D1; domain/shared/ for shared vertical-slice contracts. P10 also owns the interpretation and registry of Section.layout values. P8 may continue storing Section.layout as CMS data, but P8 does not define the presentation meaning of those values. Do not duplicate CMS ownership inside P10.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-3",
+      "title": "Frontend Technology — No Selection; Research Authorized",
+      "decision": "No frontend technology is selected. Frontend technology research is authorized, limited to a single question: 'Which rendering technology should P10 use to produce static/server-rendered HTML from P8 CMS content, under the Python-standard-library-only, project-local, no-third-party policy, such that the rendered output is consumable by the P9 deployment audit?' The research has been performed and recorded as research entries in sps2/research/cache.json. The research result MUST NOT itself authorize technology selection; technology selection remains a separate User decision.",
+      "scope": [
+        "Records that no frontend technology is selected",
+        "Authorizes and records the completed frontend technology research",
+        "Fixes the research question verbatim"
+      ],
+      "research_question": "Which rendering technology should P10 use to produce static/server-rendered HTML from P8 CMS content, under the Python-standard-library-only, project-local, no-third-party policy, such that the rendered output is consumable by the P9 deployment audit?",
+      "research_completed": {
+        "status": "PERFORMED",
+        "performed_on": "2026-10-08",
+        "research_entries": "sps2/research/cache.json (schema sps2.research/v1), entries TECH-FE-STRING-COMPOSITION, TECH-FE-STRING-TEMPLATE, TECH-FE-ELEMENTTREE-HTML, TECH-FE-3RD-PARTY-TEMPLATE-ENGINE",
+        "readiness_computed_by": "sps2/core/technology_readiness.py (readiness is computed, never stored as a label)",
+        "computed_readiness": {
+          "TECH-FE-STRING-COMPOSITION": "SUFFICIENT (all 10 coverage areas COVERED; strongest source rank 1)",
+          "TECH-FE-STRING-TEMPLATE": "PARTIAL (recommended_practices and security_considerations UNKNOWN)",
+          "TECH-FE-ELEMENTTREE-HTML": "PARTIAL (security_considerations UNKNOWN)",
+          "TECH-FE-3RD-PARTY-TEMPLATE-ENGINE": "INSUFFICIENT (STACK-CONSTRAINT and NOT-RESEARCHED blocking conflicts)"
+        },
+        "gate_selectable": "Only TECH-FE-STRING-COMPOSITION satisfies the P6 gate (readiness SUFFICIENT). Gate-satisfiable is NOT selected: selection remains a separate User decision.",
+        "recommendation": "RESEARCH RECOMMENDATION ONLY — adopt plain string composition with per-sink HTML escaping as the P10 rendering technology, implemented as a project-local static renderer that emits the build directory layout the P9 audit consumes (glob('**/*.html') plus robots.txt and sitemap.xml), reusing the already-approved P8 output-safety boundary (html.escape at the sink) and P9's per-sink escapers. string.Template is not recommended because it is a substitution layer with no escaping mechanism and no observed recommendation for HTML generation. xml.etree.ElementTree method='html' is not recommended now because it has no escaping hook for raw-text script elements, which is a live script-breakout path, and its documented None-attribute form raises TypeError on CPython 3.14.7. Third-party template engines are excluded by the standing stack constraint. This recommendation authorizes nothing; it is submitted for a separate User selection decision."
+      },
+      "strict_constraints": [
+        "Python standard library only; project-local; no dependency installation",
+        "No capability installation or activation",
+        "No framework selection before research completion",
+        "No implementation and no frontend code",
+        "No domain/frontend or domain/backend creation",
+        "No changes to P8 or P9",
+        "No production deployment and no network exposure",
+        "The existing stack constraint is not weakened or reinterpreted",
+        "No invented performance thresholds; CONF-001 preserved exactly",
+        "A technology is not treated as selectable unless the P6 research gate is satisfied"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session: 'No frontend technology is selected yet. Frontend technology research is explicitly authorized now. Research ONLY the following question: \"Which rendering technology should P10 use to produce static/server-rendered HTML from P8 CMS content, under the Python-standard-library-only, project-local, no-third-party policy, such that the rendered output is consumable by the P9 deployment audit?\" ... The research result MUST NOT itself authorize technology selection. Technology selection remains a separate User decision.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-4",
+      "title": "Legacy Section Definition-of-Done Not Carried Into SPS2",
+      "decision": "The legacy Lighthouse numeric gates are NOT authoritative for P10: Performance >= 90, SEO = 100, Accessibility = 100 and Best Practices = 100 are not carried into SPS2. The legacy mobile 320-1440px requirement and the legacy Accessibility AA requirement are not automatically promoted into P10 without explicit requirements analysis. Useful underlying principles are preserved only where they can be expressed as objective, machine-checkable requirements. P10 must use P9 for SEO verification, avoid invented performance thresholds, preserve CONF-001, express accessibility requirements through explicit testable criteria where justified, express responsive requirements through concrete design/behaviour requirements if needed rather than obsolete Lighthouse scores, and avoid importing the legacy 29-item checklist wholesale. The surviving requirements are to be decided during P10 Phase-1 requirements work.",
+      "scope": [
+        "Retires the four legacy Lighthouse numeric gates as non-authoritative for P10",
+        "Defers the legacy mobile viewport range and Accessibility AA level to separate requirements analysis rather than automatic promotion",
+        "Directs that any surviving principle be expressed as an objective, machine-checkable requirement",
+        "Binds P10 to P9 for SEO verification and to CONF-001 for Core Web Vitals"
+      ],
+      "strict_constraints": [
+        "No Lighthouse score thresholds in P10 requirements",
+        "No invented LCP or INP thresholds; CONF-001 remains UNRESOLVED",
+        "No wholesale import of the legacy 29-item checklist",
+        "No automatic promotion of the legacy mobile range or accessibility level without explicit requirements analysis"
+      ],
+      "not_authoritative_for_p10": [
+        "Legacy gate: Performance >= 90",
+        "Legacy gate: SEO = 100",
+        "Legacy gate: Accessibility = 100",
+        "Legacy gate: Best Practices = 100",
+        "Legacy mobile range: 320-1440px (not promoted without explicit requirements analysis)",
+        "Legacy accessibility level: AA (not promoted without explicit requirements analysis)"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User decision in session, quoted in full in the decision field above: 'Do NOT carry the legacy Lighthouse numeric gates into SPS2. The following legacy numeric gates are NOT authoritative for P10: Performance >= 90; SEO = 100; Accessibility = 100; Best Practices = 100. Also do not automatically promote the legacy mobile 320-1440px requirement or Accessibility AA requirement into P10 without explicit requirements analysis. Preserve useful underlying principles where they can be expressed as objective, machine-checkable requirements. P10 must: use P9 for SEO verification; avoid invented performance thresholds; preserve CONF-001; express accessibility requirements through explicit testable criteria where justified; express responsive requirements through concrete design/behavior requirements if needed, rather than obsolete Lighthouse scores; avoid importing the legacy 29-item checklist wholesale. The surviving requirements must be decided during P10 Phase-1 requirements work.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-5",
+      "title": "Frontend Technology Selection",
+      "decision": "TECH-FE-STRING-COMPOSITION is SELECTED as the P10 rendering technology. P10 will use project-local plain string composition to generate static/server-rendered HTML, with mandatory per-sink output encoding. The implementation must reuse the already-approved security boundaries established by P8 and P9, including P8's html.escape(text, quote=True), P9's _safe_attr(), and P9's escape_json_ld_for_html(). The renderer must produce the build-directory shape consumed by the P9 audit: **/*.html, robots.txt and sitemap.xml. The technology selection does NOT authorize implementation.",
+      "selected_technology": {
+        "technology_id": "TECH-FE-STRING-COMPOSITION",
+        "name": "Plain string composition with per-sink HTML escaping",
+        "research_entry": "sps2/research/cache.json (schema sps2.research/v1)",
+        "readiness": "SUFFICIENT — computed by sps2/core/technology_readiness.py, not read from a stored label",
+        "gate_selectable": true,
+        "basis_of_selection": "This candidate was the only one of the four researched to compute SUFFICIENT: all ten coverage areas COVERED and strongest source rank 1 (official documentation), with direct repository observation of the already-approved P8 and P9 output-safety implementations. The three alternatives remain unselected: TECH-FE-STRING-TEMPLATE and TECH-FE-ELEMENTTREE-HTML compute PARTIAL, and TECH-FE-3RD-PARTY-TEMPLATE-ENGINE computes INSUFFICIENT on the STACK-CONSTRAINT and NOT-RESEARCHED blocking conflicts."
+      },
+      "interpretation": [
+        "P10 rendering is project-local plain string composition with mandatory per-sink output encoding",
+        "Static/server-rendered HTML output, not a client-side framework",
+        "The P8 and P9 output-safety boundaries are reused, not reinvented: html.escape(text, quote=True) at text and attribute sinks, _safe_attr() for header metadata, escape_json_ld_for_html() for script sinks",
+        "The renderer's output contract is the P9 audit input: a build directory of **/*.html plus robots.txt and sitemap.xml"
+      ],
+      "conditions": [
+        "1. No third-party rendering or template dependency.",
+        "2. Project-local only.",
+        "3. Python standard library only, consistent with the standing stack constraint.",
+        "4. No network exposure is authorized by this decision.",
+        "5. P10 backend remains subject to D-P10-1.",
+        "6. Raw CMS content must never be placed directly into HTML sinks.",
+        "7. Per-sink encoding must be machine-enforced wherever practical.",
+        "8. Rendered HTML must be reparsed/validated using the project's approved stdlib HTMLParser approach.",
+        "9. Structural HTML correctness must be tested because string composition has no native DOM/tree model.",
+        "10. JSON-LD/script sinks must preserve the existing P9 </script> and <!-- safety boundary.",
+        "11. CONF-001 remains unchanged.",
+        "12. No LCP/INP numeric thresholds may be introduced.",
+        "13. This decision does not authorize production deployment.",
+        "14. This decision does not authorize network-facing backend exposure.",
+        "15. This decision does not authorize P10 implementation."
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-08",
+        "basis": "Explicit User selection in session: 'The User now explicitly selects: TECH-FE-STRING-COMPOSITION' — recorded as decision D-P10-5 'Frontend Technology Selection' with the 15 mandatory technology constraints quoted verbatim in the conditions array above. Selection basis is the completed research recorded in sps2/research/cache.json, in which TECH-FE-STRING-COMPOSITION is the only candidate computing readiness SUFFICIENT and the only candidate the P6 gate finds selectable."
+      }
+    },
+    {
+      "decision_id": "D-P10-APPROVAL",
+      "title": "P10 Phase 1 Requirements Approval",
+      "decision": "The User approves SPS2 P10 Phase 1 — Requirements Definition Only. The two Phase-1 artifacts are approved: sps2/requirements/P10-REQUIREMENTS.json and sps2/schemas/p10-slice.schema.json. This approval accepts the 20 P10 requirements, the eight-axis vertical-slice contract and its slice schema, the per-slice Definition of Done together with its explicitly excluded gates, the reconciliation of the 29-item legacy Section Definition of Done, and the documented security and P8/P9 ownership boundaries. It accepts TECH-FE-STRING-COMPOSITION as the selected frontend approach under the constraints already recorded under D-P10-5. This approval is of requirements definition only and authorizes no implementation.",
+      "approved_scope": [
+        "sps2/requirements/P10-REQUIREMENTS.json — approved as a requirements-definition artifact, byte-identical to the reviewed version",
+        "sps2/schemas/p10-slice.schema.json — approved as the machine-validatable slice contract, byte-identical to the reviewed version",
+        "the 20 P10 requirements REQ-P10-01 through REQ-P10-20, all in status REQUIREMENTS_ONLY with implementation and verification NOT_STARTED",
+        "the eight-axis vertical-slice contract (frontend, cms, backend, data, validation, assets, seo, tests) and the rule that no slice is complete unless all eight are verified together under the applicable runtime checks",
+        "the per-slice Definition of Done and its explicitly excluded gates: the four legacy Lighthouse numeric gates, the legacy 320-1440px viewport range pending UQ-P10-02, an Accessibility conformance level pending UQ-P10-03, any LCP or INP numeric threshold, and any public preview or deploy URL requirement held by D-P10-1",
+        "the reconciliation of the 29 legacy Section Definition of Done items: 8 RETAIN, 11 REFACTOR, 6 REJECT, 2 RESEARCH REQUIRED, 2 USER DECISION REQUIRED",
+        "the documented security boundary and the P8/P9 ownership boundaries: P8 remains headless and owns CMS and content semantics, P9 remains the SEO engine and pre-deployment audit owner, and P10 owns presentation, rendering, layout interpretation and the backend/shared boundaries within the D-P10-1 limit",
+        "TECH-FE-STRING-COMPOSITION as the selected frontend rendering approach, under the binding conditions already recorded under D-P10-5: standard library only, project-local, no third-party rendering dependency, per-sink output encoding, HTMLParser reparse validation, structural HTML testing, the P9 output contract, no network exposure, CONF-001 unchanged, and no invented LCP or INP thresholds"
+      ],
+      "conditions": [
+        "All six unresolved questions UQ-P10-01 through UQ-P10-06 remain OPEN and unresolved. This approval does not answer any of them.",
+        "CONF-001 remains UNRESOLVED. This approval invents no LCP or INP numeric threshold and does not resolve the Core Web Vitals threshold question.",
+        "The P8 content-status vocabulary conflict remains unresolved and out of scope: sps2/schemas/p8-content.schema.json and domain/cms/model.py declare (draft, published, archived) while domain/cms/validation.py additionally declares 'preview'. This approval does not resolve that conflict, and no P8 file is modified by this record.",
+        "The sps2/tools/check_sps2.py decision-ID discrepancy remains out of scope and unmodified: the validator's DEC-0000 numeric rule does not match the repository-dominant D-P<N>-<X> identifier format used by the P3, P6, P7, P8, P9 and P10 decision records.",
+        "Approving the schema does not make any runtime control operational. Structural schema validation establishes document structure and applicable field constraints only; it does not prove evidence authenticity, content authenticity, integration behaviour, test execution, P9 audit results, all-eight-axes completion, security control effectiveness, or approval authenticity.",
+        "The two approved artifacts remain byte-identical to the versions reviewed. This approval is recorded in the decision record rather than inside the artifacts, following the established P8 and P9 precedent, so that an artifact never records its own approval.",
+        "REQ-P10-17 continues to block any slice from entering implementation until an authoritative section inventory exists and has been approved by the User."
+      ],
+      "explicitly_not_approved": [
+        "P10 implementation of any kind, including renderer, backend, CMS, rendering, routes, serving, persistence or authentication code",
+        "implementation of the mandatory fail-closed runtime validation gate specified under REQ-P10-09",
+        "implementation of the state-changing operation declaration check specified under REQ-P10-07",
+        "any claim that the declared security controls are implemented, operational or effective; this approval must not be read as evidence that runtime verification is in place",
+        "population of the section inventory or the selection of a first section",
+        "any production, public or network-facing API or backend surface, held by D-P10-1 pending the security phase",
+        "implementation of authentication, authorisation beyond P8's actor-role semantics, CSRF protection or rate limiting",
+        "P10 architecture beyond what is required to express a requirement",
+        "any modification to P8 or P9",
+        "P11 implementation, and P12 or any later phase",
+        "production deployment, production-readiness or any runtime activation",
+        "resolving CONF-001, or inventing any LCP or INP threshold",
+        "any installation of a dependency, skill, MCP, CLI or package"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-09",
+        "basis": "Explicit User approval in session, quoted verbatim: 'I explicitly approve SPS2 P10 Phase 1 — Requirements Definition Only. Approved artifacts: sps2/requirements/P10-REQUIREMENTS.json, sps2/schemas/p10-slice.schema.json. Approval scope: Accept the 20 requirements, eight-axis contract, per-slice Definition of Done, legacy DoD reconciliation, and the documented security and P8/P9 ownership boundaries. Accept TECH-FE-STRING-COMPOSITION as the selected frontend approach under the already documented constraints. Keep all six UQ-P10 questions open until explicitly resolved. Keep CONF-001 unresolved. Keep the P8 preview-status conflict and check_sps2.py decision-ID issue outside this approval's scope. This approval applies ONLY to P10 Phase 1 requirements and schema. It does NOT authorize P10 implementation, runtime-gate implementation, section creation, backend exposure, deployment, or production use. No implementation work is authorized by this message. Do not interpret this approval as evidence that security controls or runtime verification are operational. Record the approval through the established governance process.'"
+      }
+    },
+    {
+      "decision_id": "D-P10-6",
+      "title": "Home Slice Acceptance Requirements — Binding of the per_slice_dod Baseline as HOME-ACC-01..24",
+      "decision": "The Home slice acceptance requirements are the EXISTING per_slice_dod baseline in sps2/requirements/P10-REQUIREMENTS.json bound to the Home section and expressed as the enumerated criteria HOME-ACC-01 through HOME-ACC-24. This binding introduces no new project-wide quality threshold and imports no legacy Lighthouse score, numeric viewport range, accessibility conformance level, or LCP/INP threshold. The Home acceptance_test_requirements field of the authoritative section inventory carries provenance USER_DECISION referencing this decision. This binding records the requirements as REQUIRED; it does NOT record any of them as satisfied.",
+      "approved_scope": [
+        "The binding of the existing per_slice_dod baseline to the Home slice as the enumerated criteria HOME-ACC-01 through HOME-ACC-24, covering contract and governance, CMS and rendering, layout and route, SEO and security, negative tests, quality, rollback and approval.",
+        "HOME-ACC-01: SLICE-P10-01 exists, validates against sps2.p10-slice/v1, and references the approved Home inventory entry.",
+        "HOME-ACC-02: no slice implementation began before REQ-P10-17 was satisfied.",
+        "HOME-ACC-03: every provenance and evidence reference resolves, with no fabricated or agent-attributed approval.",
+        "HOME-ACC-04: Home ContentType c64e3d79694e49eebd6c09ee58a53c87 exists with heading and body both type=text and required=true, matching the authorized home-default slot mapping.",
+        "HOME-ACC-05: only content with status=published renders as published Home content; draft yields no published route.",
+        "HOME-ACC-06: draft, missing, wrong-type, unresolvable or otherwise invalid content fails closed with no partial render.",
+        "HOME-ACC-07: every value reaching an HTML sink passed encode_for_html exactly once, with no raw path and no double-encoding.",
+        "HOME-ACC-08: rendered HTML reparses via the approved stdlib HTMLParser with closed elements, exactly one h1, no heading-level jumps, language declared and viewport meta present.",
+        "HOME-ACC-09: JSON-LD and script blocks round-trip without element breakout, preserving escape_json_ld_for_html.",
+        "HOME-ACC-10: a P8 edit through the integration harness demonstrably changes rendered output, and no rendered string is hardcoded.",
+        "HOME-ACC-11: error and empty states render deterministically and leak no raw CMS content.",
+        "HOME-ACC-12: home-default resolves explicitly to exactly heading and body against the Home ContentType.",
+        "HOME-ACC-13: the Home route / is unique and consistent with P9 canonical route derivation.",
+        "HOME-ACC-14: unknown layout ids and unsupported slots fail closed with no silent layout substitution.",
+        "HOME-ACC-15: all four approved P9 references are preserved exactly and no P9 logic is restated.",
+        "HOME-ACC-16: the P9 deployment-mode audit over built Home output exits 0, with robots.txt and sitemap.xml at the build root via the P9 engines.",
+        "HOME-ACC-17: no production or network exposure without implemented and authorised D-P10-1 controls, and the exposure class matches the observed bind.",
+        "HOME-ACC-18: state_changing_operations is explicitly declared and reconciled against the backend contract with no mismatch.",
+        "HOME-ACC-19: the slice imports no third-party module and writes nothing machine-global.",
+        "HOME-ACC-20: every claimed control has a negative test that fails when the control is removed.",
+        "HOME-ACC-21: zero lint, type-check or build blockers, and no dead code or unrecorded TODO.",
+        "HOME-ACC-22: the asset criteria are recorded as NOT APPLICABLE — zero assets by decision (DEC-7107) — and are NOT recorded as substantive passing tests.",
+        "HOME-ACC-23: the rollback method and scope are recorded and rehearsed in an isolated copy with no orphan references.",
+        "HOME-ACC-24: the User approved the slice, the approval is User-attributable and never agent-attributed, and no later slice began first.",
+        "Provenance USER_DECISION for the inventory field acceptance_test_requirements, with this decision as the user_decision_ref.",
+        "Vacuity handling: zero-asset criteria are recorded as NOT APPLICABLE (zero assets by decision, DEC-7107) and the empty state_changing_operations criteria are recorded as vacuously satisfied by the explicit empty declaration approved under DEC-7108; neither is recorded as a substantive passing test.",
+        "The adopted negative-case set (N-01..N-19): draft content rejected for a published route; missing Home Section; nonexistent Home Section id; missing ContentType; wrong ContentType id; missing content; invalid content-slot mapping; unknown layout id; duplicate route; unsafe content at an HTML sink; unsafe content at a JSON-LD/script sink; double-encoding absent; missing P9 contract reference; invalid or fabricated approval; runtime gate missing or failing; undeclared state-changing operation; renderer output failing reparse validation; network exposure without authorisation.",
+        "The existing exclusions carry forward unchanged: the four legacy Lighthouse numeric gates (D-P10-4); the legacy mobile 320-1440px range (UQ-P10-02, not promoted); an Accessibility conformance level such as AA (UQ-P10-03, not promoted); any LCP or INP numeric threshold (CONF-001, unresolved); and any public preview or deploy URL requirement (D-P10-1)."
+      ],
+      "conditions": [
+        "Binding is recorded as REQUIRED, not as satisfied. Acceptance of a HOME-ACC criterion is evaluated only when its named evidence artefact exists.",
+        "Criteria depending on REQ-P10-09, REQ-P10-07, SLICE-P10-01, or the Home renderer remain BLOCKED until those components exist and are verified, and are not reported as passing.",
+        "Criteria satisfied only because a declared list is empty are recorded as vacuously satisfied and MUST NOT be represented as substantive passing tests.",
+        "A negative case is valid only when it is actually executed and the rejection is observed; a case that passes vacuously does not evidence its control.",
+        "Per-sink encoding reuses the approved P8 boundary (encode_for_html, get_content_with_safe_output) and the P9 sink guards (_safe_attr, escape_json_ld_for_html); no second encoding mechanism is introduced.",
+        "This decision modifies no requirement, schema, validator, or artifact, and records no approval inside an artifact.",
+        "The section inventory file is not edited by this record; this decision is recorded here so that an artifact never records its own approval."
+      ],
+      "explicitly_not_approved": [
+        "The authoritative section inventory sps2/requirements/P10-SECTION-INVENTORY.json is NOT populated, NOT completed and NOT approved by this record. Inventory approval remains OUTSTANDING and is a separate future User action.",
+        "No slice implementation; SLICE-P10-01 is not created.",
+        "No Home renderer, no HTML reparse validation, and no build output.",
+        "No implementation of REQ-P10-07 or REQ-P10-09, and no runtime validation gate.",
+        "No publication or preview of any CMS content; the Home Content remains draft.",
+        "No P8 Section or Asset record creation, and no change to any persisted CMS record.",
+        "No modification to requirements, schemas, validators, P8, P9 or P17, and no change to real-agent execution settings.",
+        "No production deployment and no network or public exposure; D-P10-1 remains in force.",
+        "No git stage, commit, push, publish or deploy.",
+        "No dependency, skill, MCP, CLI or package installation."
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'The human User has explicitly approved Option A: the proposed Home acceptance requirements HOME-ACC-01 through HOME-ACC-24, including the six governance conditions summarized below.' The six conditions the User recorded are: (1) bind the existing per_slice_dod baseline to the Home slice through HOME-ACC-01..24; (2) record zero-asset criteria as N/A, zero assets by decision (DEC-7107), not as substantive passing tests; (3) adopt the 19 named negative cases, with cases requiring unavailable controls or a renderer remaining BLOCKED until those controls exist and are verified; (4) use USER_DECISION provenance for acceptance_test_requirements; (5) this approval does NOT approve, populate, or complete the authoritative section inventory, and inventory approval is a separate future action; (6) this approval does NOT authorize Content publication, Home slice implementation, runtime-gate implementation, deployment, or network exposure. Recorded in the decision record rather than inside any artifact, so that an artifact never records its own approval."
+      }
+    },
+    {
+      "decision_id": "D-P10-7",
+      "title": "P10 Section Inventory Planning-State Transition Authorization — INCOMPLETE_PLANNING to COMPLETE_AWAITING_USER_APPROVAL",
+      "decision": "Authorize the P10 section inventory's planning-state transition from INCOMPLETE_PLANNING to COMPLETE_AWAITING_USER_APPROVAL after confirming that every enumerated section field is resolved and structurally schema-valid. This authorization is limited to that transition. It does NOT approve the inventory, and it does NOT authorize any slice implementation, runtime-gate implementation, Content publication, deployment, or network exposure.",
+      "approved_scope": [
+        "The authoritative section inventory sps2/requirements/P10-SECTION-INVENTORY.json contains exactly one proposed Home section entry, with logical section_id 'home'.",
+        "All nine REQ-P10-17 inventory fields on that section are resolved and carry no UNDECLARED_PENDING value: section_id, purpose, route (USER_DECISION via DEC-7105); cms_content_types (DERIVED from the persisted P8 ContentType record); layout_id (USER_DECISION via DEC-7106); assets (USER_DECISION via DEC-7107, explicit empty list); backend_data_dependencies (USER_DECISION via DEC-7108, explicit empty list); seo_requirements (P9_OWNED_REFERENCE, the four approved P9 contracts); acceptance_test_requirements (USER_DECISION via D-P10-6, the 24 approved HOME-ACC-01..24 criteria).",
+        "The authorized transition is exactly three fields in that file: inventory_state INCOMPLETE_PLANNING to COMPLETE_AWAITING_USER_APPROVAL; complete false to true; and sections[0].section_completeness INCOMPLETE to COMPLETE.",
+        "user_approval remains null, as the schema requires for COMPLETE_AWAITING_USER_APPROVAL: that state exists precisely because the User has not yet approved the inventory.",
+        "The transition asserts ENUMERATION and FIELD completeness only. It is a structural assertion that every enumerated section field is resolved and schema-valid; it is NOT a runtime verification, NOT an authenticity claim about any reference, and NOT an assertion that any referenced artefact exists or is published.",
+        "cms_state_digest and p8_contract_digest remain null. No digest values are invented; their recomputation is an obligation of the runtime validation gate, which does not exist."
+      ],
+      "conditions": [
+        "Every field value, provenance envelope, the 24 HOME-ACC criteria and the four P9 references are preserved byte-identically across the transition; only the three authorized state fields change.",
+        "COMPLETE_VERIFIED_USER_APPROVED remains unavailable. It may be entered only after the required runtime verification has actually been implemented and has actually passed, AND after the User separately approves the inventory. Entering it now would assert a runtime verification that has never occurred.",
+        "Existing exclusions remain in force unchanged: the four legacy Lighthouse numeric gates (D-P10-4); the legacy mobile 320-1440px range (UQ-P10-02, not promoted); an Accessibility conformance level such as AA (UQ-P10-03, not promoted); any LCP or INP numeric threshold (CONF-001, unresolved); and any public preview or deploy URL requirement (D-P10-1).",
+        "The Home Content record 60e51f0536cb413e86e96ff6f750846a remains status=draft with published_at=null; the transition does not change, publish or preview it.",
+        "The logical P10 section id 'home' is not a P8 Section UUID; no P8 Section record exists and none is created. Existence of a P8 Section remains a runtime check.",
+        "The empty assets list is scoped to the initial Home slice only and is not a claim that no assets exist anywhere in the CMS; HOME-ACC-22 records the asset criteria as NOT APPLICABLE rather than as substantive passing tests.",
+        "The empty backend/data dependency list remains subject to REQ-P10-07 reconciliation; it is a declaration, not evidence that a reconciliation mechanism exists.",
+        "The transition is a structural state change only. It confers no approval of the inventory, and REQ-P10-17 criterion 1 continues to block any slice from entering implementation until an authoritative inventory exists AND has been approved by the User.",
+        "No requirement, schema, validator, CMS record, or delegated decision record is modified by this decision."
+      ],
+      "explicitly_not_approved": [
+        "The inventory itself is NOT approved by this decision. Inventory approval is a separate, explicit future act by the User, and user_approval remains null.",
+        "COMPLETE_VERIFIED_USER_APPROVED is NOT authorized and is not reachable while the REQ-P10-09 runtime validation gate does not exist.",
+        "No slice implementation; SLICE-P10-01 is not created.",
+        "No implementation of REQ-P10-07 or REQ-P10-09, and no runtime validation gate.",
+        "No Home renderer, no HTML reparse validation, and no build output.",
+        "No publication or preview of any CMS content; the Home Content remains draft.",
+        "No P8 Section or Asset record creation, and no change to any persisted CMS record.",
+        "No modification to requirements, schemas, validators, P10-DELEGATED-DECISIONS.json, P8, P9 or P17, and no change to real-agent execution settings.",
+        "No claim that any HOME-ACC criterion is satisfied; criteria depending on absent controls, the renderer or the runtime gate remain BLOCKED.",
+        "No production deployment and no network or public exposure; D-P10-1 remains in force.",
+        "No git stage, commit, push, publish or deploy.",
+        "No dependency, skill, MCP, CLI or package installation."
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'The human User has explicitly authorized creating a new decision record and transitioning the P10 inventory to COMPLETE_AWAITING_USER_APPROVAL. This authorization does NOT approve the inventory itself and does NOT authorize slice implementation, runtime-gate implementation, publication, or deployment.' Recorded in the decision record rather than inside any artifact, so that an artifact never records its own approval."
+      }
+    },
+    {
+      "decision_id": "D-P10-8",
+      "title": "User Approval of the P10 Home Section Inventory Contents — Without Claiming Runtime Verification",
+      "decision": "The human User explicitly approves the current contents of the authoritative P10 section inventory sps2/requirements/P10-SECTION-INVENTORY.json: the single logical Home section, its nine resolved REQ-P10-17 inventory fields, and the provenance and references exactly as recorded. On the strength of this approval the planning inventory is the authoritative section enumeration for the purposes defined by REQ-P10-17. This is a genuine User approval of the inventory CONTENTS. It is recorded here, in the decision record, and is deliberately NOT recorded inside the inventory artifact: the inventory file is not modified by this decision.",
+      "approved_scope": [
+        "The current authoritative P10 Home inventory contents as they exist in sps2/requirements/P10-SECTION-INVENTORY.json at this approval: inventory_state=COMPLETE_AWAITING_USER_APPROVAL, complete=true, sections containing exactly one entry, and sections[0].section_completeness=COMPLETE.",
+        "The single logical Home section, section_id='home'. This is the logical P10 section identifier; it is NOT a P8 Section UUID and no P8 Section record exists or is created.",
+        "Its nine resolved inventory fields and their existing provenance, approved exactly as recorded and unchanged by this decision: section_id, purpose and route as USER_DECISION via DEC-7105; cms_content_types as DERIVED from the persisted P8 ContentType record c64e3d79694e49eebd6c09ee58a53c87 with a non-blank source_ref; layout_id as USER_DECISION via DEC-7106; assets as an explicit empty USER_DECISION list via DEC-7107; backend_data_dependencies as an explicit empty USER_DECISION list via DEC-7108; seo_requirements as P9_OWNED_REFERENCE naming exactly sps2.p9-audit/v1, sps2.p9-metadata/v1, sps2.p9-sitemap/v1 and sps2.p9-structured-data/v1; acceptance_test_requirements as USER_DECISION via D-P10-6 carrying the 24 approved HOME-ACC-01..24 criteria byte-identically.",
+        "The existing provenance envelopes and decision references recorded in the inventory, including the DERIVED cms_content_types source_ref and every user_decision_ref, are approved as they stand. No field value, provenance class, HOME-ACC criterion or P9 reference is changed, weakened or reinterpreted by this decision.",
+        "The current planning inventory is approved as the authoritative section enumeration for the purposes defined by REQ-P10-17.",
+        "The inventory file itself is left byte-identical: inventory_state remains COMPLETE_AWAITING_USER_APPROVAL, complete remains true, section_completeness remains COMPLETE, and user_approval remains null."
+      ],
+      "conditions": [
+        "This approval establishes that the human User approved the inventory CONTENTS. It does NOT establish that REQ-P10-09 runtime verification has passed. The REQ-P10-09 runtime validation gate does not exist, has never been implemented and has never run; every code reference to it is prose stating its absence.",
+        "inventory_state is NOT changed to COMPLETE_VERIFIED_USER_APPROVED. That state asserts that runtime verification passed AND authentic User approval is recorded; the first conjunct is false, so that transition is refused. The inventory therefore remains COMPLETE_AWAITING_USER_APPROVAL, which accurately asserts enumeration and field completeness while the User has not yet approved it through the artifact's own approval field.",
+        "This decision does NOT authorize creating, fabricating, simulating or bypassing runtime evidence of any kind, and no runtime evidence is created or claimed by it.",
+        "The empty assets list remains scoped to the initial Home slice only and is not a claim that no assets exist anywhere in the CMS; HOME-ACC-22 continues to record the asset criteria as NOT APPLICABLE rather than as substantive passing tests.",
+        "The empty backend/data dependency list remains a declaration only, still subject to REQ-P10-07 reconciliation, which is not implemented.",
+        "The Home Content 60e51f0536cb413e86e96ff6f750846a remains status=draft with published_at=null; a published-only slice reference correctly rejects it.",
+        "All existing exclusions remain in force unchanged: the four legacy Lighthouse numeric gates (D-P10-4); the legacy mobile 320-1440px range (UQ-P10-02, not promoted); an Accessibility conformance level such as AA (UQ-P10-03, not promoted); any LCP or INP numeric threshold (CONF-001, unresolved); and any public preview or deploy URL requirement (D-P10-1).",
+        "All P10 security restrictions remain in force, including D-P10-1: no production, public or network-facing surface without implemented and authorised security controls.",
+        "No HOME-ACC criterion is claimed to be satisfied. Criteria depending on SLICE-P10-01, the Home renderer, REQ-P10-07 or REQ-P10-09 remain BLOCKED, and criteria satisfied only because a declared list is empty remain vacuously satisfied by explicit decision.",
+        "cms_state_digest and p8_contract_digest remain null. No digest value is invented; their recomputation is an obligation of the runtime gate that does not exist.",
+        "This decision modifies no requirement, schema, validator, artifact, or persisted CMS record, and records no approval inside any artifact."
+      ],
+      "explicitly_not_approved": [
+        "It is NOT established that REQ-P10-09 runtime verification has passed; no runtime verification was performed, and none is claimed.",
+        "Changing inventory_state to COMPLETE_VERIFIED_USER_APPROVED is NOT authorized. That state requires runtime verification that has genuinely been implemented and passed, which has not occurred.",
+        "Populating the inventory's user_approval field is NOT authorized by this decision; user_approval remains null.",
+        "Creating or fabricating runtime evidence of any kind is NOT authorized.",
+        "No slice implementation; SLICE-P10-01 is not created.",
+        "No Home renderer, no HTML reparse validation, and no build output.",
+        "No implementation of REQ-P10-07 or REQ-P10-09, and no runtime validation gate.",
+        "No publication or preview of any CMS content; the Home Content remains draft.",
+        "No P8 Section or Asset record creation, and no change to any persisted CMS record.",
+        "No modification to requirements, schemas, validators, D-P10-6, D-P10-7, the delegated decision records, P8, P9 or P17, and no change to real-agent execution settings.",
+        "No network exposure, deployment, production operation, or public preview or deploy URL.",
+        "No git stage, commit, push, publish or deploy.",
+        "No dependency, skill, MCP, CLI or package installation."
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-13",
+        "basis": "Explicit User authorization in session, quoted verbatim: 'The human User has authorized approval of the existing P10 Home section inventory.' The User approved the inventory in response to the question asking whether to formally approve it, stating 'go ahead'. This approval is recorded in the decision record rather than inside the inventory artifact, so that an artifact never records its own approval, and it deliberately stops short of the COMPLETE_VERIFIED_USER_APPROVED transition that would falsely imply REQ-P10-09 runtime verification had passed."
+      }
+    },
+    {
+      "decision_id": "D-P10-9",
+      "title": "Slice Field-Slots Contract — Declared Slots Must Exactly Match Layout-Consumed Slots",
+      "decision": "A slice's cms_content_references[].field_slots array must contain exactly the slot names consumed by the selected layout, with set equality (order-insensitive). Duplicate declared slots are invalid. Under-declared, over-declared, and unsupported slots are rejected. The comparison is between the slice's declared field_slots and the layout's consumed slots as defined by the authoritative layout registry (domain/frontend/layout_registry.py). The existing authoritative ContentType validation and content-slot resolution (domain/frontend/content_slots.py) remain in force. No new field-slot namespace or implicit slot auto-completion is introduced.",
+      "approved_scope": [
+        "A slice's cms_content_references[].field_slots must exactly match the layout's consumed slots via set equality: set(declared) == set(layout_consumed).",
+        "Order of declared slots is not semantically significant; comparison is set-based.",
+        "Duplicate slot entries in a single field_slots declaration are rejected (schema enforces uniqueItems: true).",
+        "Under-declared slots (slice omits a slot the layout consumes) are rejected: missing = layout_consumed - declared.",
+        "Over-declared slots (slice declares a slot the layout does not consume) are rejected: extra = declared - layout_consumed.",
+        "Unsupported slots (slots not in the authoritative _HOME_SLOT_SOURCE mapping) are rejected by the existing content_slots contract and must be rejected by the slice schema and gate.",
+        "The authoritative layout_registry._LAYOUT_SPEC defines the consumed slots for each layout. Currently only 'home-default' is registered, consuming ('heading', 'body').",
+        "The existing authoritative content_slots contract (_HOME_SLOT_SOURCE = {'heading': 'title', 'body': 'body'}) remains the value-binding authority. The gate continues to call resolve_content_slots with the declared slots.",
+        "The existing authoritative layout_registry.resolve() validation (declared slots must exist in ContentType) remains in force.",
+        "The slice schema p10-slice.schema.json is updated to add uniqueItems: true to field_slots and the description is updated to reflect the exact-match requirement."
+      ],
+      "conditions": [
+        "This decision does NOT authorize Phase B (slice implementation, renderer, deployment, or network exposure).",
+        "This decision does NOT modify the P8 CMS, P9 audit, P17 state machine, or any P8/P9/P17 artifact.",
+        "This decision does NOT resolve the M-4 declared-vs-consumed semantic ambiguity in any way other than the exact-match rule stated above; any future layout beyond 'home-default' must follow the same rule.",
+        "This decision does NOT authorize slice implementation, Content publication, runtime-gate implementation beyond the field-slot contract, deployment, or network exposure.",
+        "The REQ-P10-09 runtime validation gate's check_layout_slot_conformance control is the enforcement point for this contract. The gate must obtain consumed slots from the layout registry and compare with the slice's declared slots using set equality.",
+        "The existing ContentType validation (declared slots must exist in ContentType) and content-slot resolution (values must be non-empty strings) remain in force and are not weakened by this decision.",
+        "No new field-slot namespace is introduced; the declared and consumed slots refer to the same concept defined by the layout registry and content_slots authority.",
+        "The slice schema p10-slice.schema.json is updated to add uniqueItems: true to field_slots and the description is updated to reflect the exact-match requirement against the layout's consumed slots.",
+        "This decision modifies the schema (p10-slice.schema.json), the runtime gate (check_layout_slot_conformance), and the test suite (regression tests for the new contract). No other files are modified by this decision."
+      ],
+      "explicitly_not_approved": [
+        "Phase B slice implementation, renderer, or deployment",
+        "Content publication or preview",
+        "Network exposure or production backend exposure (held by D-P10-1)",
+        "New field-slot namespace or implicit slot auto-completion",
+        "Implicit slot auto-completion or defaulting of missing consumed slots",
+        "Weakening of the existing content_slots authority or layout_registry authority",
+        "Weakening of the existing ContentType validation or content-slot value resolution",
+        "P8, P9, or P17 modifications",
+        "REQ-P10-07 implementation (still unimplemented)",
+        "Evidence freshness/authenticity implementation (still UNIMPLEMENTED)",
+        "Digest algorithms (CMS/P8) definition (still UNDEFINED)",
+        "D-P10-8 / user_approval / COMPLETE_VERIFIED_USER_APPROVED interaction (still UNDEFINED)",
+        "Gate-record artifact schema definition (still UNDEFINED)",
+        "GATE-P17-3 and GATE-P17-4 opening",
+        "Network exposure or publication",
+        "New dependencies"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-14",
+        "basis": "Explicit User authorization to implement the field-slot exact-match contract (D-P10-9) as recommended by the contract review. The User approved: (1) slice field_slots must exactly match layout-consumed slots with set equality; (2) duplicates rejected via uniqueItems; (3) under/over-declared rejected; (4) unsupported slots rejected via existing content_slots authority; (5) schema updated with uniqueItems: true and updated description; (6) gate updated to enforce set-equality comparison; (7) no new field-slot namespace or auto-completion; (8) existing authoritative validations preserved; (9) no Phase B authorization; (10) all existing governance invariants preserved. Recorded in the decision record rather than inside any artifact, so that an artifact never records its own approval."
+      }
+    }
+  ],
+  "frontend_technology_research_authorization": {
+    "status": "EXERCISED",
+    "exercised_on": "2026-10-08",
+    "what_was_authorized": "Research only, on the single question fixed by D-P10-3, following the existing P6 research methodology and repository conventions.",
+    "where_the_research_is_recorded": "sps2/research/cache.json — four research entries appended to the existing research cache used by the P6 gate. This is the research store, not the capability registry: no capability registry entry was created and no lifecycle transition occurred. Readiness is computed by sps2/core/technology_readiness.py at read time and is never stored as a label, so a research entry cannot self-approve anything.",
+    "evidence_basis": "Official Python documentation retrieved on 2026-10-08 (docs.python.org: html, string.Template, xml.etree.ElementTree, http.server), direct repository observation of the approved P8 and P9 output-safety implementations, and direct empirical execution under the project interpreter CPython 3.14.7. No evidence was invented; areas not observed are recorded UNKNOWN and depress readiness accordingly.",
+    "explicitly_not_authorized_by_this_research": [
+      "frontend technology selection",
+      "any implementation, including any domain/frontend or domain/backend code",
+      "any weakening or reinterpretation of the stack constraint",
+      "any capability registry entry, capability installation or capability activation"
+    ]
+  },
+  "frontend_technology_selection": {
+    "status": "SELECTED",
+    "selected_on": "2026-10-08",
+    "selected_by": "User",
+    "decision_id": "D-P10-5",
+    "selected_technology": "TECH-FE-STRING-COMPOSITION",
+    "unselected_candidates": [
+      "TECH-FE-STRING-TEMPLATE (readiness PARTIAL, not selectable)",
+      "TECH-FE-ELEMENTTREE-HTML (readiness PARTIAL, not selectable)",
+      "TECH-FE-3RD-PARTY-TEMPLATE-ENGINE (readiness INSUFFICIENT, blocked by STACK-CONSTRAINT and NOT-RESEARCHED)"
+    ],
+    "research_preservation": "The four research entries in sps2/research/cache.json are unchanged by this selection. No readiness label was rewritten, no entry was added or removed, and readiness continues to be computed by sps2/core/technology_readiness.py at read time. Selection is recorded here, in the decision record, not in the research store.",
+    "registry_impact": "None. No capability registry entry was created and no capability was promoted, installed or activated. A technology selection is not a capability lifecycle transition.",
+    "still_not_authorized_by_selection": [
+      "P10 implementation of any kind",
+      "P10 Phase-1 requirements",
+      "P10 architecture, threat model, schemas, integration harness or evidence",
+      "production deployment and any network-facing backend exposure (held by D-P10-1)"
+    ]
+  },
+  "explicitly_not_approved_by_this_record": [
+    "P10 implementation of any kind",
+    "P10 Phase-1 requirements (surviving requirements under D-P10-4 are decided there, not here)",
+    "P10 architecture",
+    "P10 threat model",
+    "P10 schemas",
+    "P10 domain/frontend, domain/backend or domain/shared implementation",
+    "P10 integration harness",
+    "P10 evidence",
+    "P10 phase completion or closure",
+    "frontend technology selection is now recorded under D-P10-5, but that selection authorizes no implementation; no P10 code may be written on the strength of it",
+    "any production, public or network-facing API or backend surface (held by D-P10-1 pending the security phase)",
+    "implementation of authentication, CSRF protection, rate limiting or any other security control",
+    "any modification to P8 or P9",
+    "P11 implementation, and P12 or any later phase",
+    "production deployment or production-readiness",
+    "runtime activation of any kind",
+    "promoting any capability, including CAP-P03-005",
+    "modifying the production capability registry",
+    "resolving CONF-001",
+    "inventing any LCP or INP threshold",
+    "any git commit or push of P10 work",
+    "any installation of a dependency, skill, MCP, CLI or package"
+  ]
+}

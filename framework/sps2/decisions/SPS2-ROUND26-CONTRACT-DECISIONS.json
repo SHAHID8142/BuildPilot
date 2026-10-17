@@ -1,0 +1,122 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "SPS2-ROUND26-CONTRACT-DECISIONS",
+  "phase": "SPS2 Governance Contract Reconciliation",
+  "generated": "2026-10-16",
+  "author": "implementation agent (not a User; this record transcribes the User's Round 26 authorization message received 2026-10-16 and implements its explicitly approved contracts; it decides nothing on its own)",
+  "note": "Records exactly the User's Round 26 approvals of the amended Round 25 contracts as DEC-7301, DEC-7302, and DEC-7303. The User separately authorized creation of the three decision records, implementation, and the narrowly scoped requirement, threat-model, schema, and validator changes. The User did not authorize staging, committing, pushing, deployment, publication, CI changes, installer redesign, CMS changes, P10 User approval, backend-manifest creation, or inventory-digest changes.",
+  "decisions": [
+    {
+      "decision_id": "DEC-7301",
+      "title": "Adopt a content-pinned exception for exactly eight ratified DEC-7201 updater files",
+      "decision": "Adopt the fixed-baseline, content-and-mode-pinned legacy exception for exactly the eight paths in sps2/governance/legacy-exception-manifest.json. The manifest canonical SHA-256 is sha256:71a054df3f0fa884dae450d2bd7a586318c6bbb3624e0138fbf9442916a8891d and its authority baseline is c49f3852e1c31d0136269c80fe58201b059af3ec. A path is exempt only when the manifest is present, parseable, hash-verified, and internally exact; the path appears exactly once; it is repository-relative and contained; lstat shows a regular non-symlink file; its worktree blob, SHA-256, and mode equal the manifest values; and its stage-0 blob equals either the authority-baseline blob or the expected worktree blob. Any third stage-0 value, missing entry, deletion, rename, type change, mode change, content change, duplicate, ninth path, or excluded check-update mirror change fails. The P5 checker uses the same shared exception while preserving its c11da27 enumeration scope and fail-closed behavior. This narrowly supersedes only the conflicting legacy-diff-zero scope of DEC-0028, REQ-P3-08, REQ-P9-10, D-P7-C, the P7/P9 threat models, and the P10 roadmap prohibition for these eight pinned files; historical D-P7-C and historical P2 evidence are not rewritten.",
+      "reason": "The User explicitly approved the corrected eight-path exception, manifest integrity contract, exclusion of all four check-update mirrors, and P5 shared-exception treatment while preserving the fail-closed legacy-preservation intent.",
+      "evidence": [
+        "BEGIN USER ROUND 26 DECISION MESSAGE (verbatim, relevant approval lines)",
+        "I approve the normative contracts proposed for DEC-7301, DEC-7302, and DEC-7303 in: reports/SPS2-ROUND25-AMENDED-GOVERNANCE-PACKAGE-20261016-223101.md",
+        "DEC-7301: Approve the exact eight-path, content-and-mode-pinned exception.",
+        "Approve the proposed manifest integrity contract.",
+        "Explicitly exclude all four check-update mirrors.",
+        "Amend the P5 checker to use the same shared exception, preserving its existing scope and fail-closed behavior.",
+        "Preserve historical P2 evidence and do not rewrite D-P7-C.",
+        "Recompute all file hashes, modes, and manifest hashes before use.",
+        "END USER ROUND 26 DECISION MESSAGE",
+        "Fresh implementation-time verification: eight worktree blobs, modes, SHA-256 values, and the updater-test SHA-256 were recomputed; the canonical manifest identity is sha256:71a054df3f0fa884dae450d2bd7a586318c6bbb3624e0138fbf9442916a8891d. This differs from Round 25 because scripts/sps-update.sh, its mirror, and sps2/tests/test_updater_safety.py changed after Round 25 as authorized updater-safety work."
+      ],
+      "alternatives": [
+        "Leave all legacy checkers red despite the ratified updater work — rejected by the User.",
+        "Create a broad path-based exception — rejected; it would weaken DEC-0028 and permit later edits."
+      ],
+      "status": "ACTIVE",
+      "supersedes": "Only the conflicting legacy-diff-zero scope of DEC-0028, REQ-P3-08, REQ-P9-10, D-P7-C, P7/P9 threat-model wording, and the P10 roadmap prohibition, limited to the eight pinned files and updater test evidence.",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16T23:15:04+06:00",
+        "basis": "The User's Round 26 decision message, transcribed verbatim in the evidence array."
+      }
+    },
+    {
+      "decision_id": "DEC-7302",
+      "title": "Permit exactly four pinned P10 Home imports from the P9 SEO engine",
+      "decision": "Adopt the exact four file/module/source-symbol groups in sps2/governance/p10-p9-import-exception-manifest.json. The manifest canonical SHA-256 is sha256:d8dd50395689de0325c29fd55ea959205bee17b9a606b84b236fd3f044f22448 and its authority baseline is c49f3852e1c31d0136269c80fe58201b059af3ec. A compliant import is an absolute ast.ImportFrom whose canonical source file, source module, and imported source symbol exactly match an approved group; a local alias is irrelevant. Module imports, aliased module imports, star imports, unlisted files, modules, or symbols, duplicate source symbols, dynamic imports, syntax-invalid files, symlinked files, path traversal, and paths outside the root remain forbidden. A shared scanner is used by both P9 isolation and rollback. The four groups are owned P10 dependencies, not rollback orphans; P9 removal is a coordinated architectural operation and is no longer guaranteed to leave Home buildable until the dependency is retired or migrated. Every other domain.seo reference outside the P9 surface remains forbidden.",
+      "reason": "The User explicitly approved only the four Home/P9 groups, the manifest integrity and strict scanner rules, and the P9 rollback amendment recognizing the owned Home dependency.",
+      "evidence": [
+        "BEGIN USER ROUND 26 DECISION MESSAGE (verbatim, relevant approval lines)",
+        "DEC-7302: Approve only the four specified Home/P9 file/module/symbol groups.",
+        "Approve the manifest integrity, strict scanner, and fail-closed rules.",
+        "Amend P9 rollback semantics to recognize the owned Home dependency.",
+        "Recompute all file hashes, modes, and manifest hashes before use.",
+        "END USER ROUND 26 DECISION MESSAGE",
+        "Fresh implementation-time AST verification confirmed the four approved file/module/symbol groups; the canonical manifest identity is sha256:d8dd50395689de0325c29fd55ea959205bee17b9a606b84b236fd3f044f22448."
+      ],
+      "alternatives": [
+        "Remove the P9 imports from Home — rejected by the User in favor of a narrowly owned dependency.",
+        "Permit module-level or unlisted P9 imports — rejected; that would weaken P9 ownership and rollback isolation."
+      ],
+      "status": "ACTIVE",
+      "supersedes": "Only the conflicting P9 rollback independence and orphan-import scope of REQ-P9-10 and the P9 threat model for the four pinned Home import groups.",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16T23:15:04+06:00",
+        "basis": "The User's Round 26 decision message, transcribed verbatim in the evidence array."
+      }
+    },
+    {
+      "decision_id": "DEC-7303",
+      "title": "Adopt historical compatibility for D-P<phase>-* decision identifiers",
+      "decision": "Adopt anchored compatibility for historical identifiers matching DEC-#### or D-P<phase>-<UPPERCASE_ALNUM_SEGMENTS>. New decision records MUST use DEC-####. Historical D-P* identifiers remain compatibility-only, retain their provenance, and gain no approval validity. JSON Schema and every Python validator SHALL use the equivalent anchored pattern; duplicate-ID checks and all reason, evidence, attribution, and approval rules remain mandatory. Validator process exit semantics remain unchanged: decision-data errors are reported visibly without changing the existing exit-code contract.",
+      "reason": "The User explicitly approved historical D-P* compatibility only, required DEC-#### for new decisions, and required preservation of historical identifiers, duplicate checks, approval rules, and validator exit semantics.",
+      "evidence": [
+        "BEGIN USER ROUND 26 DECISION MESSAGE (verbatim, relevant approval lines)",
+        "DEC-7303: Approve historical D-P* compatibility only.",
+        "Require all new decisions to use DEC-####.",
+        "Preserve historical identifiers, duplicate-ID checks, approval rules, and validator exit semantics.",
+        "END USER ROUND 26 DECISION MESSAGE",
+        "Fresh implementation-time inspection confirmed DEC-7301, DEC-7302, and DEC-7303 were available immediately before record creation."
+      ],
+      "alternatives": [
+        "Rename historical D-P* identifiers — rejected; it would destroy provenance.",
+        "Admit arbitrary legacy IDs — rejected; compatibility must remain anchored and historical."
+      ],
+      "status": "ACTIVE",
+      "supersedes": "Only the conflicting DEC-####-only identifier syntax in the decision schema and validator contracts, for historical D-P* compatibility.",
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-16T23:15:04+06:00",
+        "basis": "The User's Round 26 decision message, transcribed verbatim in the evidence array."
+      }
+    }
+  ],
+  "non_goals": [
+    "No staging, commit, push, deployment, or publication.",
+    "No CI modification.",
+    "No installer preservation redesign.",
+    "No CMS content change or publication transition.",
+    "No P10 User approval or backend operations manifest creation.",
+    "No inventory-digest regeneration.",
+    "No validator exit-semantics change.",
+    "No rewrite of historical D-P7-C or historical P2 evidence."
+  ],
+  "explicitly_not_approved_by_this_record": [
+    "Editing any pinned updater file beyond its recorded blob and mode.",
+    "Adding a ninth legacy exception or covering any check-update mirror.",
+    "Adding any unlisted Home/P9 import.",
+    "Creating new D-P* decision identifiers.",
+    "Changing validator exit semantics.",
+    "Any action listed in non_goals."
+  ],
+  "unresolved_questions": null,
+  "related": [
+    "reports/SPS2-ROUND25-AMENDED-GOVERNANCE-PACKAGE-20261016-223101.md",
+    "sps2/decisions/SPS2-ROUND16-USER-DECISIONS.json (DEC-7201)",
+    "sps2/governance/legacy-exception-manifest.json",
+    "sps2/governance/p10-p9-import-exception-manifest.json",
+    "sps2/governance/decision_identifiers.py"
+  ]
+}

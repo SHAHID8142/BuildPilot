@@ -1,0 +1,28 @@
+{
+  "schema": "sps2.p17-allowlist/v1",
+  "purpose": "test",
+  "generated": "2026-10-10",
+  "note": "Isolated allowlist for the Slice 1 test suite. Purpose 'test' permits invocation of the repository-local test doubles while real-agent execution is disabled (GATE-P17-4 OPEN). It contains NO real agent. Executable names are NEVER resolved against the ambient PATH: 'trusted_roots' confines resolution to this fixture's own directory, so a same-named executable earlier on PATH cannot shadow a test double. 'trusted_roots' entries are resolved relative to the allowlist file's own directory, which keeps this fixture portable across machines.",
+  "trusted_roots": ["."],
+  "agents": [
+    {
+      "agent_id": "stub-agent.py",
+      "display_name": "P17 test double (configurable behaviour)",
+      "probe_method": "VERSION_FLAG",
+      "capabilities": [
+        "test-double",
+        "repository-state-reading",
+        "markdown",
+        "json"
+      ]
+    },
+    {
+      "agent_id": "stub-slow.py",
+      "display_name": "P17 slow test double (timeout and tree termination)",
+      "probe_method": "VERSION_FLAG",
+      "capabilities": [
+        "slow-test-double"
+      ]
+    }
+  ]
+}

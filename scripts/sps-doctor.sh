@@ -24,13 +24,14 @@ info() { echo -e "  ${DIM}- $*${NC}"; }
 
 MISSING=0
 
-REPO_REF="$HOME/.sps/src/Shahid-Personal-SkillSet"
+REPO_REF="$HOME/.sps/src/BuildPilot"
+[[ -d "$REPO_REF" ]] || REPO_REF="$HOME/.sps/src/Shahid-Personal-SkillSet"  # pre-rename installs
 SCRIPT_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VERSION="unknown"
-if [[ -f "$REPO_REF/skills/sps/VERSION" ]]; then
-  VERSION="$(tr -d '[:space:]' < "$REPO_REF/skills/sps/VERSION")"
-elif [[ -f "$SCRIPT_REPO/skills/sps/VERSION" ]]; then
-  VERSION="$(tr -d '[:space:]' < "$SCRIPT_REPO/skills/sps/VERSION")"
+if [[ -f "$REPO_REF/skill/sps/VERSION" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$REPO_REF/skill/sps/VERSION")"
+elif [[ -f "$SCRIPT_REPO/skill/sps/VERSION" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$SCRIPT_REPO/skill/sps/VERSION")"
 fi
 info "SPS version reference: $VERSION"
 
@@ -74,8 +75,8 @@ else
   bad "Install manifest missing (run get-sps.sh / install.sh)"
 fi
 
-if [[ -d "$HOME/.sps/src/Shahid-Personal-SkillSet/.git" ]]; then
-  ok "Source clone at ~/.sps/src/Shahid-Personal-SkillSet"
+if [[ -d "$HOME/.sps/src/BuildPilot/.git" ]]; then
+  ok "Source clone at ~/.sps/src/BuildPilot"
 else
   info "No source clone yet — use: curl .../get-sps.sh | bash"
 fi
@@ -83,6 +84,7 @@ fi
 echo ""
 echo -e "${BOLD}Managed skills${NC}"
 check_skill "sps-cms (mandatory CMS engine)" "$HOME/.claude/skills/sps-cms"
+check_skill "sps-seo (technical SEO standard)" "$HOME/.claude/skills/sps-seo"
 check_skill "taste-skill v2 (design-taste-frontend)" "$HOME/.claude/skills/design-taste-frontend"
 check_skill "agent-browser" "$HOME/.claude/skills/agent-browser"
 check_skill "ai-seo" "$HOME/.claude/skills/ai-seo"
@@ -115,12 +117,41 @@ if [[ -n "$PROJECT" && -d "$PROJECT" ]]; then
       info "$f missing"
     fi
   done
+
+  # Context-budget checks (CONTEXT-BUDGET.md): .sps hot files must stay small
+  # enough that a resuming agent never burns a session re-reading history.
+  echo ""
+  echo -e "${BOLD}Context budget (.sps hot files):${NC}"
+  budget_fail=0
+  check_budget() { # file max_lines max_bytes
+    local f="$PROJECT/.sps/$1" maxl=$2 maxb=$3 lines=0 bytes=0
+    [[ -f "$f" ]] || return 0
+    lines=$(wc -l < "$f" | tr -d ' ')
+    bytes=$(wc -c < "$f" | tr -d ' ')
+    if (( bytes > maxb * 150 / 100 || lines > maxl * 150 / 100 )); then
+      bad ".sps/$1 OVER BUDGET: ${lines}L/${bytes}B (budget ${maxl}L/${maxb}B) — archive old entries to .sps/archive/ (CONTEXT-BUDGET.md)"
+      budget_fail=$((budget_fail+1))
+    elif (( bytes > maxb * 90 / 100 || lines > maxl * 90 / 100 )); then
+      warn ".sps/$1 near budget: ${lines}L/${bytes}B (budget ${maxl}L/${maxb}B) — plan an archive pass"
+    else
+      ok ".sps/$1 ${lines}L/${bytes}B within budget"
+    fi
+  }
+  check_budget handoff.md 150 8192
+  check_budget agent.md 60 4096
+  check_budget profile.md 120 8192
+  check_budget plan.md 300 24576
+  check_budget task-queue.md 80 6144
+  check_budget audit-report.md 200 16384
+  if (( budget_fail > 0 )); then
+    bad "$budget_fail .sps file(s) over context budget — archive per CONTEXT-BUDGET.md rule 2"
+  fi
 fi
 
 echo ""
 echo -e "${BOLD}Next commands${NC}"
 info "Update SPS:       bash scripts/sps-update.sh --yes   (or --check)"
-info "Install/update:  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash"
+info "Install/update:  curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash"
 info "Doctor again:     bash scripts/sps-doctor.sh [project-dir]"
 info "In a project:     /sps  |  /sps audit  |  /sps sync  |  /sps doctor"
 

@@ -28,8 +28,8 @@ bash -n "$REPO/scripts/sps-update.sh" && pass "bash -n sps-update.sh" || fail "b
 bash -n "$REPO/scripts/check-update.sh" && pass "bash -n check-update.sh" || fail "bash -n check-update.sh"
 
 # check-update.sh must terminate with a valid exit code even offline
-HOME="$TMP/home-nonet" bash "$REPO/scripts/check-update.sh" --force >/dev/null 2>&1
-rc=$?
+rc=0
+HOME="$TMP/home-nonet" bash "$REPO/scripts/check-update.sh" --force >/dev/null 2>&1 || rc=$?
 if [[ $rc -eq 0 || $rc -eq 1 || $rc -eq 2 ]]; then
   pass "check-update.sh exited with valid code ($rc)"
 else
@@ -59,7 +59,7 @@ pass "bootstrap --force rerun"
 if grep -q "/sps lock" "$TMP/project/AGENTS.md"; then pass "bootstrap wrote AGENTS.md lock"
 else fail "bootstrap missing AGENTS.md lock"
 fi
-if [[ -f "$REPO/skills/sps/METHOD-CARD.md" && -f "$REPO/skills/sps/CMS-COUPLING.md" ]]; then pass "v3 law files present"
+if [[ -f "$REPO/skill/sps/METHOD-CARD.md" && -f "$REPO/skill/sps/CMS-COUPLING.md" ]]; then pass "v3 law files present"
 else fail "v3 law files missing"
 fi
 
@@ -85,6 +85,11 @@ if command -v npx >/dev/null 2>&1; then
     else
       fail "install missing mirrored sps-cms paths"
     fi
+    if [[ -d "$SMOKE_HOME/.claude/skills/sps-seo" && -d "$SMOKE_HOME/.cursor/skills/sps-seo" ]]; then
+      pass "install mirrored sps-seo to Claude + Cursor"
+    else
+      fail "install missing mirrored sps-seo paths"
+    fi
     if HOME="$SMOKE_HOME" USERPROFILE="$SMOKE_HOME" bash "$REPO/uninstall.sh" --yes; then
       if [[ ! -d "$SMOKE_HOME/.claude/skills/sps" && ! -d "$SMOKE_HOME/.cursor/skills/sps" ]]; then
         pass "uninstall removed mirrored sps paths"
@@ -95,6 +100,11 @@ if command -v npx >/dev/null 2>&1; then
         pass "uninstall removed mirrored sps-cms paths"
       else
         fail "uninstall left mirrored sps-cms paths"
+      fi
+      if [[ ! -d "$SMOKE_HOME/.claude/skills/sps-seo" && ! -d "$SMOKE_HOME/.cursor/skills/sps-seo" ]]; then
+        pass "uninstall removed mirrored sps-seo paths"
+      else
+        fail "uninstall left mirrored sps-seo paths"
       fi
     else
       fail "uninstall.sh failed"

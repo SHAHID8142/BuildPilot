@@ -2,7 +2,7 @@
 # One-command SPS bootstrap: clone/pull repo, then install.
 #
 # Recommended:
-#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/get-sps.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
 #
 # With options:
 #   curl -fsSL .../get-sps.sh | bash -s -- --yes
@@ -13,8 +13,8 @@
 
 set -euo pipefail
 
-REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/Shahid-Personal-SkillSet.git}"
-REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/Shahid-Personal-SkillSet}"
+REPO_URL="${SPS_REPO_URL:-https://github.com/SHAHID8142/BuildPilot.git}"
+REPO_DIR="${SPS_REPO_DIR:-$HOME/.sps/src/BuildPilot}"
 BRANCH="${SPS_BRANCH:-main}"
 
 CYAN='\033[0;36m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
@@ -45,24 +45,38 @@ mkdir -p "$(dirname "$REPO_DIR")"
 
 if [[ -d "$REPO_DIR/.git" ]]; then
   echo -e "${DIM}Updating existing clone:${NC} $REPO_DIR"
-  git -C "$REPO_DIR" fetch --prune origin "$BRANCH"
+  if ! status="$(git -C "$REPO_DIR" status --porcelain=v1 2>/dev/null)"; then
+    echo -e "${YELLOW}Cannot verify the source worktree; refusing to update.${NC}" >&2
+    exit 1
+  fi
+  if [[ -n "$status" ]]; then
+    echo -e "${YELLOW}Local changes present in $REPO_DIR; refusing to update.${NC}" >&2
+    echo "Commit, stash, or remove them manually, then retry." >&2
+    exit 1
+  fi
+  if ! git -C "$REPO_DIR" fetch --prune origin "$BRANCH"; then
+    echo -e "${YELLOW}Fetch failed; source left unchanged.${NC}" >&2
+    exit 1
+  fi
   git -C "$REPO_DIR" checkout "$BRANCH"
-  git -C "$REPO_DIR" pull --ff-only origin "$BRANCH" || {
-    echo -e "${YELLOW}Fast-forward pull failed; resetting to origin/$BRANCH${NC}"
-    git -C "$REPO_DIR" reset --hard "origin/$BRANCH"
-  }
+  if ! git -C "$REPO_DIR" pull --ff-only origin "$BRANCH"; then
+    echo -e "${YELLOW}Fast-forward pull failed; source left unchanged.${NC}" >&2
+    exit 1
+  fi
   echo -e "${GREEN}✓${NC} Repo updated"
+elif [[ -e "$REPO_DIR" ]]; then
+  echo -e "${YELLOW}Destination exists but is not a Git worktree; refusing to delete it.${NC}" >&2
+  exit 1
 else
   echo -e "${DIM}Cloning:${NC} $REPO_URL"
   echo -e "${DIM}Into:${NC}    $REPO_DIR"
-  rm -rf "$REPO_DIR"
   git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$REPO_DIR"
   echo -e "${GREEN}✓${NC} Repo cloned"
 fi
 
 VERSION="unknown"
-if [[ -f "$REPO_DIR/skills/sps/VERSION" ]]; then
-  VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skills/sps/VERSION")"
+if [[ -f "$REPO_DIR/skill/sps/VERSION" ]]; then
+  VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skill/sps/VERSION")"
 fi
 echo -e "${DIM}SPS version:${NC} $VERSION"
 echo ""

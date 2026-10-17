@@ -1,0 +1,255 @@
+{
+  "schema": "sps2.decisions/v1",
+  "record_id": "P17-DECISIONS",
+  "phase": "Roadmap P17 (Master Agent Execution Backbone)",
+  "generated": "2026-10-10",
+  "author": "implementation agent (recording User decisions)",
+  "note": "Records the User's explicit authorization of 2026-10-10 establishing the Master Agent Execution Backbone phase and adopting the execution security contract. This is a User decision record, not a self-approval. NOTHING IS IMPLEMENTED OR VERIFIED: the Task Runner does not exist, no agent CLI was executed to produce this record, and every requirement in sps2/requirements/P17-REQUIREMENTS.json remains implementation NOT_STARTED and verification NOT_STARTED. The approval covers the governance foundation only. Task Runner implementation requires GATE-P17-2 (security review plus explicit User approval of the implementation plan); the first real task execution requires GATE-P17-3 (explicit User approval of the specific task).",
+  "standing_bounds": {
+    "three_axis_rule": "IMPLEMENTED != VERIFIED != APPROVED (sps2/core/SPEC.md; .sps/GOVERNANCE.md §1-§2)",
+    "P8/P9": "APPROVED and must not be modified by P17 work",
+    "P10": "APPROVED requirements/schema only (D-P10-APPROVAL); P10 inventory population remains blocked on UQ-P10-05 and is untouched by this record",
+    "CONF-001": "UNRESOLVED - no LCP or INP numeric threshold may appear in any P17 artifact",
+    "stack_constraint": "Python standard library only; project-local; no dependency installation",
+    "security_boundary": "Local-only execution; no public server, no public network exposure, no deployment (D-P10-1 boundary applies to P17 by extension)"
+  },
+  "decisions": [
+    {
+      "decision_id": "D-P17-1",
+      "title": "Master Agent Execution Backbone - Phase Establishment",
+      "decision": "Roadmap phase P17 (Master Agent Execution Backbone) is established. Its objective is to accept a task, prepare an ordered plan, discover authorized agents at runtime, select one deterministically with recorded rationale, execute locally under a controlled security contract, verify the result independently, and preserve auditable evidence. Its scope covers task intake, ordered plan generation, runtime discovery of authorized CLI agents, deterministic agent selection with recorded rationale, controlled local subprocess execution, independent objective verification, auditable task status and evidence, and failure handling and recovery. Dependencies are P2, P3, P4, P5, and P7. The phase is governance-first: the governance foundation is approved now, and the Task Runner itself is NOT approved and remains NOT_STARTED behind GATE-P17-2.",
+      "scope": [
+        "Establishes P17 in the authoritative roadmap (.sps/architecture/SPS2-ROADMAP.md)",
+        "Elaborates the phase in sps2/requirements/P17-REQUIREMENTS.json (REQ-P17-01 through REQ-P17-14)",
+        "Defines the task-record contract in sps2/schemas/p17-task-record.schema.json",
+        "Records the execution security contract as binding on the first implementation"
+      ],
+      "strict_constraints": [
+        "No Task Runner implementation before GATE-P17-2 passes",
+        "No real task execution before GATE-P17-3 passes",
+        "No public deployment, no public network exposure, no listening socket",
+        "No unrestricted autonomous execution and no approval-gate bypass",
+        "No dependency installation; Python standard library only",
+        "No modification of P8, P9, or P10 artifacts"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User authorization in session: 'The User has explicitly approved: Establishing a new governance phase for the Master Agent Execution Backbone. Local execution of authorized AI CLI processes within the boundaries below. Delegating routine engineering and implementation decisions to the project agent. This authorization does NOT permit public deployment, network exposure, unrestricted autonomous execution, or bypassing existing governance gates.'"
+      }
+    },
+    {
+      "decision_id": "D-P17-2",
+      "title": "Execution Security Contract - Adoption",
+      "decision": "The eleven-boundary execution security contract (sps2/requirements/P17-REQUIREMENTS.json, execution_security_contract, SEC-P17-01 through SEC-P17-11) is adopted as binding on the first Task Runner implementation and on every execution it performs: (1) local-only execution with no public server, no public network exposure, and no deployment; (2) only explicitly authorized CLI tools from an explicit allowlist, with availability discovered at runtime by probing and never assumed from documentation; (3) provider compliance - no circumvention of provider limits, account restrictions, or terms, and no automatic account rotation intended to bypass quotas; (4) every execution has a bounded timeout, captured stdout/stderr, a recorded exit status, and an auditable execution record; (5) directory confinement by a tested containment mechanism, not a working-directory setting alone; (6) no API keys, environment secrets, or credentials in task plans, logs, transcripts, or evidence, and no unrestricted credential access; (7) independent objective verification - a successful agent exit code or an agent's own claim is not proof that the task passed; (8) fail-closed behavior for every enumerated failure mode; (9) Python standard library only; (10) no premature autonomy - no unrestricted command execution, no automatic deployment, no bypasses around existing approval gates; (11) auditable evidence with task identifiers, plan, selected agent, selection rationale, execution status, verification result, timestamps, and integrity digests, never secrets.",
+      "scope": [
+        "Binds the first implementation and every execution",
+        "Each boundary names its implementing requirement, acceptance criteria, and required evidence",
+        "The negative security suite for SEC-P17-01..11 is a prerequisite of GATE-P17-2"
+      ],
+      "strict_constraints": [
+        "The contract may not be weakened except by a new User decision recorded in a new decision record",
+        "An agent exit code of 0 is never, by itself, evidence of task success",
+        "Secret values are referenced by location only, never recorded"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User authorization in session, adopting the eleven boundaries stated in the task directive as the execution security contract for the first implementation (local-only execution; authorized executables; provider compliance; process control; directory confinement; credentials; independent verification; fail-closed behavior; no dependency installation; no premature autonomy; evidence with integrity digests and no secrets)."
+      }
+    },
+    {
+      "decision_id": "D-P17-3",
+      "title": "Delegation of Routine Engineering Decisions",
+      "decision": "Routine engineering and implementation decisions are delegated to the project agent. Delegated: implementation language (Python standard library), module layout, CLI flag and interface design, task-record and transcript file formats, naming conventions, and equivalent routine technical details. NOT delegated, and therefore still User decisions: approval gates (GATE-P17-2, GATE-P17-3), the authorized allowlist membership (UQ-P17-01), provider and account decisions, any deployment or exposure decision, verification authority for HIGH/CRITICAL work (UQ-P17-02), P17 orchestration scope (UQ-P17-03), and any change to an approved requirement, schema, decision record, or protected file.",
+      "scope": [
+        "Delegates routine implementation choices only",
+        "Preserves every approval gate and security boundary as a User decision"
+      ],
+      "strict_constraints": [
+        "Delegation never transfers approval authority",
+        "Delegation never weakens the execution security contract",
+        "Delegation never authorizes changes to approved P8/P9/P10 artifacts"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User authorization in session: 'Delegating routine engineering and implementation decisions to the project agent.'"
+      }
+    },
+    {
+      "decision_id": "D-P17-APPROVAL",
+      "title": "P17 Governance Foundation Approval",
+      "decision": "The User approves the P17 governance foundation: the roadmap amendment establishing phase P17 (.sps/architecture/SPS2-ROADMAP.md), sps2/requirements/P17-REQUIREMENTS.json (REQ-P17-01 through REQ-P17-14, the execution security contract, and the approval gates), sps2/decisions/P17-DECISIONS.json (this record), and sps2/schemas/p17-task-record.schema.json. This approval is of governance artifacts only. It accepts the phase objective, scope, dependencies, forbidden scope, deliverables, acceptance criteria, verification approach, and rollback; it adopts the execution security contract as binding; and it records the delegation of routine engineering decisions. It does not authorize implementation, execution, deployment, or exposure of any kind.",
+      "approved_scope": [
+        ".sps/architecture/SPS2-ROADMAP.md - P17 section and sequencing extension",
+        "sps2/requirements/P17-REQUIREMENTS.json - 14 requirements, execution security contract SEC-P17-01..11, approval gates GATE-P17-1..3, unresolved questions UQ-P17-01..04",
+        "sps2/decisions/P17-DECISIONS.json - D-P17-1, D-P17-2, D-P17-3, and this approval record",
+        "sps2/schemas/p17-task-record.schema.json - task-record contract sps2.p17-task-record/v1",
+        "GATE-P17-1 state: APPROVED (User, 2026-10-10)"
+      ],
+      "conditions": [
+        "Every requirement remains implementation NOT_STARTED and verification NOT_STARTED; the phase is governance-complete only",
+        "GATE-P17-2 must pass before any Task Runner implementation: implementation plan presented (plan-gate convention), negative security suite defined for SEC-P17-01..11, security review performed, and explicit User approval of the plan",
+        "GATE-P17-3 must pass before the first real task execution and before every HIGH or CRITICAL task thereafter: explicit User approval of the specific task",
+        "UQ-P17-01 (allowlist membership), UQ-P17-02 (verification authority), UQ-P17-03 (orchestration scope), and UQ-P17-04 (usage observation) remain OPEN; this approval answers none of them",
+        "The execution security contract (D-P17-2) is binding on the first implementation and every execution",
+        "No agent CLI was executed to produce this record; governance approval is not execution evidence",
+        "P8, P9, and P10 artifacts and the pre-existing working-tree modifications (sps2/tools/portability.py, sps2/research/cache.json) are untouched by this approval"
+      ],
+      "explicitly_not_approved": [
+        "Task Runner implementation of any kind",
+        "Execution of any agent CLI or any real task",
+        "Public deployment, production use, or any public network exposure",
+        "Unrestricted autonomous execution or any approval-gate bypass",
+        "Dependency installation of any kind",
+        "Any modification of P8, P9, or P10 artifacts, or of the protected pre-existing working-tree changes",
+        "Staging, committing, pushing, or deploying this work",
+        "Resolving UQ-P17-01 through UQ-P17-04"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User authorization in session: 'The User has explicitly approved: Establishing a new governance phase for the Master Agent Execution Backbone. Local execution of authorized AI CLI processes within the boundaries below. Delegating routine engineering and implementation decisions to the project agent. This authorization does NOT permit public deployment, network exposure, unrestricted autonomous execution, or bypassing existing governance gates.' Recorded through the established governance process, in the decision record rather than inside the approved artifacts, so that an artifact never records its own approval."
+      }
+    },
+    {
+      "decision_id": "D-P17-4",
+      "title": "UQ-P17-01 Resolution - Initial Authoritative Executable Allowlist",
+      "decision": "The initial authoritative executable allowlist is exactly one entry: [\"opencode\"], recorded as data in sps2/p17/allowlist.json with purpose \"production\". Evidence for the recommendation, gathered without invoking any CLI: opencode is the only executable that is both repository-declared (sps2/core/adapters/registry.json, EXPERIMENTAL, detection.cli [\"opencode\"]) and present in the environment (PATH resolution only). codex is repository-declared but absent; claude and copilot are present but repository-undeclared; generic is a declarative descriptor with no executable. While GATE-P17-4 is OPEN, agents from a production-purpose allowlist are neither probed nor invoked: discovery and execution refuse them with an explicit disabled outcome. Extending the allowlist (adding claude, codex, or any other executable) is a User decision recorded as a new decision record, never an implementation-time choice.",
+      "scope": [
+        "Resolves UQ-P17-01 (previously OPEN) to a single allowlist entry",
+        "Basis: explicit User approval of the revised .sps/plan.md, whose approval checklist states that approval of the plan constitutes approval of this line",
+        "Does not enable real-agent execution: GATE-P17-4 remains OPEN and the allowlist is not invocable while it is"
+      ],
+      "strict_constraints": [
+        "Allowlist membership is a security decision, not an engineering default",
+        "No arbitrary executable may be added without a new User decision record",
+        "Production-purpose allowlist entries must not be probed or executed while GATE-P17-4 is OPEN"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User approval of the revised .sps/plan.md on 2026-10-10 (GATE-P17-2). The plan's approval-checklist line \"Allowlist recommendation (UQ-P17-01) - initial authoritative allowlist [\\\"opencode\\\"]\" states that approval of the plan constitutes approval of that line, each line requiring the User's explicit confirmation, and the User approved the plan. This resolution rests on that explicit approval, not on the mere presence of a recommendation."
+      }
+    },
+    {
+      "decision_id": "D-P17-5",
+      "title": "UQ-P17-02 Resolution - Verification Authority for Slice 1",
+      "decision": "For Slice 1, acceptance is verified by OBJECTIVE acceptance commands only, explicitly provided and validated by the task definition. The acceptance command is executed by a structurally separate verifier (sps2/p17/verification.py) in its own subprocess, with its own record; its executable may not be an allowlisted agent executable, so the verifying command cannot be the agent being verified. An INDEPENDENT_AGENT verifier is deferred; it would require a second allowlisted executable and couples to UQ-P17-03. The executing agent's exit code and output are recorded but are never inputs to the verification result.",
+      "scope": [
+        "Resolves UQ-P17-02 (previously OPEN) for Slice 1 only",
+        "Basis: explicit User approval of the revised .sps/plan.md, whose approval checklist states that approval of the plan constitutes approval of this line",
+        "Whether an independent second agent may verify HIGH or CRITICAL work remains a later User decision"
+      ],
+      "strict_constraints": [
+        "A successful agent exit code or an agent self-claim is never proof that the task passed",
+        "The verification record must carry an explicit independence statement"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User approval of the revised .sps/plan.md on 2026-10-10 (GATE-P17-2). The plan's approval-checklist line \"Verification recommendation (UQ-P17-02) - objective acceptance commands only for slice 1\" states that approval of the plan constitutes approval of that line, and the User approved the plan."
+      }
+    },
+    {
+      "decision_id": "D-P17-6",
+      "title": "UQ-P17-03 Resolution - Orchestration Scope for Slice 1",
+      "decision": "Slice 1 is single-agent: one agent execution per task. Parallel specialist lanes (skills/sps/SUBAGENT-PLAYBOOK.md), multi-agent fan-out, and concurrent subprocess control are out of scope for Slice 1 and remain a later User decision. Slice 1 tasks execute one selected agent process per run.",
+      "scope": [
+        "Resolves UQ-P17-03 (previously OPEN) for Slice 1 only",
+        "Basis: explicit User approval of the revised .sps/plan.md, whose approval checklist states that approval of the plan constitutes approval of this line"
+      ],
+      "strict_constraints": [
+        "No parallel or concurrent agent execution may be introduced in Slice 1",
+        "Adding fan-out later requires a new User decision record and new security tests for concurrent subprocess control"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User approval of the revised .sps/plan.md on 2026-10-10 (GATE-P17-2). The plan's approval-checklist line \"Scope recommendation (UQ-P17-03) - single-agent execution only in slice 1\" states that approval of the plan constitutes approval of that line, and the User approved the plan."
+      }
+    },
+    {
+      "decision_id": "D-P17-7",
+      "title": "UQ-P17-04 Resolution - Usage Observation",
+      "decision": "Provider usage and cost are observed only through a project-local, append-only usage log (.sps/tasks/p17/usage.log): agent id, resolved executable path, probed version, execution duration, and outcome, one JSON object per execution. No provider API calls, no remote telemetry, and no credential access are involved.",
+      "scope": [
+        "Resolves UQ-P17-04 (previously OPEN)",
+        "Basis: explicit User approval of the revised .sps/plan.md, whose approval checklist states that approval of the plan constitutes approval of this line"
+      ],
+      "strict_constraints": [
+        "The usage log records local observations only; no network call of any kind",
+        "Usage data must contain no secrets"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User approval of the revised .sps/plan.md on 2026-10-10 (GATE-P17-2). The plan's approval-checklist line \"Usage-observation recommendation (UQ-P17-04) - project-local usage log\" states that approval of the plan constitutes approval of that line, and the User approved the plan."
+      }
+    },
+    {
+      "decision_id": "D-P17-GATE-P17-2-APPROVAL",
+      "title": "GATE-P17-2 Approval - Revised Implementation Plan and Slice 1 Implementation",
+      "decision": "GATE-P17-2 is APPROVED. The User approved the revised .sps/plan.md (PLAN-P17-001, Revision 2 - the security-review remediation that distinguishes preventive controls from detection/audit controls from guarantees that cannot be provided, disables real-agent execution by default, and defines GATE-P17-4) after security review, and authorizes Slice 1 implementation within the exact boundaries of that plan. Slice 1 is the narrow, test-double-only vertical slice: task intake, strict validation, ordered plan generation and persistence, deterministic selection with recorded rationale, test-double execution under a bounded timeout, independent objective acceptance-command verification, auditable status and evidence with integrity digests, and fail-closed behavior for every defined failure mode. The approved plan's approval-checklist lines are approved with it, which is what resolves UQ-P17-01 through UQ-P17-04 as recorded in D-P17-4 through D-P17-7. This approval authorizes implementation only. It does not authorize real-agent execution, does not enable any gate, and does not mark Slice 1 implemented, verified, or approved as an outcome: IMPLEMENTED != VERIFIED != APPROVED, and each status must be evidenced on its own axis.",
+      "approved_scope": [
+        ".sps/plan.md (PLAN-P17-001 Rev 2) - implementation plan, security test matrix, and acceptance criteria for Slice 1",
+        "The four checklist recommendation lines constituted by plan approval: UQ-P17-01 (allowlist [opencode]), UQ-P17-02 (objective acceptance-command verification only), UQ-P17-03 (single-agent execution only), UQ-P17-04 (project-local usage log)",
+        "Slice 1 implementation confined to the module and fixture list in the plan (sps2/p17/*, sps2/tests/test_p17_*.py, sps2/tests/fixtures/p17/*), repository-local test doubles only",
+        "The Slice 1 negative security suite for SEC-P17-01..11 executed against test doubles only"
+      ],
+      "conditions": [
+        "Real-agent CLI execution remains disabled by default; the enablement state represents DISABLED and must not claim authorization without a matching explicit decision (GATE-P17-4)",
+        "GATE-P17-3 remains required and OPEN before any real task execution",
+        "GATE-P17-4 remains OPEN; its prevention-proven isolation prerequisites are unmet, and post-execution detection is never a substitute for prevention",
+        "Slice 1 proves the pipeline with repository-local test doubles; test-double results are not evidence of real-agent isolation and must never be presented as such",
+        "Implementation is Python standard library only, local-only, and additive; no server, network listener, public exposure, deployment, unrestricted shell execution, arbitrary executable selection, account rotation, or provider-limit circumvention",
+        "No Slice 1 component may be represented as implemented, verified, or approved beyond what its own evidence demonstrates (three-axis rule)",
+        "P10, P8, P9, and the pre-existing working-tree modifications (sps2/tools/portability.py, sps2/research/cache.json) remain preserved; no staging, commit, push, or deploy"
+      ],
+      "explicitly_not_approved": [
+        "Real-agent CLI execution of any kind (opencode, claude, codex, copilot, or any other), including version probes of production-allowlist agents while GATE-P17-4 is OPEN",
+        "GATE-P17-4 enablement or satisfaction (its security prerequisites remain open until an adequate preventive isolation mechanism is reviewed and authorized)",
+        "GATE-P17-3 per-task approval for any real task",
+        "Any claim that the Slice 1 test-double pipeline establishes real-agent filesystem isolation",
+        "Any weakening of the Python-standard-library-only constraint, the security boundaries, or the existing approval gates",
+        "Extension of the executable allowlist beyond [opencode] without a new User decision record",
+        "Public deployment, network exposure, unrestricted autonomy, dependency installation, or any modification of approved P8/P9/P10 artifacts"
+      ],
+      "approval": {
+        "required": true,
+        "state": "APPROVED",
+        "decided_by": "User",
+        "decided_at": "2026-10-10",
+        "basis": "Explicit User authorization in session: 'The User has approved the revised .sps/plan.md implementation plan after security review. GATE-P17-2 is APPROVED for implementation within the exact boundaries of the revised plan. This does NOT approve real-agent execution. GATE-P17-4 remains OPEN. GATE-P17-3 remains OPEN.' Recorded in the decision record rather than inside the approved artifacts, so that an artifact never records its own approval."
+      }
+    }
+  ],
+  "explicitly_not_approved_by_this_record": [
+    "Implementation beyond the exact boundaries of the approved revised .sps/plan.md",
+    "Real-agent CLI execution of any kind (requires GATE-P17-4 enablement AND GATE-P17-3 per-task approval, in that order)",
+    "Public deployment, production use, or public network exposure",
+    "Unrestricted autonomous execution",
+    "Dependency installation",
+    "Any modification of P8, P9, or P10 artifacts",
+    "Any modification of sps2/tools/portability.py or sps2/research/cache.json",
+    "Staging, committing, pushing, or deploying",
+    "Resolution of UQ-P17-01, UQ-P17-02, UQ-P17-03, or UQ-P17-04"
+  ]
+}

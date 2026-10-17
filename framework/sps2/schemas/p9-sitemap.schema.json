@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sps2.p9-sitemap/v1",
+  "title": "P9 XML Sitemap Model Contract",
+  "description": "Schema for internal representation and generation of sitemaps.org compliant XML sitemaps.",
+  "type": "object",
+  "required": ["entries", "total_urls", "generated_at"],
+  "properties": {
+    "total_urls": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 50000
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["loc"],
+        "properties": {
+          "loc": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://",
+            "description": "Strictly absolute, canonical URL of the page"
+          },
+          "lastmod": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of last modification"
+          },
+          "changefreq": {
+            "enum": ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"]
+          },
+          "priority": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sitemap_index": {
+      "type": "boolean",
+      "default": false
+    },
+    "sitemap_files": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    }
+  },
+  "additionalProperties": false
+}
