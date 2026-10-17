@@ -86,9 +86,9 @@
     },
     {
       "path": "install.sh",
-      "expected_blob": "29c18f97f11c17c7b1ba2fb379e08f554955de88",
+      "expected_blob": "b75aa0eeb3a6eb8f83bc28bde44a39f1af048963",
       "expected_mode": "100755",
-      "sha256": "d6e240478a72d2282df10d221e2c3d60cfd91bffdf97342e1c0e464fa2458835",
+      "sha256": "8529b892665919457e5a5f6e18ca6b14c11be1e52e411edc5bc3c8773525da1e",
       "authorization": "DEC-7305",
       "reason": "T-17: backup-before-replace, version detection and upgrade report in sync_core_skill; pinned by DEC-7305 as amended 2026-10-17."
     },
@@ -102,9 +102,9 @@
     },
     {
       "path": "uninstall.sh",
-      "expected_blob": "5fdf9725ca1bef1e615e0e641696262ae1d1f11a",
+      "expected_blob": "8b60eec5b15e317faa605768b1ef5c211146ce16",
       "expected_mode": "100755",
-      "sha256": "afc8177c6601e3cf9f28b72cbcb88488ee067a393f20babfb0dcc266426b9697",
+      "sha256": "30895a9438d2d17ba110e212e4121edd809a7383a66d757f9a5358a9494b8a08",
       "authorization": "DEC-7305",
       "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305."
     },

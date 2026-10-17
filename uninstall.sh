@@ -276,6 +276,12 @@ fi
 
 # ── Remove personal data ──────────────────────────────────────────────────────
 if ! $KEEP_PERSONAL; then
+  # Preserve skill backups by default: install.sh promises a restore path in
+  # ~/.sps/backups/<skill>/, so a full uninstall must not silently destroy it.
+  if [ -d "$HOME/.sps/backups" ]; then
+    mv "$HOME/.sps/backups" "$HOME/.sps-backups-uninstalled" \
+      && info "skill backups preserved at ~/.sps-backups-uninstalled (delete manually if unwanted)"
+  fi
   section "Removing personal data (~/.sps/)"
   rm -rf "$HOME/.sps" && removed "~/.sps/ (profile, mistakes, learned)" || true
 else

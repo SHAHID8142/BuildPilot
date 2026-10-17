@@ -256,6 +256,9 @@ backup_existing_skill() {
   # never overwrite each other's backups.
   local stamp
   stamp="$(date +%Y%m%d-%H%M%S)-$(printf '%s' "$dest_root" | shasum | cut -c1-6)-$$"
+  while [ -e "$backup_root/$stamp" ]; do   # collision => suffix, never nest
+    stamp="${stamp}-x"
+  done
   mkdir -p "$backup_root" || { warn "backup dir unreachable: $backup_root"; return 1; }
   cp -R "$existing" "$backup_root/$stamp" || { warn "backup failed for $name"; return 1; }
   # Prune to the 3 most recent backups.
@@ -289,8 +292,18 @@ sync_core_skill() {
   for dest_root in "${SYNC_PATHS[@]}"; do
     if mkdir -p "$dest_root" 2>/dev/null; then
       # Version detection + backup BEFORE the destructive replace.
+      # Per-skill gate: a missing sps dir must not skip backups of
+      # sps-cms/sps-seo (they'd be wiped unbacked below).
+      # Only roots that had sps BEFORE this install started count as an
+      # upgrade path — the npx skills-add step creates sps copies in agent
+      # dirs mid-run, and treating those as "existing installs" would churn
+      # backups on a fresh machine.
       local prev_ver=""
-      if [ -d "$dest_root/sps" ]; then
+      local is_pre_existing=false
+      for _pre in "${PRE_EXISTING_SPS[@]:-}"; do
+        [ -n "$_pre" ] && [ "$_pre" = "$dest_root" ] && is_pre_existing=true
+      done
+      if [ "$is_pre_existing" = true ] || [ -d "$dest_root/sps-cms" ] || [ -d "$dest_root/sps-seo" ]; then
         had_existing=true
         prev_ver="$(installed_skill_version "$dest_root")"
         backup_existing_skill "$dest_root" sps
@@ -369,6 +382,14 @@ print_success_card() {
 # ── main ─────────────────────────────────────────────────────────────────────
 mkdir -p "$LOG_DIR/learned"
 : > "$LOG"
+
+# Snapshot which dest roots already carry a real SPS install BEFORE the npx
+# skills-add step runs — otherwise sync_core_skill mistakes the npx-created
+# copy for a previous install and "backs it up" on a fresh machine.
+PRE_EXISTING_SPS=()
+for _root in "${SYNC_PATHS[@]}"; do
+  [ -d "$_root/sps" ] && PRE_EXISTING_SPS+=("$_root")
+done
 
 banner
 detect_hosts
