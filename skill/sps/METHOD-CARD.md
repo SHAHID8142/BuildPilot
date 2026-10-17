@@ -43,6 +43,7 @@ If Host is Antigravity/Gemini and `GEMINI.md`/`AGENTS.md` locks are missing:
 - `/sps audit` — scored alignment audit
 - `/sps sync` — pay CMS/storefront debt on existing projects
 - `/sps doctor` — install/host/skill health (script + in-session checks)
+- `/sps lesson review` — user-approved promotion of lessons/inbox into skill docs
 
 ## Before coding a chunk
 

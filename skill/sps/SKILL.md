@@ -66,6 +66,14 @@ Per-section parallel lanes (CMS / UI / content / test) follow
 ### Doctor
 `/sps doctor` → run `scripts/sps-doctor.sh` or in-session host and mirror validation.
 
+### Status
+`/sps status` → run `bash scripts/sps-status.sh`. Read-only dashboard (branch, tree
+cleanliness, task queue, last handoff, after-sale clocks, skill version, pending
+lessons, unpushed commits) — safe to run anytime, no session boot or state change.
+
+### Lesson Review
+`/sps lesson review` → run `bash scripts/sps-lesson.sh review`, then for each lesson in `lessons/inbox/`: read it, verify the `Applies-to` target doc exists, propose the exact doc edit to the user, and ask approve / reject / edit ([LESSONS.md](LESSONS.md)). On approval: merge the rule into the named doc (matching section style), add a `check_laws.py` marker if machine-checkable, move the file to `lessons/adopted/` with `status: adopted` + date, and add one line to the session report. On reject: move to `lessons/rejected/` with a one-line reason — never delete. The user approves every lesson.
+
 ### Read-Only Q&A Carve-Out (Context-Efficiency)
 If the user's request is purely investigatory or asking a simple code question ("explain this function", "what does X do?", "where is Y defined?"), SKIP full session boot / heavy memory load and answer directly. Only activate full memory, audit, or discovery for actual build, refactor, audit, or code-modifying tasks.
 
