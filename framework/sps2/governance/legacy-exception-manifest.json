@@ -2,7 +2,7 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 26,
+  "exception_count": 28,
   "exceptions": [
     {
       "path": "get-sps.ps1",
@@ -198,19 +198,35 @@
     },
     {
       "path": "scripts/sps-lesson.sh",
-      "expected_blob": "3be82c6e00369fd0d67bb9435e1f8ab38a90b74a",
+      "expected_blob": "5664960d7736ccce81f2aaf0f12cbed48c0e7fbe",
       "expected_mode": "100755",
-      "sha256": "6eac640fbfc044c30d9b3a7a50b1b3b6b43cc22e1e38ab846559a66f3e73cdd1",
+      "sha256": "2a309b8de2e653483a58aa2e8b209c009e7710c11a97dce3c7dd4f68480fa548",
       "authorization": "DEC-7305",
-      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18."
+      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
     },
     {
       "path": "skill/sps/scripts/sps-lesson.sh",
-      "expected_blob": "3be82c6e00369fd0d67bb9435e1f8ab38a90b74a",
+      "expected_blob": "5664960d7736ccce81f2aaf0f12cbed48c0e7fbe",
       "expected_mode": "100755",
-      "sha256": "6eac640fbfc044c30d9b3a7a50b1b3b6b43cc22e1e38ab846559a66f3e73cdd1",
+      "sha256": "2a309b8de2e653483a58aa2e8b209c009e7710c11a97dce3c7dd4f68480fa548",
       "authorization": "DEC-7305",
-      "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18."
+      "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
+    },
+    {
+      "path": "scripts/sps-status.sh",
+      "expected_blob": "937f8e1512921bff7bb17af52ffc86489e172016",
+      "expected_mode": "100755",
+      "sha256": "7c8f9bf3f53b6b3ff7db43973756b4d0b19cba029dddd4d9beb46a71771822d0",
+      "authorization": "DEC-7305",
+      "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "skill/sps/scripts/sps-status.sh",
+      "expected_blob": "937f8e1512921bff7bb17af52ffc86489e172016",
+      "expected_mode": "100755",
+      "sha256": "7c8f9bf3f53b6b3ff7db43973756b4d0b19cba029dddd4d9beb46a71771822d0",
+      "authorization": "DEC-7305",
+      "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18."
     }
   ],
   "related_test_artifacts": [

@@ -3,7 +3,7 @@
 # Usage:
 #   bash scripts/sps-lesson.sh capture "short title"   # in a client project
 #   bash scripts/sps-lesson.sh send                    # PR lessons to BuildPilot
-#   bash scripts/sps-lesson.sh review                  # in BuildPilot: list inbox
+#   bash scripts/sps-lesson.sh review                  # in BuildPilot: review inbox
 set -uo pipefail
 
 BG_REPO="${BG_REPO:-SHAHID8142/BuildPilot}"
@@ -13,9 +13,42 @@ cmd="${1:-}"; shift || true
 
 die() { echo "ERROR: $*" >&2; exit 1; }
 
+have_gh() { command -v gh >/dev/null 2>&1; }
+
 slugify() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*$//;s/^-\+//;s/-\+$//' | cut -c1-40; }
 
- today() { date +%Y%m%d; }
+today() { date +%Y%m%d; }
+
+# section_body FILE HEADING — print the body of "## HEADING" up to the next "## "
+section_body() {
+  awk -v h="$2" '
+    /^## / { on = ($0 == "## " h); next }
+    on { print }
+  ' "$1"
+}
+
+# section_snippet FILE HEADING MAXLINES — first non-empty lines, joined to one line
+section_snippet() {
+  section_body "$1" "$2" | grep -v '^[[:space:]]*$' | head -n "$3" | tr '\n' ' ' \
+    | sed 's/[[:space:]]\{1,\}/ /g; s/^ //; s/ $//'
+}
+
+# next_action APPLIES_TEXT — suggested next action based on the Applies-to line
+next_action() {
+  target=""
+  for word in $1; do
+    case "$word" in
+      *.md|*.sh|*.py) target="$word"; break ;;
+    esac
+  done
+  if [[ -z "$target" ]]; then
+    echo "Applies-to names no target doc — finish the thought (LESSONS.md: a lesson without a target is not ready)"
+  elif [[ -f "skill/sps/$target" || -f "$target" ]]; then
+    echo "target ${target} exists — propose the exact doc edit and ask the user: approve / reject / edit"
+  else
+    echo "Applies-to target ${target} NOT found in skill/sps/ or repo root — verify the name or pick the right doc"
+  fi
+}
 
 case "$cmd" in
   capture)
@@ -100,16 +133,30 @@ EOF
     lessons=(lessons/inbox/LESSON-*.md)
     shopt -u nullglob
     if [[ ${#lessons[@]} -eq 0 ]]; then echo "Inbox empty."; exit 0; fi
-    echo "Pending lessons (${#lessons[@]}) — review each per LESSONS.md:"
+    echo "Pending lessons (${#lessons[@]}) — review each per LESSONS.md (user approves every one):"
+    echo
+    n=0
     for f in "${lessons[@]}"; do
-      echo "  - $f"
-      grep -m1 -E "^(category|severity):" "$f" | sed 's/^/      /'
+      n=$((n+1))
+      category="$(sed -n 's/^category:[[:space:]]*//p' "$f" | head -n 1)"
+      severity="$(sed -n 's/^severity:[[:space:]]*//p' "$f" | head -n 1)"
+      problem="$(section_snippet "$f" "Problem" 2)"
+      rule="$(section_snippet "$f" "Rule" 2)"
+      applies="$(section_snippet "$f" "Applies-to" 2)"
+      echo "[$n] $f"
+      echo "    category: ${category:-?}  severity: ${severity:-?}"
+      echo "    Problem:    ${problem:-<empty>}"
+      echo "    Rule:       ${rule:-<empty>}"
+      echo "    Applies-to: ${applies:-<empty>}"
+      echo "    Next: $(next_action "${applies:-}")"
+      echo
     done
-    echo "For each: read it, verify Applies-to exists, propose the doc edit, ask the user."
+    echo "Per lesson: read the full file, verify the Applies-to target exists, propose the exact doc edit, ask the user (approve / reject / edit)."
+    echo "Approve: merge the rule into the named doc (+ check_laws.py marker if machine-checkable), move to lessons/adopted/ (status: adopted + date), add one line to the session report."
+    echo "Reject: move to lessons/rejected/ with a one-line reason — never delete."
     ;;
 
   *)
     die "usage: sps-lesson.sh capture \"title\" | send | review"
     ;;
 esac
-have_gh() { command -v gh >/dev/null 2>&1; }
