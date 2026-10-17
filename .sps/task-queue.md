@@ -4,7 +4,7 @@
 - [ ] id: T-19 task: Nightly skill-ecosystem scan — build per delivered design (GitHub Actions cron 03:17 UTC, report-only, [skip ci], deduped tracking issue, 6 vetting gates) — started: 2026-10-18
 
 ## queued (oldest first)
-- (empty)
+- [ ] id: T-20 task: Lessons→validators automation — when check_laws.py rejects the same doc mistake twice, auto-generate the negative test (user-approved next build, 2026-10-18)
 
 ## queued (oldest first)
 - (empty — all received tasks finished; law-checker + design-craft batches pushed af84a39/407b515, CI watching)
