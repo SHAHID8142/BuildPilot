@@ -127,6 +127,15 @@ if dod.is_file():
         if marker not in dt:
             v(f"section-dod: audit-gap item missing: {marker}")
 
+# ── DESIGN-GATE: craft laws + anti-slop ban list present ─────────────────────
+dg = REPO / "skill" / "sps" / "DESIGN-GATE.md"
+if dg.is_file():
+    dt = dg.read_text(encoding="utf-8", errors="replace")
+    for marker_text in ("tabular-nums", "60-30-10", "prefers-reduced-motion",
+                        "Anti-slop ban list", "44×44px", "cubic-bezier"):
+        if marker_text not in dt:
+            v(f"design-gate: craft law missing: {marker_text}")
+
 # ── COMPANY-LIFECYCLE: both gates defined ────────────────────────────────────
 cl = REPO / "skill" / "sps" / "COMPANY-LIFECYCLE.md"
 if cl.is_file():

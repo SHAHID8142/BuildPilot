@@ -29,7 +29,7 @@ Current skill version: read `VERSION` and stamp it into `./.sps/agent.md`.
 4. **Mandatory Discovery.** Grill until complete on goals, stack, CMS, auth, mobile policies, multi-agent roles, and deploy targets. Client jobs run the full company lifecycle (kickoff questionnaire → platform research → G1 user confirm → lifecycle plan → build → delivery → after-sale: 1 month all-type support + 1 month free SEO) per [COMPANY-LIFECYCLE.md](COMPANY-LIFECYCLE.md).
 5. **Plan-First Zero-Code Gate ([PLAN-GATE.md](PLAN-GATE.md)).** Write `./.sps/plan.md`, present it, and **stop — zero code before user approval**. Then build one section at a time.
 6. **CMS-Coupled Section Delivery.** If CMS is enabled, storefront + CMS for the same section ship together. Storefront-only done is strictly forbidden ([CMS-COUPLING.md](CMS-COUPLING.md)).
-7. **Design Gate & Zero Clichés.** No fake dummy buttons, no purple-on-dark clichés, no uncurated stock slop. Research before design ([DESIGN-GATE.md](DESIGN-GATE.md)).
+7. **Design Gate & Zero Clichés.** No fake dummy buttons, no purple-on-dark clichés, no uncurated stock slop. Research before design. Concrete craft laws (typography/surfaces/space/motion/forms) + anti-slop ban list in [DESIGN-GATE.md](DESIGN-GATE.md) — machine-checked.
 8. **Two-Tier Approval Packets ([APPROVAL-PACKETS.md](APPROVAL-PACKETS.md)):**
    - *Tier 1 (Compact Quick-Fix):* 5-6 lines for bug fixes, CSS tweaks, and text updates.
    - *Tier 2 (Full Architecture):* Comprehensive packet for major sections, new pages, and database schemas.
