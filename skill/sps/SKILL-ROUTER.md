@@ -24,7 +24,7 @@ as a second orchestrator by default.
 | React quality | `vercel-react-best-practices` | `vercel-composition-patterns` | stack best practices in repo |
 | Testing | `webapp-testing` | Playwright / `agent-browser` for live checks | VERIFICATION-RECIPES.md |
 | Lighthouse / live verify | `agent-browser` | — | manual Lighthouse run |
-| SEO | `ai-seo` | SPS `seo` skill (fallback) | SEO checklist in SECTION-DOD |
+| SEO | **`sps-seo` (bundled, synced by installer)** | `ai-seo` (fallback) | SEO checklist in SECTION-DOD |
 | Content / copy | `copywriting` (SPS drafts, user edits) | `fact-check` | copy in content-model.md |
 | Mobile app (RN) | `vercel-react-native-skills` | `sleek-design-mobile-apps` | — |
 | Backend / DB | `supabase` + `prisma-*` (when stack matches) | vendor docs | stack best practices |
@@ -69,6 +69,11 @@ npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y
 sps-cms (mandatory CMS engine — bundled in this repo, synced by installer):
 ```bash
 npx skills add SHAHID8142/Shahid-Personal-SkillSet --skill sps-cms -g -y
+```
+
+sps-seo (technical SEO standard — bundled in this repo, synced by installer):
+```bash
+npx skills add SHAHID8142/Shahid-Personal-SkillSet --skill sps-seo -g -y
 ```
 
 Karpathy:

@@ -17,7 +17,9 @@ EXPECTED_SCHEMA = "sps2.legacy-exception-manifest/v1"
 EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged).
-EXPECTED_MANIFEST_SHA256 = "59cdc23fba53d383d3c58b21bad34c946eff1ad5542f747b0732de7f3d6c6551"
+EXPECTED_MANIFEST_SHA256 = "2f4ab3d876ddd2020123c19f6c9be39bd7c75da711d2b3bf213ecd79a75b4101"
+EXPECTED_EXCEPTION_COUNT = 14  # DEC-7301 as amended by DEC-7305 (sps-seo registration)
+EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",
     "decision_id",
@@ -98,10 +100,10 @@ def load_manifest(root: Path) -> dict[str, Any]:
         raise ValueError("manifest decision_id mismatch")
     if not isinstance(manifest["baseline_commit"], str) or len(manifest["baseline_commit"]) != 40:
         raise ValueError("manifest baseline_commit is not a 40-character object ID")
-    if manifest["exception_count"] != 8:
-        raise ValueError("manifest exception_count is not 8")
-    if not isinstance(manifest["exceptions"], list) or len(manifest["exceptions"]) != 8:
-        raise ValueError("manifest exceptions must contain exactly eight records")
+    if manifest["exception_count"] != EXPECTED_EXCEPTION_COUNT:
+        raise ValueError("manifest exception_count does not match DEC-7301 as amended")
+    if not isinstance(manifest["exceptions"], list) or len(manifest["exceptions"]) != EXPECTED_EXCEPTION_COUNT:
+        raise ValueError("manifest exceptions count does not match DEC-7301 as amended")
     if not isinstance(manifest["related_test_artifacts"], list) or len(manifest["related_test_artifacts"]) != 1:
         raise ValueError("manifest must contain exactly one test artifact")
     if not isinstance(manifest["explicitly_excluded_paths"], list) or len(manifest["explicitly_excluded_paths"]) != 4:
@@ -116,7 +118,7 @@ def load_manifest(root: Path) -> dict[str, Any]:
         if path_value in seen:
             raise ValueError(f"duplicate exception path: {path_value}")
         seen.add(path_value)
-        if record["authorization"] != "DEC-7201":
+        if record["authorization"] not in EXPECTED_AUTHORIZATIONS:
             raise ValueError(f"exception authorization mismatch: {path_value}")
         if not isinstance(record["reason"], str) or not record["reason"].strip():
             raise ValueError(f"exception reason is empty: {path_value}")
@@ -236,7 +238,8 @@ def verify_legacy_repository(
     """Return all changed or untracked legacy paths not covered by DEC-7301."""
     exclude_prefixes = exclude_prefixes or []
     violations = verify_legacy_exceptions(root)
-    exempt = set(load_manifest(root)["exceptions"][index]["path"] for index in range(8)) if violations == [] else set()
+    manifest_exceptions = load_manifest(root)["exceptions"]
+    exempt = set(record["path"] for record in manifest_exceptions) if violations == [] else set()
     try:
         diff = _git(root, "diff", "--name-only", baseline, "--", *pathspec)
     except ValueError as exc:

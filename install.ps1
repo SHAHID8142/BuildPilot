@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = "Continue"
 $env:GIT_TERMINAL_PROMPT = "0"
-$env:GIT_SSH_COMMAND = "ssh -oBatchMode=yes -oStrictHostKeyChecking=no"
+$env:GIT_SSH_COMMAND = "ssh -oBatchMode=yes -oStrictHostKeyChecking=accept-new"
 $env:npm_config_yes = "true"
 $env:CI = "1"
 $env:npm_config_cache = Join-Path $env:USERPROFILE ".sps\npm-cache"
@@ -30,7 +30,7 @@ $script:ClaudePlugins = @()
 $script:ClaudeMarketplaces = @()
 $script:UseContext7 = 0
 $script:UseGraphify = 0
-$versionFile = Join-Path $repoDir "skills\sps\VERSION"
+$versionFile = Join-Path $repoDir "skill\sps\VERSION"
 $script:Version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "unknown" }
 $syncRoots = @(
     "$env:USERPROFILE\.claude\skills",
@@ -163,8 +163,9 @@ SYNC_PATHS=$($syncRoots -join ",")
 }
 
 function Sync-CoreSkill {
-    $src = Join-Path $repoDir "skills\sps"
-    $cmsSrc = Join-Path $repoDir "skills\sps-cms"
+    $src = Join-Path $repoDir "skill\sps"
+    $cmsSrc = Join-Path $repoDir "skill\sps-cms"
+    $seoSrc = Join-Path $repoDir "skill\sps-seo"
     if (-not (Test-Path $src)) {
         note "skills\sps not found - run from repo root"
         return
@@ -181,6 +182,12 @@ function Sync-CoreSkill {
                 if (Test-Path $cmsDest) { Remove-Item -Recurse -Force $cmsDest }
                 Copy-Item -Path $cmsSrc -Destination $destRoot -Recurse -Force -ErrorAction Stop
                 note "+ synced /sps-cms to $cmsDest"
+            }
+            if (Test-Path $seoSrc) {
+                $seoDest = Join-Path $destRoot "sps-seo"
+                if (Test-Path $seoDest) { Remove-Item -Recurse -Force $seoDest }
+                Copy-Item -Path $seoSrc -Destination $destRoot -Recurse -Force -ErrorAction Stop
+                note "+ synced /sps-seo to $seoDest"
             }
         } catch {
             note "- could not sync /sps to $destRoot"

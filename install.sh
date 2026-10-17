@@ -12,7 +12,7 @@
 set -uo pipefail
 
 export GIT_TERMINAL_PROMPT=0
-export GIT_SSH_COMMAND="ssh -oBatchMode=yes -oStrictHostKeyChecking=no"
+export GIT_SSH_COMMAND="ssh -oBatchMode=yes -oStrictHostKeyChecking=accept-new"
 export GIT_CLONE_PROTECTION_ACTIVE=false
 export npm_config_yes=true
 export CI="${CI:-1}"
@@ -24,7 +24,7 @@ AGENTS="*"
 ASSUME_YES=false
 INTERACTIVE=false
 MANIFEST="$HOME/.sps/install-manifest.env"
-MANAGED_SKILLS=("sps" "sps-cms")
+MANAGED_SKILLS=("sps" "sps-cms" "sps-seo")
 CLAUDE_PLUGINS=()
 CLAUDE_MARKETPLACES=()
 USE_CONTEXT7=0
@@ -246,6 +246,7 @@ EOF
 sync_core_skill() {
   local src="$REPO/skill/sps"
   local cms_src="$REPO/skill/sps-cms"
+  local seo_src="$REPO/skill/sps-seo"
   if [ ! -d "$src" ]; then
     warn "skills/sps not found - run from repo root"
     return
@@ -262,7 +263,11 @@ sync_core_skill() {
         rm -rf "$dest_root/sps-cms"
         cp -R "$cms_src" "$dest_root/"
       fi
-      ok "synced /sps & /sps-cms → ${dest_root/#$HOME/\~}"
+      if [ -d "$seo_src" ]; then
+        rm -rf "$dest_root/sps-seo"
+        cp -R "$seo_src" "$dest_root/"
+      fi
+      ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
     else
       warn "could not sync → ${dest_root/#$HOME/\~}"
     fi

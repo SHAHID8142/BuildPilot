@@ -40,6 +40,49 @@ if (-not $Yes) {
 # -- Remove agent-installed skills ---------------------------------------------
 section "Removing globally installed skills"
 
+# Confinement guard: a deletion target must resolve inside an allowlisted
+# agent-skill root. Manifest-controlled values are never trusted directly.
+function Test-SafeUninstallTarget([string]$Path) {
+    # Reject symlinked/reparse-point targets: a linked skill dir must not be
+    # followed out of the allowlisted root.
+    $item = Get-Item -LiteralPath $Path -ErrorAction SilentlyContinue -Force
+    if ($item -and ($item.LinkType)) { return $false }
+    $parentItem = Get-Item -LiteralPath (Split-Path -Parent $Path) -ErrorAction SilentlyContinue -Force
+    if ($parentItem -and ($parentItem.LinkType)) { return $false }
+    $candidate = [IO.Path]::GetFullPath($Path)
+    $roots = @(
+        (Join-Path $env:USERPROFILE ".agents\skills"),
+        (Join-Path $env:USERPROFILE ".config\agents\skills"),
+        (Join-Path $env:USERPROFILE ".claude\skills"),
+        (Join-Path $env:USERPROFILE ".claude\rules"),
+        (Join-Path $env:USERPROFILE ".cursor\skills"),
+        (Join-Path $env:USERPROFILE ".cursor\rules"),
+        (Join-Path $env:USERPROFILE ".codex\skills"),
+        (Join-Path $env:USERPROFILE ".gemini\skills"),
+        (Join-Path $env:USERPROFILE ".gemini\config\skills"),
+        (Join-Path $env:USERPROFILE ".gemini\antigravity\skills"),
+        (Join-Path $env:USERPROFILE ".gemini\antigravity-cli\skills"),
+        (Join-Path $env:USERPROFILE ".windsurf\skills"),
+        (Join-Path $env:USERPROFILE ".antigravity\skills")
+    )
+    foreach ($root in $roots) {
+        $fullRoot = [IO.Path]::GetFullPath($root + [IO.Path]::DirectorySeparatorChar)
+        if ($candidate.StartsWith($fullRoot, [StringComparison]::OrdinalIgnoreCase)) {
+            return $true
+        }
+    }
+    return $false
+}
+
+function Remove-ConstrainedItem([string]$Path) {
+    if (Test-SafeUninstallTarget $Path) {
+        Remove-Item -Recurse -Force $Path
+        return $true
+    }
+    info "refusing non-conforming delete target: $Path"
+    return $false
+}
+
 function Remove-AgentSkill($name) {
     $paths = @(
         "$env:USERPROFILE\.agents\skills\$name",
@@ -67,7 +110,7 @@ function Remove-AgentSkill($name) {
     )
     $found = $false
     foreach ($p in $paths) {
-        if (Test-Path $p) { Remove-Item -Recurse -Force $p; $found = $true }
+        if (Test-Path $p) { if (Remove-ConstrainedItem $p) { $found = $true } }
     }
     if ($found) { removed $name }
 }
@@ -85,7 +128,7 @@ function Get-AgentArgs {
 }
 
 $manifestPath = "$env:USERPROFILE\.sps\install-manifest.env"
-$managedSkills = @("sps","hallmark","impeccable","design-taste-frontend","sps-cms","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion","astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman","taste-skill")
+$managedSkills = @("sps","hallmark","impeccable","design-taste-frontend","sps-cms","sps-seo","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion","astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman","taste-skill")
 $claudePlugins = @("universal-build-orchestrator@shahid-personal-skillset","ui-ux-pro-max@ui-ux-pro-max-skill","engineering-skills@claude-code-skills","engineering-advanced-skills@claude-code-skills","marketing-skills@claude-code-skills","a11y-audit@claude-code-skills","docker-development@claude-code-skills")
 $claudeMarketplaces = @("shahid-personal-skillset","ui-ux-pro-max-skill","claude-code-skills")
 $useContext7 = 0
@@ -136,13 +179,11 @@ foreach ($destRoot in ($syncPaths + $defaultSyncPaths | Select-Object -Unique)) 
     if (-not $destRoot) { continue }
     $spsPath = Join-Path $destRoot "sps"
     if (Test-Path $spsPath) {
-        Remove-Item -Recurse -Force $spsPath
-        removed "$spsPath"
+        if (Remove-ConstrainedItem $spsPath) { removed "$spsPath" }
     }
     $spsCmsPath = Join-Path $destRoot "sps-cms"
     if (Test-Path $spsCmsPath) {
-        Remove-Item -Recurse -Force $spsCmsPath
-        removed "$spsCmsPath"
+        if (Remove-ConstrainedItem $spsCmsPath) { removed "$spsCmsPath" }
     }
 }
 
@@ -182,7 +223,7 @@ if (Get-Command uv -ErrorAction SilentlyContinue) {
     }
 }
 $graphifySkill = "$env:USERPROFILE\.claude\skills\graphify"
-if (Test-Path $graphifySkill) { Remove-Item -Recurse -Force $graphifySkill; removed "graphify skill" }
+if (Test-Path $graphifySkill) { if (Remove-ConstrainedItem $graphifySkill) { removed "graphify skill" } }
 
 # -- Remove personal data (only with -All) ------------------------------------
 if (-not $KeepPersonal) {

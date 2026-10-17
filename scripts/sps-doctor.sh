@@ -84,6 +84,7 @@ fi
 echo ""
 echo -e "${BOLD}Managed skills${NC}"
 check_skill "sps-cms (mandatory CMS engine)" "$HOME/.claude/skills/sps-cms"
+check_skill "sps-seo (technical SEO standard)" "$HOME/.claude/skills/sps-seo"
 check_skill "taste-skill v2 (design-taste-frontend)" "$HOME/.claude/skills/design-taste-frontend"
 check_skill "agent-browser" "$HOME/.claude/skills/agent-browser"
 check_skill "ai-seo" "$HOME/.claude/skills/ai-seo"

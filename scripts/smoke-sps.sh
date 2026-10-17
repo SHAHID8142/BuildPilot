@@ -85,6 +85,11 @@ if command -v npx >/dev/null 2>&1; then
     else
       fail "install missing mirrored sps-cms paths"
     fi
+    if [[ -d "$SMOKE_HOME/.claude/skills/sps-seo" && -d "$SMOKE_HOME/.cursor/skills/sps-seo" ]]; then
+      pass "install mirrored sps-seo to Claude + Cursor"
+    else
+      fail "install missing mirrored sps-seo paths"
+    fi
     if HOME="$SMOKE_HOME" USERPROFILE="$SMOKE_HOME" bash "$REPO/uninstall.sh" --yes; then
       if [[ ! -d "$SMOKE_HOME/.claude/skills/sps" && ! -d "$SMOKE_HOME/.cursor/skills/sps" ]]; then
         pass "uninstall removed mirrored sps paths"
@@ -95,6 +100,11 @@ if command -v npx >/dev/null 2>&1; then
         pass "uninstall removed mirrored sps-cms paths"
       else
         fail "uninstall left mirrored sps-cms paths"
+      fi
+      if [[ ! -d "$SMOKE_HOME/.claude/skills/sps-seo" && ! -d "$SMOKE_HOME/.cursor/skills/sps-seo" ]]; then
+        pass "uninstall removed mirrored sps-seo paths"
+      else
+        fail "uninstall left mirrored sps-seo paths"
       fi
     else
       fail "uninstall.sh failed"
