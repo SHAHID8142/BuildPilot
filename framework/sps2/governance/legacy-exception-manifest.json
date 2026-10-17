@@ -2,7 +2,7 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 25,
+  "exception_count": 26,
   "exceptions": [
     {
       "path": "get-sps.ps1",
@@ -134,17 +134,17 @@
     },
     {
       "path": "CHANGELOG.md",
-      "expected_blob": "f159f85baf95ab8b7feb133d75c13009ffc71e9a",
+      "expected_blob": "314508c4aaccf438c4376da652022bf7b6bf0a28",
       "expected_mode": "100644",
-      "sha256": "2fb1ca60f9707cb0a64600f1783dd93e7caa0747619d82d95d191a0f68c636cb",
+      "sha256": "5812ca5c6c79b716b48333ef9c1a01215b05274d6390e198b519f4644431cef6",
       "authorization": "DEC-7305",
       "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "README.md",
-      "expected_blob": "bc9b85bd4631f4e39a06236d8d3b1854b069b684",
+      "expected_blob": "78418d2a1261b25c8c6499a44f779e7b9fee8579",
       "expected_mode": "100644",
-      "sha256": "8d8330c1bb482cbdc8fe73fd9f29eee32eccac65830a11bce33b55c89ca82391",
+      "sha256": "0d38da24e42b3a93ea7e905fc819f4a8046aa303dd62804e59783883e726985d",
       "authorization": "DEC-7305",
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
@@ -203,6 +203,14 @@
       "sha256": "6eac640fbfc044c30d9b3a7a50b1b3b6b43cc22e1e38ab846559a66f3e73cdd1",
       "authorization": "DEC-7305",
       "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18."
+    },
+    {
+      "path": "skill/sps/scripts/sps-lesson.sh",
+      "expected_blob": "3be82c6e00369fd0d67bb9435e1f8ab38a90b74a",
+      "expected_mode": "100755",
+      "sha256": "6eac640fbfc044c30d9b3a7a50b1b3b6b43cc22e1e38ab846559a66f3e73cdd1",
+      "authorization": "DEC-7305",
+      "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18."
     }
   ],
   "related_test_artifacts": [
