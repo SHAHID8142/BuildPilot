@@ -168,8 +168,8 @@ While SEO is often perceived as non-executable content optimization, modern SEO 
 - **Threat**: Writing persistent SEO state to machine-global locations (`~/.sps/`) or modifying legacy repository files (`skills/`, `scripts/`).
 - **Mitigation**:
   - All SEO files reside strictly under `domain/seo/` and `sps2/`.
-  - Advisory rollback contract: deleting `domain/seo/` completely restores pre-P9 state with zero orphaned references.
-  - Legacy diff remains strictly `0`.
+  - Advisory rollback contract: outside the four owned P10 Home dependencies approved by DEC-7302, deleting `domain/seo/` leaves no unowned orphaned references; P9 removal is coordinated and does not guarantee Home remains buildable until those dependencies are retired or migrated.
+  - Legacy diff remains `0` except the eight content-and-mode-pinned updater files authorized by DEC-7301.
 
 ---
 

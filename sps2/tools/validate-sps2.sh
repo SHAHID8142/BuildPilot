@@ -62,7 +62,7 @@ sect "1. Required structure"
 for d in core core/lifecycle core/protocols core/gates core/adapters \
          governance governance/SCHEMAS governance/policies \
          capability capability/security research project skills mcp \
-         tests tests/fixtures docs docs/adr legacy tools; do
+         tests tests/fixtures docs docs/adr legacy tools p17; do
   [ -d "$SPS2/$d" ] && pass "dir $d" || fail "missing dir $d"
 done
 
@@ -205,9 +205,17 @@ BRAND=$(grep -rlIiE '\b(claude|cursor|codex|gemini|opencode|cline|antigravity)\b
 
 sect "9. Legacy protection"
 [ -f "$SPS2/legacy/MANIFEST.md" ] && pass "legacy manifest present" || fail "legacy manifest missing"
-DIFF=$(cd "$REPO" && git diff --name-only HEAD -- skills scripts plugins .github \
-       install.sh install.ps1 uninstall.sh uninstall.ps1 get-sps.sh get-sps.ps1 2>/dev/null)
-[ -z "$DIFF" ] && pass "legacy implementation untouched by P1" || fail "legacy modified: $DIFF"
+LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
+  --root "$REPO" \
+  --baseline c49f3852e1c31d0136269c80fe58201b059af3ec \
+  --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
+  --pathspec install.sh --pathspec install.ps1 --pathspec uninstall.sh \
+  --pathspec uninstall.ps1 --pathspec get-sps.sh --pathspec get-sps.ps1 2>&1)"
+if [ $? -eq 0 ]; then
+  pass "legacy implementation matches the DEC-7301 pinned exception"
+else
+  while IFS= read -r line; do [ -n "$line" ] && fail "legacy protection: $line"; done <<< "$LEGACY_OUT"
+fi
 
 sect "10. Git provenance"
 cd "$REPO" || exit 2
@@ -230,7 +238,13 @@ sect "12. P17 (test doubles only; real-agent execution disabled)"
 P17_SEC_OUT="$(python3 "$SPS2/tests/test_p17_security.py" 2>&1)"; P17_SEC_RC=$?
 P17_SEC_RAN="$(printf '%s\n' "$P17_SEC_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
 if [ "$P17_SEC_RC" -eq 0 ]; then
-  pass "P17 security suite: ${P17_SEC_RAN:-?} tests, 0 failed (SEC-P17-01..11)"
+  # rc==0 alone is not proof: an empty suite ("Ran 0 tests", all collection
+  # broken) also exits 0. Require a collected count of at least 1.
+  if [ -n "$P17_SEC_RAN" ] && [ "$P17_SEC_RAN" -ge 1 ] 2>/dev/null; then
+    pass "P17 security suite: $P17_SEC_RAN tests, 0 failed (SEC-P17-01..11)"
+  else
+    fail "P17 security suite collected 0 tests (rc=$P17_SEC_RC, ran='${P17_SEC_RAN:-none}')"
+  fi
 else
   while IFS= read -r l; do [ -n "$l" ] && fail "P17 security: $l"; done <<< \
     "$(printf '%s\n' "$P17_SEC_OUT" | grep -E '^(FAIL|ERROR): ')"
@@ -248,10 +262,15 @@ if [ -f "$SPS2/tests/test_p17_lifecycle.py" ] && [ -d "$SPS2/p17" ]; then
   P17_LIFE_RAN="$(printf '%s\n' "$P17_LIFE_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
   P17_LIFE_SKIP="$(printf '%s\n' "$P17_LIFE_OUT" | sed -n 's/^OK (skipped=\([0-9][0-9]*\).*/\1/p' | tail -1)"
   if [ "$P17_LIFE_RC" -eq 0 ]; then
-    if [ -n "${P17_LIFE_SKIP:-}" ] && [ "$P17_LIFE_SKIP" != "0" ]; then
-      pass "P17 lifecycle suite: ${P17_LIFE_RAN:-?} tests OK, ${P17_LIFE_SKIP} skipped"
+    # "Ran 0 tests" also exits 0: an empty suite is not a passing run.
+    if [ -n "${P17_LIFE_RAN:-}" ] && [ "$P17_LIFE_RAN" -ge 1 ] 2>/dev/null; then
+      if [ -n "${P17_LIFE_SKIP:-}" ] && [ "$P17_LIFE_SKIP" != "0" ]; then
+        pass "P17 lifecycle suite: $P17_LIFE_RAN tests OK, $P17_LIFE_SKIP skipped"
+      else
+        pass "P17 lifecycle suite: $P17_LIFE_RAN tests OK (isolated roots)"
+      fi
     else
-      pass "P17 lifecycle suite: ${P17_LIFE_RAN:-?} tests OK (isolated roots)"
+      fail "P17 lifecycle suite collected 0 tests (rc=$P17_LIFE_RC, ran='${P17_LIFE_RAN:-none}')"
     fi
   else
     while IFS= read -r l; do [ -n "$l" ] && fail "P17 lifecycle: $l"; done <<< \
@@ -286,10 +305,15 @@ if [ -f "$SPS2/tests/test_p17_endtoend.py" ] && [ -d "$SPS2/p17" ]; then
   P17_E2E_RAN="$(printf '%s\n' "$P17_E2E_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
   P17_E2E_SKIP="$(printf '%s\n' "$P17_E2E_OUT" | sed -n 's/^OK (skipped=\([0-9][0-9]*\).*/\1/p' | tail -1)"
   if [ "$P17_E2E_RC" -eq 0 ]; then
-    if [ -n "${P17_E2E_SKIP:-}" ] && [ "$P17_E2E_SKIP" != "0" ]; then
-      pass "P17 end-to-end: ${P17_E2E_RAN:-?} tests OK, ${P17_E2E_SKIP} skipped ($P17_E2E_NOTE)"
+    # "Ran 0 tests" also exits 0: an empty suite is not a passing run.
+    if [ -n "${P17_E2E_RAN:-}" ] && [ "$P17_E2E_RAN" -ge 1 ] 2>/dev/null; then
+      if [ -n "${P17_E2E_SKIP:-}" ] && [ "$P17_E2E_SKIP" != "0" ]; then
+        pass "P17 end-to-end: $P17_E2E_RAN tests OK, $P17_E2E_SKIP skipped ($P17_E2E_NOTE)"
+      else
+        pass "P17 end-to-end: $P17_E2E_RAN tests OK ($P17_E2E_NOTE)"
+      fi
     else
-      pass "P17 end-to-end: ${P17_E2E_RAN:-?} tests OK ($P17_E2E_NOTE)"
+      fail "P17 end-to-end suite collected 0 tests (rc=$P17_E2E_RC, ran='${P17_E2E_RAN:-none}')"
     fi
   else
     while IFS= read -r l; do [ -n "$l" ] && fail "P17 end-to-end: $l"; done <<< \
@@ -312,7 +336,12 @@ if [ -f "$SPS2/tests/test_p17_pinning.py" ] && [ -d "$SPS2/p17" ]; then
   P17_PIN_OUT="$(python3 "$SPS2/tests/test_p17_pinning.py" 2>&1)"; P17_PIN_RC=$?
   P17_PIN_RAN="$(printf '%s\n' "$P17_PIN_OUT" | sed -n 's/^Ran \([0-9][0-9]*\).*/\1/p' | tail -1)"
   if [ "$P17_PIN_RC" -eq 0 ]; then
-    pass "P17 pinning suite: ${P17_PIN_RAN:-?} tests OK (fail-closed resolution)"
+    # "Ran 0 tests" also exits 0: an empty suite is not a passing run.
+    if [ -n "${P17_PIN_RAN:-}" ] && [ "$P17_PIN_RAN" -ge 1 ] 2>/dev/null; then
+      pass "P17 pinning suite: $P17_PIN_RAN tests OK (fail-closed resolution)"
+    else
+      fail "P17 pinning suite collected 0 tests (rc=$P17_PIN_RC, ran='${P17_PIN_RAN:-none}')"
+    fi
   else
     while IFS= read -r l; do [ -n "$l" ] && fail "P17 pinning: $l"; done <<< \
       "$(printf '%s\n' "$P17_PIN_OUT" | grep -E '^(FAIL|ERROR): ')"

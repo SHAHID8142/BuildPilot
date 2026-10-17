@@ -11,7 +11,7 @@
     "\"frontend now, CMS later\" sequencing",
     "third-party rendering or template dependencies (Python standard library only)",
     "inventing LCP or INP numeric thresholds (CONF-001)",
-    "modifying legacy artefacts (legacy diff must remain 0)",
+    "modifying legacy artefacts outside the eight content-and-mode-pinned files authorized by DEC-7301 (legacy diff otherwise remains 0)",
     "writing machine-global state or external state outside the project",
     "network exposure before the D-P10-1 security controls exist and are authorised",
     "importing the legacy Lighthouse numeric gates (D-P10-4)"

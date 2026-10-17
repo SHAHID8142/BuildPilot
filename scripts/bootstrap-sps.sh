@@ -34,6 +34,30 @@ if [[ ! -d "$TEMPLATE_DIR" ]]; then
   exit 1
 fi
 
+if [[ -L "$DEST" ]]; then
+  echo "Refusing symlinked SPS destination: $DEST" >&2
+  exit 1
+fi
+if [[ -e "$DEST" && ! -d "$DEST" ]]; then
+  echo "SPS destination is not a directory: $DEST" >&2
+  exit 1
+fi
+
+# Preflight every path this script writes before copying any template. In
+# particular, --force must never follow a file symlink into user data.
+for name in profile.md handoff.md mistakes.md agent.md audit-report.md plan.md \
+            content-model.md cms-foundation.md cms-debt.md design-system.md \
+            architecture.md section-registry.md changelog-sps.md; do
+  if [[ -L "$DEST/$name" ]]; then
+    echo "Refusing symlinked template destination: $DEST/$name" >&2
+    exit 1
+  fi
+done
+if [[ -L "$DEST/section-todos" || -L "$DEST/section-todos/README.md" ]]; then
+  echo "Refusing symlinked section-todos destination: $DEST/section-todos" >&2
+  exit 1
+fi
+
 mkdir -p "$DEST"
 
 copy_template() {
@@ -127,18 +151,3 @@ done
 
 echo "Bootstrapped $DEST (SPS $VERSION)"
 echo "Next: open the project in your agent and run /sps (or /sps audit, /sps sync)"
-
-# Session-start update check (non-blocking, 24h cached). Auto-applies when the
-# host is an agent session and an update is available.
-UPDATE_CHECK="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/check-update.sh"
-if [[ -f "$UPDATE_CHECK" ]]; then
-  bash "$UPDATE_CHECK" >/dev/null 2>&1
-  rc=$?
-  if [[ $rc -eq 1 ]]; then
-    UPDATE_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/sps-update.sh"
-    if [[ -f "$UPDATE_SCRIPT" ]]; then
-      echo "SPS update available — auto-applying…"
-      bash "$UPDATE_SCRIPT" --yes
-    fi
-  fi
-fi

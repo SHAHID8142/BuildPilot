@@ -316,10 +316,17 @@ PY
   || fail "forced-choice behaviour is incorrect"
 
 sect "8. Legacy and machine-global protection"
-DIFF=$(cd "$REPO" && git diff --name-only c11da27 -- skills scripts plugins .github \
-       templates README.md CHANGELOG.md CATALOG.md '*.sh' '*.ps1' 2>/dev/null \
-       | grep -v '^sps2/')
-[ -z "$DIFF" ] && pass "legacy repository untouched by P3" || fail "legacy modified: $DIFF"
+LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
+  --root "$REPO" --baseline c11da27 \
+  --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
+  --pathspec templates --pathspec README.md --pathspec CHANGELOG.md \
+  --pathspec CATALOG.md --pathspec '*.sh' --pathspec '*.ps1' \
+  --exclude-prefix sps2/ 2>&1)"
+if [ $? -eq 0 ]; then
+  pass "legacy repository matches the DEC-7301 pinned exception"
+else
+  while IFS= read -r line; do [ -n "$line" ] && fail "$line"; done <<< "$LEGACY_OUT"
+fi
 if grep -rqE --exclude-dir=tools 'git config --global|\$HOME/\.(sps|claude|codex|config)' "$SPS2" 2>/dev/null; then
   fail "sps2 references machine-global state"
 else

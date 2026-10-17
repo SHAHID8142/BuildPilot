@@ -547,6 +547,65 @@ class TestCredentials(P17TestCase):
         self.assertEqual(removed, [])
         self.assertIn(digest, cleaned)
 
+    def test_scrub_covers_round21_evasion_shapes(self):
+        """Round 21A (T-07): the five demonstrated evasion shapes are caught.
+
+        All values are synthetic fixtures, not real credentials.
+        """
+        cases = {
+            # AWS session (temporary) token — sibling of the covered AKIA.
+            "ASIAABCDEFGHIJKLMNOP": "provider-token",
+            # Slack app-level token — sibling of the covered xox[baprs]-.
+            "xapp-1-A0123456789-0123456789": "provider-token",
+            # GitLab personal access token.
+            "glpat-AbCdEfGhIjKlMnOpQrSt": "provider-token",
+            # PEM private-key block without interior spaces.
+            "-----BEGINRSAPRIVATEKEY-----MIIEabc-----ENDRSAPRIVATEKEY-----":
+                "private-key-block",
+            # base64-encoded "password: ..." prefix hedge.
+            "cGFzc3dvcmQ6IGh1bnRlcjI=": "base64-credential",
+            # base64-encoded "user: ..." prefix hedge.
+            "dXNlcjogaHVudGVyMg==": "base64-credential",
+            # base64-encoded "auth: ..." prefix hedge.
+            "YXV0aDogaHVudGVyMg==": "base64-credential",
+        }
+        for text, expected in cases.items():
+            cleaned, removed = scrub.scrub(text)
+            self.assertIn(expected, removed, text)
+            self.assertIn("[REDACTED]", cleaned, text)
+
+    def test_scrub_negative_controls_are_not_over_redacted(self):
+        """Round 21A (T-07): near-miss shapes must survive untouched.
+
+        Guards the new patterns against excessive redaction: short IDs,
+        prefix-only strings, colon-less base64, and empty PEM blocks are
+        not secrets.
+        """
+        negatives = [
+            "ASIA1234",                      # below the 16-char body bound
+            "AKIA1234",                      # below the 16-char body bound
+            "glpat-",                        # prefix alone
+            "glpat-short1",                  # below the 16-char body bound
+            "xapp-1-short",                  # below the 10-char body bound
+            "cGFzc3dvcmRz",                  # base64("passwords"): no colon
+            "YXV0aDo",                       # b64 prefix alone, no body
+            "dXNlcjo",                       # b64 prefix alone, no body
+            "-----BEGIN CERTIFICATE-----",   # BEGIN without the full block
+            "Bearer abc12345",               # below the 16-char bearer bound
+            "deadbeef" * 8,                  # 64-hex digest, not a secret
+        ]
+        for text in negatives:
+            cleaned, removed = scrub.scrub(text)
+            self.assertEqual(removed, [], text)
+            self.assertEqual(cleaned, text, text)
+
+    def test_space_free_pem_block_still_requires_full_block(self):
+        """The relaxed private-key pattern still needs BEGIN and END."""
+        text = "-----BEGINRSAPRIVATEKEY-----MIIEabc"  # no END marker
+        cleaned, removed = scrub.scrub(text)
+        self.assertEqual(removed, [], text)
+        self.assertEqual(cleaned, text, text)
+
     def test_environment_is_explicit_and_minimal(self):
         _sentinel = "P17_FAKE_PARENT_SECRET"
         _absent = object()

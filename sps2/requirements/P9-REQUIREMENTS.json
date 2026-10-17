@@ -347,8 +347,8 @@
       "acceptance_criteria": [
         "All SEO implementation code resides in domain/seo/ and sps2/tools/ without modifying sps2/core/",
         "No third-party packages, CLIs, or npm modules installed (Python stdlib only)",
-        "Zero modifications to legacy repository files (legacy diff remains exactly 0)",
-        "Disabling the SEO subsystem via configuration or removal does not break core SPS 2.0 builds (advisory rollback contract)",
+    "Zero modifications to legacy repository files except the eight content-and-mode-pinned updater files authorized by DEC-7301; every other legacy change fails closed",
+    "Outside the four owned P10 Home dependencies approved by DEC-7302, disabling or removing the SEO subsystem does not break other core SPS 2.0 builds; P9 removal is a coordinated architectural operation and no longer guarantees that Home remains buildable until those dependencies are retired or migrated",
         "Rollback rehearsal proves deletion of domain/seo/ leaves core validators passing"
       ],
       "dependencies": ["P7"],

@@ -6,7 +6,7 @@ Last updated:
 - Specialists may assist; `/sps` remains the orchestrator.
 
 ## SPS version
-- Skill version:
+- Skill version: 4.0.0
 
 ## Project identity
 - Name:
@@ -51,3 +51,22 @@ Last updated:
 
 ## Working patterns observed
 -
+
+
+## Team / deploy
+- Team / multi-agent:
+- Approvers:
+- Deploy target:
+- Deploy method:
+- Domains:
+- Secrets ownership:
+
+## Systems
+- CMS enabled:
+- CRM enabled:
+- ERP enabled:
+
+## Global design defaults applied
+- No eyebrows: yes
+- Seamless minimal section gaps: yes
+- Palette discipline: yes

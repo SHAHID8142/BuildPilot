@@ -917,6 +917,7 @@ class TestMalformedPolicyFailsVisibly(unittest.TestCase):
         os.makedirs(tools)
         for rel, dest in (
             (os.path.join("governance", "attribution.py"), gov),
+            (os.path.join("governance", "decision_identifiers.py"), gov),
             (os.path.join("tools", "check_sps2.py"), tools),
             (os.path.join("tools", "check_p2.py"), tools),
         ):
@@ -1079,6 +1080,7 @@ class TestCheckerDocumentShapesFailVisibly(unittest.TestCase):
         os.makedirs(gov)
         os.makedirs(tools)
         for rel, dest in (("governance/attribution.py", gov),
+                          ("governance/decision_identifiers.py", gov),
                           ("tools/check_p2.py", tools),
                           ("tools/check_sps2.py", tools),
                           ("governance/attribution_policy.json", gov)):

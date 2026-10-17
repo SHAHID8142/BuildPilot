@@ -25,12 +25,14 @@ import re
 # the scrub report can say what class was removed without echoing the value.
 PATTERNS = [
     ("private-key-block", re.compile(
-        r"-----BEGIN [A-Z ]*PRIVATE KEY-----.*?-----END [A-Z ]*PRIVATE KEY-----",
+        r"-----BEGIN[A-Z ]*PRIVATE[ ]?KEY-----.*?-----END[A-Z ]*PRIVATE[ ]?KEY-----",
         re.DOTALL)),
     ("provider-token", re.compile(
         r"\b(?:sk-[A-Za-z0-9_\-]{12,}|ghp_[A-Za-z0-9]{16,}|github_pat_[A-Za-z0-9_]{20,}"
-        r"|xox[baprs]-[A-Za-z0-9\-]{10,}|AKIA[0-9A-Z]{16}"
-        r"|AIza[0-9A-Za-z_\-]{20,}|sk-ant-[A-Za-z0-9_\-]{12,}|npm_[A-Za-z0-9]{16,})")),
+        r"|xox[baprs]-[A-Za-z0-9\-]{10,}|xapp-1-[A-Za-z0-9\-]{10,}"
+        r"|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}"
+        r"|AIza[0-9A-Za-z_\-]{20,}|sk-ant-[A-Za-z0-9_\-]{12,}|npm_[A-Za-z0-9]{16,}"
+        r"|glpat-[A-Za-z0-9_\-]{16,})")),
     ("bearer-token", re.compile(r"\b[Bb]earer\s+[A-Za-z0-9._\-]{16,}")),
     ("jwt", re.compile(r"\beyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}")),
     ("url-credentials", re.compile(r"\b[a-zA-Z][a-zA-Z0-9+.\-]*://[^\s/:@]+:[^\s/@]+@")),
@@ -43,6 +45,17 @@ PATTERNS = [
         r"[A-Z0-9_]*\s*=\s*).+$")),
     ("pem-body", re.compile(r"-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----",
                             re.DOTALL)),
+    # Narrow base64-credential hedge (Round 21A): matches only the base64
+    # encodings of the fixed prefixes "password:", "user:", "auth:" — NOT a
+    # general base64 matcher, so digests and license keys are untouched.
+    #   base64("password:") = cGFzc3dvcmQ6 (self-delimiting, no padding)
+    #   base64("user:")     = dXNlcjo=     -> stable prefix dXNlcjo
+    #   base64("auth:")     = YXV0aDo=     -> stable prefix YXV0aDo
+    # (the trailing '=' is alignment padding, so the prefix without it is
+    # the position-independent marker; any string starting with it decodes
+    # to the credential prefix at offset 0 of some base64 stream).
+    ("base64-credential", re.compile(
+        r"\b(?:cGFzc3dvcmQ6|dXNlcjo|YXV0aDo)[A-Za-z0-9+/=]{4,}")),
 ]
 
 

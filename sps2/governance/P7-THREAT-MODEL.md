@@ -145,7 +145,7 @@ additional durable state.
 ## 15. Explicit prohibited behaviours
 
 - Writing state outside the project (roadmap forbidden).
-- Modifying legacy files / legacy diff non-zero (D-P7-C).
+- Modifying legacy files outside the eight content-and-mode-pinned updater files authorized by DEC-7301; D-P7-C's legacy-diff-zero intent otherwise remains binding.
 - Modifying the production capability registry.
 - Promoting or activating any capability.
 - Resolving CONF-001 (unchanged).
@@ -166,7 +166,7 @@ additional durable state.
 5. `validate-p7-readiness.py` passes with the threat model present and P7
    still unstarted.
 6. No P7 implementation artefact exists.
-7. Production registry byte-identical; legacy diff zero.
+7. Production registry byte-identical; legacy diff contains only the DEC-7301 pinned exception.
 8. CONF-001 UNRESOLVED; LCP/INP NOT_OBSERVED.
 
 ## 17. Rollback / removal criteria

@@ -1,15 +1,104 @@
 {
   "$comment": "STRUCTURAL VALIDITY IS NOT AUTHORITY. A separate document was verified to validate against this schema while every one of its section_id, purpose, route, content-type, layout, asset, dependency, P9-reference and test references was invented and unresolvable, and while its user_approval.decided_by named an agent. The schema therefore cannot detect fabrication, and this file is not authoritative merely because it validates. Authenticity of every reference, existence of the P8 Section, ContentType and Asset records, existence of the layout in the P10 layout registry, P9 route and SEO contract consistency, reconciliation of backend/data dependencies against real slice contracts, existence of acceptance and test evidence, derivation from genuine CMS state, and genuineness of the User approval are ALL runtime verification obligations of the mandatory fail-closed gate (REQ-P10-09, REQ-P10-17). That gate is specified but NOT implemented and has NOT been executed. No runtime check, CMS integration or approval verification has been performed.",
   "inventory_id": "P10-SECTION-INVENTORY-v1",
-  "inventory_state": "INCOMPLETE_PLANNING",
-  "complete": false,
+  "inventory_state": "COMPLETE_AWAITING_USER_APPROVAL",
+  "complete": true,
   "provenance": {
     "generated_at": "2026-10-09",
     "generator": "sps2 contract scaffolding: format established by the governance directive; no CMS state or P8 content contract was consulted",
-    "cms_state_digest": null,
-    "p8_contract_digest": null
+    "cms_state_digest": "sha256:b35f7aba68eca4e7c9b688ae979891330f2f3d08c2b4250ce855c55943f7e38e",
+    "p8_contract_digest": "sha256:ee6bb68f04f0eb468f0fd6eafaaea0b68639b88199e207c7a76ef57e10bbf217"
   },
   "user_approval": null,
-  "sections": [],
+  "sections": [
+    {
+      "section_completeness": "COMPLETE",
+      "section_id": {
+        "provenance": "USER_DECISION",
+        "value": "home",
+        "user_decision_ref": "sps2/decisions/P10-DELEGATED-DECISIONS.json#DEC-7105",
+        "note": "Logical P10 section identifier approved by the human User (DEC-7105, APPROVED 2026-10-13). It is NOT a P8 Section UUID; no P8 Section record exists and none is created by this inventory entry. Existence of a P8 Section is a runtime check (REQ-P10-09), which is not implemented."
+      },
+      "purpose": {
+        "provenance": "USER_DECISION",
+        "value": "The application's primary entry point.",
+        "user_decision_ref": "sps2/decisions/P10-DELEGATED-DECISIONS.json#DEC-7105",
+        "note": "Free text approved by the human User; not machine-verifiable for correctness."
+      },
+      "route": {
+        "provenance": "USER_DECISION",
+        "value": "/",
+        "user_decision_ref": "sps2/decisions/P10-DELEGATED-DECISIONS.json#DEC-7105",
+        "note": "P8 Section has no route field (id, name, layout, content_ids, order), so route cannot be derived from CMS state. Value matches the schema route format ^/[a-z0-9/-]*$. Route uniqueness and P9 route consistency remain runtime checks (REQ-P10-09), not established here."
+      },
+      "cms_content_types": {
+        "provenance": "DERIVED",
+        "source_ref": "domain/cms/data/content_types.json (persisted P8 ContentType record with name=home)",
+        "values": [
+          "c64e3d79694e49eebd6c09ee58a53c87"
+        ],
+        "note": "DERIVED from persisted P8 CMS state: a ContentType record id=c64e3d79694e49eebd6c09ee58a53c87 with name=home exists on disk and declares fields heading and body, both type=text and required=true. This entry references that P8 record and does not restate or redefine its semantics. Referencing a ContentType does not assert that any Content exists, is published, or is renderable."
+      },
+      "layout_id": {
+        "provenance": "USER_DECISION",
+        "value": "home-default",
+        "user_decision_ref": "sps2/decisions/P10-DELEGATED-DECISIONS.json#DEC-7106",
+        "note": "Approved by the human User (DEC-7106). Membership is independently verified: domain/frontend/layout_registry.py registers home-default with field_slots ('heading','body') and resolve('home-default', <Home ContentType>) returns RESOLVED. Registry membership is NOT permission to render or publish, and runtime validity still requires the unimplemented REQ-P10-09 gate."
+      },
+      "assets": {
+        "provenance": "USER_DECISION",
+        "values": [],
+        "user_decision_ref": "sps2/decisions/P10-DELEGATED-DECISIONS.json#DEC-7107",
+        "note": "An explicit empty array means 'none by decision', which is distinct from UNDECLARED_PENDING. Approved by the human User (DEC-7107): the INITIAL Home slice has no assets. This is scoped to the initial Home slice only and is NOT a claim that no assets exist anywhere in the CMS. HOME-ACC-22 records the asset criteria as NOT APPLICABLE, not as substantive passing tests."
+      },
+      "backend_data_dependencies": {
+        "provenance": "USER_DECISION",
+        "values": [],
+        "user_decision_ref": "sps2/decisions/P10-DELEGATED-DECISIONS.json#DEC-7108",
+        "note": "An explicit empty list approved by the human User (DEC-7108): the initial Home slice declares no backend or data dependencies. An explicit empty list is a declaration, not an omission. This declaration remains SUBJECT TO REQ-P10-07 reconciliation against the Home slice contract; that reconciliation mechanism does not exist, so the declaration is NOT evidence that a reconciliation check exists or passes."
+      },
+      "seo_requirements": {
+        "provenance": "P9_OWNED_REFERENCE",
+        "references": [
+          "sps2.p9-audit/v1",
+          "sps2.p9-metadata/v1",
+          "sps2.p9-sitemap/v1",
+          "sps2.p9-structured-data/v1"
+        ],
+        "note": "Exactly the four contracts approved under DEC-7109, recorded here unchanged and none added or reinterpreted. All four were verified on disk (sps2/schemas/p9-audit.schema.json, p9-metadata.schema.json, p9-sitemap.schema.json, p9-structured-data.schema.json each declare the stated $id). P9 retains ownership of all SEO validation; P10 references these contracts and restates no P9 logic. Passing the P9 deployment audit (HOME-ACC-16) remains BLOCKED because no build output or renderer exists."
+      },
+      "acceptance_test_requirements": {
+        "provenance": "USER_DECISION",
+        "values": [
+          "HOME-ACC-01: SLICE-P10-01 exists, validates against sps2.p10-slice/v1, and references the approved Home inventory entry.",
+          "HOME-ACC-02: no slice implementation began before REQ-P10-17 was satisfied.",
+          "HOME-ACC-03: every provenance and evidence reference resolves, with no fabricated or agent-attributed approval.",
+          "HOME-ACC-04: Home ContentType c64e3d79694e49eebd6c09ee58a53c87 exists with heading and body both type=text and required=true, matching the authorized home-default slot mapping.",
+          "HOME-ACC-05: only content with status=published renders as published Home content; draft yields no published route.",
+          "HOME-ACC-06: draft, missing, wrong-type, unresolvable or otherwise invalid content fails closed with no partial render.",
+          "HOME-ACC-07: every value reaching an HTML sink passed encode_for_html exactly once, with no raw path and no double-encoding.",
+          "HOME-ACC-08: rendered HTML reparses via the approved stdlib HTMLParser with closed elements, exactly one h1, no heading-level jumps, language declared and viewport meta present.",
+          "HOME-ACC-09: JSON-LD and script blocks round-trip without element breakout, preserving escape_json_ld_for_html.",
+          "HOME-ACC-10: a P8 edit through the integration harness demonstrably changes rendered output, and no rendered string is hardcoded.",
+          "HOME-ACC-11: error and empty states render deterministically and leak no raw CMS content.",
+          "HOME-ACC-12: home-default resolves explicitly to exactly heading and body against the Home ContentType.",
+          "HOME-ACC-13: the Home route / is unique and consistent with P9 canonical route derivation.",
+          "HOME-ACC-14: unknown layout ids and unsupported slots fail closed with no silent layout substitution.",
+          "HOME-ACC-15: all four approved P9 references are preserved exactly and no P9 logic is restated.",
+          "HOME-ACC-16: the P9 deployment-mode audit over built Home output exits 0, with robots.txt and sitemap.xml at the build root via the P9 engines.",
+          "HOME-ACC-17: no production or network exposure without implemented and authorised D-P10-1 controls, and the exposure class matches the observed bind.",
+          "HOME-ACC-18: state_changing_operations is explicitly declared and reconciled against the backend contract with no mismatch.",
+          "HOME-ACC-19: the slice imports no third-party module and writes nothing machine-global.",
+          "HOME-ACC-20: every claimed control has a negative test that fails when the control is removed.",
+          "HOME-ACC-21: zero lint, type-check or build blockers, and no dead code or unrecorded TODO.",
+          "HOME-ACC-22: the asset criteria are recorded as NOT APPLICABLE — zero assets by decision (DEC-7107) — and are NOT recorded as substantive passing tests.",
+          "HOME-ACC-23: the rollback method and scope are recorded and rehearsed in an isolated copy with no orphan references.",
+          "HOME-ACC-24: the User approved the slice, the approval is User-attributable and never agent-attributed, and no later slice began first."
+        ],
+        "user_decision_ref": "sps2/decisions/P10-DECISIONS.json#D-P10-6",
+        "note": "The 24 approved Home acceptance criteria HOME-ACC-01..24, reproduced verbatim from D-P10-6 (approved by the human User, decided_at 2026-10-13). They bind the EXISTING per_slice_dod baseline; no new project-wide quality threshold is introduced and no legacy Lighthouse score, numeric viewport range, WCAG conformance level, or LCP/INP threshold is imported (D-P10-4, UQ-P10-02, UQ-P10-03, CONF-001). These requirements are APPROVED as REQUIRED, NOT as satisfied. Many are currently NOT TESTABLE and remain BLOCKED because SLICE-P10-01, the Home renderer, REQ-P10-07 and REQ-P10-09 do not exist; REQ-P10-09 runtime-gate checks are NOT claimed to exist. The Home Content 60e51f0536cb413e86e96ff6f750846a remains status=draft with published_at=null, so a published-only slice reference correctly rejects it; no Content is published or previewed by this entry. Zero-asset and empty state_changing_operations criteria are recorded as vacuously satisfied by explicit decision and MUST NOT be read as substantive passing tests."
+      }
+    }
+  ],
   "notes": "PLANNING STATE ONLY. Zero sections enumerated, by design and by prohibition: no authoritative section set exists in the repository, and naming a section is an explicit User decision under REQ-P10-17 criterion 4. KNOWN UNRESOLVED DEPENDENCIES, recorded so they are not silently forgotten: (1) the P10 layout registry required by REQ-P10-02 does not exist, so layout_id cannot yet be validated for any section; (2) P8 Section has no route field (p8-content.schema.json Section definition is id, name, layout, content_ids, order), so route cannot be derived from CMS state and is a User decision; (3) no populated P8 CMS state is present in the repository, so content types, assets and content references cannot be derived; (4) no slice contracts exist, so backend/data dependencies and acceptance/test requirements cannot be reconciled; (5) P9 owns all SEO validation, so seo_requirements will hold P9 contract references only and will never restate P9 logic. CONFLICT RECORDED, NOT RESOLVED AND NOT AMENDED: REQ-P10-17 criterion 2 requires these nine fields per section while criterion 3 requires the inventory be produced from CMS state and slice contracts. Six of the nine fields have no CMS or slice-contract source. This file resolves that tension structurally through per-field provenance, where a field lacking a derivable source is marked USER_DECISION rather than being invented. REQ-P10-17 has NOT been amended; if the User prefers an explicit amendment to criterion 3, that is a separate decision recorded separately."
 }

@@ -53,6 +53,17 @@ except Exception as _ex:
     AGENT = None
     ATTRIBUTION_ERROR = "%s: %s" % (type(_ex).__name__, _ex)
 
+# Same empty-stdout-as-PASS hazard applies to the shared decision-identifier
+# pattern: a missing or corrupt decision_identifiers.py in a deployed tree
+# would abort at import with empty stdout and be scored as a clean check.
+# Guard it identically and fail closed with a visible ERR line.
+DECISION_ID_ERROR = None
+try:
+    from decision_identifiers import DECISION_ID_PATTERN  # noqa: E402,F811
+except Exception as _ex:  # noqa: F811 - deliberate re-import under guard
+    DECISION_ID_PATTERN = None
+    DECISION_ID_ERROR = "%s: %s" % (type(_ex).__name__, _ex)
+
 RESULTS = {"PASS", "FAIL", "SKIP", "BLOCKED"}
 SEC = {"VERIFIED_SAFE", "REVIEWED_LOW_RISK", "SUSPECTED_RISK",
        "VULNERABLE", "UNKNOWN"}
@@ -221,7 +232,7 @@ def decision(d):
     decs = _records(d, e, "decisions")
     for x in decs:
         did = x.get("decision_id", "<no id>")
-        if not re.fullmatch(r"DEC-\d{4}", str(did)):
+        if not re.fullmatch(DECISION_ID_PATTERN, str(did)):
             e.append("%s: bad decision_id" % did)
             continue
         if not x.get("reason") or not x.get("evidence"):
@@ -235,19 +246,24 @@ def decision(d):
 
 def handoff(d):
     e = []
-    for h in _records(d, e, "handoffs"):
+    hs = _records(d, e, "handoffs")
+    for h in hs:
         hid = h.get("handoff_id", "<no id>")
         if not h.get("next_allowed_action") or not h.get("forbidden_next_action"):
             e.append("%s: handoff must state next AND forbidden actions" % hid)
         for k in ("completed", "not_completed", "blockers"):
             if not isinstance(h.get(k), list):
                 e.append("%s: %s must be a list" % (hid, k))
+    dup = _dup([h.get("handoff_id") for h in hs])
+    if dup:
+        e.append("duplicate handoff IDs: %s" % dup)
     return e
 
 
 def action(d):
     e = []
-    for a in _records(d, e, "actions"):
+    acts = _records(d, e, "actions")
+    for a in acts:
         aid = a.get("action_id", "<no id>")
         if a.get("assumption") == "MATERIAL_DECISION" \
            and _as_dict(e, aid, "approval",
@@ -262,6 +278,9 @@ def action(d):
                 e.append("%s: GLOBAL authorized by non-user %r" % (aid, who))
         if a.get("risk_level") == "CRITICAL" and not a.get("rollback_method"):
             e.append("%s: CRITICAL action without rollback_method" % aid)
+    dup = _dup([a.get("action_id") for a in acts])
+    if dup:
+        e.append("duplicate action IDs: %s" % dup)
     return e
 
 
@@ -281,6 +300,9 @@ def main():
         # Controlled report: an ERR line on stdout (exit 0, no traceback), so
         # the stdout-based harness sees a failure instead of an empty PASS.
         print("ERR\tattribution policy unavailable: %s" % ATTRIBUTION_ERROR)
+        return 0
+    if DECISION_ID_ERROR is not None:
+        print("ERR\tdecision-identifier policy unavailable: %s" % DECISION_ID_ERROR)
         return 0
     try:
         data = json.load(open(path))

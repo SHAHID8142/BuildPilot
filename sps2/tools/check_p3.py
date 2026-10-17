@@ -13,7 +13,24 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 CAP = os.path.join(os.path.dirname(HERE), "capability")
 sys.path.insert(0, CAP)
+GOVERNANCE = os.path.join(os.path.dirname(HERE), "governance")
+sys.path.insert(0, GOVERNANCE)
 import engine  # noqa: E402
+
+# Same empty-stdout-as-PASS hazard as check_sps2.py's attribution guard: a
+# missing or corrupt decision_identifiers.py in a deployed tree would abort at
+# import with a traceback on stderr and empty stdout, and validate-p3.sh's
+# assert_clean scores empty stdout as a PASS. Guard it and fail closed with a
+# visible ERR line from main() instead.
+DECISION_ID_ERROR = None
+try:
+    from decision_identifiers import DECISION_ID_PATTERN  # noqa: E402
+except Exception as _ex:
+    # Broad `Exception` on purpose: an uncaught one here would leave stdout
+    # empty and be scored as a clean check. KeyboardInterrupt/SystemExit
+    # derive from BaseException, not Exception, so real interrupts propagate.
+    DECISION_ID_PATTERN = None
+    DECISION_ID_ERROR = "%s: %s" % (type(_ex).__name__, _ex)
 
 SPS2 = os.path.dirname(CAP)
 AGENTISH = engine.AGENTISH
@@ -212,7 +229,7 @@ def check_records(kind, path):
         decs = records_collection(e, d, "decisions", kind)
         for x in decs:
             did = x.get("decision_id", "<no id>")
-            if not re.fullmatch(r"DEC-\d{4}", str(did)):
+            if not re.fullmatch(DECISION_ID_PATTERN, str(did)):
                 err("%s: bad decision_id" % did)
                 continue
             if not x.get("reason") or not x.get("evidence"):
@@ -247,6 +264,11 @@ def main():
     if len(sys.argv) < 2:
         print("usage: check_p3.py <registry|selection|records|gate> ...")
         return 2
+    if DECISION_ID_ERROR is not None:
+        # Controlled report: an ERR line on stdout (exit 0, no traceback), so
+        # the stdout-based harness sees a failure instead of an empty PASS.
+        print("ERR\tdecision-identifier policy unavailable: %s" % DECISION_ID_ERROR)
+        return 0
     mode = sys.argv[1]
     try:
         if mode == "registry":

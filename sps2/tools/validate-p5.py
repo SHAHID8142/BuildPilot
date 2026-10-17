@@ -220,8 +220,15 @@ def s7(r):
                             os.path.join(SPS2, "tools", "sps5.py"), "report"],
                            capture_output=True, text=True)
         outs.add(p.stdout)
-    r.ok("repeated integration report is byte-identical") if len(outs) == 1 \
-        else r.bad("integration report was not deterministic")
+    # Byte-identical is only evidence of determinism if the report actually
+    # SUCCEEDS: three identical crashes (empty stdout) would also collapse to
+    # a single element.
+    if p.returncode != 0 or not next(iter(outs), "").strip():
+        r.bad("sps5.py report failed (rc=%s); determinism unproven" % p.returncode)
+    else:
+        r.ok("repeated integration report is byte-identical") \
+            if len(outs) == 1 \
+            else r.bad("integration report was not deterministic")
 
 
 def s8(r):
@@ -231,7 +238,13 @@ def s8(r):
                        capture_output=True, text=True)
     if p.returncode == 0:
         m = re.search(r"Ran (\d+) tests", p.stderr + p.stdout)
-        r.ok("%s unit tests, all passing" % (m.group(1) if m else "?"))
+        ran = int(m.group(1)) if m else 0
+        # "Ran 0 tests" means nothing was collected: unittest exits 0 with an
+        # empty suite, which is not a passing test run.
+        if ran < 1:
+            r.bad("unit test suite collected 0 tests")
+        else:
+            r.ok("%s unit tests, all passing" % ran)
     else:
         r.bad("unit tests failed")
         for line in (p.stderr + p.stdout).splitlines():
@@ -249,11 +262,23 @@ def s9(r):
                     "promotion_decision") == "PROMOTED_TO_PRODUCTION":
                 problems.append("PROMOTED_WITH_UNATTRIBUTABLE_APPROVAL: %s"
                                 % c["capability_id"])
-    for who in ("Agent", "Claude", "the model", "self"):
+    # Probe identities must match the authoritative policy: attribution_policy
+    # json EXCLUDES "self" as a token (DEC-0027 — "Self" is a legitimate human
+    # surname), so expecting the predicate to reject it would contradict the
+    # ratified policy. "Agent", "Claude" and "the model" carry no such
+    # ratification and must stay rejected.
+    for who in ("Agent", "Claude", "the model"):
         if G.approval_is_user_attributable(
                 {"state": "APPROVED", "decided_by": who,
                  "decided_on": "2026-10-04"}):
             problems.append("AGENT_APPROVAL_ACCEPTED: %s" % who)
+    # The computed problems MUST reach the report: a silent drop here would
+    # let every promoted capability carry an agent-attributed approval while
+    # this section prints its header and passes.
+    r.bad("s9: %s" % problems) if problems else r.ok(
+        "all promoted approvals user-attributable; agent identities rejected")
+
+
 def s10(r):
     r.section("10. Research gaps preserved")
     src = json.load(open(os.path.join(SPS2, "research", "P2-SOURCES.json")))
@@ -278,12 +303,18 @@ def s10(r):
 
 def s11(r):
     r.section("11. Legacy protection")
-    p = git("diff", "--name-only", "c11da27", "--", "skills", "scripts",
-            "plugins", ".github", "templates", "README.md", "CHANGELOG.md",
-            "CATALOG.md")
-    legacy = [x for x in p.stdout.split() if not x.startswith("sps2/")]
-    r.bad("legacy modified: %s" % legacy) if legacy \
-        else r.ok("legacy repository untouched (diff = 0 files)")
+    helper = os.path.join(SPS2, "governance", "legacy_exceptions.py")
+    p = subprocess.run(
+        [sys.executable, helper, "--root", REPO, "--baseline", "c11da27",
+         "--pathspec", "skills", "--pathspec", "scripts", "--pathspec",
+         "plugins", "--pathspec", ".github", "--pathspec", "templates",
+         "--pathspec", "README.md", "--pathspec", "CHANGELOG.md",
+         "--pathspec", "CATALOG.md", "--pathspec", "*.sh", "--pathspec", "*.ps1",
+         "--exclude-prefix", "sps2/"],
+        capture_output=True, text=True)
+    findings = [line for line in p.stderr.splitlines() if line]
+    r.bad("legacy modified: %s" % findings) if p.returncode or findings \
+        else r.ok("legacy repository matches the DEC-7301 pinned exception")
 
 
 def s12(r):
@@ -616,8 +647,14 @@ def negative_suite(r):
         try:
             slipped = bool(fn())
         except Exception as exc:
-            slipped = False
-            r.info("case raised %s" % type(exc).__name__)
+            # A case that RAISES has not demonstrated rejection: the API under
+            # test may have changed shape (TypeError) or the probe itself may
+            # be broken. Scoring that as "rejected" would hide the breakage,
+            # so the case counts as missed and the exception is reported.
+            r.neg_missed += 1
+            r.bad("%s -> case errored (%s: %s)"
+                  % (label, type(exc).__name__, exc))
+            continue
         if slipped:
             r.neg_missed += 1
             r.bad("%s -> NOT rejected" % label)

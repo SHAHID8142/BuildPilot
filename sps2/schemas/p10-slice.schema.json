@@ -44,9 +44,10 @@
           "field_slots": {
             "type": "array",
             "minItems": 1,
+            "uniqueItems": true,
             "items": {
               "type": "string",
-              "description": "Content-type field name the renderer reads. Every listed slot must exist in the P8 ContentType definition."
+              "description": "Content-type field name the renderer reads. Every listed slot must exist in the P8 ContentType definition and exactly match the layout's consumed slots (set equality, order-insensitive). Duplicates are rejected. The layout registry (domain/frontend/layout_registry.py) is the authoritative source of which slots a layout consumes; a slice's declared field_slots must exactly match the layout's consumed slots via set equality (order-insensitive). Under-declared, over-declared, duplicate, and unsupported slots are rejected."
             }
           },
           "required_status": {
@@ -312,7 +313,7 @@
         "decided_by": {"type": "string", "description": "Identity of the approving User."},
         "decided_by_role": {
           "enum": ["USER"],
-          "description": "REQUIRED provenance marker. The only permitted value is USER, so approval can never be structurally attributed to an agent; the runtime validation gate additionally rejects any approval that is missing, null, fabricated, or whose decided_by does not correspond to the User."
+          "description": "REQUIRED provenance marker. The only permitted value is USER, so approval can never be STRUCTURALLY attributed to an agent. The runtime validation gate additionally rejects any approval whose decided_by is missing, null, malformed, or names an agent-associated word. [SPEC-2 CORRECTION 2026-10-15: the previous wording stated that the gate 'rejects any approval that is missing, null, fabricated, or whose decided_by does not correspond to the User'. That was a false description of the gate: no mechanism anywhere in this repository can establish that a non-agent decided_by corresponds to a real User, because decided_by is self-asserted free text. The clause is restated to what the gate actually does. Whether the gate SHOULD establish correspondence remains an open requirement question and is not settled by this correction.]"
         },
         "decided_at": {"type": "string", "format": "date"}
       },

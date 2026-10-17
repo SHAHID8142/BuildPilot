@@ -18,6 +18,12 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from sps2.core.p9_surface import P9_ALLOWLIST_RELATIVE_PATHS
+from sps2.governance.import_exceptions import scan_import_exceptions
+from sps2.governance.legacy_exceptions import verify_legacy_repository
+
+AUTHORITY_BASELINE = "c49f3852e1c31d0136269c80fe58201b059af3ec"
+
 # Standard library module names (Python 3.10+ native set with fallback)
 FALLBACK_STDLIB = frozenset(
     "abc argparse ast asyncio base64 bisect calendar cgi cmath codecs collections "
@@ -42,36 +48,6 @@ STDLIB_MODULES: frozenset[str] = getattr(sys, "stdlib_module_names", None) or FA
 
 # Invariant pattern for CONF-001: numeric thresholds for LCP or INP are forbidden
 CONF_001_INVENTED_REGEX = re.compile(r"(LCP|INP)\s*[:=]?\s*\d+")
-
-# Explicit allowlist of P9 files and directories
-P9_ALLOWLIST_RELATIVE_PATHS: list[str] = [
-    "domain/seo/__init__.py",
-    "domain/seo/model.py",
-    "domain/seo/metadata.py",
-    "domain/seo/indexing.py",
-    "domain/seo/structured_data.py",
-    "domain/seo/onpage.py",
-    "domain/seo/media.py",
-    "domain/seo/url_taxonomy.py",
-    "domain/seo/cwv.py",
-    "domain/seo/specialized.py",
-    "domain/seo/audit.py",
-    "domain/seo/isolation.py",
-    "domain/seo/tests/__init__.py",
-    "domain/seo/tests/test_model.py",
-    "domain/seo/tests/test_metadata.py",
-    "domain/seo/tests/test_indexing.py",
-    "domain/seo/tests/test_structured_data.py",
-    "domain/seo/tests/test_onpage.py",
-    "domain/seo/tests/test_media.py",
-    "domain/seo/tests/test_url_taxonomy.py",
-    "domain/seo/tests/test_cwv.py",
-    "domain/seo/tests/test_specialized.py",
-    "domain/seo/tests/test_audit.py",
-    "domain/seo/tests/test_isolation.py",
-    "sps2/tools/seo_audit.py",
-    "sps2/tools/rollback_seo.py",
-]
 
 # Legacy directories that must never be modified by P9
 LEGACY_DIRECTORIES: tuple[str, ...] = ("skills", "scripts", "plugins", "templates")
@@ -200,71 +176,22 @@ def scan_for_orphan_imports(
     check_subsystem: str = "domain.seo",
     exclude_paths: list[str | Path] | None = None,
 ) -> list[str]:
-    """Scan all Python files across project_root outside exclude_paths for references to check_subsystem.
-    
-    Proves that removing check_subsystem leaves zero orphan imports across the remaining codebase.
-    """
-    root = Path(project_root).resolve()
-    if exclude_paths is None:
-        exclude_paths = [
-            root / "domain" / "seo",
-            root / "sps2" / "tools" / "seo_audit.py",
-            root / "sps2" / "tools" / "rollback_seo.py",
-        ]
-    excluded = {Path(p).resolve() for p in exclude_paths}
-    orphan_violations: list[str] = []
-
-    skip_dirs = {".git", "__pycache__", ".pytest_cache", "node_modules", ".venv", "venv"}
-
-    for base, dirs, files in os.walk(root):
-        dirs[:] = [d for d in dirs if d not in skip_dirs]
-        for f in files:
-            if not f.endswith(".py"):
-                continue
-            full_p = Path(base) / f
-            # Skip if file is inside an excluded path
-            if any(full_p == exc or exc in full_p.parents for exc in excluded):
-                continue
-
-            for mod_name, line_no in scan_python_imports(full_p):
-                if mod_name == check_subsystem or mod_name.startswith(f"{check_subsystem}."):
-                    orphan_violations.append(
-                        f"{full_p}:{line_no}: Orphan reference to rolled-back subsystem '{mod_name}'"
-                    )
-
-    return orphan_violations
+    """Scan the shared DEC-7302 exception contract and return all violations."""
+    del check_subsystem, exclude_paths
+    return scan_import_exceptions(project_root)["violations"]
 
 
 def verify_legacy_diff_zero(
     project_root: str | Path,
     legacy_dirs: tuple[str, ...] = LEGACY_DIRECTORIES,
 ) -> list[str]:
-    """Assert that git diff of legacy directories against HEAD is exactly zero."""
-    root = Path(project_root).resolve()
-    violations: list[str] = []
-
-    for ld in legacy_dirs:
-        legacy_path = root / ld
-        if not legacy_path.exists():
-            continue
-
-        try:
-            res = subprocess.run(
-                ["git", "diff", "HEAD", "--", ld],
-                cwd=str(root),
-                capture_output=True,
-                text=True,
-                check=False,
-            )
-            if res.returncode == 0 and res.stdout.strip():
-                violations.append(
-                    f"Legacy directory '{ld}' has uncommitted modifications: {res.stdout[:200]}"
-                )
-        except (subprocess.SubprocessError, FileNotFoundError):
-            # If git is unavailable in test harness, fallback to manual file check
-            pass
-
-    return violations
+    """Apply the fixed-baseline DEC-7301 exception to P9 legacy protection."""
+    del legacy_dirs
+    return verify_legacy_repository(
+        project_root,
+        AUTHORITY_BASELINE,
+        list(LEGACY_DIRECTORIES),
+    )
 
 
 def verify_p7_isolation_intact(project_root: str | Path) -> list[str]:

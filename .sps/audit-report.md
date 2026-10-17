@@ -4,7 +4,7 @@ Date:
 Project status: legacy first contact | existing SPS project
 Scope: full alignment | focused
 Active agent:
-SPS version:
+SPS version: 4.0.0
 
 ## Score
 - Total: /100

@@ -17,7 +17,7 @@
   "properties": {
     "decision_id": {
       "type": "string",
-      "pattern": "^DEC-[0-9]{4}$"
+      "pattern": "^(?:DEC-[0-9]{4}|D-P[0-9]+(?:-[A-Z0-9]+)*)$"
     },
     "title": {
       "type": "string",

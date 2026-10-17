@@ -1,0 +1,17 @@
+{
+  "acceptance": {
+    "command": [
+      "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+      "-c",
+      "print('acceptance: objective command satisfied')"
+    ],
+    "expected_exit_status": 0
+  },
+  "created_at": "2026-10-10T13:08:07Z",
+  "goal": "stub-mode:write=demonstration-output.txt",
+  "required_capabilities": [
+    "test-double"
+  ],
+  "task_id": "TASK-P17-0011",
+  "timeout_seconds": 60
+}

@@ -34,12 +34,12 @@ GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'
 BOLD='\033[1m'; DIM='\033[2m'; NC='\033[0m'
 ok()   { echo -e "  ${GREEN}✓${NC} $*"; }
 warn() { echo -e "  ${YELLOW}!${NC} $*"; }
-bad()  { echo -e "  ${RED}✗${NC} $*"; }
+bad()  { echo -e "  ${RED}✗${NC} $*" >&2; }
 
 have() { command -v "$1" >/dev/null 2>&1; }
 
 checker() {
-  # prefer sibling check script; else repo clone copy; else fallback logic
+  # prefer sibling check script; else repo clone copy; else fail closed
   local check=""
   for cand in "$ROOT/scripts/check-update.sh" "$REPO_DIR/scripts/check-update.sh"; do
     if [[ -f "$cand" ]]; then check="$cand"; break; fi
@@ -48,26 +48,32 @@ checker() {
     bash "$check" "$@"
     return $?
   fi
-  # minimal inline check when check-update.sh is absent (older install)
-  local raw="https://raw.githubusercontent.com/SHAHID8142/Shahid-Personal-SkillSet/main/skills/sps/VERSION"
-  local installed="unknown" latest=""
-  [[ -f "$MANIFEST" ]] && installed="$(grep '^SPS_VERSION=' "$MANIFEST" | cut -d= -f2)"
-  [[ "$installed" == "" ]] && installed="unknown"
-  if have curl; then latest="$(curl -fsSL --max-time 10 "$raw" 2>/dev/null | tr -d '[:space:]')"; fi
-  if [[ -z "$latest" ]]; then
-    echo "SPS version check: offline (installed $installed)" >&2
-    return 2
-  fi
-  if [[ "$installed" == "$latest" ]]; then
-    echo "SPS is up to date (v$installed)"
-    return 0
-  fi
-  echo "SPS update available: v$installed → v$latest"
-  return 1
+  # No inline remote check (removed Round 26A): a missing check-update.sh
+  # means a broken or pre-cache install; fail closed without any network
+  # request rather than trust unvalidated remote VERSION data.
+  echo "SPS version check: check-update.sh not found; cannot check (installed: $(grep '^SPS_VERSION=' "$MANIFEST" 2>/dev/null | cut -d= -f2 || echo unknown))" >&2
+  return 2
 }
 
 echo ""
 echo -e "${BOLD}SPS updater${NC}"
+
+if [[ "$MODE" != "check" ]]; then
+  if [[ -d "$REPO_DIR/.git" ]]; then
+    if ! status="$(git -C "$REPO_DIR" status --porcelain=v1 2>/dev/null)"; then
+      bad "Cannot verify the source worktree; refusing to update."
+      exit 1
+    fi
+    if [[ -n "$status" ]]; then
+      bad "Local changes present in $REPO_DIR; refusing to update."
+      echo "Commit, stash, or remove them manually, then retry."
+      exit 1
+    fi
+  elif [[ -e "$REPO_DIR" ]]; then
+    bad "Destination exists but is not a Git worktree; refusing to delete it."
+    exit 1
+  fi
+fi
 
 if [[ "$MODE" == "check" ]]; then
   checker --force
@@ -100,20 +106,29 @@ fi
 mkdir -p "$(dirname "$REPO_DIR")"
 if [[ -d "$REPO_DIR/.git" ]]; then
   echo -e "${DIM}Pulling latest source:${NC} $REPO_DIR"
-  git -C "$REPO_DIR" fetch --prune origin "$BRANCH" || { bad "fetch failed"; exit 1; }
-  git -C "$REPO_DIR" checkout "$BRANCH" 2>/dev/null || true
-  git -C "$REPO_DIR" pull --ff-only origin "$BRANCH" || {
-    git -C "$REPO_DIR" reset --hard "origin/$BRANCH" || { bad "pull failed"; exit 1; }
-  }
+  if ! git -C "$REPO_DIR" fetch --prune origin "$BRANCH"; then
+    bad "Fetch failed; source left unchanged."
+    exit 1
+  fi
+  if ! git -C "$REPO_DIR" checkout "$BRANCH" 2>/dev/null; then
+    bad "Checkout failed; source left unchanged."
+    exit 1
+  fi
+  if ! git -C "$REPO_DIR" pull --ff-only origin "$BRANCH"; then
+    bad "Fast-forward pull failed; source left unchanged."
+    exit 1
+  fi
 else
-  echo -e "${DIM}Cloning source:${NC} $REPO_DIR"
-  rm -rf "$REPO_DIR"
+  echo -e "${DIM}Cloning source:${NC} $REPO_URL"
   git clone --depth 1 --branch "$BRANCH" "$REPO_URL" "$REPO_DIR" || { bad "clone failed"; exit 1; }
 fi
 ok "Source updated"
 
 # 2. Reinstall with same choices (single unified install — no profiles)
-cd "$REPO_DIR"
+if ! cd "$REPO_DIR"; then
+  bad "Cannot enter the updated source directory; reinstall stopped."
+  exit 1
+fi
 VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skills/sps/VERSION" 2>/dev/null || echo "unknown")"
 echo -e "${DIM}Installing SPS v${VERSION}…${NC}"
 bash ./install.sh --yes

@@ -102,7 +102,14 @@
         "state": "VERIFIED",
         "method": "AUTOMATED",
         "verifier": "sps2/tools/validate-p5.py",
-        "observed_result": "Section 5 confirmed every promoted capability is fully traceable across all ten links with no runtime claims. Section 9 confirmed every promoted approval is user-attributable and that Agent, Claude, 'the model' and 'self' are all rejected as approvers."
+        "observed_result": "Section 5 confirmed every promoted capability is fully traceable across all ten links with no runtime claims. Section 9 confirmed every promoted approval is user-attributable and that Agent, Claude, 'the model' and 'self' are all rejected as approvers. [SPEC-2 CORRECTION 2026-10-15: the final clause is factually wrong. 'self' is NOT rejected - the canonical policy omits it because 'Self' is a human surname. Section 9 also emits no verdict: validate-p5.py s9() builds a problems list but never calls r.bad(). The verification state is left as recorded; whether this requirement still merits VERIFIED is a User decision.]",
+        "spec2_correction": {
+          "date": "2026-10-15",
+          "original_observed_result": "Section 5 confirmed every promoted capability is fully traceable across all ten links with no runtime claims. Section 9 confirmed every promoted approval is user-attributable and that Agent, Claude, 'the model' and 'self' are all rejected as approvers.",
+          "what_was_wrong": "Asserted 'self' is rejected and that Section 9 reported PASS.",
+          "evidence": "attribution_policy.json omits 'self'; s9() calls no verdict emitter.",
+          "state_changed": false
+        }
       },
       "approval": {
         "state": "APPROVED",

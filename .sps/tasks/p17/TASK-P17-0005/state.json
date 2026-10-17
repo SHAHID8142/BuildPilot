@@ -1,0 +1,16 @@
+{
+  "attempts": [
+    {
+      "agent_id": "stub-agent.py",
+      "allowlist_source": "sps2/tests/fixtures/p17/test-allowlist.json",
+      "at": "2026-10-10T12:45:35Z",
+      "attempt": 1,
+      "purpose": "test",
+      "selection_fingerprint": "726c4e9b557b57bdad6b2ddee3361cd6e784bcbe24e68118b444bf543f725e88"
+    }
+  ],
+  "created_at": "2026-10-10T12:45:35Z",
+  "retry_bound": 2,
+  "task_id": "TASK-P17-0005",
+  "updated_at": "2026-10-10T12:45:35Z"
+}

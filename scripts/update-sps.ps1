@@ -35,6 +35,24 @@ function Checker {
 Write-Host ""
 Write-Host "SPS updater" -ForegroundColor Cyan
 
+if (-not $Check) {
+    if (Test-Path (Join-Path $repoDir ".git")) {
+        $status = & git -C $repoDir status --porcelain=v1 2>$null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host "Cannot verify the source worktree; refusing to update." -ForegroundColor Red
+            exit 1
+        }
+        if ($status) {
+            Write-Host "Local changes present in $repoDir; refusing to update." -ForegroundColor Red
+            Write-Host "Commit, stash, or remove them manually, then retry."
+            exit 1
+        }
+    } elseif (Test-Path $repoDir) {
+        Write-Host "Destination exists but is not a Git worktree; refusing to delete it." -ForegroundColor Red
+        exit 1
+    }
+}
+
 if ($Check) {
     $rc = Checker
     exit $rc
@@ -63,18 +81,43 @@ if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
 New-Item -ItemType Directory -Force -Path (Split-Path $repoDir) | Out-Null
 if (Test-Path (Join-Path $repoDir ".git")) {
     Write-Host "Pulling latest source: $repoDir"
+    $status = & git -C $repoDir status --porcelain=v1 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Cannot verify the source worktree; refusing to update." -ForegroundColor Red
+        exit 1
+    }
+    if ($status) {
+        Write-Host "Local changes present in $repoDir; refusing to update." -ForegroundColor Red
+        Write-Host "Commit, stash, or remove them manually, then retry."
+        exit 1
+    }
     Push-Location $repoDir
     git fetch --prune origin $branch
     if ($LASTEXITCODE -ne 0) { Pop-Location; Write-Host "fetch failed" -ForegroundColor Red; exit 1 }
     git checkout $branch 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Pop-Location
+        Write-Host "Checkout failed; source left unchanged." -ForegroundColor Red
+        exit 1
+    }
     git pull --ff-only origin $branch
-    if ($LASTEXITCODE -ne 0) { git reset --hard "origin/$branch" }
+    if ($LASTEXITCODE -ne 0) {
+        Pop-Location
+        Write-Host "Fast-forward pull failed; source left unchanged." -ForegroundColor Red
+        exit 1
+    }
     Pop-Location
 } else {
     Write-Host "Cloning source: $repoDir"
-    Remove-Item -Recurse -Force $repoDir -ErrorAction SilentlyContinue
+    if (Test-Path $repoDir) {
+        Write-Host "Destination exists but is not a Git worktree; refusing to delete it." -ForegroundColor Red
+        exit 1
+    }
     git clone --depth 1 --branch $branch $repoUrl $repoDir
-    if ($LASTEXITCODE -ne 0) { Write-Host "clone failed" -ForegroundColor Red; exit 1 }
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Clone failed; the destination may be partially created. Inspect it and remove it manually if needed." -ForegroundColor Red
+        exit 1
+    }
 }
 Write-Host "Source updated" -ForegroundColor Green
 

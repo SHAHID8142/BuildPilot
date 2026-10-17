@@ -17,6 +17,32 @@ import re
 POLICY_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)),
                            "attribution_policy.json")
 
+# Admissible shape of ONE token.
+#
+# re.escape() neutralises regex metacharacters, so a well-typed but degenerate
+# token list ("(", "[", "*", "\", "a b", "   ") still compiles rather than
+# failing at re.compile() time. Such a pattern simply matches nothing, so the
+# compiled matcher silently stops detecting anything and every consumer emits 0
+# bytes, which the shell harness scores as a clean PASS. The loader validates
+# TYPE today; this pattern is the SEMANTIC check that the type guard alone
+# cannot express.
+#
+#   - ASCII lowercase alphanumerics and interior hyphens only. No whitespace,
+#     no punctuation, no regex metacharacter, so re.escape() is a no-op and the
+#     compiled alternation is exactly the approved \b(...)\b form. Every one of
+#     the ratified 17 tokens satisfies this unchanged.
+#   - Must begin and end with an alphanumeric, so '', '(', '-', '--' and '-a'
+#     are rejected. A token can never start with the hyphen that separates
+#     compound names, which keeps \b semantics meaningful.
+#   - No underscore: \b does not fire between a word character and '_', so such
+#     a token could never match under the approved word-boundary semantics.
+#   - No '^' or '$' anchor: an anchor inside the alternation either makes the
+#     pattern unmatchable or unanchors the intended word boundary.
+#   - Lowercase only, because the matcher is compiled with re.I: an uppercase
+#     spelling would be a behavioural duplicate of its lowercase form and would
+#     signal an un-reviewed edit. The canonical set is entirely lowercase.
+TOKEN_PATTERN = re.compile(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\Z")
+
 
 def load_agent_tokens(path=POLICY_PATH):
     """The agent-name token set, loaded from the authoritative policy file.
@@ -46,6 +72,37 @@ def load_agent_tokens(path=POLICY_PATH):
         raise ValueError("attribution policy defines no tokens: %r" % (path,))
     if not all(isinstance(t, str) and t for t in tokens):
         raise ValueError("attribution policy has a non-string token: %r" % (tokens,))
+    # SEMANTIC validation. Type-correctness is not enough: a well-typed but
+    # degenerate list is accepted by the checks above, re.escape() keeps it
+    # compiling, and the resulting matcher detects nothing. Every consumer then
+    # prints nothing to stdout, and the stdout-based shell harness scores an
+    # empty stdout as a clean PASS. Reject such a policy loudly, with the same
+    # ValueError the consumer guards in check_sps2.py / check_p2.py already
+    # report as a visible "ERR attribution policy unavailable: ..." line at
+    # exit 0, so a silently disabled control cannot be mistaken for a clean one.
+    #
+    # A duplicate token is rejected as well, although under \b(...)\b it does
+    # not by itself change behaviour: a duplicate means the file was edited
+    # without review, and DEC-0025's own instruction was "Do not introduce
+    # duplicate tokens". Catching it here keeps that requirement enforceable.
+    seen = set()
+    duplicates = []
+    for token in tokens:
+        if not TOKEN_PATTERN.match(token):
+            raise ValueError(
+                "attribution policy has a malformed token %r: tokens must be "
+                "lowercase ASCII alphanumerics with interior hyphens only "
+                "(no whitespace, punctuation, regex metacharacters, "
+                "underscores, anchors or leading/trailing hyphens): %r"
+                % (token, path))
+        if token in seen and token not in duplicates:
+            duplicates.append(token)
+        seen.add(token)
+    if duplicates:
+        raise ValueError(
+            "attribution policy has duplicate token(s) %r: a duplicate is an "
+            "unreviewed edit and a token may be listed only once: %r"
+            % (sorted(duplicates), path))
     return tuple(tokens)
 
 # Heuristic denylist of names that INDICATE the decision was made by an

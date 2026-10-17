@@ -135,8 +135,9 @@
       "type": "VERIFICATION",
       "claim": "An agent-attributed approval is rejected for every promoted capability.",
       "command": "python3 sps2/tools/validate-p5.py",
-      "observed": "Section 9 reported PASS. Agent, Claude, 'the model' and 'self' are all rejected as approvers.",
-      "result": "PASS"
+      "observed": "Section 9 reported PASS. Agent, Claude, 'the model' and 'self' are all rejected as approvers. [SPEC-2 CORRECTION 2026-10-15: this observed text is factually wrong in two respects and is superseded. (1) 'self' is NOT rejected by the canonical policy - sps2/governance/attribution_policy.json omits it deliberately because 'Self' is a human surname. (2) Section 9 does not report a verdict: sps2/tools/validate-p5.py s9() builds a problems list and never calls r.bad(), so it asserts nothing. The command and result fields above are left exactly as recorded. Original observed text is preserved verbatim at the start of this field.]",
+      "result": "PASS",
+      "supersedes_note": "SPEC-2 corrected the observed description only. Re-running validate-p5.py is NOT authorized in this task (it writes into the repository), so the recorded result is left untouched and re-verification remains a User decision."
     },
     {
       "id": "EV-P5-012",

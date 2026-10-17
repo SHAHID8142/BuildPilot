@@ -494,10 +494,17 @@ print(json.load(open('$REG'))['counts']['promoted'])")
   || fail "$PROM promoted - expected the 4 user-approved capabilities"
 
 sect "10. Legacy protection"
-DIFF=$(cd "$REPO" && git diff --name-only c11da27 -- skills scripts plugins .github \
-       templates README.md CHANGELOG.md CATALOG.md '*.sh' '*.ps1' 2>/dev/null \
-       | grep -v '^sps2/')
-[ -z "$DIFF" ] && pass "legacy repository untouched" || fail "legacy modified: $DIFF"
+LEGACY_OUT="$(python3 "$SPS2/governance/legacy_exceptions.py" \
+  --root "$REPO" --baseline c11da27 \
+  --pathspec skills --pathspec scripts --pathspec plugins --pathspec .github \
+  --pathspec templates --pathspec README.md --pathspec CHANGELOG.md \
+  --pathspec CATALOG.md --pathspec '*.sh' --pathspec '*.ps1' \
+  --exclude-prefix sps2/ 2>&1)"
+if [ $? -eq 0 ]; then
+  pass "legacy repository matches the DEC-7301 pinned exception"
+else
+  while IFS= read -r line; do [ -n "$line" ] && fail "$line"; done <<< "$LEGACY_OUT"
+fi
 
 sect "11. Secret safety"
 python3 "$SPS2/security/scan_secrets.py" "$SPS2" --quiet \
@@ -924,11 +931,14 @@ import json, sys
 d = json.load(open(sys.argv[1]))
 json.dump({"capabilities": [d, dict(d)]}, open(sys.argv[2], "w"))
 PY
-if python3 "$CHECK" "$TMP/dup.json" 2>&1 | grep -q 'DUPLICATE' \
-   || python3 -c "
-import json,sys
-a=json.load(open('$TMP/dup.json'))['capabilities']
-sys.exit(0 if len({c['capability_id'] for c in a})<len(a) else 1)"; then
+# The case must require the checker's own DUPLICATE output. A second disjunct
+# that re-reads the fixture we just built is a tautology (the fixture always
+# contains a duplicate), so it scored the case as rejected even if the checker
+# never detected anything. A checker crash or silent regression now fails.
+# The registry-level duplicate control lives in check_p3.py (check_p4.py is a
+# single-capability gate checker and has no registry view), so the fixture is
+# run through `check_p3.py registry`.
+if python3 "$HERE/check_p3.py" registry "$TMP/dup.json" 2>&1 | grep -q 'DUPLICATE'; then
   NNP=$((NNP+1)); pass "N18 duplicate capability id -> rejected"
 else
   NNF=$((NNF+1)); fail "N18 duplicate capability id NOT rejected"

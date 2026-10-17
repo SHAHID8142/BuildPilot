@@ -286,7 +286,7 @@
       "risk": "HIGH",
       "status": "APPROVED",
       "acceptance_criteria": [
-        "git diff against c11da27 over legacy paths is empty",
+    "git diff against c11da27 over legacy paths contains only the eight content-and-mode-pinned files authorized by DEC-7301; every other legacy change fails closed",
         "The emoji scan finds nothing under sps2",
         "P3 requirements and decisions remain PENDING_USER_APPROVAL"
       ],

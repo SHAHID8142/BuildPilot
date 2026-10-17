@@ -38,19 +38,43 @@ New-Item -ItemType Directory -Force -Path (Split-Path $repoDir -Parent) | Out-Nu
 
 if (Test-Path (Join-Path $repoDir ".git")) {
     Write-Host "Updating existing clone: $repoDir" -ForegroundColor DarkGray
+    $status = & git -C $repoDir status --porcelain=v1 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Cannot verify the source worktree; refusing to update." -ForegroundColor Red
+        exit 1
+    }
+    if ($status) {
+        Write-Host "Local changes present in $repoDir; refusing to update." -ForegroundColor Red
+        Write-Host "Commit, stash, or remove them manually, then retry."
+        exit 1
+    }
     git -C $repoDir fetch --prune origin $branch
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Fetch failed; source left unchanged." -ForegroundColor Red
+        exit 1
+    }
     git -C $repoDir checkout $branch
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Checkout failed; source left unchanged." -ForegroundColor Red
+        exit 1
+    }
     git -C $repoDir pull --ff-only origin $branch
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "Fast-forward failed; hard reset to origin/$branch" -ForegroundColor Yellow
-        git -C $repoDir reset --hard "origin/$branch"
+        Write-Host "Fast-forward pull failed; source left unchanged." -ForegroundColor Red
+        exit 1
     }
     Write-Host "[OK] Repo updated" -ForegroundColor Green
+} elseif (Test-Path $repoDir) {
+    Write-Host "Destination exists but is not a Git worktree; refusing to delete it." -ForegroundColor Red
+    exit 1
 } else {
     Write-Host "Cloning: $repoUrl" -ForegroundColor DarkGray
     Write-Host "Into:    $repoDir" -ForegroundColor DarkGray
-    if (Test-Path $repoDir) { Remove-Item -Recurse -Force $repoDir }
     git clone --depth 1 --branch $branch $repoUrl $repoDir
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Clone failed; the destination may be partially created. Inspect it and remove it manually if needed." -ForegroundColor Red
+        exit 1
+    }
     Write-Host "[OK] Repo cloned" -ForegroundColor Green
 }
 
