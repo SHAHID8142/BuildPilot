@@ -34,6 +34,7 @@ jobs:
         env:
           GITHUB_API_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           mkdir -p scan-output
           bash scripts/ecosystem-scan.sh scan-output | tee scan-stdout.log
           REPORT_FILE="$(sed -n 's/^REPORT_FILE=//p' scan-stdout.log)"
@@ -71,6 +72,10 @@ jobs:
           [ "$PROPOSALS" != "0" ] || { echo "no proposals"; exit 0; }
 
           LABEL="ecosystem-scan"
+          # Bootstrap the label if missing: on a fresh repo every
+          # `gh issue create --label` below would fail (set -u, no -e makes
+          # the step report success with zero issues filed).
+          gh label create "$LABEL" --color 0E8A16 --description "Nightly skill-ecosystem scan proposals" 2>/dev/null || true
           # Existing open tracking issue?
           TRACKING="$(gh issue list --label "$LABEL" --state open --json number,title \
             --jq '.[] | select(.title | startswith("skill-ecosystem-scan: proposals")) | .number' | head -1 || true)"
@@ -95,7 +100,10 @@ jobs:
 
           # Per-candidate issues: only for candidate repos not already named in
           # ANY open ecosystem-scan issue (simple mention check), max 3 total.
-          KNOWN="$(gh issue list --label "$LABEL" --state open --json body,title --jq '.[].body; .[].title' || true)"
+          # jq comma operator streams BOTH fields; the previous `;` statement
+          # separator was invalid and — swallowed by `|| true` — silently
+          # emptied KNOWN, so dedup never matched and duplicates were filed.
+          KNOWN="$(gh issue list --label "$LABEL" --state open --json body,title --jq '.[].body, .[].title' || true)"
           if [ -n "$TRACKING" ]; then
             KNOWN="$KNOWN
           $(gh issue view "$TRACKING" --comments 2>/dev/null || true)"

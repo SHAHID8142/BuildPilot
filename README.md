@@ -89,7 +89,7 @@ bash ~/.sps/src/BuildPilot/scripts/sps-update.sh --yes
 bash ~/.sps/src/BuildPilot/uninstall.sh --yes
 ```
 
-> **Trust note:** the installer fetches ~27 third-party skills via `npx skills add`
+> **Trust note:** the installer fetches 26 third-party skills via `npx skills add`
 > with auto-yes, installs 11 Claude plugins from 4 marketplaces, adds the
 > Context7 MCP server and the graphify CLI, uses `StrictHostKeyChecking=accept-new`
 > for its git operations (unknown hosts accepted on first use; changed host keys
@@ -180,7 +180,7 @@ Every claim above has a command behind it. Run them yourself:
 | "Third-party skills can't be tampered with" | `bash scripts/sps-provenance.sh check --strict` — shipped skills are pinned in the committed store `.sps/provenance-store.json`; CI fails on any drift |
 | "The rules are actually enforced" | `python3 framework/sps2/tools/check_laws.py .` — the referee's own report card |
 | "Docs never rot" | `python3 framework/sps2/tools/check_docs_drift.py` — every command in the docs must exist, or this fails |
-| "Your work is backed up" | `bash scripts/sps-backup.sh` — rolling snapshots of your project memory |
+| "Your work is backed up" | `bash scripts/sps-backup.sh snapshot` — rolling snapshots of your project memory |
 | "1,258 tests" | `PYTHONPATH=. python3 -m unittest $(cat .github/expected-test-modules.txt \| tr '\n' ' ')` — count them yourself |
 
 ---
@@ -209,7 +209,7 @@ aliases of sync). New to the skill? The one-page cheat sheet is at
 |---|---|---|
 | What | Installable instructions your agent follows | A rulebook + referee that machine-checks agent work |
 | Use it | `curl … get-sps.sh \| bash`, then type `/sps` in any project | Not user-installable yet — under construction, see its own gate |
-| Status | ✅ Working, v4.3.0 | 🚧 In progress — release gate NOT READY by design |
+| Status | ✅ Working, v4.4.0 | 🚧 In progress — release gate NOT READY by design |
 | Formerly | `skills/` | `sps2/` + `domain/` |
 
 The skill is what you use today. The framework is a stricter, machine-verified

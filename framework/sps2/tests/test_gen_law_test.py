@@ -212,6 +212,44 @@ class GenLawTestSubprocessTests(unittest.TestCase):
         )
         shutil.rmtree(scratch, ignore_errors=True)
 
+    def test_f_check_id_trailing_newline_refused(self):
+        # Regression for the \Z anchor fix (audit NIT n-3): the old
+        # `$`-anchored pattern MATCHED a check_id with a trailing newline
+        # ("dod-22\n" — $ matches before a final newline), letting the
+        # newline reach the generated test's id. \Z requires the true end
+        # of string; a revert to $ must fail this test.
+        hostile = "dod-22\n"
+        scratch = Path(tempfile.mkdtemp(
+            prefix="gen-law-test-newline-cid-", dir=self._tmp))
+        repo = scratch / "repo"
+        shutil.copytree(
+            REPO_ROOT,
+            repo,
+            ignore=shutil.ignore_patterns(".git", "node_modules", "__pycache__"),
+        )
+        _write_ledger(
+            repo,
+            [
+                {"check_id": hostile, "target_file": LEDGER_PAIR[1],
+                 "message": LEDGER_MESSAGE},
+                {"check_id": hostile, "target_file": LEDGER_PAIR[1],
+                 "message": LEDGER_MESSAGE},
+            ],
+        )
+        proc = _run_gen(
+            repo, "--check", hostile, "--file", LEDGER_PAIR[1],
+            "--approved-by", "test-fixture",
+        )
+        self.assertNotEqual(proc.returncode, 0)
+        self.assertIn("unsafe check_id", proc.stderr)
+        self.assertEqual(
+            list((repo / "framework" / "sps2" / "tests").glob(
+                "test_law_regress_*.py")),
+            [],
+            "check_id with trailing newline produced a test file",
+        )
+        shutil.rmtree(scratch, ignore_errors=True)
+
 
 if __name__ == "__main__":
     unittest.main()

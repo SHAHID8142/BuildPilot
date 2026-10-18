@@ -159,14 +159,26 @@ def _is_dynamic_import(node: ast.AST, dynamic_names: set[str] | None = None) -> 
     )
 
 
+def _is_domain_seo_module(module: str) -> bool:
+    # Every spelling of the forbidden namespace counts: the bare alias
+    # ("domain.seo"), its submodules ("domain.seo.model"), and the
+    # framework-qualified package and submodules. The exact form
+    # "framework.domain.seo" (no trailing dot) is the natural import of the
+    # package and re-exports the whole engine, so it is forbidden too.
+    if module == "domain.seo" or module.startswith("domain.seo."):
+        return True
+    return module == "framework.domain.seo" or module.startswith("framework.domain.seo.")
+
+
 def _contains_domain_seo_string(node: ast.AST) -> bool:
     # Fail closed: a literal fragment of the forbidden namespace, or ANY
-    # string concatenation inside the call (a computed module name such as
-    # "domain" + ".seo.model" never holds the full literal in one constant),
-    # both count. Benign dynamic imports of unrelated modules pass a plain
-    # literal and no BinOp, so the false-positive surface stays narrow.
+    # string composition inside the call — BinOp concatenation
+    # ("domain" + ".seo.model") or an f-string (f"framework.domain.se{o}")
+    # — never holds the full literal in one constant, so both count.
+    # Benign dynamic imports of unrelated modules pass a plain literal and
+    # no BinOp/JoinedStr, so the false-positive surface stays narrow.
     for child in ast.walk(node):
-        if isinstance(child, ast.BinOp):
+        if isinstance(child, (ast.BinOp, ast.JoinedStr)):
             return True
         if (
             isinstance(child, ast.Constant)
@@ -226,11 +238,11 @@ def scan_import_exceptions(project_root: str | Path) -> dict[str, Any]:
                         )
                 if isinstance(node, ast.Import):
                     for alias in node.names:
-                        if alias.name == "domain.seo" or alias.name.startswith("framework.domain.seo."):
+                        if _is_domain_seo_module(alias.name):
                             violations.append(
                                 f"{relative}:{node.lineno}: module import '{alias.name}' is forbidden"
                             )
-                elif isinstance(node, ast.ImportFrom) and node.module:
+                elif isinstance(node, ast.ImportFrom) and (node.module or node.level):
                     module = node.module
                     if node.level:
                         # A relative import (`from ..seo.metadata import x`)
@@ -259,24 +271,58 @@ def scan_import_exceptions(project_root: str | Path) -> dict[str, Any]:
                         if climb:
                             base_parts = base_parts[: len(base_parts) - climb]
                         resolved = ".".join(base_parts)
-                        module = f"{resolved}.{node.module}" if resolved else node.module
-                    if module != "domain.seo" and not module.startswith("framework.domain.seo."):
-                        continue
+                        # `from .. import seo` has node.module == None: the
+                        # resolved package itself is the imported module.
+                        module = (
+                            f"{resolved}.{node.module}"
+                            if node.module
+                            else (resolved or ".")
+                        )
+                    if not _is_domain_seo_module(module):
+                        # `from . import seo` (node.module None) imports the
+                        # RESOLVED package's submodule named by each alias:
+                        # inside framework/domain/ it binds
+                        # framework.domain.seo. Check the alias-qualified
+                        # forms too before skipping.
+                        if not (node.module is None and any(
+                            _is_domain_seo_module(f"{module}.{alias.name}")
+                            for alias in node.names
+                        )):
+                            continue
+                        submodule_via_relative = True
+                    else:
+                        submodule_via_relative = False
                     for alias in node.names:
                         if alias.name == "*":
                             violations.append(f"{relative}:{node.lineno}: star import is forbidden")
                             continue
-                        symbol_counts[(module, alias.name)] = symbol_counts.get((module, alias.name), 0) + 1
-                        permitted = allowed.get((relative, module), set())
+                        # A bare relative package import binds the alias as
+                        # a submodule of the resolved package.
+                        effective_module = (
+                            f"{module}.{alias.name}"
+                            if submodule_via_relative
+                            else module
+                        )
+                        if submodule_via_relative and not _is_domain_seo_module(effective_module):
+                            continue
+                        symbol_counts[(effective_module, alias.name)] = symbol_counts.get((effective_module, alias.name), 0) + 1
+                        permitted = allowed.get((relative, effective_module), set())
                         if alias.name not in permitted:
+                            # In the bare-relative form the alias IS the
+                            # submodule name, already part of effective_module.
+                            reported = (
+                                effective_module
+                                if submodule_via_relative
+                                else f"{effective_module}.{alias.name}"
+                            )
                             violations.append(
-                                f"{relative}:{node.lineno}: unapproved import {module}.{alias.name}"
+                                f"{relative}:{node.lineno}: unapproved import {reported}"
                             )
                         else:
                             approved.append(
                                 {
                                     "file": relative,
-                                    "module": module,
+                                    "module": effective_module,
                                     "symbol": alias.name,
                                     "local_alias": alias.asname or alias.name,
                                 }

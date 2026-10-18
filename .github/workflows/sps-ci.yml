@@ -1,6 +1,6 @@
 name: sps-ci
 
-on:
+"on":
   push:
   pull_request:
 
@@ -47,6 +47,7 @@ jobs:
   version-sanity:
     name: Version sanity
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -84,6 +85,7 @@ jobs:
   powershell-syntax:
     name: PowerShell syntax
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -114,7 +116,6 @@ jobs:
           python-version: "3.12"
 
       - name: Python unit tests (deterministic module list)
-        working-directory: ${{ github.workspace }}
         env:
           PYTHONDONTWRITEBYTECODE: "1"
           # Pins the repo root on sys.path so the dotted module names below

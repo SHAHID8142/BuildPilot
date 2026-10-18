@@ -139,7 +139,8 @@ class TestLegacyExceptionContract(unittest.TestCase):
             manifest["exceptions"].append(duplicate)
             # Track the record list length so the count contract does not
             # mask the duplicate-path contract this test exercises (the
-            # manifest was amended 8 -> 18 exceptions by DEC-7305).
+            # count is re-pinned to len() here; the manifest itself is at
+            # 59 exceptions as of the 2026-10-18 batch).
             manifest["exception_count"] = len(manifest["exceptions"])
             path = root / legacy_exceptions.MANIFEST_RELATIVE_PATH
             path.write_bytes(canonical_json(manifest))

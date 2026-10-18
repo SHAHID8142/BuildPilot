@@ -18,9 +18,9 @@ EXPECTED_DECISION_ID = "DEC-7301"
 # Updated 2026-10-17 under the User-approved BuildPilot restructure (paths+hashes of
 # moved legacy files; DEC-7301 authorization itself unchanged). Amended same day by
 # DEC-7305: 22 exceptions, then 23 (skill-search.sh + its scripts/ mirror). Re-pinned
-# 2026-10-18 (tests/CI audit fix, T-20): expected-test-modules.txt regenerated (39
-# modules), sps-ci.yml gains validator-battery + permissions/concurrency + MIN_TESTS
-# 1000, smoke-sps.sh (+ mirror) gains shell-tool smoke coverage. Re-pinned again
+# 2026-10-18 (tests/CI audit fix, T-20): expected-test-modules.txt regenerated
+# (53 modules), sps-ci.yml gains validator-battery + permissions/concurrency +
+# MIN_TESTS 1210, smoke-sps.sh (+ mirror) gains shell-tool smoke coverage. Re-pinned again
 # 2026-10-18 (shell-scripts audit fixes): installer arg-loop/symlink/color fixes in
 # install.sh, uninstall.sh, get-sps.sh, sps-status.sh, sps-doctor.sh, sps-update.sh,
 # sps-hygiene.sh, bootstrap-sps.sh (+ mirrors).
@@ -30,7 +30,7 @@ EXPECTED_DECISION_ID = "DEC-7301"
 # edit the manifest, this constant, AND the workflow before anything passes.
 # Accepted residual: repo write still reaches all three; final detection is
 # git history + PR review.
-EXPECTED_MANIFEST_SHA256 = "fd72245bdda1429e03fe0a041b86eb3f465e8977b36539e707774ffd48ac9b38"
+EXPECTED_MANIFEST_SHA256 = "38c289b8356491ddd45c0ebda2e59a1330ff667c0c17913898da0f2c2a813359"
 EXPECTED_EXCEPTION_COUNT = 59  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow; +2 sps-cms updater scripts, consent+scan batch 2026-10-18)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
@@ -74,7 +74,7 @@ def sha256_file(path: Path) -> str:
 def _relative_path(root: Path, value: str, label: str) -> Path:
     if not isinstance(value, str) or not value or "\x00" in value:
         raise ValueError(f"{label}: path is not a non-empty string")
-    if Path(value).is_absolute() or "\\" in value or value.startswith("/"):
+    if Path(value).is_absolute() or "\\" in value:
         raise ValueError(f"{label}: path is not repository-relative POSIX")
     lexical = Path(value)
     if any(part in ("..", "") for part in lexical.parts):
@@ -181,7 +181,7 @@ def _worktree_mode(path: Path) -> str:
 
 
 def verify_legacy_exceptions(root: Path) -> list[str]:
-    """Verify the eight exception paths; return deterministic violation strings."""
+    """Verify the pinned exception paths; return deterministic violation strings."""
     try:
         manifest = load_manifest(root)
     except (OSError, ValueError) as exc:

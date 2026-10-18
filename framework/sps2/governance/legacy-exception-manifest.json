@@ -14,11 +14,11 @@
     },
     {
       "path": ".github/workflows/ecosystem-scan.yml",
-      "expected_blob": "b18069ef896d2c32685c13ada509a5a5f260fc5a",
+      "expected_blob": "49a4fbb44d4fe96f8e607f89b30d8b9b50ebfc5e",
       "expected_mode": "100644",
-      "sha256": "3653951d8de6d19aa77bd228ef6a65cad344a38a1fdb19c650062b693326255b",
+      "sha256": "c83a8454b5bce340bc05f4da52640b49b4b245c5a784cee2dcd36d9d550a22ec",
       "authorization": "DEC-7305",
-      "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18."
+      "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
     },
     {
       "path": ".github/workflows/secret-scan.yml",
@@ -30,11 +30,11 @@
     },
     {
       "path": ".github/workflows/sps-ci.yml",
-      "expected_blob": "67d6bd7cd959efa5b400019836e25443981ba4bb",
+      "expected_blob": "99a8eb3cb8afe87b7349982f5f851afde2f6777d",
       "expected_mode": "100644",
-      "sha256": "82e0f83df8b0f9d6283b38df4bea13456e818c117f00d87d26b4bf5e0a67d5bc",
+      "sha256": "f4bf0f9f60c11301bf840fb2fdce6671990eb24ace50382d9d33d0ab326e2fb7",
       "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): validator-battery job added, MIN_TESTS raised to 1000, permissions/concurrency block added; pinned by DEC-7305 as amended 2026-10-18.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "tests/CI audit fix (T-20): validator-battery job added, MIN_TESTS raised to 1000, permissions/concurrency block added; pinned by DEC-7305 as amended 2026-10-18.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
     },
     {
       "path": ".github/workflows/weekly-audit.yml",
@@ -46,11 +46,11 @@
     },
     {
       "path": ".github/workflows/windows-smoke.yml",
-      "expected_blob": "19d54293f0d288b2318e8b6f8e308823020abbe8",
+      "expected_blob": "6692957304f775ef8ef3b5f4f993305128f8a694",
       "expected_mode": "100644",
-      "sha256": "3cb0c141ad826271bd74705afbfad6e8dfede19121a6d851b66b2ae2ff6789e6",
+      "sha256": "c19e74ba645b89ee8b1a01735e67cecdce931c530b002f8fb6862e0462d43b1b",
       "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
     },
     {
       "path": ".secrets-allowlist",
@@ -70,19 +70,19 @@
     },
     {
       "path": "CHANGELOG.md",
-      "expected_blob": "dbd753089c0b0addb8f013ffda4988c1b1932d93",
+      "expected_blob": "6ddefd835197cd5405e6b51cb52ea28dee29e32a",
       "expected_mode": "100644",
-      "sha256": "bcc20fdf084e7eaf7e2ce5458ba2b22b03524d7502e87beba61982f0caa3cc5f",
+      "sha256": "78ae9fe1023300618cac4cbdb25d4107eb0ea0b51a76961e29ab75f615412737",
       "authorization": "DEC-7305",
-      "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
+      "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17. Re-pinned 2026-10-18: QA round-2 doc-truth fixes."
     },
     {
       "path": "README.md",
-      "expected_blob": "95fbc0216a28d430ce72ec330c02b3ce98bf2682",
+      "expected_blob": "1819b8f811a06d89a154fcfd731543cb4bf49895",
       "expected_mode": "100644",
-      "sha256": "b0dbe0e73165990359970da45b7788343f0fd9c255478c9172082b75b26404d9",
+      "sha256": "741347fd03a40707869832657d95109c7f5e4d90bcec7f56c2893316abebb158",
       "authorization": "DEC-7305",
-      "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 doc-truth fixes."
     },
     {
       "path": "framework/sps2/tests/test_hooks.py",

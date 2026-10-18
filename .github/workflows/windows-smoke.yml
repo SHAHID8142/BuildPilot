@@ -7,11 +7,12 @@ name: windows-smoke
 # it requires node/npx (preinstalled on windows-latest) and writes only under
 # USERPROFILE (~/.sps, agent skill dirs) — safe on a disposable runner. Steps
 # that fail (npx skills add to a remote repo, missing claude CLI) are recorded
-# by the installer as "Skipped" and make it exit 1; this job treats the
-# installer's STRUCTURE as the gate (banner + manifest + core skill synced)
-# rather than requiring every remote skill download to succeed, because the
-# runner has no control over third-party repo availability. A genuine script
-# crash (exit before the final banner) still fails the job.
+# by the installer as "Skipped"; the installer still exits 0 when the CORE
+# mirrors are healthy and exits 1 only when core sync itself fails. This job
+# treats the installer's STRUCTURE as the gate (banner + manifest + core skill
+# synced) rather than requiring every remote skill download to succeed,
+# because the runner has no control over third-party repo availability. A
+# genuine script crash (exit before the final banner) still fails the job.
 
 "on":
   push:
@@ -42,13 +43,10 @@ jobs:
 
       - name: Run PowerShell installer (install.ps1 -Yes)
         shell: pwsh
-        # -Yes skips the Read-Host confirm. The installer exits 1 when any
-        # step is Skipped (e.g. a third-party skills repo is down); that is a
-        # degraded install, not a broken script, so we capture the exit code
-        # and gate below on structural success instead. A pwsh-level crash
-        # (uncaught exception, syntax error) still fails this step outright.
-        id: install
-        continue-on-error: false
+        # -Yes skips the Read-Host confirm. The installer exits 1 only when
+        # CORE sync fails; extras recorded as "Skipped" (e.g. a third-party
+        # skills repo is down) still exit 0. A pwsh-level crash (uncaught
+        # exception, syntax error) fails this step outright.
         run: |
           ./install.ps1 -Yes
           exit $LASTEXITCODE

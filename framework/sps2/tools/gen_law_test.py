@@ -58,7 +58,7 @@ def _check_check_id(check_id: str) -> str:
     if not CHECK_ID_RE.match(check_id):
         raise ValueError(
             f"unsafe check_id in ledger: {check_id!r} — must match "
-            f"^[A-Za-z0-9][A-Za-z0-9 ._-]*$"
+            f"^[A-Za-z0-9][A-Za-z0-9 ._-]*\\Z (no trailing newline)"
         )
     return check_id
 
@@ -76,7 +76,8 @@ def _check_approved_by(value: str) -> str:
     """Validate a --approved-by reviewer name; return the sanitized form.
 
     Rules: non-empty after strip, single line (no newline/carriage return or
-    any other control character), only letters/digits/space/./-/_/@ allowed,
+    any other control character), only letters/digits/space/./-/_/@/ allowed
+    (slash permitted for "org/repo" style names),
     and at most APPROVED_BY_MAX_LEN characters. Raises ValueError otherwise.
     """
     stripped = value.strip()
@@ -351,9 +352,14 @@ def main(argv: list[str] | None = None) -> int:
     counts = Counter((e["check_id"], e["target_file"]) for e in entries)
 
     if args.list:
+        def _safe_display(s: str) -> str:
+            # Ledger strings can embed \t/\n; replace control chars so a
+            # hostile ledger cannot forge extra rows in this listing.
+            # (The --check path validates for real; this is display-only.)
+            return "".join("·" if ord(c) < 0x20 else c for c in s)
         for (cid, tf), n in sorted(counts.items()):
             if n >= 2:
-                print(f"{cid}\t{tf}\tcount={n}")
+                print(f"{_safe_display(cid)}\t{_safe_display(tf)}\tcount={n}")
         return 0
 
     if not (args.check and args.target_file):

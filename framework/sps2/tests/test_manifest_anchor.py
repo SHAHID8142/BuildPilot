@@ -7,10 +7,11 @@ pass every in-repo check. This module enforces the dual anchor added by the
 audit fix: the same canonical hashes are pinned in
 framework/sps2/governance/manifest-anchors.env (consumed by the sps-ci.yml validator-battery
 step) and cross-checked here. A coordinated edit must now touch the
-manifest, the module constant, the anchors file, AND this test before
-anything drifts silently. Accepted residual: anyone with repo write can
-still edit all of these surfaces; final detection remains git history + PR
-review.
+manifest, the module constant, AND the anchors file before anything drifts
+silently — this test asserts equality among those three surfaces, and the
+CI step recomputes from the anchors file independently. Accepted residual:
+anyone with repo write can still edit all of these surfaces; final
+detection remains git history + PR review.
 
 WHY framework/sps2/governance/manifest-anchors.env AND NOT literals in sps-ci.yml itself:
 sps-ci.yml is pinned in the legacy manifest, so embedding manifest hashes

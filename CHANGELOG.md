@@ -30,7 +30,7 @@
   per DEC-0027.
 - **Hygiene**: `.secrets-allowlist` recognized as a legitimate root config
   (was a false ROOT-STRAY that would have fired the weekly audit).
-- Battery: 1,258 tests, 0 failures. 52 test modules. 57 pinned manifest
+- Battery: 1,258 tests, 0 failures. 53 test modules. 59 pinned manifest
   exceptions. Three external audit reports preserved in `reports/`.
 
 ## 4.3.0
