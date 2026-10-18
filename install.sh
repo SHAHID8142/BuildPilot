@@ -259,6 +259,10 @@ consent_extras() {
     ok "consent via --yes — third-party skills + plugins will be installed"
     return
   fi
+  if [ "$INTERACTIVE" = true ] && ! [ -t 0 ]; then
+    bad "--interactive requested but stdin is not a terminal"
+    exit 1
+  fi
   if [ -t 0 ]; then
     printf "Install these %s third-party skills + %s plugins? [yes/no] " "$THIRD_PARTY_SKILLS" "$THIRD_PARTY_PLUGINS"
     read -r confirm
@@ -311,6 +315,18 @@ write_manifest() {
   if ((${#CLAUDE_MARKETPLACES[@]})); then
     claude_marketplaces=$(IFS=,; echo "${CLAUDE_MARKETPLACES[*]}")
   fi
+  # Core-only reinstall: keep the previous manifest's extras records so
+  # uninstall still knows about extras installed by an earlier full run.
+  # (Only fill fields this run left empty; never drop what's already there.)
+  if [ "$INSTALL_EXTRAS" = false ] && [ -f "$MANIFEST" ]; then
+    local prev_managed prev_plugins prev_mp
+    prev_managed=$(sed -n 's/^MANAGED_SKILLS=//p' "$MANIFEST" | head -1)
+    prev_plugins=$(sed -n 's/^CLAUDE_PLUGINS=//p' "$MANIFEST" | head -1)
+    prev_mp=$(sed -n 's/^CLAUDE_MARKETPLACES=//p' "$MANIFEST" | head -1)
+    [ -z "$managed" ] && managed="$prev_managed"
+    [ -z "$claude_plugins" ] && claude_plugins="$prev_plugins"
+    [ -z "$claude_marketplaces" ] && claude_marketplaces="$prev_mp"
+  fi
   mkdir -p "$HOME/.sps"
   cat > "$MANIFEST" <<EOF
 PROFILE=all
@@ -343,11 +359,14 @@ backup_existing_skill() {
   done
   mkdir -p "$backup_root" || { warn "backup dir unreachable: $backup_root"; return 1; }
   cp -R "$existing" "$backup_root/$stamp" || { warn "backup failed for $name"; return 1; }
-  # Prune to the 3 most recent backups.
+  # Prune to the 3 most recent backups. Bounded loop: if rm fails (e.g.
+  # permissions) the count never drops, so bail out instead of spinning.
   local old
-  while [ "$(ls -1 "$backup_root" 2>/dev/null | wc -l | tr -d ' ')" -gt 3 ]; do
+  local guard=0
+  while [ "$(ls -1 "$backup_root" 2>/dev/null | wc -l | tr -d ' ')" -gt 3 ] && [ "$guard" -lt 10 ]; do
     old="$(ls -1dt "$backup_root"/* 2>/dev/null | tail -1)"
     [ -n "$old" ] && rm -rf "$old"
+    guard=$((guard + 1))
   done
   ok "backed up existing $name → ~/.sps/backups/$name/$stamp"
   return 0
@@ -438,7 +457,11 @@ sync_core_skill() {
         printf 'reinstalled %s: %s (same version)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
       fi
       if [ "$replace_sps" = true ]; then
-        ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
+        if [ "$replace_cms" = true ] && [ "$replace_seo" = true ]; then
+          ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
+        else
+          ok "synced /sps → ${dest_root/#$HOME/\~} (cms/seo kept: backup failed)"
+        fi
       fi
     else
       warn "could not sync → ${dest_root/#$HOME/\~}"
@@ -533,42 +556,44 @@ compute_total_steps
 note "Planned steps: $TOTAL_STEPS"
 
 section "Installing"
-step "/sps core skill" npx skills add "$REPO" -g --copy -y "${AGENT_ARGS[@]:-}"
+step "/sps core skill" npx skills add "$REPO" -g --copy -y "${AGENT_ARGS[@]}"
 
 consent_extras
 if [ "$INSTALL_EXTRAS" = false ]; then
-  TOTAL_STEPS=$((STEP + 4))   # keep progress bar honest on core-only installs
+  # Core-only: no further step calls happen (everything below is gated), so
+  # the total becomes the current step count — the bar reads complete.
+  TOTAL_STEPS=$STEP
 fi
 
 if [ "$INSTALL_EXTRAS" = true ]; then MANAGED_SKILLS+=(hallmark impeccable design-taste-frontend webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion); fi
-extras_step "hallmark" npx skills add nutlope/hallmark -g -y "${AGENT_ARGS[@]:-}"
-extras_step "impeccable" npx skills add pbakaus/impeccable -g -y "${AGENT_ARGS[@]:-}"
-extras_step "design-taste-frontend (taste-skill v2)" npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y "${AGENT_ARGS[@]:-}"
-extras_step "webapp-testing" npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y "${AGENT_ARGS[@]:-}"
-extras_step "web-design-guidelines" npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y "${AGENT_ARGS[@]:-}"
-extras_step "vercel-react-best-practices" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y "${AGENT_ARGS[@]:-}"
-extras_step "vercel-composition-patterns" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y "${AGENT_ARGS[@]:-}"
-extras_step "karpathy-guidelines" npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y "${AGENT_ARGS[@]:-}"
-extras_step "agent-browser" npx skills add https://github.com/vercel-labs/agent-browser -g -y "${AGENT_ARGS[@]:-}"
-extras_step "ai-seo" npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y "${AGENT_ARGS[@]:-}"
-extras_step "copywriting" npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y "${AGENT_ARGS[@]:-}"
-extras_step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]:-}"
-extras_step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]:-}"
+extras_step "hallmark" npx skills add nutlope/hallmark -g -y "${AGENT_ARGS[@]}"
+extras_step "impeccable" npx skills add pbakaus/impeccable -g -y "${AGENT_ARGS[@]}"
+extras_step "design-taste-frontend (taste-skill v2)" npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y "${AGENT_ARGS[@]}"
+extras_step "webapp-testing" npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y "${AGENT_ARGS[@]}"
+extras_step "web-design-guidelines" npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y "${AGENT_ARGS[@]}"
+extras_step "vercel-react-best-practices" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y "${AGENT_ARGS[@]}"
+extras_step "vercel-composition-patterns" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y "${AGENT_ARGS[@]}"
+extras_step "karpathy-guidelines" npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y "${AGENT_ARGS[@]}"
+extras_step "agent-browser" npx skills add https://github.com/vercel-labs/agent-browser -g -y "${AGENT_ARGS[@]}"
+extras_step "ai-seo" npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y "${AGENT_ARGS[@]}"
+extras_step "copywriting" npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y "${AGENT_ARGS[@]}"
+extras_step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]}"
+extras_step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]}"
 
 if [ "$INSTALL_EXTRAS" = true ]; then MANAGED_SKILLS+=(astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman); fi
-extras_step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]:-}"
-extras_step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]:-}"
-extras_step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]:-}"
-extras_step "supabase" npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y "${AGENT_ARGS[@]:-}"
-extras_step "supabase-postgres-best-practices" npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y "${AGENT_ARGS[@]:-}"
-extras_step "prisma-database-setup" npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y "${AGENT_ARGS[@]:-}"
-extras_step "prisma-client-api" npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y "${AGENT_ARGS[@]:-}"
-extras_step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]:-}"
-extras_step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]:-}"
-extras_step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]:-}"
-extras_step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]:-}"
-extras_step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]:-}"
-extras_step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]:-}"
+extras_step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]}"
+extras_step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]}"
+extras_step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]}"
+extras_step "supabase" npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y "${AGENT_ARGS[@]}"
+extras_step "supabase-postgres-best-practices" npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y "${AGENT_ARGS[@]}"
+extras_step "prisma-database-setup" npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y "${AGENT_ARGS[@]}"
+extras_step "prisma-client-api" npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y "${AGENT_ARGS[@]}"
+extras_step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]}"
+extras_step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]}"
+extras_step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]}"
+extras_step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]}"
+extras_step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]}"
+extras_step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]}"
 
 if have claude; then
   if [ "$INSTALL_EXTRAS" = true ]; then

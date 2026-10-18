@@ -168,7 +168,7 @@ function Remove-AgentSkill($name) {
 function Get-AgentArgs {
     # Full registry of the `skills` CLI — must match install.ps1 Get-AgentArgs.
     # The old 6-agent default left catalog copies in the other agents behind.
-    if ($Agents -eq "*") { return @("--agent","claude-code","--agent","cursor","--agent","codex","--agent","antigravity","--agent","antigravity-cli","--agent","windsurf","--agent","github-copilot","--agent","opencode","--agent","cline","--agent","roo","--agent","kiro-cli","--agent","amp","--agent","goose","--agent","crush","--agent","trae","--agent","junie","--agent","zed","--agent","openclaw","--agent","droid","--agent","qoder","--agent","kilo","--agent","warp","--agent","universal") }
+    if ($Agents -eq "*") { return @("--agent","claude-code","--agent","cursor","--agent","codex","--agent","antigravity","--agent","antigravity-cli","--agent","windsurf","--agent","github-copilot","--agent","opencode","--agent","cline","--agent","roo","--agent","kiro-cli","--agent","amp","--agent","goose","--agent","crush","--agent","trae","--agent","junie","--agent","zed","--agent","openclaw","--agent","droid","--agent","qoder","--agent","kilo","--agent","warp","--agent","devin","--agent","replit","--agent","adal","--agent","augment","--agent","continue","--agent","grok","--agent","openhands","--agent","rovodev","--agent","zcode","--agent","universal") }
     $args = @()
     foreach ($agent in ($Agents -split ",")) {
         if ($agent.Trim()) {
@@ -185,8 +185,8 @@ $manifestPath = "$env:USERPROFILE\.sps\install-manifest.env"
 # two += batches). When the manifest exists it is parsed below and takes
 # precedence.
 $managedSkills = @("sps","sps-cms","sps-seo","hallmark","impeccable","design-taste-frontend","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion","astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman","taste-skill")
-$claudePlugins = @("universal-build-orchestrator@shahid-personal-skillset","ui-ux-pro-max@ui-ux-pro-max-skill","engineering-skills@claude-code-skills","engineering-advanced-skills@claude-code-skills","marketing-skills@claude-code-skills","a11y-audit@claude-code-skills","docker-development@claude-code-skills")
-$claudeMarketplaces = @("shahid-personal-skillset","ui-ux-pro-max-skill","claude-code-skills")
+$claudePlugins = @("universal-build-orchestrator@shahid-personal-skillset","ui-ux-pro-max@ui-ux-pro-max-skill","engineering-skills@claude-code-skills","engineering-advanced-skills@claude-code-skills","marketing-skills@claude-code-skills","a11y-audit@claude-code-skills","docker-development@claude-code-skills","differential-review@trailofbits","static-analysis@trailofbits","ask-questions-if-underspecified@trailofbits","insecure-defaults@trailofbits")
+$claudeMarketplaces = @("shahid-personal-skillset","ui-ux-pro-max-skill","claude-code-skills","trailofbits")
 $useContext7 = 0
 $useGraphify = 0
 $syncPaths = @()
@@ -275,8 +275,15 @@ section "Removing Claude plugins"
 
 if (Get-Command claude -ErrorAction SilentlyContinue) {
     foreach ($p in $claudePlugins) {
+        # The installer mixes scopes (most plugins project, Trail of Bits
+        # user), so try both; the manifest does not record scope.
         claude plugin uninstall $p --scope project 2>&1 | Out-Null
-        if ($LASTEXITCODE -eq 0) { removed $p }
+        if ($LASTEXITCODE -eq 0) {
+            removed "$p (project)"
+        } else {
+            claude plugin uninstall $p --scope user 2>&1 | Out-Null
+            if ($LASTEXITCODE -eq 0) { removed "$p (user)" }
+        }
     }
 
     foreach ($mkt in $claudeMarketplaces) {
@@ -305,14 +312,27 @@ if (Get-Command uv -ErrorAction SilentlyContinue) {
         if ($LASTEXITCODE -eq 0) { removed "graphify (pip)" }
     }
 }
-$graphifySkill = "$env:USERPROFILE\.claude\skills\graphify"
-if (Test-Path $graphifySkill) { if (Remove-ConstrainedItem $graphifySkill) { removed "graphify skill" } }
+foreach ($g in @("$env:USERPROFILE\.claude\skills\graphify", "$env:USERPROFILE\.config\agents\skills\graphify")) {
+    if (Test-Path $g) { if (Remove-ConstrainedItem $g) { removed "graphify skill" } }
+}
 
 # -- Remove personal data (only with -All) ------------------------------------
 if (-not $KeepPersonal) {
     section "Removing personal data (~/.sps/)"
     $spsDir = "$env:USERPROFILE\.sps"
-    if (Test-Path $spsDir) { Remove-Item -Recurse -Force $spsDir; removed "~\.sps\ (profile, mistakes, learned)" }
+    if (Test-Path $spsDir) {
+        # Preserve skill backups before deleting ~/.sps (mirrors uninstall.sh):
+        # install.sh promises a restore path in ~/.sps/backups — keep it out of
+        # the blast radius at ~/.sps-backups-uninstalled.
+        $backupsDir = Join-Path $spsDir "backups"
+        if (Test-Path $backupsDir) {
+            $preserve = "$env:USERPROFILE\.sps-backups-uninstalled"
+            try { Move-Item -Path $backupsDir -Destination $preserve -Force -ErrorAction Stop } catch {}
+            ok "skill backups preserved at ~\.sps-backups-uninstalled"
+        }
+        Remove-Item -Recurse -Force $spsDir
+        removed "~\.sps\ (profile, mistakes, learned)"
+    }
 } else {
     section "Personal data kept"
     ok "~\.sps\ kept intact (profile, mistakes, learned topics)"

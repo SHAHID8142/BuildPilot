@@ -12,6 +12,8 @@
 param(
     [string]$Agents = "*",
     [switch]$Yes,
+    [switch]$NoExtras,
+    [switch]$Force,
     [switch]$Interactive
 )
 
@@ -78,7 +80,7 @@ if (Test-Path (Join-Path $repoDir ".git")) {
     Write-Host "[OK] Repo cloned" -ForegroundColor Green
 }
 
-$versionFile = Join-Path $repoDir "skills\sps\VERSION"
+$versionFile = Join-Path $repoDir "skill\sps\VERSION"
 $version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "unknown" }
 Write-Host "SPS version: $version" -ForegroundColor DarkGray
 Write-Host ""
@@ -87,6 +89,8 @@ $install = Join-Path $repoDir "install.ps1"
 $argsList = @()
 if ($Agents) { $argsList += @("-Agents", $Agents) }
 if ($Yes) { $argsList += "-Yes" }
+if ($NoExtras) { $argsList += "-NoExtras" }
+if ($Force) { $argsList += "-Force" }
 if ($Interactive) { $argsList += "-Interactive" }
 
 & $install @argsList

@@ -46,7 +46,13 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --help|-h)
-      echo "Usage: bash uninstall.sh [--keep-personal] [--yes] [--agents '*'|agent1,agent2]"
+      echo "Usage: bash uninstall.sh [--keep-personal] [--all] [--yes] [--agents '*'|agent1,agent2]"
+      echo ""
+      echo "  --keep-personal   keep ~/.sps/ (project memory, manifest)"
+      echo "  --all             remove personal data too (same as default; explicit form)"
+      echo "  --agents LIST     narrows the 'npx skills remove' agent IDs; the"
+      echo "                    filesystem sweep still covers all agent roots so"
+      echo "                    nothing is left behind"
       exit 0
       ;;
     *)
@@ -74,13 +80,16 @@ section "Removing globally installed skills"
 
 # Confinement guard: a deletion target must resolve inside an allowlisted
 # agent-skill root. Manifest-controlled values are never trusted directly.
-# Superset of the installer's SYNC_PATHS (install.sh:36-71; 34 unique roots)
-# plus the two intentional
-# rules dirs ($HOME/.claude/rules, $HOME/.cursor/rules) which install.sh
-# never syncs but remove_agent_skill cleans. Keep in sync by hand: every
-# SYNC_PATHS entry must appear in this list. Verify with:
-#   diff <(sed -n '36,71p' install.sh | grep -o '"\$HOME/[^"]*"' | tr -d '"' | sort -u) \
-#        <(printf '%s\n' "${UNINSTALL_ROOTS[@]}" | sort -u) | grep -v '^<'
+# Superset of the installer's SYNC_PATHS (34 unique roots — extract with
+# `grep -o '"\$HOME/[^"]*"' install.sh | sort -u` rather than line slices,
+# which drift) plus three intentional extras: the two rules dirs
+# ($HOME/.claude/rules, $HOME/.cursor/rules) which install.sh never syncs
+# but remove_agent_skill cleans, and $HOME/.antigravity/skills (legacy
+# install location still found on some machines). Keep in sync by hand:
+# every SYNC_PATHS entry must appear in this list. Verify with:
+#   diff <(awk '/^SYNC_PATHS=\(/,/^\)/' install.sh | grep -o '"\$HOME/[^"]*"' | tr -d '"' | sort -u) \
+#        <(awk '/^UNINSTALL_ROOTS=\(/,/^\)/' uninstall.sh | grep -o '"\$HOME/[^"]*"' | tr -d '"' | sort -u) \
+#        | grep -v '^<'
 UNINSTALL_ROOTS=(
   "$HOME/.agents/skills"
   "$HOME/.config/agents/skills"
@@ -231,8 +240,8 @@ MANIFEST="$HOME/.sps/install-manifest.env"
 # future installer change automatically narrows this to exactly what was
 # installed.
 MANAGED_SKILLS=(sps sps-cms sps-seo hallmark impeccable design-taste-frontend webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman taste-skill)
-CLAUDE_PLUGINS=(universal-build-orchestrator@shahid-personal-skillset ui-ux-pro-max@ui-ux-pro-max-skill engineering-skills@claude-code-skills engineering-advanced-skills@claude-code-skills marketing-skills@claude-code-skills a11y-audit@claude-code-skills docker-development@claude-code-skills)
-CLAUDE_MARKETPLACES=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-skills)
+CLAUDE_PLUGINS=(universal-build-orchestrator@shahid-personal-skillset ui-ux-pro-max@ui-ux-pro-max-skill engineering-skills@claude-code-skills engineering-advanced-skills@claude-code-skills marketing-skills@claude-code-skills a11y-audit@claude-code-skills docker-development@claude-code-skills differential-review@trailofbits static-analysis@trailofbits ask-questions-if-underspecified@trailofbits insecure-defaults@trailofbits)
+CLAUDE_MARKETPLACES=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-skills trailofbits)
 USE_CONTEXT7=0
 USE_GRAPHIFY=0
 SYNC_PATHS=()
@@ -256,10 +265,10 @@ build_agent_args
 
 if command -v npx >/dev/null 2>&1; then
   section "Removing skills via Skills CLI"
-  npx skills remove "${MANAGED_SKILLS[@]:-}" -g -y "${REMOVE_AGENT_ARGS[@]:-}" >/dev/null 2>&1 || true
+  npx skills remove "${MANAGED_SKILLS[@]}" -g -y "${REMOVE_AGENT_ARGS[@]}" >/dev/null 2>&1 || true
 fi
 
-for skill in "${MANAGED_SKILLS[@]:-}"; do
+for skill in "${MANAGED_SKILLS[@]}"; do
   [ -n "$skill" ] || continue
   remove_agent_skill "$skill"
 done
@@ -340,7 +349,9 @@ section "Removing Claude plugins"
 if command -v claude >/dev/null 2>&1; then
   if ((${#CLAUDE_PLUGINS[@]})); then
     for plugin in "${CLAUDE_PLUGINS[@]:-}"; do
-      claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1 && removed "$plugin" || true
+      # The installer mixes scopes (most plugins --scope project, Trail of
+      # Bits --scope user), so try both; the manifest does not record scope.
+      claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1 && removed "$plugin (project)"         || claude plugin uninstall "$plugin" --scope user >/dev/null 2>&1 && removed "$plugin (user)" || true
     done
   fi
 
@@ -378,8 +389,18 @@ if ! $KEEP_PERSONAL; then
   # Preserve skill backups by default: install.sh promises a restore path in
   # ~/.sps/backups/<skill>/, so a full uninstall must not silently destroy it.
   if [ -d "$HOME/.sps/backups" ]; then
-    mv "$HOME/.sps/backups" "$HOME/.sps-backups-uninstalled" \
-      && info "skill backups preserved at ~/.sps-backups-uninstalled (delete manually if unwanted)"
+    if [ -d "$HOME/.sps-backups-uninstalled" ]; then
+      # Previous uninstall already preserved a copy — move the per-skill
+      # dirs in alongside it instead of nesting one inside the other.
+      mkdir -p "$HOME/.sps-backups-uninstalled"
+      for b in "$HOME/.sps/backups"/*; do
+        [ -d "$b" ] && mv "$b" "$HOME/.sps-backups-uninstalled/"
+      done
+      info "skill backups merged into ~/.sps-backups-uninstalled"
+    else
+      mv "$HOME/.sps/backups" "$HOME/.sps-backups-uninstalled" \
+        && info "skill backups preserved at ~/.sps-backups-uninstalled (delete manually if unwanted)"
+    fi
   fi
   section "Removing personal data (~/.sps/)"
   rm -rf "$HOME/.sps" && removed "~/.sps/ (profile, mistakes, learned)" || true

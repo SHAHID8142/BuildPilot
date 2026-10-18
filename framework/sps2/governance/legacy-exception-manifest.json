@@ -102,11 +102,11 @@
     },
     {
       "path": "get-sps.ps1",
-      "expected_blob": "8d2f3f6467de6d5a0356823d953bb6713452dbbc",
+      "expected_blob": "250a5d62259b4ba83415995d8b9969d7d7d002ad",
       "expected_mode": "100644",
-      "sha256": "3fb777c1fd7bf0d85646a149d096a10662b5486435eb61d90446508cd79e8f98",
+      "sha256": "939c88865a5691f4a769aa10983f0d5eb88817ba46337779b2081ee09f523d1d",
       "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301."
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: installer QA round-2 fixes."
     },
     {
       "path": "get-sps.sh",
@@ -118,19 +118,19 @@
     },
     {
       "path": "install.ps1",
-      "expected_blob": "83169c8617630feb61f7e5826f868f7f1578f05b",
+      "expected_blob": "4d7b6fd6d1a289a89e742e467fb3af0b2551058c",
       "expected_mode": "100644",
-      "sha256": "2f6f4196fc0e0202ee26a6343c7db1ce1161e7b22e74d8e082524f9495167376",
+      "sha256": "481df450a714e89d83c00067d40c846a4538e4ba412356393ffa8ee06f0245bb",
       "authorization": "DEC-7305",
-      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305."
+      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes."
     },
     {
       "path": "install.sh",
-      "expected_blob": "d56623de576a0427e46a04a048991ea30c56efde",
+      "expected_blob": "ed082bf3ddc3c45f355c442fcfa0d6298d0ee9ef",
       "expected_mode": "100755",
-      "sha256": "159980026928e948e478ffff0b20ee89c2a881c985c97a036876b7de5a12b223",
+      "sha256": "03db259ac8a431dcc4c58c989f838aa5b87be81b96809890e72a8d4b1be69526",
       "authorization": "DEC-7305",
-      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall)."
     },
     {
       "path": "scripts/bootstrap-sps.sh",
@@ -462,19 +462,19 @@
     },
     {
       "path": "uninstall.ps1",
-      "expected_blob": "a64609c3c3cc6c498965806c13576da63b8c6c03",
+      "expected_blob": "510b299726273fe8345744d4525e9c40b5b60761",
       "expected_mode": "100644",
-      "sha256": "7037174f86c65f6c1b625ded121155992d508fe1c39c8867bfa43143c7b8cb96",
+      "sha256": "db5bb9c65e7e8ed563b5f605f391feacd8cf4cdc9e32bd4e0bc0c21661f471b8",
       "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305."
+      "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes."
     },
     {
       "path": "uninstall.sh",
-      "expected_blob": "b56fc66086fb692a1a2d38a57aca62b724a043a8",
+      "expected_blob": "6fff7b8473207a5ec899552cd1e50068ab4e01f5",
       "expected_mode": "100755",
-      "sha256": "5452bd2789515670bd1df2f27e37b9825b5ef5c3d5222dffa3a55145197d6380",
+      "sha256": "c9e81d94325e44abf54b22125e44b718937043ae64f6e5a22b3885003875707e",
       "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall)."
     }
   ],
   "related_test_artifacts": [
