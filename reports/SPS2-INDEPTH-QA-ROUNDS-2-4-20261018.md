@@ -89,3 +89,35 @@ across all three surfaces (manifest ↔ `legacy_exceptions.py`
   middle ground; codexx law-checker-own-docs) — to be presented after the
   scripts round lands.
 - CI on 2263684 watched; auto-merge rule applies on green.
+
+---
+
+## Round 5 — scripts reviewer (committed in 02da7d3, + CI catch in 8281442)
+
+12 findings (1 CRITICAL + 1 MAJOR + 6 MINOR + 4 NIT), all fixed. The
+reviewer empirically tested every load-bearing claim on macOS bash 3.2.
+
+- **CRITICAL**: empty-array expansion under `set -u` on bash 3.2 — the
+  deeper form of round-2 finding 22. `"${ARR[@]:-}"` yields a stray empty
+  arg; plain `"${ARR[@]}"` is an *unbound variable error* on an empty
+  array. All 48 expansions across install.sh / uninstall.sh /
+  sps-update.sh / sps-lesson.sh now use the bash-3.2-safe idiom
+  `"${ARR[@]+${ARR[@]}}"`.
+- **MAJOR**: sps-lesson.sh send was fail-open — missing scanner only
+  warned, then pushed unscanned content to the public repo. Now aborts.
+- MINOR/NIT: same-day resend branch reuse, commit-failure abort,
+  restore-preview mtime split, smoke status-repo cwd, doctor --fix
+  project-arg wipe, lesson overwrite skip, matched-text-only allowlist
+  testing, NUL-safe file walk, unknown-option rejection, hygiene -z
+  rename-pair parsing.
+
+**Live CI catch:** windows-smoke on 6035452 exposed a PowerShell parse
+error in install.ps1 (`"$LASTEXITCODE:"` inside a string parses as a
+scoped-variable reference) — fixed in 8281442 with `${LASTEXITCODE}`.
+
+Governance chain: 5 re-pin cycles this session, final canonical hash
+`42b5a0bc…`. Final: 1,259 tests OK, smoke 128 PASS, all gates green.
+
+**Repo-setting fact verified for Batch C:** branch protection requires 4
+checks (Lint+smoke, PowerShell syntax, Python unit tests, Version
+sanity), strict=true, **enforce_admins=false** (admin pushes bypass).
