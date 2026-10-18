@@ -121,3 +121,29 @@ Governance chain: 5 re-pin cycles this session, final canonical hash
 **Repo-setting fact verified for Batch C:** branch protection requires 4
 checks (Lint+smoke, PowerShell syntax, Python unit tests, Version
 sanity), strict=true, **enforce_admins=false** (admin pushes bypass).
+
+## Round 6 — scripts re-verification (committed in c692a70)
+
+The reviewer re-verified against HEAD and found three of round 5's own
+fixes didn't work as written (each reproduced empirically before fixing):
+
+- **MAJOR**: the fail-closed scanner path resolved relative to the
+  invocation cwd but ran after `cd` into the clone — the documented
+  cross-project send flow always aborted. Now resolved absolute with a
+  `~/.sps/src/BuildPilot/scripts` fallback; "cannot run" no longer
+  reported as "flagged".
+- **MAJOR**: same-day resend's `checkout -b` succeeded in the fresh clone
+  (diverged from the remote batch branch), pushing failed
+  non-fast-forward with exit 0. Now tracks `origin/<branch>` when it
+  exists (verified end-to-end in a scratch remote); push failure exits 1.
+- **MAJOR**: update preserved agents but not the core-only choice —
+  `--no-extras` installs got all extras pulled on every update.
+  install.sh now records `INSTALL_EXTRAS` in the manifest; sps-update
+  passes `--no-extras` through when it was false.
+- MINOR/NIT: check-update cached-state truth for unknown installed
+  version (check-update.sh newly pinned — manifest now 60 exceptions,
+  canonical hash `e1f9cd40…`); scratch-dir leak on clone failure;
+  AGENTS value trimming; NUL-safe config-surface dedupe.
+
+Final chain state after round 6: 1,259 tests OK, smoke PASS, laws, P2
+(69 checks + 22 negatives), anchors, mirrors — all green.
