@@ -2,7 +2,12 @@
 # sps-lesson.sh — cross-project lesson capture & promotion (LESSONS.md)
 # Usage:
 #   bash scripts/sps-lesson.sh capture "short title"   # in a client project
-#   bash scripts/sps-lesson.sh send                    # PR lessons to BuildPilot
+#   bash scripts/sps-lesson.sh send [--yes]            # PR lessons to BuildPilot
+#                                                      # (--yes skips the typed
+#                                                      #  confirmation; without
+#                                                      #  it, send shows exactly
+#                                                      #  what will be published
+#                                                      #  and asks first)
 #   bash scripts/sps-lesson.sh review                  # in BuildPilot: review inbox
 set -uo pipefail
 
@@ -90,11 +95,32 @@ EOF
     ;;
 
   send)
+    assume_yes=""
+    for a in "$@"; do
+      case "$a" in
+        --yes) assume_yes="yes" ;;
+        *) die "unknown option for send: $a (usage: sps-lesson.sh send [--yes])" ;;
+      esac
+    done
     [[ -d .sps/lessons/pending ]] || die "no pending lessons"
     shopt -s nullglob
     lessons=(.sps/lessons/pending/LESSON-*.md)
     shopt -u nullglob
     [[ ${#lessons[@]} -gt 0 ]] || die "no pending lessons to send"
+    if [[ "$assume_yes" != "yes" ]]; then
+      echo "About to publish ${#lessons[@]} lesson(s) to the PUBLIC repo ${BG_REPO}"
+      echo "(branch lesson/$(today)-batch, then a pull request):"
+      echo
+      for f in "${lessons[@]}"; do echo "  $f"; done
+      echo
+      read -r -p "Send these ${#lessons[@]} lesson(s) to ${BG_REPO}? (yes/no): " confirm
+      if [[ "$confirm" != "yes" ]]; then
+        echo "Aborted — nothing was sent, pending lessons left in .sps/lessons/pending/."
+        echo "Send later:  bash scripts/sps-lesson.sh send"
+        echo "Delete one:  rm .sps/lessons/pending/<file>"
+        exit 1
+      fi
+    fi
     work="$(mktemp -d)/BuildPilot"
     if git clone --quiet "https://github.com/${BG_REPO}.git" "$work" 2>/dev/null; then
       :

@@ -46,6 +46,8 @@ root_allowed() {
     install.sh|install.ps1|get-sps.sh|get-sps.ps1|uninstall.sh|uninstall.ps1|update-sps.ps1) return 0 ;;
     # dotfiles / machine config
     .gitignore|.gitmodules|.mcp.json|.editorconfig|.nvmrc|.npmrc) return 0 ;;
+    # security gate config (scripts/secret-scan.sh reads this; manifest-pinned)
+    .secrets-allowlist) return 0 ;;
     # standard directories
     .git|.github|.claude|.claude-plugin|.sps|.kilo|.vscode|.idea|.agents|.agent|.cursor|.cline|.roo|.continue|.codeium|.pytest_cache|.workbuddy-ai) return 0 ;;
     .claude-plugin*|.claude*) return 0 ;;

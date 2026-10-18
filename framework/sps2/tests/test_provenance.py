@@ -65,6 +65,38 @@ class TestProvenance(unittest.TestCase):
         self.script.write_text(SCRIPT.read_text(encoding="utf-8"), encoding="utf-8")
         self.claude_skills = self.home / ".claude" / "skills"
         self.cursor_skills = self.home / ".cursor" / "skills"
+        # The shim is a BuildPilot-checkout lookalike (it has install.sh), so
+        # check mode verifies the repo store too. Seed a valid one for the
+        # shipped skills so $HOME-store tests are unaffected; the repo-store
+        # contract gets its own dedicated tests below.
+        self.repo_store = self.repo_shim / ".sps" / "provenance-store.json"
+        self._seed_repo_store()
+
+    def _seed_repo_store(self) -> None:
+        """Pin the shim's shipped skills exactly as `pin --repo` would."""
+        import hashlib
+
+        def dir_digest(d: Path) -> str:
+            h = hashlib.sha256()
+            for p in sorted(p for p in d.rglob("*") if p.is_file()):
+                h.update(p.relative_to(d).as_posix().encode("utf-8"))
+                h.update(b"\0")
+                h.update(hashlib.sha256(p.read_bytes()).digest())
+            return h.hexdigest()
+
+        store = {}
+        for name in ("sps", "sps-cms", "sps-seo"):
+            d = self.repo_shim / "skill" / name
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "SKILL.md").write_text(f"# {name}\n", encoding="utf-8")
+            store[name] = {
+                "dir": f"skill/{name}",
+                "sha256_skill_md": hashlib.sha256((d / "SKILL.md").read_bytes()).hexdigest(),
+                "digest": dir_digest(d),
+                "pinned_at": "1970-01-01T00:00:00",
+            }
+        self.repo_store.parent.mkdir(parents=True, exist_ok=True)
+        self.repo_store.write_text(json.dumps(store, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     def tearDown(self) -> None:
         self._temp.cleanup()
@@ -141,18 +173,65 @@ class TestProvenance(unittest.TestCase):
         self.assertIn("UNPINNED: late-arrival", proc.stdout)
 
     def test_no_skills_dirs_notes_and_exits_0(self) -> None:
+        # No $HOME skills AND no repo store: nothing to do, exit 0.
+        self.repo_store.unlink()
         proc = self._run_shim("check")
         self.assertEqual(proc.returncode, 0)
-        self.assertIn("no skills directories found", proc.stdout)
+        self.assertIn("nothing to check", proc.stdout)
         proc = self._run_shim("pin")
         self.assertEqual(proc.returncode, 0)
+        self.assertIn("nothing to pin", proc.stdout)
 
     def test_no_provenance_json_all_skills_unpinned(self) -> None:
         _mk_skill(self.claude_skills, "cool-skill")
         proc = self._run_shim("check")
         self.assertEqual(proc.returncode, 0)
         self.assertIn("UNPINNED: cool-skill", proc.stdout)
-        self.assertNotIn("PINNED-OK", proc.stdout)
+        # shipped skills ARE pinned (repo store) — only the $HOME scan is unpinned
+        self.assertNotIn("\nPINNED-OK", proc.stdout)
+        self.assertNotIn(" PINNED-OK", proc.stdout)
+        self.assertIn("0 pinned-ok", proc.stdout)
+
+    # --- repo-store contract: the shipped skills' committed trust anchor ----
+
+    def test_repo_store_drift_fails_strict(self) -> None:
+        (self.repo_shim / "skill" / "sps" / "SKILL.md").write_text(
+            "# sps\ntampered\n", encoding="utf-8"
+        )
+        proc = self._run_shim("check", "--strict")
+        self.assertEqual(proc.returncode, 1, proc.stdout)
+        self.assertIn("REPO-DRIFT: sps", proc.stdout)
+
+    def test_repo_store_missing_fails_strict_in_checkout(self) -> None:
+        # A $HOME skill must exist so check mode proceeds past the
+        # nothing-to-do early exit — this isolates the missing-store failure.
+        _mk_skill(self.claude_skills, "cool-skill")
+        self.repo_store.unlink()
+        proc = self._run_shim("check", "--strict")
+        self.assertEqual(proc.returncode, 1, proc.stdout)
+        self.assertIn("REPO-STORE-MISSING", proc.stdout)
+
+    def test_repo_store_missing_shipped_skill_fails_strict(self) -> None:
+        store = json.loads(self.repo_store.read_text(encoding="utf-8"))
+        del store["sps-seo"]
+        self.repo_store.write_text(json.dumps(store, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        proc = self._run_shim("check", "--strict")
+        self.assertEqual(proc.returncode, 1, proc.stdout)
+        self.assertIn("REPO-UNPINNED: sps-seo", proc.stdout)
+
+    def test_repo_store_ok_and_report_only_without_strict(self) -> None:
+        proc = self._run_shim("check")
+        self.assertEqual(proc.returncode, 0)
+        self.assertIn("REPO-PINNED-OK: sps", proc.stdout)
+        self.assertIn("REPO-PINNED-OK: sps-cms", proc.stdout)
+        self.assertIn("REPO-PINNED-OK: sps-seo", proc.stdout)
+        # drift stays report-only without --strict
+        (self.repo_shim / "skill" / "sps-seo" / "SKILL.md").write_text(
+            "# sps-seo\ntampered\n", encoding="utf-8"
+        )
+        proc = self._run_shim("check")
+        self.assertEqual(proc.returncode, 0)
+        self.assertIn("REPO-DRIFT: sps-seo", proc.stdout)
 
 
 if __name__ == "__main__":

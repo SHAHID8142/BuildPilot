@@ -60,6 +60,39 @@ def _check_check_id(check_id: str) -> str:
     return check_id
 
 
+# The approver name is interpolated into the generated test's header comment
+# (`# reviewed by: {reviewer} {date}`), so a multi-line or quote-bearing
+# --approved-by value could inject module-level Python that executes when the
+# test battery imports the generated file. Same threat model as check_id and
+# target_file above, so the same validate-then-refuse treatment applies.
+APPROVED_BY_MAX_LEN = 80
+APPROVED_BY_RE = re.compile(r"^[A-Za-z0-9 .@_/-]*$")
+
+
+def _check_approved_by(value: str) -> str:
+    """Validate a --approved-by reviewer name; return the sanitized form.
+
+    Rules: non-empty after strip, single line (no newline/carriage return or
+    any other control character), only letters/digits/space/./-/_/@ allowed,
+    and at most APPROVED_BY_MAX_LEN characters. Raises ValueError otherwise.
+    """
+    stripped = value.strip()
+    if not stripped:
+        raise ValueError("empty or whitespace-only")
+    if any(ord(c) < 32 or ord(c) == 127 for c in value):
+        raise ValueError(
+            "contains control characters (newlines and other C0 controls are not allowed)"
+        )
+    if not APPROVED_BY_RE.match(value):
+        raise ValueError(
+            "contains characters outside the allowed set "
+            "(letters, digits, space, ./-/_/@)"
+        )
+    if len(stripped) > APPROVED_BY_MAX_LEN:
+        raise ValueError(f"longer than {APPROVED_BY_MAX_LEN} characters")
+    return stripped
+
+
 def read_ledger(path: Path) -> list[dict]:
     """Parse the JSONL ledger; skip blank/corrupt lines gracefully."""
     if not path.is_file():
@@ -294,6 +327,21 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--ledger", type=Path, default=LEDGER, help="ledger path override")
     args = ap.parse_args(argv)
 
+    # Fail fast on a hostile approver value BEFORE any preview or write: the
+    # value is interpolated into generated Python source, so a multi-line or
+    # quote-bearing name could inject module-level code into the test battery.
+    reviewer = "<unset>"
+    if args.approved_by is not None:
+        try:
+            reviewer = _check_approved_by(args.approved_by)
+        except ValueError as exc:
+            print(
+                f"gen_law_test: invalid --approved-by value: {exc}",
+                file=sys.stderr,
+            )
+            return 1
+        assert "\n" not in reviewer and "\r" not in reviewer, "sanitized approver must be single-line"
+
     entries = read_ledger(args.ledger)
     if not entries:
         print(f"gen_law_test: ledger empty or missing: {args.ledger}", file=sys.stderr)
@@ -345,7 +393,7 @@ def main(argv: list[str] | None = None) -> int:
     body = "\n".join(" " * 12 + ln for ln in flat)
 
     content = TEMPLATE.format(
-        reviewer=args.approved_by or "<unset>",
+        reviewer=reviewer,
         date=datetime.now(timezone.utc).strftime("%Y-%m-%d"),
         check_id=args.check,
         target_file=args.target_file,
@@ -368,7 +416,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
     out.write_text(content, encoding="utf-8")
-    print(f"gen_law_test: wrote {out} (reviewed by {args.approved_by})")
+    print(f"gen_law_test: wrote {out} (reviewed by {reviewer})")
     return 0
 
 

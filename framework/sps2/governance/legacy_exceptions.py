@@ -24,7 +24,13 @@ EXPECTED_DECISION_ID = "DEC-7301"
 # 2026-10-18 (shell-scripts audit fixes): installer arg-loop/symlink/color fixes in
 # install.sh, uninstall.sh, get-sps.sh, sps-status.sh, sps-doctor.sh, sps-update.sh,
 # sps-hygiene.sh, bootstrap-sps.sh (+ mirrors).
-EXPECTED_MANIFEST_SHA256 = "f24d9dc5bc87634d653c8081b56cd0635d538ff4eccf6e700cf12732ae9b5edf"
+# Dual anchor (audit fix 2026-10-18): the same canonical SHA-256 is pinned in
+# .github/workflows/sps-ci.yml (validator-battery job) and cross-checked by
+# framework/sps2/tests/test_manifest_anchor.py. A coordinated tamper must now
+# edit the manifest, this constant, AND the workflow before anything passes.
+# Accepted residual: repo write still reaches all three; final detection is
+# git history + PR review.
+EXPECTED_MANIFEST_SHA256 = "863c6d62a3eea926888028587b628677bb6fd1d868fb5ecfbcd2c0448827847c"
 EXPECTED_EXCEPTION_COUNT = 57  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {

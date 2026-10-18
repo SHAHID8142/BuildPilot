@@ -259,6 +259,37 @@ jobs:
           python3 framework/sps2/tools/validate-p7-readiness.py
           python3 framework/sps2/tools/validate-bootstrap.py
 
+      - name: Governance manifest trust anchors (DEC-7301/DEC-7302)
+        run: |
+          set -euo pipefail
+          # Independent dual anchor. legacy_exceptions.py and
+          # import_exceptions.py each pin their manifest's canonical SHA-256
+          # inside the module that verifies it, so a coordinated tamper could
+          # edit manifest + constant together and pass every in-repo check.
+          # The expected hashes live in .github/manifest-anchors.env — a
+          # separate pinned file, because embedding them HERE would make the
+          # workflow self-referential (this workflow is itself pinned in the
+          # legacy manifest: workflow pins manifest hash, manifest pins
+          # workflow bytes — that loop never converges). Cross-checked by
+          # framework/sps2/tests/test_manifest_anchor.py: a coordinated edit
+          # must touch the manifest, the module constant, the anchors file,
+          # AND the anchor test. Accepted residual: repo write still reaches
+          # all of these; detection remains git history + PR review.
+          anchor_sha() {
+            python3 -c 'import hashlib, json, sys; parsed = json.loads(open(sys.argv[1], encoding="utf-8").read()); print(hashlib.sha256(json.dumps(parsed, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest())' "$1"
+          }
+          while IFS= read -r pair; do
+            case "$pair" in \#*|"") continue ;; esac
+            manifest="${pair%%:*}"
+            expected="${pair#*:}"
+            actual="$(anchor_sha "$manifest")"
+            if [ "$actual" != "$expected" ]; then
+              echo "::error::manifest anchor mismatch for ${manifest}: expected ${expected}, got ${actual}"
+              exit 1
+            fi
+            echo "manifest anchor OK: ${manifest} = ${actual}"
+          done < .github/manifest-anchors.env
+
       - name: sps2 validator + law + generated-test guards
         env:
           PYTHONPATH: ${{ github.workspace }}

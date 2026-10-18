@@ -77,8 +77,11 @@ with BuildPilot:
    `bash scripts/sps-lesson.sh capture "short title"`
 2. It fills a strict template with you (what went wrong, the rule that
    prevents it, which doc it belongs to).
-3. When ready: `bash scripts/sps-lesson.sh send` — opens a pull request
-   against BuildPilot. Nothing is sent automatically.
+3. When ready: `bash scripts/sps-lesson.sh send` — it first shows you every
+   lesson that will be published, the target repo and branch, and asks for a
+   typed confirmation (you must answer exactly `yes`). Only then does it open
+   a pull request against BuildPilot. Nothing is sent without that
+   confirmation. For non-interactive use, add `--yes` to skip the prompt.
 4. Next time you're in the BuildPilot repo:
    `bash scripts/sps-lesson.sh review` — walk each lesson, approve/reject.
    Approved lessons become permanent rules in the skill, enforced by CI.
@@ -97,7 +100,9 @@ at delivery and again at day 30 with a before/after report).
 ## 7. Safety model, in plain words
 
 - The agent **never pushes, deploys, or publishes** without your explicit go.
-- Project memory lives in `.sps/` inside your project — nothing is sent anywhere.
+- Project memory lives in `.sps/` inside your project and stays there. The
+  only thing that ever leaves your machine is a lesson you explicitly confirm
+  sending with `sps-lesson.sh send` (it asks first, every time).
 - Third-party skills are only installed after you consent (the agent must
   ask first, every time).
 - Legal documents the agent drafts (privacy policy, terms, refund policy)

@@ -74,7 +74,13 @@ section "Removing globally installed skills"
 
 # Confinement guard: a deletion target must resolve inside an allowlisted
 # agent-skill root. Manifest-controlled values are never trusted directly.
-# Covers every installer SYNC_PATHS root (install.sh) plus the rules dirs.
+# Superset of the installer's SYNC_PATHS (install.sh:36-72; 34 unique roots —
+# .config/opencode/skills is listed twice there) plus the two intentional
+# rules dirs ($HOME/.claude/rules, $HOME/.cursor/rules) which install.sh
+# never syncs but remove_agent_skill cleans. Keep in sync by hand: every
+# SYNC_PATHS entry must appear in this list. Verify with:
+#   diff <(sed -n '36,72p' install.sh | grep -o '"\$HOME/[^"]*"' | tr -d '"' | sort -u) \
+#        <(printf '%s\n' "${UNINSTALL_ROOTS[@]}" | sort -u) | grep -v '^<'
 UNINSTALL_ROOTS=(
   "$HOME/.agents/skills"
   "$HOME/.config/agents/skills"
@@ -96,6 +102,23 @@ UNINSTALL_ROOTS=(
   "$HOME/.kiro/skills"
   "$HOME/.amp/skills"
   "$HOME/.github/skills"
+  "$HOME/.config/goose/skills"
+  "$HOME/.goose/skills"
+  "$HOME/.crush/skills"
+  "$HOME/.config/trae/skills"
+  "$HOME/.trae/skills"
+  "$HOME/.junie/skills"
+  "$HOME/.config/junie/skills"
+  "$HOME/.zed/skills"
+  "$HOME/.openclaw/skills"
+  "$HOME/.droid/skills"
+  "$HOME/.qoder/skills"
+  "$HOME/.kilocode/skills"
+  "$HOME/.warp/plugins/skills"
+  "$HOME/.grok/skills"
+  "$HOME/.hermes/skills"
+  "$HOME/.autohand/skills"
+  "$HOME/.zeroclaw/skills"
 )
 is_safe_uninstall_target() {
   local candidate="$1"
@@ -188,6 +211,7 @@ CLAUDE_MARKETPLACES=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-sk
 USE_CONTEXT7=0
 USE_GRAPHIFY=0
 SYNC_PATHS=()
+CLEANED_ROOTS=0
 
 if [ -f "$MANIFEST" ]; then
   while IFS='=' read -r key value; do
@@ -233,12 +257,16 @@ if ((${#SYNC_PATHS[@]} == 0)); then
 fi
 for dest_root in "${SYNC_PATHS[@]:-}" "${DEFAULT_SYNC_PATHS[@]}"; do
   [[ -z "$dest_root" ]] && continue
+  _root_cleaned=false
   if [ -e "$dest_root/sps" ] && safe_rm "$dest_root/sps"; then
     removed "${dest_root/#$HOME/\~}/sps"
+    _root_cleaned=true
   fi
   if [ -e "$dest_root/sps-cms" ] && safe_rm "$dest_root/sps-cms"; then
     removed "${dest_root/#$HOME/\~}/sps-cms"
+    _root_cleaned=true
   fi
+  $_root_cleaned && CLEANED_ROOTS=$((CLEANED_ROOTS + 1))
 done
 
 # ── Remove Claude plugin system skills ───────────────────────────────────────
@@ -301,7 +329,9 @@ echo ""
 echo "╔══════════════════════════════════════════════════════════════════╗"
 echo "║                    Uninstall complete                             ║"
 echo "║                                                                  ║"
-echo "║  All /sps skills and catalog skills removed.                     ║"
+printf '║%-66s║\n' "  /sps and catalog skills removed from ${CLEANED_ROOTS} agent root(s)."
+echo "║  (Roots that were never installed are simply absent — that's     ║"
+echo "║   expected, not a failure.)                                      ║"
 if ! $KEEP_PERSONAL; then
 echo "║  Personal data (~/.sps/) also removed.                           ║"
 else

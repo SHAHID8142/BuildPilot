@@ -25,12 +25,14 @@ framework.sps2.tests.test_backup_restore
 framework.sps2.tests.test_check_update_safety
 framework.sps2.tests.test_docs_drift
 framework.sps2.tests.test_gen_law_test
+framework.sps2.tests.test_gen_law_test_approval
 framework.sps2.tests.test_generated_tests
 framework.sps2.tests.test_hooks
 framework.sps2.tests.test_kickoff
 framework.sps2.tests.test_law_checker
 framework.sps2.tests.test_law_uncovered_checks
 framework.sps2.tests.test_learning
+framework.sps2.tests.test_manifest_anchor
 framework.sps2.tests.test_p10_runtime_gate
 framework.sps2.tests.test_p17_endtoend
 framework.sps2.tests.test_p17_execution_gate_attribution

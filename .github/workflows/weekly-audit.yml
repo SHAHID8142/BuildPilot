@@ -80,13 +80,14 @@ jobs:
           set -euo pipefail
           bash scripts/sps-hygiene.sh check 2>&1 | tee "$RUNNER_TEMP/audit-hygiene.log"
 
-      # Provenance on a fresh runner: ~/.sps/provenance.json does not exist
-      # there, and sps-provenance.sh handles that state deliberately — the
-      # missing store reads as {} and every third-party skill is reported
-      # UNPINNED (report-only); --strict exits 1 on PROVENANCE-DRIFT only, so
-      # this step exits 0 (with UNPINNED warnings) on a fresh runner and
-      # still catches tampering once a pin exists. No pre-pin step, by
-      # design: pinning on the runner would always self-verify as clean.
+      # Provenance has two stores. The repo store (.sps/provenance-store.json)
+      # is COMMITTED: it pins the shipped skills (skill/sps, sps-cms, sps-seo),
+      # so on CI it is always present and check --strict FAILS on any drift or
+      # shipped skill missing from it — this is the real anti-tamper gate.
+      # The $HOME store does not exist on a fresh runner; UNPINNED there is
+      # onboarding state (report-only, by design) and no $HOME skills exist on
+      # CI anyway. Pinning on the runner would always self-verify as clean —
+      # never do it; the store is pinned locally and committed.
       - name: Provenance check (strict)
         run: |
           set -euo pipefail
