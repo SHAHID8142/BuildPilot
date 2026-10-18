@@ -118,19 +118,19 @@
   },
   {
    "path": "install.ps1",
-   "expected_blob": "dc2bd23998fa75d77b3b4da198589e849bb2ef85",
+   "expected_blob": "1467755b6b53c33a895ecb855b966582640076df",
    "expected_mode": "100644",
-   "sha256": "4fca2f8b17082176eff5b4bb9e3cb2cb6fce455977d156c8cd77aa75b02bb852",
+   "sha256": "67c0e264930ae66c918d9bc7e13741b43019520283034a91ab097594338fcfc9",
    "authorization": "DEC-7305",
-   "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (Invoke-Native Start-Job runspace fix (audit #1)) — orchestrator; Re-pinned 2026-10-18: fact-check skill add gains --full-depth (upstream repo nested fact-check 5 levels deep, npx scanner default depth missed it — windows-smoke CI failure)"
+   "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (Invoke-Native Start-Job runspace fix (audit #1)) — orchestrator; Re-pinned 2026-10-18: fact-check skill add gains --full-depth (upstream repo nested fact-check 5 levels deep, npx scanner default depth missed it — windows-smoke CI failure); Re-pinned 2026-10-18 (2nd): caveman skill removed from extras — upstream author deleted it from mattpocock/skills ('duplicate, never meant to be public'); TotalSteps 28->27"
   },
   {
    "path": "install.sh",
-   "expected_blob": "1fec502271f63814169b448e56c990e205781152",
+   "expected_blob": "4a2a782e1ef86c7710ecbe698b3d3f06140a6df8",
    "expected_mode": "100755",
-   "sha256": "50d51fdf153830a31efc06053e25351b01f1cc9b141463d018ab3c9992c70244",
+   "sha256": "8fd477d3197c728acef42892ac8fc873b4a4de0661fb2b0ba425ebd9d73ec644",
    "authorization": "DEC-7305",
-   "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (PRE_EXISTING_SPS preservation fix (audit #7)) — orchestrator; Re-pinned 2026-10-18: fact-check skill add gains --full-depth (upstream repo nested fact-check 5 levels deep, npx scanner default depth missed it — windows-smoke CI failure)"
+   "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (PRE_EXISTING_SPS preservation fix (audit #7)) — orchestrator; Re-pinned 2026-10-18: fact-check skill add gains --full-depth (upstream repo nested fact-check 5 levels deep, npx scanner default depth missed it — windows-smoke CI failure); Re-pinned 2026-10-18 (2nd): caveman skill removed from extras — upstream author deleted it from mattpocock/skills ('duplicate, never meant to be public'); TotalSteps 28->27"
   },
   {
    "path": "scripts/bootstrap-sps.sh",

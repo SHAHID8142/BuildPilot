@@ -154,7 +154,7 @@ detect_hosts() {
 }
 
 compute_total_steps() {
-  TOTAL_STEPS=28
+  TOTAL_STEPS=27
   if have claude; then TOTAL_STEPS=$((TOTAL_STEPS + 16)); fi
   if have uv || have pip; then TOTAL_STEPS=$((TOTAL_STEPS + 1)); fi
 }
@@ -589,7 +589,7 @@ extras_step "copywriting" npx skills add https://github.com/coreyhaines31/market
 extras_step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 
-if [ "$INSTALL_EXTRAS" = true ]; then MANAGED_SKILLS+=(astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman); fi
+if [ "$INSTALL_EXTRAS" = true ]; then MANAGED_SKILLS+=(astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me); fi
 extras_step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
@@ -602,7 +602,6 @@ extras_step "vercel-react-native-skills" npx skills add https://github.com/verce
 extras_step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check --full-depth -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
-extras_step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 
 if have claude; then
   if [ "$INSTALL_EXTRAS" = true ]; then

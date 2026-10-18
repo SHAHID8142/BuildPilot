@@ -1,6 +1,6 @@
 # Handoff (rolled 2026-10-18; prior log → .sps/archive/handoff-2026-10-18-pre-audit-fix-batch.md)
 
-## STATE: CI-fix batch pushed (381f282 + 6c54bfd handoff/docs). sps-ci GREEN on both; secret-scan GREEN; windows-smoke was re-running at pause (its 0f17eb4 root cause — fact-check depth — is fixed and verified locally with npx --full-depth; if it still fails on 6c54bfd, read the log before touching anything else). (2026-10-18 late)
+## STATE: CI-fix batch pushed (381f282 + 6c54bfd handoff/docs). sps-ci GREEN on both; secret-scan GREEN; windows-smoke root causes BOTH fixed: (1) fact-check depth → --full-depth (CI-verified: fact-check now installs); (2) caveman — upstream author DELETED it from mattpocock/skills ('duplicate, never meant to be public') → removed from both installers + extras list, TotalSteps 28→27, re-pinned (canonical 3e6f298b…). windows-smoke final run pending on this push. (2026-10-18 late)
 
 Done this batch: 21 audit fixes verified; COPY-GATE shipped (law 21, CI, DoD);
 import-scanner hardening #12–#16; legacy manifest now 65 records (canonical

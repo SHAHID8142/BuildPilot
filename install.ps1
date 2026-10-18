@@ -364,7 +364,7 @@ if (have pip) { ok "pip found" } else { warn "pip not found" }
 $agentArgs = Get-AgentArgs
 $agentArgsString = Get-AgentArgString
 
-$script:TotalSteps = 28
+$script:TotalSteps = 27
 if (have claude) { $script:TotalSteps += 16 }
 if ((have uv) -or (have pip)) { $script:TotalSteps += 1 }
 note "Planned steps: $($script:TotalSteps)"
@@ -395,7 +395,7 @@ ExtrasStep "copywriting" ([scriptblock]::Create("Invoke-Native { npx skills add 
 ExtrasStep "deploy-to-vercel" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y $agentArgsString }"))
 ExtrasStep "verification-before-completion" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y $agentArgsString }"))
 
-if ($script:InstallExtras) { $script:ManagedSkills += @("astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman") }
+if ($script:InstallExtras) { $script:ManagedSkills += @("astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me") }
 ExtrasStep "astro-framework" ([scriptblock]::Create("Invoke-Native { npx skills add withastro/astro -g -y $agentArgsString }"))
 ExtrasStep "webgpu-claude-skill" ([scriptblock]::Create("Invoke-Native { npx skills add dgreenheck/webgpu-claude-skill -g -y $agentArgsString }"))
 ExtrasStep "firecrawl" ([scriptblock]::Create("Invoke-Native { npx skills add firecrawl/firecrawl -g -y $agentArgsString }"))
@@ -408,7 +408,6 @@ ExtrasStep "vercel-react-native-skills" ([scriptblock]::Create("Invoke-Native { 
 ExtrasStep "sleek-design-mobile-apps" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y $agentArgsString }"))
 ExtrasStep "fact-check" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/jwynia/agent-skills --skill fact-check --full-depth -g -y $agentArgsString }"))
 ExtrasStep "grill-me" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y $agentArgsString }"))
-ExtrasStep "caveman" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/mattpocock/skills --skill caveman -g -y $agentArgsString }"))
 
 if (have claude) {
     section "Claude extras"
