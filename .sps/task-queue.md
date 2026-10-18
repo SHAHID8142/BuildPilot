@@ -1,7 +1,7 @@
 # Task Queue
 
 ## doing
-- (integration pass: register test modules, pin new files, compact queue, full sweep, PR + auto-merge on green)
+- CI-fix batch 381f282 pushed 2026-10-18 (65-record manifest, --full-depth fact-check); CI watch running — verify green, then close
 
 ## queued (oldest first)
 - (empty — all received tasks finished)
