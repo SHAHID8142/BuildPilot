@@ -30,8 +30,8 @@ EXPECTED_DECISION_ID = "DEC-7301"
 # edit the manifest, this constant, AND the workflow before anything passes.
 # Accepted residual: repo write still reaches all three; final detection is
 # git history + PR review.
-EXPECTED_MANIFEST_SHA256 = "3dd7c76e746d363c8d58195bb21c9c7e51c171d1b83c22ec87ac940341c4447e"
-EXPECTED_EXCEPTION_COUNT = 57  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow)
+EXPECTED_MANIFEST_SHA256 = "11a3e8f72a734a064a53a0efce0a18bb90b5f10716c38e89f60b45379b070a36"
+EXPECTED_EXCEPTION_COUNT = 59  # DEC-7301 as amended by DEC-7305 (lesson channel, status dashboard, ecosystem scan, law-log ledger, hygiene checker: scripts+mirrors+tsv+workflow; +2 sps-cms updater scripts, consent+scan batch 2026-10-18)
 EXPECTED_AUTHORIZATIONS = {"DEC-7201", "DEC-7305"}  # ratified authorizing decisions
 TOP_LEVEL_FIELDS = {
     "schema",

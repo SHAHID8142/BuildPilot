@@ -2,7 +2,7 @@
   "schema": "sps2.legacy-exception-manifest/v1",
   "decision_id": "DEC-7301",
   "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 57,
+  "exception_count": 59,
   "exceptions": [
     {
       "path": ".github/expected-test-modules.txt",
@@ -54,11 +54,11 @@
     },
     {
       "path": ".secrets-allowlist",
-      "expected_blob": "7dc40e9510cffc85f9d42b7cff175be17de46acb",
+      "expected_blob": "f0b2c4a8697c1802e24576bc9c5e972d77282470",
       "expected_mode": "100644",
-      "sha256": "12a229ce77b9ec64c5f2bbe85f87c9638541cc740ca1ed3fe86119241740ca7f",
+      "sha256": "dc05745479728131c8e97fb4ef4a7b2683f438cc230e10073e8b791394ed6dc8",
       "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator). Re-pinned 2026-10-18: dummy ghp_ example token from audit reports allowlisted (consent+scan batch)."
     },
     {
       "path": "CATALOG.md",
@@ -443,6 +443,22 @@
       "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
       "authorization": "DEC-7201",
       "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
+    },
+    {
+      "path": "skill/sps-cms/scripts/update.sh",
+      "expected_blob": "56a7c55c5df49fa32d1a79663c445a2e0f081391",
+      "expected_mode": "100755",
+      "sha256": "4f20982eef07f64d027f15e5d28f124b2e20b7ef14ab2954329d5ebd2ff23151",
+      "authorization": "DEC-7305",
+      "reason": "m-7 fix: no more curl|bash remote exec — download to temp, review, typed yes before running. Pinned 2026-10-18: consent+scan audit batch. Authorized by DEC-7305 (consent+scan audit batch 2026-10-18)."
+    },
+    {
+      "path": "skill/sps-cms/scripts/update.ps1",
+      "expected_blob": "669be2e5f066949302e2c451dda19bb07e4ffbfa",
+      "expected_mode": "100644",
+      "sha256": "fe878c72ea487a2becdfb40517d7d82d8ece50f05a4f3217b7ab0c1e628d82d2",
+      "authorization": "DEC-7305",
+      "reason": "m-7 fix: no more Invoke-Expression of remote scripts — download to temp, review, explicit yes before running. Pinned 2026-10-18: consent+scan audit batch. Authorized by DEC-7305 (consent+scan audit batch 2026-10-18)."
     },
     {
       "path": "uninstall.ps1",

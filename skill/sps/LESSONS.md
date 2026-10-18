@@ -59,12 +59,20 @@ finish the thought first.
 ## 3. Send (PR to BuildPilot)
 
 ```bash
-bash scripts/sps-lesson.sh send
+bash scripts/sps-lesson.sh send          # add --yes to skip the typed prompt
 ```
 
-- Clones BuildPilot to a temp dir (or reuses a cached clone), copies
-  pending lessons onto a `lesson/<id>` branch, pushes, and opens a PR
-  via `gh` when available; otherwise prints the compare URL to open.
+- **Full-content preview first**: every pending lesson's complete text is
+  printed before anything leaves the machine — you consent to content, not
+  to a filename.
+- **Typed `yes` gate**: `send` aborts unless you type exactly `yes`;
+  `--yes` is the non-interactive form of that same consent.
+- **Secret scan before push**: the staged lesson bytes are run through
+  `scripts/secret-scan.sh`; any secret-shaped value aborts the send.
+  The scan runs even with `--yes`.
+- Then: clones BuildPilot to a fresh temp dir, copies pending lessons onto
+  a dated `lesson/<YYYYMMDD>-batch` branch, pushes, and opens a PR via
+  `gh` when available; otherwise prints the compare URL to open.
 - **Never sends automatically** — `send` is always an explicit user action.
 - Secrets rule: a lesson containing client names, keys, or URLs is edited
   to `project: generic` before sending. The template defaults to generic.
@@ -104,10 +112,17 @@ never silently return. **No auto-land**: generation proposes; only an explicit
 
 At session end, the agent MAY draft lesson candidates via
 `python3 framework/sps2/tools/propose_lessons.py propose --pattern "<one line>" --confidence 0.8 --source "<where>"`.
-Proposals are inert data files in `lessons/inbox/` — never rules. Only the
-existing user-approval review flow (section 4 above) promotes one
-(`promote --file <name> --approved-by <you>`), and the tool then only moves
-the file and PRINTS the manual LESSONS.md edit the human must still make.
+Proposals are inert data files in `lessons/inbox/` — never rules. Only a
+user approval promotes one, via one of two distinct flows:
+
+- `propose_lessons.py promote --file <name> --approved-by <you>` moves the
+  proposal to `lessons/accepted/` (machine-tracked acceptance) and PRINTS
+  the manual LESSONS.md edit the human must still make.
+- The section-4 review flow (`sps-lesson.sh review`) merges the rule into
+  its named doc and moves the lesson to `lessons/adopted/` with
+  `status: adopted`.
+
+The two destinations are different on purpose; do not conflate them.
 The tool can never edit LESSONS.md or any rule file — the hard rules below
 are unchanged by T-33.
 
