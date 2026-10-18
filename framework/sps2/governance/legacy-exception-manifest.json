@@ -14,9 +14,9 @@
     },
     {
       "path": ".github/workflows/ecosystem-scan.yml",
-      "expected_blob": "49a4fbb44d4fe96f8e607f89b30d8b9b50ebfc5e",
+      "expected_blob": "6ae064c4040edd4f1073b16516abd0f65f49a7a6",
       "expected_mode": "100644",
-      "sha256": "c83a8454b5bce340bc05f4da52640b49b4b245c5a784cee2dcd36d9d550a22ec",
+      "sha256": "fde792ed5d62f43caba2d91f38f9730622322863c1401c1fe418a2ee691340ae",
       "authorization": "DEC-7305",
       "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
     },
@@ -78,9 +78,9 @@
     },
     {
       "path": "README.md",
-      "expected_blob": "1819b8f811a06d89a154fcfd731543cb4bf49895",
+      "expected_blob": "566c8d14e96cb3104a879ffc0b74920610132c7d",
       "expected_mode": "100644",
-      "sha256": "741347fd03a40707869832657d95109c7f5e4d90bcec7f56c2893316abebb158",
+      "sha256": "59f656080e418af637950b500e39fde45b831f48d5a6c1c88f98eda4b21f3651",
       "authorization": "DEC-7305",
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 doc-truth fixes."
     },

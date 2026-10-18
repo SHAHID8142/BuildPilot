@@ -60,7 +60,15 @@ jobs:
           git config user.name "sps-ecosystem-scan"
           git config user.email "actions@users.noreply.github.com"
           git commit -m "ecosystem-scan report $(date -u +%Y-%m-%d) [skip ci]"
-          git push
+          # Branch protection requires status checks this workflow can't
+          # provide on a [skip ci] commit, so a direct push to main is
+          # rejected. Push the report branch instead; the report also ships
+          # as a workflow artifact (below), so a failed push is not data loss.
+          if ! git push origin "HEAD:main"; then
+            REPORT_BRANCH="scan-report/$(date -u +%Y%m%d)"
+            git push --force origin "HEAD:$REPORT_BRANCH"
+            echo "main push rejected (protected branch); report pushed to $REPORT_BRANCH instead"
+          fi
 
       - name: File proposals (max 3 issues per run, tracking issue included)
         env:
