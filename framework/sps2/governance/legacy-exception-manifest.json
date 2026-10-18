@@ -126,11 +126,11 @@
     },
     {
       "path": "install.sh",
-      "expected_blob": "ed082bf3ddc3c45f355c442fcfa0d6298d0ee9ef",
+      "expected_blob": "c7bc9ef95565cb78205611471ca05dd72c9cae1a",
       "expected_mode": "100755",
-      "sha256": "03db259ac8a431dcc4c58c989f838aa5b87be81b96809890e72a8d4b1be69526",
+      "sha256": "d1f657445181ba163e27cdfc42210b1382ec6ce2c5c27350db3baf69b33fc022",
       "authorization": "DEC-7305",
-      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall)."
+      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
     },
     {
       "path": "scripts/bootstrap-sps.sh",
@@ -270,11 +270,11 @@
     },
     {
       "path": "scripts/sps-update.sh",
-      "expected_blob": "a7677d2c5e78cd9e74cf7b2818b6938e35dfe74b",
+      "expected_blob": "7ef2ad45d3a03ab3ba8da0e95395794d33f27aab",
       "expected_mode": "100755",
-      "sha256": "9b799ba9322656cfd5af3f30ae78df38fc2bd937e5b184b5276e69113bf8a692",
+      "sha256": "c1390288ca8e8c340db7ab55dc68601ea9a981120bf3636721a63f632744d7be",
       "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
     },
     {
       "path": "scripts/update-sps.ps1",
@@ -430,11 +430,11 @@
     },
     {
       "path": "skill/sps/scripts/sps-update.sh",
-      "expected_blob": "a7677d2c5e78cd9e74cf7b2818b6938e35dfe74b",
+      "expected_blob": "7ef2ad45d3a03ab3ba8da0e95395794d33f27aab",
       "expected_mode": "100755",
-      "sha256": "9b799ba9322656cfd5af3f30ae78df38fc2bd937e5b184b5276e69113bf8a692",
+      "sha256": "c1390288ca8e8c340db7ab55dc68601ea9a981120bf3636721a63f632744d7be",
       "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
     },
     {
       "path": "skill/sps/scripts/update-sps.ps1",
@@ -470,11 +470,11 @@
     },
     {
       "path": "uninstall.sh",
-      "expected_blob": "6fff7b8473207a5ec899552cd1e50068ab4e01f5",
+      "expected_blob": "c42c48a6ec01e10843b8185842ece85d01fd8f04",
       "expected_mode": "100755",
-      "sha256": "c9e81d94325e44abf54b22125e44b718937043ae64f6e5a22b3885003875707e",
+      "sha256": "18d310cc504505f0fae238604f18c4de451d0c478d57b30413c141a2bdfb1384",
       "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall)."
+      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
     }
   ],
   "related_test_artifacts": [

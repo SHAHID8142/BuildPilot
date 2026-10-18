@@ -392,7 +392,7 @@ sync_core_skill() {
   local had_existing=false
   local backup_ok_any=false
   local sync_aborted=false
-  for dest_root in "${SYNC_PATHS[@]:-}"; do
+  for dest_root in "${SYNC_PATHS[@]}"; do
     if mkdir -p "$dest_root" 2>/dev/null; then
       # Version detection + backup BEFORE the destructive replace.
       # Per-skill gate: a missing sps dir must not skip backups of
@@ -403,7 +403,7 @@ sync_core_skill() {
       # backups on a fresh machine.
       local prev_ver=""
       local is_pre_existing=false
-      for _pre in "${PRE_EXISTING_SPS[@]:-}"; do
+      for _pre in "${PRE_EXISTING_SPS[@]}"; do
         [ -n "$_pre" ] && [ "$_pre" = "$dest_root" ] && is_pre_existing=true
       done
       # Fail-safe replace: each managed skill is deleted only after its own
@@ -525,7 +525,7 @@ mkdir -p "$LOG_DIR/learned"
 # skills-add step runs — otherwise sync_core_skill mistakes the npx-created
 # copy for a previous install and "backs it up" on a fresh machine.
 PRE_EXISTING_SPS=()
-for _root in "${SYNC_PATHS[@]:-}"; do
+for _root in "${SYNC_PATHS[@]}"; do
   [ -d "$_root/sps" ] && PRE_EXISTING_SPS+=("$_root")
 done
 

@@ -166,7 +166,7 @@ record_cleaned_root() {
   local raw="$1" abs existing
   [[ -z "$raw" ]] && return 0
   abs="$(cd "$raw" 2>/dev/null && pwd -P)" || return 0
-  for existing in "${CLEANED_ROOT_PATHS[@]:-}"; do
+  for existing in "${CLEANED_ROOT_PATHS[@]}"; do
     [[ "$existing" == "$abs" ]] && return 0
   done
   CLEANED_ROOT_PATHS+=("$abs")
@@ -322,10 +322,10 @@ fi
 # skills. Every deletion still goes through safe_rm (allowlist-guarded).
 CORE_SYNC_SKILLS=(sps sps-cms sps-seo)
 # Dedupe: manifest SYNC_PATHS may overlap DEFAULT_SYNC_PATHS.
-for dest_root in "${SYNC_PATHS[@]:-}" "${DEFAULT_SYNC_PATHS[@]}"; do
+for dest_root in "${SYNC_PATHS[@]}" "${DEFAULT_SYNC_PATHS[@]}"; do
   [[ -z "$dest_root" ]] && continue
   _seen=false
-  for _prev in "${_DEDUPED_SYNC_ROOTS[@]:-}"; do
+  for _prev in "${_DEDUPED_SYNC_ROOTS[@]}"; do
     [[ "$_prev" == "$dest_root" ]] && _seen=true && break
   done
   $_seen && continue
@@ -348,7 +348,7 @@ section "Removing Claude plugins"
 
 if command -v claude >/dev/null 2>&1; then
   if ((${#CLAUDE_PLUGINS[@]})); then
-    for plugin in "${CLAUDE_PLUGINS[@]:-}"; do
+    for plugin in "${CLAUDE_PLUGINS[@]}"; do
       # The installer mixes scopes (most plugins --scope project, Trail of
       # Bits --scope user), so try both; the manifest does not record scope.
       claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1 && removed "$plugin (project)"         || claude plugin uninstall "$plugin" --scope user >/dev/null 2>&1 && removed "$plugin (user)" || true
@@ -357,7 +357,7 @@ if command -v claude >/dev/null 2>&1; then
 
   # Remove marketplaces
   if ((${#CLAUDE_MARKETPLACES[@]})); then
-    for mkt in "${CLAUDE_MARKETPLACES[@]:-}"; do
+    for mkt in "${CLAUDE_MARKETPLACES[@]}"; do
       claude plugin marketplace remove "$mkt" >/dev/null 2>&1 && removed "marketplace: $mkt" || true
     done
   fi
