@@ -12,6 +12,8 @@ One page. Every sentence a non-technical user ever needs. Nothing else to learn.
 ## During build — approve or change
 - "Approve" — yes to the section as shown.
 - "Request changes: <what>" — name the thing, the agent fixes and re-asks.
+  The agent will first confirm what it heard, then say whether it's a quick
+  fix, a section redo, or a plan change — you only re-approve what changed.
 - "Batch approve" — let consecutive low-risk sections run without stopping.
 - "I'll do that step now" — you're on an external step (API key, DNS); say it
   when done. Never paste full secrets in chat — mask them and put real values

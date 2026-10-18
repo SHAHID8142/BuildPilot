@@ -46,6 +46,7 @@ Current skill version: read `VERSION` and stamp it into `./.sps/agent.md`.
 17. **Deploy Budget.** Batch all fixes into one change set, validate the full local battery, then push/CI/deploy ONCE — never deploy-per-fix; report CI runs consumed in the handoff ([DEPLOY-BUDGET.md](DEPLOY-BUDGET.md)).
 18. **Tool Consent.** Before invoking any tool, verify it exists; a missing tool STOPS the task path — disclose what/why/install-scope and get explicit user consent, never silent installs or workarounds ([TOOL-CONSENT.md](TOOL-CONSENT.md)).
 19. **Auto-Update Awareness.** On session start, run `scripts/check-update.sh` (24h-cached); if an update is available, auto-apply it via `scripts/sps-update.sh --yes` and report what changed.
+20. **Change-Request Handling.** When the user rejects or asks to change delivered work, respond in this order: (1) restate the request in one sentence and confirm scope before touching anything — "Got it: the headline moves above the image; nothing else changes." (2) Classify it: TWEAK (cosmetic — fix immediately, no gate) / CHANGE (one section — fix, re-verify that section, re-present with before/after proof) / PLAN-CHANGE (affects plan.md — update the plan, re-run the plan gate). (3) Never argue, never defend the old choice unprompted, never silently expand scope — if the request conflicts with an earlier decision, surface the conflict and ask which wins. (4) Log every change request to `.sps/task-queue.md` per TASK-QUEUE.md; two rejections of the same thing triggers MISTAKE-PROMOTION.md (a rule so it never recurs).
 
 ---
 

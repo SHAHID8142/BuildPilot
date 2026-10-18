@@ -1,20 +1,20 @@
 {
   "sps": {
-    "digest": "21e085e84c5cd501505419ee12e307dfe0dbd1bff5f6f0b7d68a195a9b5c76b7",
+    "digest": "57d3c681c93872dc8c311abbecbfb9ba4270bc6aab559faea2d5007fb7caa3b1",
     "dir": "skill/sps",
-    "pinned_at": "2026-10-18T16:24:17",
-    "sha256_skill_md": "848f004e8116affd7aaf251799479416dda4a96cc51477e799991a8e942919c9"
+    "pinned_at": "2026-10-18T17:24:03",
+    "sha256_skill_md": "b88107c41e473142dcfa80f24089272564f697c55e602fe8ad57a42208a9c360"
   },
   "sps-cms": {
     "digest": "f92f111a57498d42bffb30013e26103b54fdde7dd167d120cde14fb1b257bee1",
     "dir": "skill/sps-cms",
-    "pinned_at": "2026-10-18T16:24:17",
+    "pinned_at": "2026-10-18T17:24:03",
     "sha256_skill_md": "412c7e08b1a272f11c9ea84bf27413e471e56e085a583136551e38ce6fc0712d"
   },
   "sps-seo": {
     "digest": "f248948cf64b522825e358c1c333a0d71597455af119be2dbd28ce7536459a7e",
     "dir": "skill/sps-seo",
-    "pinned_at": "2026-10-18T16:24:17",
+    "pinned_at": "2026-10-18T17:24:03",
     "sha256_skill_md": "b466a7e1abf9f81cac1747c14af9577316237382c2802366cebfa87b3739b2b3"
   }
 }
