@@ -1,5 +1,38 @@
 # Changelog
 
+## 4.4.0
+
+- **Five MAJOR audit findings fixed** (three independent external audits —
+  DeepSeek, opencode, workbuddy — then re-derived and verified in-repo):
+  - **Lesson consent**: `sps-lesson.sh send` now previews every lesson that
+    will be published (names, target repo, branch) and requires a typed
+    `yes` before anything leaves the machine; `--yes` for non-interactive
+    use. USER-GUIDE's "nothing is sent" claims now describe the real flow.
+  - **Uninstall completeness**: deletion allowlist covers all 34 installer
+    sync roots (was 19); the completion banner reports a truthful count of
+    cleaned roots instead of claiming everything was removed.
+  - **Codegen injection**: `gen_law_test.py --approved-by` is validated
+    fail-fast (single line, safe charset, ≤80 chars); 8 adversarial
+    regression tests; a reviewer name can no longer inject Python into the
+    generated test.
+  - **Provenance enforcement**: shipped skills (`sps`, `sps-cms`, `sps-seo`)
+    are pinned in a committed store (`.sps/provenance-store.json`);
+    `check --strict` now **fails** on any drift, a missing store, or a
+    shipped skill absent from the store — the README receipt is
+    machine-checked, not report-only.
+  - **Manifest dual anchor**: both governance manifests are anchored by a
+    module constant + a CI-checked anchors file
+    (`framework/sps2/governance/manifest-anchors.env`) + a cross-check test;
+    a coordinated tamper must now edit four independently-reviewed surfaces.
+- **Attribution predicate** (B5): literal self-attestations ("Self
+  (self-approved)", "self", "me", "myself") are rejected as User-attributable
+  evidence; real names containing "Self" (e.g. "Jane Self") remain protected
+  per DEC-0027.
+- **Hygiene**: `.secrets-allowlist` recognized as a legitimate root config
+  (was a false ROOT-STRAY that would have fired the weekly audit).
+- Battery: 1,258 tests, 0 failures. 52 test modules. 57 pinned manifest
+  exceptions. Three external audit reports preserved in `reports/`.
+
 ## 4.3.0
 
 - **Nightly skill-ecosystem scan** (`scripts/ecosystem-scan.sh` +

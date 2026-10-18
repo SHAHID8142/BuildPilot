@@ -6,7 +6,7 @@
 
 **A foreman for coding agents** — Claude Code, Cursor, Codex, and 30+ more.
 
-**Version:** 4.3.0 · 1,258 tests · MIT · `SHAHID8142/BuildPilot`
+**Version:** 4.4.0 · 1,258 tests · MIT · `SHAHID8142/BuildPilot`
 
 </div>
 

@@ -70,17 +70,17 @@
     },
     {
       "path": "CHANGELOG.md",
-      "expected_blob": "c53c0e4d83bd6d92fd82d1ee5ab581fa164c0182",
+      "expected_blob": "dbd753089c0b0addb8f013ffda4988c1b1932d93",
       "expected_mode": "100644",
-      "sha256": "f62a1334f387ce4b1a1cbf870ca34c19f743043521f885f440d2122abd35f0a6",
+      "sha256": "bcc20fdf084e7eaf7e2ce5458ba2b22b03524d7502e87beba61982f0caa3cc5f",
       "authorization": "DEC-7305",
       "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17."
     },
     {
       "path": "README.md",
-      "expected_blob": "6cc9a980d29b6ef114cb64ea635e7a7993b46b31",
+      "expected_blob": "52e3246fc17f6a802f0d0fd6caf3eef4e3d89168",
       "expected_mode": "100644",
-      "sha256": "631ec913cfff9eb6599781e937ede45e6a5c22c9f05e59211eca6d06b79ba497",
+      "sha256": "37b8d04c976036cfb542ee8f5d1cc5f6042842721354683a64118ac420f31d6c",
       "authorization": "DEC-7305",
       "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
     },
