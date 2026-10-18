@@ -1,6 +1,7 @@
 param(
     [string]$Agents = "*",
     [switch]$Yes,
+    [switch]$NoExtras,
     [switch]$Interactive
 )
 
@@ -26,6 +27,7 @@ New-Item -ItemType Directory -Force -Path (Join-Path $spsHome "learned") | Out-N
 $script:Log = Join-Path $spsHome "install.log"
 "" | Set-Content -Path $script:Log
 $script:ManagedSkills = @("sps")
+$script:InstallExtras = $true
 $script:ClaudePlugins = @()
 $script:ClaudeMarketplaces = @()
 $script:UseContext7 = 0
@@ -101,6 +103,40 @@ function Step {
         Get-Content $tmpOut -Tail 3 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "     $_" -ForegroundColor DarkGray }
         $script:Skipped++
         Add-Content -Path $script:Log -Value "FAILED: $Label"
+    }
+}
+
+function ExtrasStep {
+    param([string]$Label, [scriptblock]$Action, [int]$TimeoutSec = $NetworkTimeout)
+    if (-not $script:InstallExtras) { return }
+    Step -Label $Label -Action $Action -TimeoutSec $TimeoutSec
+}
+
+function Grant-ExtrasConsent {
+    # One gate for the whole third-party batch (skills + plugins + tools).
+    # -Yes IS the consent (itemized summary still printed for the log);
+    # interactive mode asks once; -NoExtras or a decline keeps core-only.
+    if ($NoExtras) {
+        $script:InstallExtras = $false
+        warn "-NoExtras: skipping 26 third-party skills + 11 plugins (core-only install)"
+        return
+    }
+    note "third-party content: 26 skills (vercel-labs/skills registry + community repos) + 11 plugins (shahid-personal-skillset, ui-ux-pro-max-skill, claude-code-skills, trailofbits marketplaces) + Context7 MCP + graphify"
+    if ($Yes) {
+        ok "consent via -Yes — third-party skills + plugins will be installed"
+        return
+    }
+    if ([Environment]::UserInteractive) {
+        $confirm = Read-Host "Install these 26 third-party skills + 11 plugins? [yes/no]"
+        if ($confirm -match '^(y|Y|yes|YES)$') {
+            ok "consent granted — third-party skills + plugins will be installed"
+        } else {
+            $script:InstallExtras = $false
+            warn "declined — skipping third-party skills + plugins (core install continues)"
+        }
+    } else {
+        $script:InstallExtras = $false
+        warn "non-interactive without -Yes — skipping third-party skills + plugins (pass -Yes to install them)"
     }
 }
 
@@ -237,41 +273,44 @@ note "Planned steps: $($script:TotalSteps)"
 section "Installing"
 Step "/sps core skill" ([scriptblock]::Create("npx skills add `"$repoDir`" -g --copy -y $agentArgsString"))
 
-section "Complete skill stack"
-$script:ManagedSkills += @("hallmark","impeccable","design-taste-frontend","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion")
-Step "hallmark" ([scriptblock]::Create("npx skills add nutlope/hallmark -g -y $agentArgsString"))
-Step "impeccable" ([scriptblock]::Create("npx skills add pbakaus/impeccable -g -y $agentArgsString"))
-Step "design-taste-frontend (taste-skill v2)" ([scriptblock]::Create("npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y $agentArgsString"))
-Step "webapp-testing" ([scriptblock]::Create("npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y $agentArgsString"))
-Step "web-design-guidelines" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y $agentArgsString"))
-Step "vercel-react-best-practices" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y $agentArgsString"))
-Step "vercel-composition-patterns" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y $agentArgsString"))
-Step "karpathy-guidelines" ([scriptblock]::Create("npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y $agentArgsString"))
-Step "agent-browser" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-browser -g -y $agentArgsString"))
-Step "ai-seo" ([scriptblock]::Create("npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y $agentArgsString"))
-Step "copywriting" ([scriptblock]::Create("npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y $agentArgsString"))
-Step "deploy-to-vercel" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y $agentArgsString"))
-Step "verification-before-completion" ([scriptblock]::Create("npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y $agentArgsString"))
+Grant-ExtrasConsent
 
-$script:ManagedSkills += @("astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman")
-Step "astro-framework" ([scriptblock]::Create("npx skills add withastro/astro -g -y $agentArgsString"))
-Step "webgpu-claude-skill" ([scriptblock]::Create("npx skills add dgreenheck/webgpu-claude-skill -g -y $agentArgsString"))
-Step "firecrawl" ([scriptblock]::Create("npx skills add firecrawl/firecrawl -g -y $agentArgsString"))
-Step "supabase" ([scriptblock]::Create("npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y $agentArgsString"))
-Step "supabase-postgres-best-practices" ([scriptblock]::Create("npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y $agentArgsString"))
-Step "prisma-database-setup" ([scriptblock]::Create("npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y $agentArgsString"))
-Step "prisma-client-api" ([scriptblock]::Create("npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y $agentArgsString"))
-Step "prisma-cli" ([scriptblock]::Create("npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y $agentArgsString"))
-Step "vercel-react-native-skills" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y $agentArgsString"))
-Step "sleek-design-mobile-apps" ([scriptblock]::Create("npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y $agentArgsString"))
-Step "fact-check" ([scriptblock]::Create("npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y $agentArgsString"))
-Step "grill-me" ([scriptblock]::Create("npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y $agentArgsString"))
-Step "caveman" ([scriptblock]::Create("npx skills add https://github.com/mattpocock/skills --skill caveman -g -y $agentArgsString"))
+section "Complete skill stack"
+if ($script:InstallExtras) { $script:ManagedSkills += @("hallmark","impeccable","design-taste-frontend","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion") }
+ExtrasStep "hallmark" ([scriptblock]::Create("npx skills add nutlope/hallmark -g -y $agentArgsString"))
+ExtrasStep "impeccable" ([scriptblock]::Create("npx skills add pbakaus/impeccable -g -y $agentArgsString"))
+ExtrasStep "design-taste-frontend (taste-skill v2)" ([scriptblock]::Create("npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y $agentArgsString"))
+ExtrasStep "webapp-testing" ([scriptblock]::Create("npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y $agentArgsString"))
+ExtrasStep "web-design-guidelines" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y $agentArgsString"))
+ExtrasStep "vercel-react-best-practices" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y $agentArgsString"))
+ExtrasStep "vercel-composition-patterns" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y $agentArgsString"))
+ExtrasStep "karpathy-guidelines" ([scriptblock]::Create("npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y $agentArgsString"))
+ExtrasStep "agent-browser" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-browser -g -y $agentArgsString"))
+ExtrasStep "ai-seo" ([scriptblock]::Create("npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y $agentArgsString"))
+ExtrasStep "copywriting" ([scriptblock]::Create("npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y $agentArgsString"))
+ExtrasStep "deploy-to-vercel" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y $agentArgsString"))
+ExtrasStep "verification-before-completion" ([scriptblock]::Create("npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y $agentArgsString"))
+
+if ($script:InstallExtras) { $script:ManagedSkills += @("astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman") }
+ExtrasStep "astro-framework" ([scriptblock]::Create("npx skills add withastro/astro -g -y $agentArgsString"))
+ExtrasStep "webgpu-claude-skill" ([scriptblock]::Create("npx skills add dgreenheck/webgpu-claude-skill -g -y $agentArgsString"))
+ExtrasStep "firecrawl" ([scriptblock]::Create("npx skills add firecrawl/firecrawl -g -y $agentArgsString"))
+ExtrasStep "supabase" ([scriptblock]::Create("npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y $agentArgsString"))
+ExtrasStep "supabase-postgres-best-practices" ([scriptblock]::Create("npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y $agentArgsString"))
+ExtrasStep "prisma-database-setup" ([scriptblock]::Create("npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y $agentArgsString"))
+ExtrasStep "prisma-client-api" ([scriptblock]::Create("npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y $agentArgsString"))
+ExtrasStep "prisma-cli" ([scriptblock]::Create("npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y $agentArgsString"))
+ExtrasStep "vercel-react-native-skills" ([scriptblock]::Create("npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y $agentArgsString"))
+ExtrasStep "sleek-design-mobile-apps" ([scriptblock]::Create("npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y $agentArgsString"))
+ExtrasStep "fact-check" ([scriptblock]::Create("npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y $agentArgsString"))
+ExtrasStep "grill-me" ([scriptblock]::Create("npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y $agentArgsString"))
+ExtrasStep "caveman" ([scriptblock]::Create("npx skills add https://github.com/mattpocock/skills --skill caveman -g -y $agentArgsString"))
 
 if (have claude) {
     section "Claude extras"
         $rd = $repoDir
-        $script:ClaudeMarketplaces += @("shahid-personal-skillset","ui-ux-pro-max-skill","claude-code-skills")
+        if ($script:InstallExtras) {
+            $script:ClaudeMarketplaces += @("shahid-personal-skillset","ui-ux-pro-max-skill","claude-code-skills")
         $script:ClaudePlugins += @(
             "universal-build-orchestrator@shahid-personal-skillset",
             "ui-ux-pro-max@ui-ux-pro-max-skill",
@@ -281,25 +320,26 @@ if (have claude) {
             "a11y-audit@claude-code-skills",
             "docker-development@claude-code-skills"
         )
-        $script:ClaudeMarketplaces += @("trailofbits")
-        $script:ClaudePlugins += @("differential-review@trailofbits","static-analysis@trailofbits","ask-questions-if-underspecified@trailofbits","insecure-defaults@trailofbits")
-        Step "Trail of Bits marketplace" { claude plugin marketplace add trailofbits/skills }
-        Step "ToB differential-review" { claude plugin install differential-review@trailofbits --scope user }
-        Step "ToB static-analysis" { claude plugin install static-analysis@trailofbits --scope user }
-        Step "ToB ask-questions" { claude plugin install ask-questions-if-underspecified@trailofbits --scope user }
-        Step "ToB insecure-defaults" { claude plugin install insecure-defaults@trailofbits --scope user }
-        Step "/sps Claude marketplace" ([scriptblock]::Create("claude plugin marketplace add `"$rd`""))
-        Step "/sps Claude plugin" { claude plugin install universal-build-orchestrator@shahid-personal-skillset --scope project }
-        Step "ui-ux-pro-max marketplace" { claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill }
-        Step "ui-ux-pro-max" { claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill --scope project }
-        Step "claude-code-skills marketplace" { claude plugin marketplace add alirezarezvani/claude-skills }
-        Step "engineering-skills" { claude plugin install engineering-skills@claude-code-skills --scope project }
-        Step "engineering-advanced-skills" { claude plugin install engineering-advanced-skills@claude-code-skills --scope project }
-        Step "marketing-skills" { claude plugin install marketing-skills@claude-code-skills --scope project }
-        Step "a11y-audit" { claude plugin install a11y-audit@claude-code-skills --scope project }
-        Step "docker-development" { claude plugin install docker-development@claude-code-skills --scope project }
-        $script:UseContext7 = 1
-        Step "Context7 MCP" {
+            $script:ClaudeMarketplaces += @("trailofbits")
+            $script:ClaudePlugins += @("differential-review@trailofbits","static-analysis@trailofbits","ask-questions-if-underspecified@trailofbits","insecure-defaults@trailofbits")
+        }
+        ExtrasStep "Trail of Bits marketplace" { claude plugin marketplace add trailofbits/skills }
+        ExtrasStep "ToB differential-review" { claude plugin install differential-review@trailofbits --scope user }
+        ExtrasStep "ToB static-analysis" { claude plugin install static-analysis@trailofbits --scope user }
+        ExtrasStep "ToB ask-questions" { claude plugin install ask-questions-if-underspecified@trailofbits --scope user }
+        ExtrasStep "ToB insecure-defaults" { claude plugin install insecure-defaults@trailofbits --scope user }
+        ExtrasStep "/sps Claude marketplace" ([scriptblock]::Create("claude plugin marketplace add `"$rd`""))
+        ExtrasStep "/sps Claude plugin" { claude plugin install universal-build-orchestrator@shahid-personal-skillset --scope project }
+        ExtrasStep "ui-ux-pro-max marketplace" { claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill }
+        ExtrasStep "ui-ux-pro-max" { claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill --scope project }
+        ExtrasStep "claude-code-skills marketplace" { claude plugin marketplace add alirezarezvani/claude-skills }
+        ExtrasStep "engineering-skills" { claude plugin install engineering-skills@claude-code-skills --scope project }
+        ExtrasStep "engineering-advanced-skills" { claude plugin install engineering-advanced-skills@claude-code-skills --scope project }
+        ExtrasStep "marketing-skills" { claude plugin install marketing-skills@claude-code-skills --scope project }
+        ExtrasStep "a11y-audit" { claude plugin install a11y-audit@claude-code-skills --scope project }
+        ExtrasStep "docker-development" { claude plugin install docker-development@claude-code-skills --scope project }
+        if ($script:InstallExtras) { $script:UseContext7 = 1 }
+        ExtrasStep "Context7 MCP" {
             $out = claude mcp add --scope project context7 -- npx -y @upstash/context7-mcp 2>&1
             if ($LASTEXITCODE -ne 0 -and $out -match "already exists") {
                 Write-Output "MCP server context7 already exists"
@@ -314,11 +354,11 @@ if (have claude) {
 
 section "Optional research tools"
 if (have uv) {
-    $script:UseGraphify = 1
-    Step "graphify" { uv tool install graphifyy; graphify install }
+    if ($script:InstallExtras) { $script:UseGraphify = 1 }
+    ExtrasStep "graphify" { uv tool install graphifyy; graphify install }
 } elseif (have pip) {
-    $script:UseGraphify = 1
-    Step "graphify (pip)" { pip install graphifyy; graphify install }
+    if ($script:InstallExtras) { $script:UseGraphify = 1 }
+    ExtrasStep "graphify (pip)" { pip install graphifyy; graphify install }
 } else {
     note "graphify skipped because neither uv nor pip is available"
 }
@@ -337,10 +377,12 @@ if (Test-Path "$env:USERPROFILE\.codex\skills\sps\SKILL.md") { ok "/sps on Codex
 if (Test-Path "$env:USERPROFILE\.gemini\config\skills\sps") { ok "/sps on Gemini/Antigravity" } else { warn "/sps missing on Gemini/Antigravity" }
 
 $elapsed = [math]::Round((Get-Date).Subtract($script:Start).TotalSeconds)
+$stackLabel = "complete stack (all)"
+if (-not $script:InstallExtras) { $stackLabel = "core only (no third-party extras)" }
 Write-Host ""
 Write-Host "+============================================================+" -ForegroundColor Green
 Write-Host "|  Install complete                                          |" -ForegroundColor Green
-Write-Host ("|  Install: {0,-46}|" -f "complete stack (all)") -ForegroundColor Green
+Write-Host ("|  Install: {0,-46}|" -f $stackLabel) -ForegroundColor Green
 Write-Host ("|  Version: {0,-47}|" -f $script:Version) -ForegroundColor Green
 Write-Host ("|  Time:    {0,-47}|" -f "${elapsed}s") -ForegroundColor Green
 Write-Host "|  Next: open a project and run  /sps                        |" -ForegroundColor Green

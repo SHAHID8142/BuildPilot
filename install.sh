@@ -4,6 +4,9 @@
 # Usage:
 #   bash install.sh                 # interactive confirm when TTY
 #   bash install.sh --yes           # non-interactive
+#   bash install.sh --no-extras     # core-only: skip third-party skills/plugins/tools
+#   bash install.sh --force         # replace managed skills even if their
+#                                   # pre-replace backup fails (no safety copy)
 #   bash install.sh --agents claude-code,cursor --yes
 #   bash install.sh --agents '*' --yes   # every host in the skills CLI registry
 #                                        # (claude-code, cursor, codex, antigravity,
@@ -26,6 +29,8 @@ export NPX_NO_UPDATE_NOTIFIER=1
 NETWORK_TIMEOUT=90
 AGENTS="*"
 ASSUME_YES=false
+NO_EXTRAS=false
+FORCE_SKIP_BACKUP=false
 INTERACTIVE=false
 MANIFEST="$HOME/.sps/install-manifest.env"
 MANAGED_SKILLS=("sps" "sps-cms" "sps-seo")
@@ -61,7 +66,6 @@ SYNC_PATHS=(
   "$HOME/.zed/skills"
   "$HOME/.openclaw/skills"
   "$HOME/.droid/skills"
-  "$HOME/.config/opencode/skills"
   "$HOME/.qoder/skills"
   "$HOME/.kilocode/skills"
   "$HOME/.warp/plugins/skills"
@@ -87,11 +91,16 @@ START_TS=$SECONDS
 
 usage() {
   cat <<'EOF'
-Usage: bash install.sh [--agents '*'|list] [--yes] [--interactive]
+Usage: bash install.sh [--agents '*'|list] [--yes] [--no-extras] [--force] [--interactive]
 
 Single unified install: /sps orchestrator + complete curated skill stack
 (design taste, CMS engine, testing, SEO/copy, deploy, backend, mobile, security,
 token efficiency) for every detected agent host.
+
+Options:
+  --yes         non-interactive; also consents to all third-party installs
+  --no-extras   core-only install: skip third-party skills, plugins,
+                MCP servers and CLI tools (/sps + sps-cms + sps-seo only)
 
 One-command (clone/pull + install):
   curl -fsSL https://raw.githubusercontent.com/SHAHID8142/BuildPilot/main/get-sps.sh | bash
@@ -111,6 +120,8 @@ while [[ $# -gt 0 ]]; do
       if [[ $# -lt 2 || -z "$AGENTS" ]]; then echo "missing value for --agents" >&2; exit 1; fi
       shift 2 ;;
     --yes|-y)     ASSUME_YES=true; shift ;;
+    --no-extras)  NO_EXTRAS=true; shift ;;
+    --force|-f)   FORCE_SKIP_BACKUP=true; shift ;;
     --interactive|-i) INTERACTIVE=true; shift ;;
     --help|-h) usage; exit 0 ;;
     *) echo "Unknown argument: $1"; usage; exit 1 ;;
@@ -225,6 +236,43 @@ step() {
   fi
 }
 
+# ── third-party consent gate ────────────────────────────────────────────────
+# One gate for the whole third-party batch (skills + plugins + tools).
+# --yes IS the consent (itemized summary still printed for the log);
+# interactive mode asks once; --no-extras or a decline keeps core-only.
+THIRD_PARTY_SKILLS=26
+THIRD_PARTY_PLUGINS=11
+INSTALL_EXTRAS=true
+
+extras_step() {
+  if [ "$INSTALL_EXTRAS" = true ]; then step "$@"; fi
+}
+
+consent_extras() {
+  if [ "$NO_EXTRAS" = true ]; then
+    INSTALL_EXTRAS=false
+    warn "--no-extras: skipping $THIRD_PARTY_SKILLS third-party skills + $THIRD_PARTY_PLUGINS plugins (core-only install)"
+    return
+  fi
+  note "third-party content: $THIRD_PARTY_SKILLS skills (vercel-labs/skills registry + community repos) + $THIRD_PARTY_PLUGINS plugins (shahid-personal-skillset, ui-ux-pro-max-skill, claude-code-skills, trailofbits marketplaces) + Context7 MCP + graphify"
+  if [ "$ASSUME_YES" = true ]; then
+    ok "consent via --yes — third-party skills + plugins will be installed"
+    return
+  fi
+  if [ -t 0 ]; then
+    printf "Install these %s third-party skills + %s plugins? [yes/no] " "$THIRD_PARTY_SKILLS" "$THIRD_PARTY_PLUGINS"
+    read -r confirm
+    case "${confirm:-no}" in
+      y|Y|yes|YES) ok "consent granted — third-party skills + plugins will be installed" ;;
+      *) INSTALL_EXTRAS=false
+         warn "declined — skipping third-party skills + plugins (core install continues)" ;;
+    esac
+  else
+    INSTALL_EXTRAS=false
+    warn "non-interactive without --yes — skipping third-party skills + plugins (pass --yes to install them)"
+  fi
+}
+
 seed_global_memory() {
   if [ ! -f "$HOME/.sps/personal-defaults.md" ]; then
     if [ -f "$REPO/templates/personal-defaults.md" ]; then
@@ -280,7 +328,7 @@ EOF
 # Back up an existing managed skill dir before replacing it. Keeps the last
 # N=3 backups per skill in ~/.sps/backups/<skill>/<timestamp>/ so a bad update
 # (or a user-customized skill) can always be restored. Returns 0 if a backup
-# was made, 1 if there was nothing to back up.
+# was made, 1 if there was nothing to back up or the backup failed.
 backup_existing_skill() {
   local dest_root="$1" name="$2"
   local existing="$dest_root/$name"
@@ -323,6 +371,8 @@ sync_core_skill() {
   mkdir -p "$HOME/.sps"
   : > "$upgrade_report"
   local had_existing=false
+  local backup_ok_any=false
+  local sync_aborted=false
   for dest_root in "${SYNC_PATHS[@]:-}"; do
     if mkdir -p "$dest_root" 2>/dev/null; then
       # Version detection + backup BEFORE the destructive replace.
@@ -337,35 +387,59 @@ sync_core_skill() {
       for _pre in "${PRE_EXISTING_SPS[@]:-}"; do
         [ -n "$_pre" ] && [ "$_pre" = "$dest_root" ] && is_pre_existing=true
       done
+      # Fail-safe replace: each managed skill is deleted only after its own
+      # backup succeeded (or there was nothing to back up). A failed backup
+      # aborts that skill's replacement so local customizations survive.
+      local replace_sps=true replace_cms=true replace_seo=true
       if [ "$is_pre_existing" = true ] || [ -d "$dest_root/sps-cms" ] || [ -d "$dest_root/sps-seo" ]; then
         had_existing=true
         prev_ver="$(installed_skill_version "$dest_root")"
-        backup_existing_skill "$dest_root" sps
-        backup_existing_skill "$dest_root" sps-cms
-        backup_existing_skill "$dest_root" sps-seo
+        local skill
+        for skill in sps sps-cms sps-seo; do
+          [ -d "$dest_root/$skill" ] || continue
+          if backup_existing_skill "$dest_root" "$skill"; then
+            backup_ok_any=true
+          elif [ "$FORCE_SKIP_BACKUP" = true ]; then
+            warn "--force: replacing $skill in ${dest_root/#$HOME/\~} WITHOUT a backup"
+          else
+            bad "backup failed for $skill — NOT replacing in ${dest_root/#$HOME/\~}; your existing copy is untouched. Fix the backup destination or use --force to skip backup."
+            sync_aborted=true
+            case "$skill" in
+              sps)     replace_sps=false ;;
+              sps-cms) replace_cms=false ;;
+              sps-seo) replace_seo=false ;;
+            esac
+          fi
+        done
       fi
-      rm -rf "$dest_root/sps"
-      cp -R "$src" "$dest_root/"
-      if [ -d "$REPO/scripts" ]; then
-        mkdir -p "$dest_root/sps/scripts"
-        cp -R "$REPO/scripts/"* "$dest_root/sps/scripts/"
+      if [ "$replace_sps" = true ]; then
+        rm -rf "$dest_root/sps"
+        cp -R "$src" "$dest_root/"
+        if [ -d "$REPO/scripts" ]; then
+          mkdir -p "$dest_root/sps/scripts"
+          cp -R "$REPO/scripts/"* "$dest_root/sps/scripts/"
+        fi
       fi
-      if [ -d "$cms_src" ]; then
+      if [ "$replace_cms" = true ] && [ -d "$cms_src" ]; then
         rm -rf "$dest_root/sps-cms"
         cp -R "$cms_src" "$dest_root/"
       fi
-      if [ -d "$seo_src" ]; then
+      if [ "$replace_seo" = true ] && [ -d "$seo_src" ]; then
         rm -rf "$dest_root/sps-seo"
         cp -R "$seo_src" "$dest_root/"
       fi
-      if [ -n "$prev_ver" ] && [ "$prev_ver" != "$VERSION" ]; then
+      if [ "$replace_sps" = false ]; then
+        printf 'kept %s: sps NOT replaced (backup failed)\n' "${dest_root/#$HOME/\~}" >> "$upgrade_report"
+      elif [ -n "$prev_ver" ] && [ "$prev_ver" != "$VERSION" ]; then
         printf 'upgraded %s: %s → %s\n' "${dest_root/#$HOME/\~}" "$prev_ver" "$VERSION" >> "$upgrade_report"
       elif [ -z "$prev_ver" ]; then
         printf 'installed %s: %s (fresh)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
       else
         printf 'reinstalled %s: %s (same version)\n' "${dest_root/#$HOME/\~}" "$VERSION" >> "$upgrade_report"
       fi
-      ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
+      if [ "$replace_sps" = true ]; then
+        ok "synced /sps & /sps-cms & /sps-seo → ${dest_root/#$HOME/\~}"
+      fi
     else
       warn "could not sync → ${dest_root/#$HOME/\~}"
     fi
@@ -373,9 +447,14 @@ sync_core_skill() {
   if [ "$had_existing" = true ] && [ -s "$upgrade_report" ]; then
     section "Upgrade report"
     cat "$upgrade_report"
-    note "previous versions kept in ~/.sps/backups/<skill>/ (last 3 per skill)"
-    note "restore: rm -rf <dest>/<skill> && cp -R ~/.sps/backups/<skill>/<stamp> <dest>/<skill>"
+    # Only promise kept backups when at least one backup actually succeeded.
+    if [ "$backup_ok_any" = true ]; then
+      note "previous versions kept in ~/.sps/backups/<skill>/ (last 3 per skill)"
+      note "restore: rm -rf <dest>/<skill> && cp -R ~/.sps/backups/<skill>/<stamp> <dest>/<skill>"
+    fi
   fi
+  [ "$sync_aborted" = true ] && return 1
+  return 0
 }
 
 add_context7() {
@@ -396,7 +475,9 @@ print_success_card() {
   echo -e "${GREEN}${BOLD}╔════════════════════════════════════════════════════════════╗${NC}"
   echo -e "${GREEN}${BOLD}║${NC}  ${BOLD}Install complete${NC}                                         ${GREEN}${BOLD}║${NC}"
   echo -e "${GREEN}${BOLD}╠════════════════════════════════════════════════════════════╣${NC}"
-  printf "${GREEN}${BOLD}║${NC}  Install: %-46s ${GREEN}${BOLD}║${NC}\n" "complete stack (all)"
+  local stack_label="complete stack (all)"
+  [ "$INSTALL_EXTRAS" = false ] && stack_label="core only (no third-party extras)"
+  printf "${GREEN}${BOLD}║${NC}  Install: %-46s ${GREEN}${BOLD}║${NC}\n" "$stack_label"
   printf "${GREEN}${BOLD}║${NC}  Version: %-47s ${GREEN}${BOLD}║${NC}\n" "$VERSION"
   printf "${GREEN}${BOLD}║${NC}  Time:    %-47s ${GREEN}${BOLD}║${NC}\n" "${elapsed}s"
   printf "${GREEN}${BOLD}║${NC}  Steps:   %-47s ${GREEN}${BOLD}║${NC}\n" "$INSTALLED ok / $FAILED failed"
@@ -454,68 +535,77 @@ note "Planned steps: $TOTAL_STEPS"
 section "Installing"
 step "/sps core skill" npx skills add "$REPO" -g --copy -y "${AGENT_ARGS[@]:-}"
 
-MANAGED_SKILLS+=(hallmark impeccable design-taste-frontend webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion)
-step "hallmark" npx skills add nutlope/hallmark -g -y "${AGENT_ARGS[@]:-}"
-step "impeccable" npx skills add pbakaus/impeccable -g -y "${AGENT_ARGS[@]:-}"
-step "design-taste-frontend (taste-skill v2)" npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y "${AGENT_ARGS[@]:-}"
-step "webapp-testing" npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y "${AGENT_ARGS[@]:-}"
-step "web-design-guidelines" npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y "${AGENT_ARGS[@]:-}"
-step "vercel-react-best-practices" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y "${AGENT_ARGS[@]:-}"
-step "vercel-composition-patterns" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y "${AGENT_ARGS[@]:-}"
-step "karpathy-guidelines" npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y "${AGENT_ARGS[@]:-}"
-step "agent-browser" npx skills add https://github.com/vercel-labs/agent-browser -g -y "${AGENT_ARGS[@]:-}"
-step "ai-seo" npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y "${AGENT_ARGS[@]:-}"
-step "copywriting" npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y "${AGENT_ARGS[@]:-}"
-step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]:-}"
-step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]:-}"
+consent_extras
+if [ "$INSTALL_EXTRAS" = false ]; then
+  TOTAL_STEPS=$((STEP + 4))   # keep progress bar honest on core-only installs
+fi
 
-MANAGED_SKILLS+=(astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman)
-step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]:-}"
-step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]:-}"
-step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]:-}"
-step "supabase" npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y "${AGENT_ARGS[@]:-}"
-step "supabase-postgres-best-practices" npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y "${AGENT_ARGS[@]:-}"
-step "prisma-database-setup" npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y "${AGENT_ARGS[@]:-}"
-step "prisma-client-api" npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y "${AGENT_ARGS[@]:-}"
-step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]:-}"
-step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]:-}"
-step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]:-}"
-step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]:-}"
-step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]:-}"
-step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]:-}"
+if [ "$INSTALL_EXTRAS" = true ]; then MANAGED_SKILLS+=(hallmark impeccable design-taste-frontend webapp-testing web-design-guidelines vercel-react-best-practices vercel-composition-patterns karpathy-guidelines agent-browser ai-seo copywriting deploy-to-vercel verification-before-completion); fi
+extras_step "hallmark" npx skills add nutlope/hallmark -g -y "${AGENT_ARGS[@]:-}"
+extras_step "impeccable" npx skills add pbakaus/impeccable -g -y "${AGENT_ARGS[@]:-}"
+extras_step "design-taste-frontend (taste-skill v2)" npx skills add Leonxlnx/taste-skill --skill design-taste-frontend -g -y "${AGENT_ARGS[@]:-}"
+extras_step "webapp-testing" npx skills add https://github.com/anthropics/skills --skill webapp-testing -g -y "${AGENT_ARGS[@]:-}"
+extras_step "web-design-guidelines" npx skills add https://github.com/vercel-labs/agent-skills --skill web-design-guidelines -g -y "${AGENT_ARGS[@]:-}"
+extras_step "vercel-react-best-practices" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-best-practices -g -y "${AGENT_ARGS[@]:-}"
+extras_step "vercel-composition-patterns" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-composition-patterns -g -y "${AGENT_ARGS[@]:-}"
+extras_step "karpathy-guidelines" npx skills add https://github.com/forrestchang/andrej-karpathy-skills --skill karpathy-guidelines -g -y "${AGENT_ARGS[@]:-}"
+extras_step "agent-browser" npx skills add https://github.com/vercel-labs/agent-browser -g -y "${AGENT_ARGS[@]:-}"
+extras_step "ai-seo" npx skills add https://github.com/coreyhaines31/marketingskills --skill ai-seo -g -y "${AGENT_ARGS[@]:-}"
+extras_step "copywriting" npx skills add https://github.com/coreyhaines31/marketingskills --skill copywriting -g -y "${AGENT_ARGS[@]:-}"
+extras_step "deploy-to-vercel" npx skills add https://github.com/vercel-labs/agent-skills --skill deploy-to-vercel -g -y "${AGENT_ARGS[@]:-}"
+extras_step "verification-before-completion" npx skills add https://github.com/obra/superpowers --skill verification-before-completion -g -y "${AGENT_ARGS[@]:-}"
+
+if [ "$INSTALL_EXTRAS" = true ]; then MANAGED_SKILLS+=(astro-framework webgpu-claude-skill firecrawl supabase supabase-postgres-best-practices prisma-database-setup prisma-client-api prisma-cli vercel-react-native-skills sleek-design-mobile-apps fact-check grill-me caveman); fi
+extras_step "astro-framework" npx skills add withastro/astro -g -y "${AGENT_ARGS[@]:-}"
+extras_step "webgpu-claude-skill" npx skills add dgreenheck/webgpu-claude-skill -g -y "${AGENT_ARGS[@]:-}"
+extras_step "firecrawl" npx skills add firecrawl/firecrawl -g -y "${AGENT_ARGS[@]:-}"
+extras_step "supabase" npx skills add https://github.com/supabase/agent-skills --skill supabase -g -y "${AGENT_ARGS[@]:-}"
+extras_step "supabase-postgres-best-practices" npx skills add https://github.com/supabase/agent-skills --skill supabase-postgres-best-practices -g -y "${AGENT_ARGS[@]:-}"
+extras_step "prisma-database-setup" npx skills add https://github.com/prisma/skills --skill prisma-database-setup -g -y "${AGENT_ARGS[@]:-}"
+extras_step "prisma-client-api" npx skills add https://github.com/prisma/skills --skill prisma-client-api -g -y "${AGENT_ARGS[@]:-}"
+extras_step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]:-}"
+extras_step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]:-}"
+extras_step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]:-}"
+extras_step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]:-}"
+extras_step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]:-}"
+extras_step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]:-}"
 
 if have claude; then
-  CLAUDE_MARKETPLACES+=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-skills)
-  CLAUDE_PLUGINS+=(universal-build-orchestrator@shahid-personal-skillset ui-ux-pro-max@ui-ux-pro-max-skill engineering-skills@claude-code-skills engineering-advanced-skills@claude-code-skills marketing-skills@claude-code-skills a11y-audit@claude-code-skills docker-development@claude-code-skills)
-  step "/sps Claude marketplace" claude plugin marketplace add "$REPO"
-  step "/sps Claude plugin" claude plugin install universal-build-orchestrator@shahid-personal-skillset --scope project
-  step "ui-ux-pro-max marketplace" claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
-  step "ui-ux-pro-max" claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill --scope project
-  step "claude-code-skills marketplace" claude plugin marketplace add alirezarezvani/claude-skills
-  step "engineering-skills" claude plugin install engineering-skills@claude-code-skills --scope project
-  step "engineering-advanced-skills" claude plugin install engineering-advanced-skills@claude-code-skills --scope project
-  step "marketing-skills" claude plugin install marketing-skills@claude-code-skills --scope project
-  step "a11y-audit" claude plugin install a11y-audit@claude-code-skills --scope project
-  step "docker-development" claude plugin install docker-development@claude-code-skills --scope project
-  CLAUDE_MARKETPLACES+=(trailofbits)
-  CLAUDE_PLUGINS+=(differential-review@trailofbits static-analysis@trailofbits ask-questions-if-underspecified@trailofbits insecure-defaults@trailofbits)
-  step "Trail of Bits marketplace" claude plugin marketplace add trailofbits/skills
-  step "ToB differential-review" claude plugin install differential-review@trailofbits --scope user
-  step "ToB static-analysis" claude plugin install static-analysis@trailofbits --scope user
-  step "ToB ask-questions" claude plugin install ask-questions-if-underspecified@trailofbits --scope user
-  step "ToB insecure-defaults" claude plugin install insecure-defaults@trailofbits --scope user
-  USE_CONTEXT7=1
-  step "Context7 MCP" add_context7
+  if [ "$INSTALL_EXTRAS" = true ]; then
+    CLAUDE_MARKETPLACES+=(shahid-personal-skillset ui-ux-pro-max-skill claude-code-skills)
+    CLAUDE_PLUGINS+=(universal-build-orchestrator@shahid-personal-skillset ui-ux-pro-max@ui-ux-pro-max-skill engineering-skills@claude-code-skills engineering-advanced-skills@claude-code-skills marketing-skills@claude-code-skills a11y-audit@claude-code-skills docker-development@claude-code-skills)
+  fi
+  extras_step "/sps Claude marketplace" claude plugin marketplace add "$REPO"
+  extras_step "/sps Claude plugin" claude plugin install universal-build-orchestrator@shahid-personal-skillset --scope project
+  extras_step "ui-ux-pro-max marketplace" claude plugin marketplace add nextlevelbuilder/ui-ux-pro-max-skill
+  extras_step "ui-ux-pro-max" claude plugin install ui-ux-pro-max@ui-ux-pro-max-skill --scope project
+  extras_step "claude-code-skills marketplace" claude plugin marketplace add alirezarezvani/claude-skills
+  extras_step "engineering-skills" claude plugin install engineering-skills@claude-code-skills --scope project
+  extras_step "engineering-advanced-skills" claude plugin install engineering-advanced-skills@claude-code-skills --scope project
+  extras_step "marketing-skills" claude plugin install marketing-skills@claude-code-skills --scope project
+  extras_step "a11y-audit" claude plugin install a11y-audit@claude-code-skills --scope project
+  extras_step "docker-development" claude plugin install docker-development@claude-code-skills --scope project
+  if [ "$INSTALL_EXTRAS" = true ]; then
+    CLAUDE_MARKETPLACES+=(trailofbits)
+    CLAUDE_PLUGINS+=(differential-review@trailofbits static-analysis@trailofbits ask-questions-if-underspecified@trailofbits insecure-defaults@trailofbits)
+  fi
+  extras_step "Trail of Bits marketplace" claude plugin marketplace add trailofbits/skills
+  extras_step "ToB differential-review" claude plugin install differential-review@trailofbits --scope user
+  extras_step "ToB static-analysis" claude plugin install static-analysis@trailofbits --scope user
+  extras_step "ToB ask-questions" claude plugin install ask-questions-if-underspecified@trailofbits --scope user
+  extras_step "ToB insecure-defaults" claude plugin install insecure-defaults@trailofbits --scope user
+  if [ "$INSTALL_EXTRAS" = true ]; then USE_CONTEXT7=1; fi
+  extras_step "Context7 MCP" add_context7
 else
   warn "Claude extras skipped because claude CLI was not found"
 fi
 
 if have uv; then
-  USE_GRAPHIFY=1
-  step "graphify" bash -c 'uv tool install graphifyy && graphify install'
+  if [ "$INSTALL_EXTRAS" = true ]; then USE_GRAPHIFY=1; fi
+  extras_step "graphify" bash -c 'uv tool install graphifyy && graphify install'
 elif have pip; then
-  USE_GRAPHIFY=1
-  step "graphify (pip)" bash -c 'pip install graphifyy && graphify install'
+  if [ "$INSTALL_EXTRAS" = true ]; then USE_GRAPHIFY=1; fi
+  extras_step "graphify (pip)" bash -c 'pip install graphifyy && graphify install'
 else
   warn "graphify skipped because neither uv nor pip is available"
 fi
@@ -523,7 +613,9 @@ fi
 section "Shared setup"
 seed_global_memory
 ok "seeded ~/.sps personal defaults / mistakes / learned index"
-sync_core_skill
+if ! sync_core_skill; then
+  warn "one or more managed skills were NOT replaced (backup failed) — see messages above"
+fi
 write_manifest
 ok "wrote install manifest → ~/.sps/install-manifest.env"
 

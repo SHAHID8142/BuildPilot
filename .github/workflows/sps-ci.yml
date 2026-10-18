@@ -18,10 +18,10 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "22"
 
@@ -33,6 +33,9 @@ jobs:
 
       - name: Machine law check (DoD / checkpoint / context-budget)
         run: python3 framework/sps2/tools/check_laws.py
+
+      - name: Docs drift (every command in docs must exist)
+        run: python3 framework/sps2/tools/check_docs_drift.py
 
       - name: SPS smoke
         run: bash scripts/smoke-sps.sh
@@ -46,7 +49,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: VERSION parses and matches templates
         run: |
@@ -83,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Parse all PS1 files
         shell: pwsh
@@ -101,12 +104,12 @@ jobs:
       # content. A shallow clone cannot resolve it, and 19 tests across 5
       # methods then fail for reasons unrelated to the change under test.
       - name: Checkout (full history required for pinned BASELINE_REV)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.6.0
         with:
           python-version: "3.12"
 
@@ -154,7 +157,10 @@ jobs:
           # but a partially-empty run exits 0. Capture output and assert the
           # parsed test count against MIN_TESTS so a green build cannot mean
           # zero executed tests. Raise MIN_TESTS as the suite grows.
-          MIN_TESTS=1000
+          # 1258 = the full suite as of the 4.4.0 audit-fix batch; the floor is
+          # set ~96% of that (1210) so losing up to a few dozen tests still
+          # fails CI, while adding tests never does.
+          MIN_TESTS=1210
 
           set +e
           OUTPUT="$(python3 -m unittest -v "${MODULES[@]}" 2>&1)"
@@ -182,6 +188,10 @@ jobs:
           # running, nor one whose file was deleted (deletion removes it from
           # git ls-files, so the discovered list shrinks with it). Compare the
           # discovered set against a COMMITTED manifest instead.
+          # The check is deliberately a SUBSET test (expected ⊆ discovered):
+          # a brand-new test module not yet in the baseline passes — new tests
+          # are welcome — while losing a known module always fails. Adding the
+          # new module to the baseline is enforced by review, not CI.
           MANIFEST=".github/expected-test-modules.txt"
           if [ ! -f "${MANIFEST}" ]; then
             echo "::error::missing ${MANIFEST}; refusing to report success without a module baseline."
@@ -235,12 +245,12 @@ jobs:
       # fetch-depth: 0 for parity with python-unittest: the validators and
       # law checks read tracked history and pinned baselines.
       - name: Checkout (full history)
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.6.0
         with:
           python-version: "3.12"
 

@@ -104,11 +104,15 @@ else
   echo "SKIP  pwsh not installed; see scripts/check-powershell.ps1"
 fi
 
-# Minimal install/uninstall smoke in isolated HOME (may need network for npx)
+# Minimal install/uninstall smoke in isolated HOME.
+# --no-extras: the smoke exercises the CORE sync + uninstall paths only — it
+# must not fetch 26 third-party skills from the network on every CI run
+# (audit m-12/m-9). Third-party install behavior is covered by the consent
+# gate, which is separately tested.
 if command -v npx >/dev/null 2>&1; then
   SMOKE_HOME="$TMP/home"
   mkdir -p "$SMOKE_HOME"
-  if HOME="$SMOKE_HOME" USERPROFILE="$SMOKE_HOME" bash "$REPO/install.sh" --agents '*' --yes; then
+  if HOME="$SMOKE_HOME" USERPROFILE="$SMOKE_HOME" bash "$REPO/install.sh" --agents '*' --no-extras --yes; then
     if [[ -d "$SMOKE_HOME/.claude/skills/sps" && -d "$SMOKE_HOME/.cursor/skills/sps" ]]; then
       pass "install mirrored sps to Claude + Cursor"
     else

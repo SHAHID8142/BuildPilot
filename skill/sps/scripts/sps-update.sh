@@ -135,14 +135,25 @@ if ! cd "$REPO_DIR"; then
 fi
 VERSION="$(tr -d '[:space:]' < "$REPO_DIR/skill/sps/VERSION" 2>/dev/null || echo "unknown")"
 echo -e "${DIM}Installing SPS v${VERSION}…${NC}"
-bash ./install.sh --yes
+# Preserve the agents selection recorded at install time (m-4): the manifest
+# stores the original --agents value; without this, a user who installed with
+# e.g. --agents claude-code,cursor would silently get AGENTS='*' (every host).
+UPDATE_AGENT_ARGS=()
+if [[ -f "$MANIFEST" ]]; then
+  _saved_agents="$(grep '^AGENTS=' "$MANIFEST" 2>/dev/null | cut -d= -f2-)"
+  if [[ -n "$_saved_agents" && "$_saved_agents" != "*" ]]; then
+    UPDATE_AGENT_ARGS=(--agents "$_saved_agents")
+    echo -e "${DIM}Preserving agents selection:${NC} $_saved_agents"
+  fi
+fi
+bash ./install.sh --yes "${UPDATE_AGENT_ARGS[@]:-}"
 rc=$?
 if [[ $rc -ne 0 ]]; then
   bad "Reinstall failed (exit $rc). See ~/.sps/install.log"
   exit 1
 fi
 
-# 4. Verify with doctor
+# 3. Verify with doctor
 echo ""
 if [[ -f "$REPO_DIR/scripts/sps-doctor.sh" ]]; then
   bash "$REPO_DIR/scripts/sps-doctor.sh"

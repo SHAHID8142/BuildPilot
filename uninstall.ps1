@@ -50,7 +50,8 @@ function Test-SafeUninstallTarget([string]$Path) {
     $parentItem = Get-Item -LiteralPath (Split-Path -Parent $Path) -ErrorAction SilentlyContinue -Force
     if ($parentItem -and ($parentItem.LinkType)) { return $false }
     $candidate = [IO.Path]::GetFullPath($Path)
-    # Covers every installer sync root plus the rules dirs.
+    # Covers every installer sync root plus the rules dirs. Keep in sync with
+    # install.ps1's $syncRoots and uninstall.sh's UNINSTALL_ROOTS.
     $roots = @(
         (Join-Path $env:USERPROFILE ".agents\skills"),
         (Join-Path $env:USERPROFILE ".config\agents\skills"),
@@ -71,7 +72,24 @@ function Test-SafeUninstallTarget([string]$Path) {
         (Join-Path $env:USERPROFILE ".roo\skills"),
         (Join-Path $env:USERPROFILE ".kiro\skills"),
         (Join-Path $env:USERPROFILE ".amp\skills"),
-        (Join-Path $env:USERPROFILE ".github\skills")
+        (Join-Path $env:USERPROFILE ".github\skills"),
+        (Join-Path $env:USERPROFILE ".config\goose\skills"),
+        (Join-Path $env:USERPROFILE ".goose\skills"),
+        (Join-Path $env:USERPROFILE ".crush\skills"),
+        (Join-Path $env:USERPROFILE ".config\trae\skills"),
+        (Join-Path $env:USERPROFILE ".trae\skills"),
+        (Join-Path $env:USERPROFILE ".junie\skills"),
+        (Join-Path $env:USERPROFILE ".config\junie\skills"),
+        (Join-Path $env:USERPROFILE ".zed\skills"),
+        (Join-Path $env:USERPROFILE ".openclaw\skills"),
+        (Join-Path $env:USERPROFILE ".droid\skills"),
+        (Join-Path $env:USERPROFILE ".qoder\skills"),
+        (Join-Path $env:USERPROFILE ".kilocode\skills"),
+        (Join-Path $env:USERPROFILE ".warp\plugins\skills"),
+        (Join-Path $env:USERPROFILE ".grok\skills"),
+        (Join-Path $env:USERPROFILE ".hermes\skills"),
+        (Join-Path $env:USERPROFILE ".autohand\skills"),
+        (Join-Path $env:USERPROFILE ".zeroclaw\skills")
     )
     foreach ($root in $roots) {
         $fullRoot = [IO.Path]::GetFullPath($root + [IO.Path]::DirectorySeparatorChar)
@@ -92,46 +110,65 @@ function Remove-ConstrainedItem([string]$Path) {
 }
 
 function Remove-AgentSkill($name) {
-    $paths = @(
-        "$env:USERPROFILE\.agents\skills\$name",
-        "$env:USERPROFILE\.config\agents\skills\$name",
-        ".\.agents\skills\$name",
-        "$env:USERPROFILE\.claude\skills\$name",
-        ".\.claude\skills\$name",
-        "$env:USERPROFILE\.cursor\skills\$name",
-        "$env:USERPROFILE\.cursor\rules\$name.mdc",
-        ".\.cursor\rules\$name.mdc",
-        ".\.cursor\skills\$name",
-        "$env:USERPROFILE\.codex\skills\$name",
-        ".\.codex\skills\$name",
-        "$env:USERPROFILE\.gemini\skills\$name",
-        ".\.gemini\skills\$name",
-        "$env:USERPROFILE\.gemini\config\skills\$name",
-        "$env:USERPROFILE\.gemini\antigravity\skills\$name",
-        ".\.gemini\antigravity\skills\$name",
-        "$env:USERPROFILE\.gemini\antigravity-cli\skills\$name",
-        ".\.gemini\antigravity-cli\skills\$name",
-        "$env:USERPROFILE\.windsurf\skills\$name",
-        ".\.windsurf\skills\$name",
-        "$env:USERPROFILE\.antigravity\skills\$name",
-        ".\.antigravity\skills\$name",
-        "$env:USERPROFILE\.codeium\windsurf\skills\$name",
-        "$env:USERPROFILE\.config\opencode\skills\$name",
-        "$env:USERPROFILE\.cline\skills\$name",
-        "$env:USERPROFILE\.roo\skills\$name",
-        "$env:USERPROFILE\.kiro\skills\$name",
-        "$env:USERPROFILE\.amp\skills\$name",
-        "$env:USERPROFILE\.github\skills\$name"
+    # Scan every allowlisted root (derived from the Test-SafeUninstallTarget
+    # root list so the two can never drift). The old hand-written path list
+    # covered only ~18 roots, leaving goose/crush/trae/junie/zed/openclaw/
+    # droid/qoder/kilocode/warp/grok/hermes/autohand/zeroclaw installs behind.
+    $roots = @(
+        "$env:USERPROFILE\.agents\skills",
+        "$env:USERPROFILE\.config\agents\skills",
+        "$env:USERPROFILE\.claude\skills",
+        "$env:USERPROFILE\.claude\rules",
+        "$env:USERPROFILE\.cursor\skills",
+        "$env:USERPROFILE\.cursor\rules",
+        "$env:USERPROFILE\.codex\skills",
+        "$env:USERPROFILE\.gemini\skills",
+        "$env:USERPROFILE\.gemini\config\skills",
+        "$env:USERPROFILE\.gemini\antigravity\skills",
+        "$env:USERPROFILE\.gemini\antigravity-cli\skills",
+        "$env:USERPROFILE\.windsurf\skills",
+        "$env:USERPROFILE\.antigravity\skills",
+        "$env:USERPROFILE\.codeium\windsurf\skills",
+        "$env:USERPROFILE\.config\opencode\skills",
+        "$env:USERPROFILE\.cline\skills",
+        "$env:USERPROFILE\.roo\skills",
+        "$env:USERPROFILE\.kiro\skills",
+        "$env:USERPROFILE\.amp\skills",
+        "$env:USERPROFILE\.github\skills",
+        "$env:USERPROFILE\.config\goose\skills",
+        "$env:USERPROFILE\.goose\skills",
+        "$env:USERPROFILE\.crush\skills",
+        "$env:USERPROFILE\.config\trae\skills",
+        "$env:USERPROFILE\.trae\skills",
+        "$env:USERPROFILE\.junie\skills",
+        "$env:USERPROFILE\.config\junie\skills",
+        "$env:USERPROFILE\.zed\skills",
+        "$env:USERPROFILE\.openclaw\skills",
+        "$env:USERPROFILE\.droid\skills",
+        "$env:USERPROFILE\.qoder\skills",
+        "$env:USERPROFILE\.kilocode\skills",
+        "$env:USERPROFILE\.warp\plugins\skills",
+        "$env:USERPROFILE\.grok\skills",
+        "$env:USERPROFILE\.hermes\skills",
+        "$env:USERPROFILE\.autohand\skills",
+        "$env:USERPROFILE\.zeroclaw\skills"
     )
     $found = $false
-    foreach ($p in $paths) {
-        if (Test-Path $p) { if (Remove-ConstrainedItem $p) { $found = $true } }
+    foreach ($root in $roots) {
+        foreach ($leaf in @($name, "$name.mdc")) {
+            $target = Join-Path $root $leaf
+            if (Test-Path -LiteralPath $target) {
+                if (Remove-ConstrainedItem $target) { $found = $true }
+            }
+        }
     }
     if ($found) { removed $name }
 }
 
 function Get-AgentArgs {
-    if ($Agents -eq "*") { return @("--agent","claude-code","--agent","cursor","--agent","codex","--agent","antigravity","--agent","antigravity-cli","--agent","universal") }
+    # Full registry of the `skills` CLI — must match install.ps1 Get-AgentArgs.
+    # The old 6-agent default left catalog copies in the other agents behind.
+    if ($Agents -eq "*") { return @("--agent","claude-code","--agent","cursor","--agent","codex","--agent","antigravity","--agent","antigravity-cli","--agent","windsurf","--agent","github-copilot","--agent","opencode","--agent","cline","--agent","roo","--agent","kiro-cli","--agent","amp","--agent","goose","--agent","crush","--agent","trae","--agent","junie","--agent","zed","--agent","openclaw","--agent","droid","--agent","qoder","--agent","kilo","--agent","warp","--agent","universal") }
     $args = @()
     foreach ($agent in ($Agents -split ",")) {
         if ($agent.Trim()) {
@@ -143,7 +180,11 @@ function Get-AgentArgs {
 }
 
 $manifestPath = "$env:USERPROFILE\.sps\install-manifest.env"
-$managedSkills = @("sps","hallmark","impeccable","design-taste-frontend","sps-cms","sps-seo","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion","astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman","taste-skill")
+# Fallback when the manifest is gone (standalone uninstall). Must stay a
+# superset of install.ps1's $script:ManagedSkills (initial @("sps") plus the
+# two += batches). When the manifest exists it is parsed below and takes
+# precedence.
+$managedSkills = @("sps","sps-cms","sps-seo","hallmark","impeccable","design-taste-frontend","webapp-testing","web-design-guidelines","vercel-react-best-practices","vercel-composition-patterns","karpathy-guidelines","agent-browser","ai-seo","copywriting","deploy-to-vercel","verification-before-completion","astro-framework","webgpu-claude-skill","firecrawl","supabase","supabase-postgres-best-practices","prisma-database-setup","prisma-client-api","prisma-cli","vercel-react-native-skills","sleek-design-mobile-apps","fact-check","grill-me","caveman","taste-skill")
 $claudePlugins = @("universal-build-orchestrator@shahid-personal-skillset","ui-ux-pro-max@ui-ux-pro-max-skill","engineering-skills@claude-code-skills","engineering-advanced-skills@claude-code-skills","marketing-skills@claude-code-skills","a11y-audit@claude-code-skills","docker-development@claude-code-skills")
 $claudeMarketplaces = @("shahid-personal-skillset","ui-ux-pro-max-skill","claude-code-skills")
 $useContext7 = 0
@@ -178,6 +219,9 @@ foreach ($s in $managedSkills) { Remove-AgentSkill $s }
 Remove-AgentSkill "universal-build-orchestrator"
 
 section "Removing mirrored /sps sync paths"
+# Keep in sync with install.ps1's $syncRoots. The installer syncs sps,
+# sps-cms AND sps-seo (Sync-CoreSkill); the old loop removed only the first
+# two, so sps-seo survived every uninstall.
 $defaultSyncPaths = @(
     "$env:USERPROFILE\.claude\skills",
     "$env:USERPROFILE\.cursor\skills",
@@ -187,18 +231,42 @@ $defaultSyncPaths = @(
     "$env:USERPROFILE\.gemini\config\skills",
     "$env:USERPROFILE\.gemini\skills",
     "$env:USERPROFILE\.gemini\antigravity\skills",
-    "$env:USERPROFILE\.gemini\antigravity-cli\skills"
+    "$env:USERPROFILE\.gemini\antigravity-cli\skills",
+    "$env:USERPROFILE\.codeium\windsurf\skills",
+    "$env:USERPROFILE\.windsurf\skills",
+    "$env:USERPROFILE\.config\opencode\skills",
+    "$env:USERPROFILE\.cline\skills",
+    "$env:USERPROFILE\.roo\skills",
+    "$env:USERPROFILE\.kiro\skills",
+    "$env:USERPROFILE\.amp\skills",
+    "$env:USERPROFILE\.github\skills",
+    "$env:USERPROFILE\.config\goose\skills",
+    "$env:USERPROFILE\.goose\skills",
+    "$env:USERPROFILE\.crush\skills",
+    "$env:USERPROFILE\.config\trae\skills",
+    "$env:USERPROFILE\.trae\skills",
+    "$env:USERPROFILE\.junie\skills",
+    "$env:USERPROFILE\.config\junie\skills",
+    "$env:USERPROFILE\.zed\skills",
+    "$env:USERPROFILE\.openclaw\skills",
+    "$env:USERPROFILE\.droid\skills",
+    "$env:USERPROFILE\.qoder\skills",
+    "$env:USERPROFILE\.kilocode\skills",
+    "$env:USERPROFILE\.warp\plugins\skills",
+    "$env:USERPROFILE\.grok\skills",
+    "$env:USERPROFILE\.hermes\skills",
+    "$env:USERPROFILE\.autohand\skills",
+    "$env:USERPROFILE\.zeroclaw\skills"
 )
 if ($syncPaths.Count -eq 0) { $syncPaths = $defaultSyncPaths }
+$coreSyncSkills = @("sps", "sps-cms", "sps-seo")
 foreach ($destRoot in ($syncPaths + $defaultSyncPaths | Select-Object -Unique)) {
     if (-not $destRoot) { continue }
-    $spsPath = Join-Path $destRoot "sps"
-    if (Test-Path $spsPath) {
-        if (Remove-ConstrainedItem $spsPath) { removed "$spsPath" }
-    }
-    $spsCmsPath = Join-Path $destRoot "sps-cms"
-    if (Test-Path $spsCmsPath) {
-        if (Remove-ConstrainedItem $spsCmsPath) { removed "$spsCmsPath" }
+    foreach ($skillName in $coreSyncSkills) {
+        $skillPath = Join-Path $destRoot $skillName
+        if (Test-Path -LiteralPath $skillPath) {
+            if (Remove-ConstrainedItem $skillPath) { removed "$skillPath" }
+        }
     }
 }
 

@@ -111,7 +111,13 @@ EOF
       echo "About to publish ${#lessons[@]} lesson(s) to the PUBLIC repo ${BG_REPO}"
       echo "(branch lesson/$(today)-batch, then a pull request):"
       echo
-      for f in "${lessons[@]}"; do echo "  $f"; done
+      for f in "${lessons[@]}"; do
+        echo "  ── $f ──"
+        # Show the full content: this text is about to leave the machine,
+        # so the user must be able to review exactly what is published.
+        sed 's/^/  │ /' "$f"
+        echo
+      done
       echo
       read -r -p "Send these ${#lessons[@]} lesson(s) to ${BG_REPO}? (yes/no): " confirm
       if [[ "$confirm" != "yes" ]]; then
@@ -135,7 +141,23 @@ EOF
       cp "$f" "$work/lessons/inbox/"
       copied=$((copied+1))
     done
+    # Secret-scan the exact bytes about to be pushed (audit m-3): a lesson
+    # containing a client API key must never reach the public repo. Stage the
+    # copies first, then run secret-scan.sh inside the clone (it scans tracked
+    # files of the repo it finds itself in) — so what is scanned == what is sent.
     git -C "$work" add lessons/inbox
+    scan="$(dirname "$0")/secret-scan.sh"
+    [[ -f "$scan" ]] || scan="$(pwd)/scripts/secret-scan.sh"
+    if [[ -f "$scan" ]]; then
+      echo "Running secret scan over the ${copied} staged lesson(s)…"
+      if ! (cd "$work" && bash "$scan"); then
+        echo "ABORTED — secret-scan flagged the lesson content." >&2
+        echo "Redact the lesson files in .sps/lessons/pending/ and try again." >&2
+        exit 1
+      fi
+    else
+      echo "warning: secret-scan.sh not found — skipping the pre-push secret scan" >&2
+    fi
     git -C "$work" -c user.name="SPS Lesson Bot" -c user.email="lessons@users.noreply.github.com" \
       commit -qm "Lessons from client project ($(basename "$PWD")): ${copied} item(s)"
     if git -C "$work" push -q "https://github.com/${BG_REPO}.git" "$branch" 2>/dev/null; then

@@ -118,7 +118,7 @@ done < <(
   {
     find .claude -type f -print0 2>/dev/null
     find . -maxdepth 4 -name '.mcp.json' -type f -print0 2>/dev/null
-  } | while IFS= read -r -d '' p; do printf '%s\0' "${p#./}"; done | sort -z | awk 'BEGIN{RS="\0"} !seen[$0]++ {printf "%s\0", $0}'
+  } | while IFS= read -r -d '' p; do printf '%s\0' "${p#./}"; done | sort -zu
 )
 
 # --- verdict ------------------------------------------------------------------

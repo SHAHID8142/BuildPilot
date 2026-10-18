@@ -47,8 +47,11 @@ GEN_LINE = "GEN_LAW_TEST: preview only — pass --approved-by to write"
 # check_id is interpolated into the generated test's docstring and module
 # filename (via snake()), so a hostile ledger value containing e.g. `"""`
 # could break out of the string literal and inject code. Spaces are allowed
-# because real ledger ids contain them (e.g. "dod-22 junk file").
-CHECK_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._-]*$")
+# because real ledger ids contain them (e.g. "dod-22 junk file"). The match
+# is anchored with \Z (not $) so a trailing newline cannot slip through —
+# $ matches before a final newline, which would embed the raw "\n" in the
+# generated docstring (audit NIT n-3).
+CHECK_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 ._-]*\Z")
 
 
 def _check_check_id(check_id: str) -> str:
@@ -322,7 +325,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--list", action="store_true", help="list repeat rejections (count >= 2)")
     ap.add_argument("--check", help="check_id from the ledger")
     ap.add_argument("--file", dest="target_file", help="target_file from the ledger")
-    ap.add_argument("--approved-by", help="reviewer name; required to write anything")
+    ap.add_argument("--approved-by", help="reviewer name (plain name like 'Jane Doe' or 'jane.doe@corp'; angle brackets/quotes not allowed); required to write anything")
     ap.add_argument("--force", action="store_true", help="allow overwriting an existing test")
     ap.add_argument("--ledger", type=Path, default=LEDGER, help="ledger path override")
     args = ap.parse_args(argv)

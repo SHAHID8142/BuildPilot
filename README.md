@@ -90,10 +90,14 @@ bash ~/.sps/src/BuildPilot/uninstall.sh --yes
 ```
 
 > **Trust note:** the installer fetches ~27 third-party skills via `npx skills add`
-> with auto-yes, uses `StrictHostKeyChecking=accept-new` for its git operations
-> (unknown hosts accepted on first use; changed host keys rejected), and
-> refreshes the managed `sps`/`sps-cms`/`sps-seo` skill directories (overwriting local edits
-> in those paths). Review `install.sh` before running it in a sensitive environment.
+> with auto-yes, installs 11 Claude plugins from 4 marketplaces, adds the
+> Context7 MCP server and the graphify CLI, uses `StrictHostKeyChecking=accept-new`
+> for its git operations (unknown hosts accepted on first use; changed host keys
+> rejected), and refreshes the managed `sps`/`sps-cms`/`sps-seo` skill directories
+> (overwriting local edits in those paths; a timestamped backup is kept in
+> `~/.sps/backups/`). You are asked once, before any of this runs: answer
+> interactively, pass `--yes` to consent, or pass `--no-extras` for a core-only
+> install. Review `install.sh` before running it in a sensitive environment.
 
 ---
 
@@ -108,7 +112,7 @@ any promise is broken:
 | 1 | **No code before a plan you approved.** | The plan gate — a hard stop, every time |
 | 2 | **Every section ends in proof, not claims.** | Product-proof gate: test output, screenshot, or boot log — attached, or the handoff fails |
 | 3 | **CMS sites ship whole.** | Storefront + admin controls land in the same section, or the section is marked incomplete |
-| 4 | **It remembers.** | All project memory lives in `.sps/` inside *your* project — nothing sent anywhere |
+| 4 | **It remembers.** | All project memory lives in `.sps/` inside *your* project — the only thing ever sent is a lesson you explicitly confirm via `sps-lesson.sh send` |
 | 5 | **Mistakes can't quietly return.** | A rule broken twice gets an auto-generated regression test that lives in the test suite forever |
 
 And the promise to *you*, outside the machine: **`/sps` never pushes,
@@ -172,7 +176,7 @@ Every claim above has a command behind it. Run them yourself:
 
 | Claim | Prove it with |
 |---|---|
-| "Secrets can't sneak out" | `bash scripts/secret-scan.sh` — scans every push, CI blocks the merge |
+| "Secrets get a pattern-based gate" | `bash scripts/secret-scan.sh` — scans every push, CI blocks the merge (pattern scanner with a reviewed allowlist — not a guarantee; review what you push) |
 | "Third-party skills can't be tampered with" | `bash scripts/sps-provenance.sh check --strict` — shipped skills are pinned in the committed store `.sps/provenance-store.json`; CI fails on any drift |
 | "The rules are actually enforced" | `python3 framework/sps2/tools/check_laws.py .` — the referee's own report card |
 | "Docs never rot" | `python3 framework/sps2/tools/check_docs_drift.py` — every command in the docs must exist, or this fails |
