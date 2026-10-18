@@ -1,0 +1,52 @@
+# সাধু verb forms and non-standard (West Bengal) spellings — CRITICAL in
+# bn-BD web copy. চলিত রীতি only (বাংলা একাডেমি standard).
+# Format: one form per line; lines starting with # are comments.
+# --- সাধু finite verb forms ---
+করিতেছি
+করিতেছেন
+করিতেছে
+করিয়াছি
+করিয়াছেন
+করিয়াছে
+করিব
+করিবেন
+করিবে
+হইব
+হইবে
+হইবেন
+হইয়াছে
+হইয়াছেন
+হইতেছে
+করিয়া
+গিয়া
+দিয়া
+লইয়া
+পাইয়া
+হইল
+করিল
+করিলেন
+তাহার
+তাহাদের
+তাহারা
+ইহার
+ইহাদের
+ইহা
+উহার
+উহারা
+কাহার
+কাহাকে
+আমারে
+তোমারে
+তাহাকে
+করিত
+হইত
+---
+# --- West Bengal (Kolkata) standard forms — bn-BD rejects these ---
+আশ্চয্য
+প্রকিতি
+শ্রেণী
+দেশী
+কোনও
+কারো
+জানোয়ার
+রোজগার

@@ -393,9 +393,11 @@ sync_core_skill() {
   local upgrade_report="$HOME/.sps/last-upgrade.txt"
   mkdir -p "$HOME/.sps"
   : > "$upgrade_report"
-  # Populated later (line ~527) by the pre-install scan; declared here because
-  # the backup loop below reads it and set -u treats an unset array as an error.
-  PRE_EXISTING_SPS=()
+  # PRE_EXISTING_SPS is NOT reset here: the top-level pre-install scan
+  # (before main flow) populated it, and wiping it would make is_pre_existing
+  # always false — upgrades of an existing install would run with no backup.
+  # The "${ARR[@]+${ARR[@]}}" guards below make an unset/empty array safe
+  # under set -u, so no defensive reset is needed.
   local had_existing=false
   local backup_ok_any=false
   local sync_aborted=false

@@ -108,7 +108,7 @@ function Get-InstalledVersion {
         $line = Select-String -Path $manifest -Pattern '^SPS_VERSION=' | Select-Object -First 1
         if ($line) { return ($line.Line -split '=')[1].Trim() }
     }
-    $cand = Join-Path $HOME ".sps\src\BuildPilot\skills\sps\VERSION"
+    $cand = Join-Path $HOME ".sps\src\BuildPilot\skill\sps\VERSION"
     if (Test-Path $cand) { return (Get-Content $cand -Raw).Trim() }
     return "unknown"
 }

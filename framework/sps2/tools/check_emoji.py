@@ -50,7 +50,11 @@ def scan(root):
                 continue
             try:
                 text = open(p, encoding="utf-8", errors="replace").read()
-            except Exception:
+            except OSError as e:
+                # Fail-closed: a file the gate cannot read is reported as a
+                # violation, never silently skipped (an unreadable file whose
+                # only emoji is invisible would otherwise flip the gate PASS).
+                findings.append((os.path.relpath(p, root) + " (unreadable: %s)" % e.__class__.__name__, 0))
                 continue
             scanned += 1
             for i, line in enumerate(text.splitlines(), 1):

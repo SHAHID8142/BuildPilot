@@ -35,7 +35,9 @@ handoff. An unchecked handoff is an incomplete task.
    before the handoff.
 4b. **Self-verification loop.** Before any "task complete" claim, the agent
    runs the relevant machine checks itself — the law checker
-   (`check_laws.py`), the validators affected by the change, and the local
+   (`check_laws.py`), the copy validator (`check_copy.py` via
+   `scripts/sps-copycheck.sh`) when customer-facing copy changed, the
+   validators affected by the change, and the local
    test battery — and ATTACHES the output to the handoff. Claiming done
    with unverified work violates this checkpoint; "it should pass" is not
    evidence.

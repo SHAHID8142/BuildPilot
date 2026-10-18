@@ -61,6 +61,9 @@ try {
 
 } catch {
     Write-Host "❌ Installation failed: $_" -ForegroundColor Red
+    # update.ps1 gates on $LASTEXITCODE — a failed install must not exit 0
+    # or the updater would report "Update complete!" (audit finding).
+    exit 1
 } finally {
     # Cleanup
     if (Test-Path $TempZip) { Remove-Item -Path $TempZip -Force -ErrorAction SilentlyContinue }

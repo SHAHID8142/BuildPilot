@@ -109,6 +109,11 @@ function Invoke-Native {
         throw "command exited with code ${LASTEXITCODE}: $Command"
     }
 }
+# Start-Job runs the action in a fresh runspace: parent-session functions do
+# not exist there, so the definition must be carried into the job explicitly
+# (QA finding: every step died with CommandNotFoundException while the job
+# still reported Completed).
+$script:InvokeNativeDef = ${function:Invoke-Native}.ToString()
 
 function Step {
     param([string]$Label, [scriptblock]$Action, [int]$TimeoutSec = $NetworkTimeout)
@@ -119,7 +124,8 @@ function Step {
     $tmpOut = Join-Path $spsHome ".step.out"
     Clear-Content -Path $tmpOut -ErrorAction SilentlyContinue
 
-    $job = Start-Job -ScriptBlock $Action -Name "InstallJob"
+    $init = [scriptblock]::Create("function Invoke-Native { $($script:InvokeNativeDef) }")
+    $job = Start-Job -InitializationScript $init -ScriptBlock $Action -Name "InstallJob"
     Wait-Job -Job $job -Timeout $TimeoutSec | Out-Null
     Receive-Job -Job $job 2>&1 | Out-File -FilePath $tmpOut -Append
 
@@ -139,6 +145,9 @@ function Step {
         Get-Content $tmpOut -Tail 3 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "     $_" -ForegroundColor DarkGray }
         $script:Skipped++
         Add-Content -Path $script:Log -Value "FAILED: $Label"
+        # A failed step must fail the installer: throw so the run stops with a
+        # nonzero exit instead of printing "Install complete" (QA finding).
+        throw "Step failed: $Label (see $tmpOut and $($script:Log))"
     }
 }
 
@@ -302,7 +311,7 @@ function Sync-CoreSkill {
                 $skillDest = Join-Path $destRoot $name
                 if (Test-Path $skillDest) {
                     $backedUp = Backup-ManagedSkill -DestRoot $destRoot -Name $name
-                    if (-not $backedUp -and -not $ForceSkipBackup) {
+                    if (-not $backedUp -and -not $Force) {
                         warn "backup failed for $name in $destRoot - NOT replacing (use -Force to skip backup)"
                         if ($name -eq "sps-cms") { $replaceCms = $false }
                         if ($name -eq "sps-seo") { $replaceSeo = $false }

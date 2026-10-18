@@ -23,7 +23,7 @@ Every `/sps` project must keep these files current:
 | `./.sps/agent.md` | Active host identity, capabilities, version stamp, `/sps` lock |
 | `./.sps/audit-report.md` | Latest scored SPS alignment audit report |
 
-Bootstrap from `skills/sps/templates/` or run:
+Bootstrap from `skill/sps/templates/` or run:
 
 ```bash
 bash scripts/bootstrap-sps.sh /path/to/project
@@ -61,7 +61,7 @@ Once `./.sps/` exists for a project:
 - how the workflow will fall back if a capability is missing
 
 Refresh this file whenever the host changes or a new session starts.
-Read the matching file under `skills/sps/hosts/` for host-specific notes.
+Read the matching file under `skill/sps/hosts/` for host-specific notes.
 
 ## Scope types
 

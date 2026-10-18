@@ -123,12 +123,36 @@ if (Test-Path (Join-Path $repoDir ".git")) {
 }
 Write-Host "Source updated" -ForegroundColor Green
 
-# 2. Reinstall (single unified install — no profiles)
+# 2. Reinstall with same choices (single unified install — no profiles)
 Set-Location $repoDir
-$versionFile = Join-Path $repoDir "skills\sps\VERSION"
+$versionFile = Join-Path $repoDir "skill\sps\VERSION"
 $version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "unknown" }
 Write-Host "Installing SPS v$version..."
-& powershell -ExecutionPolicy Bypass -File (Join-Path $repoDir "install.ps1") -Yes
+# Preserve the choices recorded at install time: the manifest stores the
+# original -Agents value and whether third-party extras were installed.
+# Without this, a user who installed with -NoExtras would get 26 third-party
+# skills + 11 plugins pulled in by the update's -Yes (which install.ps1
+# reads as full extras consent), and a custom -Agents selection would
+# silently reset to all hosts. Older manifests without the fields default
+# to the historical behavior (all agents, extras on).
+$installArgs = @("-Yes")
+if (Test-Path $manifest) {
+    $savedAgents = ""
+    $savedExtras = ""
+    foreach ($line in (Get-Content $manifest -ErrorAction SilentlyContinue)) {
+        if     ($line -like "AGENTS=*")        { $savedAgents = $line.Substring("AGENTS=".Length).Trim() }
+        elseif ($line -like "INSTALL_EXTRAS=*") { $savedExtras = $line.Substring("INSTALL_EXTRAS=".Length).Trim() }
+    }
+    if ($savedAgents -and $savedAgents -ne "*") {
+        $installArgs += @("-Agents", $savedAgents)
+        Write-Host "Preserving agents selection: $savedAgents"
+    }
+    if ($savedExtras -eq "false") {
+        $installArgs += "-NoExtras"
+        Write-Host "Preserving core-only install (no third-party extras)"
+    }
+}
+& powershell -ExecutionPolicy Bypass -File (Join-Path $repoDir "install.ps1") @installArgs
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Reinstall failed (exit $LASTEXITCODE). See ~\.sps\install.log" -ForegroundColor Red
     exit 1

@@ -6,7 +6,7 @@
 
 **A foreman for coding agents** — Claude Code, Cursor, Codex, and 30+ more.
 
-**Version:** 4.4.0 · 1,258 tests · MIT · `SHAHID8142/BuildPilot`
+**Version:** 4.4.0 · 1,268 tests · MIT · `SHAHID8142/BuildPilot`
 
 </div>
 
@@ -181,7 +181,7 @@ Every claim above has a command behind it. Run them yourself:
 | "The rules are actually enforced" | `python3 framework/sps2/tools/check_laws.py .` — the referee's own report card |
 | "Docs never rot" | `python3 framework/sps2/tools/check_docs_drift.py` — every command in the docs must exist, or this fails |
 | "Your work is backed up" | `bash scripts/sps-backup.sh snapshot` — rolling snapshots of your project memory |
-| "1,258 tests" | `PYTHONPATH=. python3 -m unittest $(cat .github/expected-test-modules.txt \| tr '\n' ' ')` — count them yourself |
+| "1,268 tests" | `PYTHONPATH=. python3 -m unittest $(cat .github/expected-test-modules.txt \| tr '\n' ' ')` — count them yourself |
 
 ---
 

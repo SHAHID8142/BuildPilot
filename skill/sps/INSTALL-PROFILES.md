@@ -52,7 +52,7 @@ Windows: `uninstall.ps1` / `uninstall.ps1 -KeepPersonal -Yes`
 - `webapp-testing`, `web-design-guidelines`
 - `vercel-react-best-practices`, `vercel-composition-patterns`
 - `karpathy-guidelines`, `verification-before-completion`
-- `agent-browser`, `ai-seo`, `copywriting`, `deploy-to-vercel`
+- `agent-browser`, `ai-seo`, `copywriting` (enhancer only — COPY-GATE.md is the law), `deploy-to-vercel`
 - `grill-me`, `caveman`, `fact-check`, `firecrawl`
 - `astro-framework`, `webgpu-claude-skill`
 - `supabase`, `supabase-postgres-best-practices`

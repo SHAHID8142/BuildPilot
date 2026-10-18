@@ -1,0 +1,46 @@
+# English AI-slop stock phrases — one hit is a CRITICAL.
+# Case-insensitive, word-boundary, exact-phrase match.
+# Sources: editor banned-phrase lists (Poynter/CJR), GPTZero/Originality.ai
+# vendor lists, Wikipedia "Signs of AI writing", AntiSlop Sampler (ICLR 2026).
+in today's fast-paced world
+in the ever-evolving landscape of
+in the ever-evolving world of
+in the digital age
+in today's digital landscape
+look no further
+don't miss out
+the secret to
+it's important to note
+it is important to note
+it's worth noting
+it is worth noting
+in conclusion
+at the end of the day
+unlock the potential of
+navigate the complexities of
+navigating the complexities of
+testament to
+beacon of
+double-edged sword
+game-changer
+game changer
+whether you're a
+whether you are a
+the world of
+dive into
+delve into
+in summary
+to sum up
+that being said
+with that said
+revolutionize the way
+take it to the next level
+elevate your
+unlock your
+unleash your
+embark on a journey
+in the realm of
+a testament to
+when it comes to
+let's explore
+let's dive in

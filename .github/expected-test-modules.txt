@@ -22,6 +22,7 @@ framework.domain.seo.tests.test_structured_data
 framework.domain.seo.tests.test_url_taxonomy
 framework.sps2.tests.test_attribution_policy
 framework.sps2.tests.test_backup_restore
+framework.sps2.tests.test_check_copy
 framework.sps2.tests.test_check_update_safety
 framework.sps2.tests.test_docs_drift
 framework.sps2.tests.test_gen_law_test

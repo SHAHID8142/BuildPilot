@@ -63,7 +63,7 @@ For JSX / TypeScript components:
 
 ## 4. Content & CMS Copy (per-section, user-editable)
 
-13. All section copy is drafted (headlines, body, CTAs, alt text) — SPS drafts, user edits.
+13. All section copy is drafted (headlines, body, CTAs, alt text) — SPS drafts, user edits — and passes the copy gate: `bash scripts/sps-copycheck.sh <project> --mode deployment` exits 0 ([COPY-GATE.md](COPY-GATE.md)).
 14. Content inventory for this section complete in `content-model.md`.
 15. Drafted copy is loaded through the CMS/content layer (no hardcoded final copy).
 16. Empty / loading / error / unpublished states handled.

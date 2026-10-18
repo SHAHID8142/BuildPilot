@@ -35,6 +35,7 @@ profiles; that vocabulary is retired as of 4.0.0 (see CHANGELOG.md).
 | Surgical/token | `karpathy-guidelines` | SPS CONTEXT-EFFICIENCY |
 | Security | Trail of Bits | host security review |
 | CMS | SPS CMS-COUPLING + `/sps sync` | — |
+| Content / copy | COPY-GATE.md (bundled law) | `copywriting`, `fact-check` |
 | Logos | `theSVG` | official assets |
 
-See `skills/sps/SKILL-ROUTER.md` for install-or-instruct protocol and conflict bans.
+See `skill/sps/SKILL-ROUTER.md` for install-or-instruct protocol and conflict bans.

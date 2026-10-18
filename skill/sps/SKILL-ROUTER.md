@@ -45,7 +45,7 @@ first use; conflict bans below still apply regardless of origin.
 | Testing | `webapp-testing` | Playwright / `agent-browser` for live checks | VERIFICATION-RECIPES.md |
 | Lighthouse / live verify | `agent-browser` | — | manual Lighthouse run |
 | SEO | **`sps-seo` (bundled, synced by installer)** | `ai-seo` (fallback) | SEO checklist in SECTION-DOD |
-| Content / copy | `copywriting` (SPS drafts, user edits) | `fact-check` | copy in content-model.md |
+| Content / copy | **COPY-GATE.md (bundled law)** — copy quality + Bangla standard | `copywriting` (enhancer), `fact-check` | copy in content-model.md |
 | Mobile app (RN) | `vercel-react-native-skills` | `sleek-design-mobile-apps` | — |
 | Backend / DB | `supabase` + `prisma-*` (when stack matches) | vendor docs | stack best practices |
 | Deploy | `deploy-to-vercel` (when Vercel target) | — | deploy steps in plan.md |

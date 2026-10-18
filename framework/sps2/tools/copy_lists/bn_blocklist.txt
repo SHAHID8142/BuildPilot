@@ -1,0 +1,31 @@
+# Bangla AI-slop phrases — one hit is a CRITICAL.
+# Direct calques of the EN slop lexicon + formulaic essay connectors that
+# native readers identify as machine-generated (অনুবাদ ঘেঁষা).
+# Sources: Bengali commentary on AI Bangla, EN→BN calque mapping
+# (Guardian/GPTZero lists), Bangla AI-detection literature.
+বর্তমান বিশ্বে
+বর্তমান যুগে
+বর্তমানের ডিজিটাল যুগে
+দ্রুতগতির বিশ্বে
+দ্রুতগতির এই বিশ্বে
+গুরুত্বপূর্ণ ভূমিকা পালন করে
+গুরুত্বপূর্ণ ভূমিকা রাখে
+নতুন দিগন্ত উন্মোচন
+অভূতপূর্ব অগ্রগতি
+সমৃদ্ধ ঐতিহ্যের ধারাবাহিকতা
+মসৃণ অভিজ্ঞতা
+আপনার জার্নি
+আপনার যাত্রা শুরু করুন
+গভীর ডাইভ
+গভীরে ডুব দেওয়া
+গেম চেঞ্জার
+লক আনলক
+আনলক করুন
+সিমলেস
+অতএব
+ফলস্বরূপ
+উল্লেখ্য যে
+বিশেষভাবে উল্লেখযোগ্য
+এখন পর্যন্ত সেরা
+শুধু নয় বরং
+শুধু এটি নয়

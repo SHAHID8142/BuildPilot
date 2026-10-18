@@ -88,6 +88,9 @@ if [ "$cmd" = "restore" ]; then
   fi
   tar -tzf "$snap" >/dev/null   # integrity check: a corrupt archive aborts here
   tmp="$(mktemp -d "${TMPDIR:-/tmp}/sps-restore.XXXXXX")"
+  # Clean up the extract dir even if tar -xzf fails after the -t check passed
+  # (disk full, permission error) — set -e would otherwise exit and leak it.
+  trap 'rm -rf "$tmp"' EXIT
   tar -xzf "$snap" -C "$tmp"
   if [ ! -d "$tmp/.sps" ]; then
     echo "sps-backup: archive does not contain a .sps/ directory: $snap" >&2
@@ -135,6 +138,7 @@ PY
   fi
   mv "$tmp/.sps" "$SPS"
   rm -rf "$tmp"
+  trap - EXIT
   echo "RESTORED: .sps/ replaced from $(basename "$snap")"
   echo "  previous .sps/ kept at: $pre (your safety net — remove it yourself when satisfied)"
   exit 0

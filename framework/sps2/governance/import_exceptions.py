@@ -36,6 +36,16 @@ EXCLUDED_PATHS = (
     "framework/sps2/tools/seo_audit.py",
     "framework/sps2/tools/rollback_seo.py",
 )
+# Fail-closed dynamic-arg rule (audit 2026-10-18, defect #13) flags any dynamic
+# loader whose module argument is not a provably-safe string literal. Two
+# pre-existing test files drive `__import__` with a name computed from
+# MIGRATED_CONSUMERS rel-paths (capability/engine.py etc. — never domain.seo);
+# they are auditable, narrow exemptions, mirroring check_emoji's EXEMPT list
+# pattern. Anything not listed here keeps the fail-closed behavior. p10_
+# runtime_gate.py:1944 stays a live, test-pinned violation on purpose.
+DYNAMIC_ARG_FILE_EXEMPTS = frozenset({
+    "framework/sps2/tests/test_attribution_policy.py",
+})
 
 
 def canonical_json(value: Any) -> bytes:
@@ -115,12 +125,17 @@ def _is_dynamic_loader_expression(node: ast.AST, dynamic_names: set[str]) -> boo
         return node.attr == "import_module"
     if isinstance(node, ast.Call):
         function = node.func
+        # getattr(importlib, "import_module") — but also the fail-closed
+        # form: getattr with a NON-literal attribute name cannot be proven
+        # safe, so it counts as a potential dynamic loader too.
         return (
             isinstance(function, ast.Name)
             and function.id == "getattr"
             and len(node.args) >= 2
-            and isinstance(node.args[1], ast.Constant)
-            and node.args[1].value == "import_module"
+            and (
+                not isinstance(node.args[1], ast.Constant)
+                or node.args[1].value == "import_module"
+            )
         )
     if isinstance(node, ast.Subscript):
         return (
@@ -148,6 +163,13 @@ def _dynamic_loader_names(tree: ast.AST) -> set[str]:
                 if isinstance(target, ast.Name) and target.id not in dynamic_names:
                     dynamic_names.add(target.id)
                     changed = True
+    # Aliased loaders (`from importlib import import_module as im`) bind the
+    # same callable under a different name — track them like assignments.
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "importlib":
+            for alias in node.names:
+                if alias.name in {"import_module", "__import__"} and alias.asname:
+                    dynamic_names.add(alias.asname)
     return dynamic_names
 
 
@@ -205,11 +227,46 @@ def scan_import_exceptions(project_root: str | Path) -> dict[str, Any]:
     violations: list[str] = []
     excluded = {root / item for item in EXCLUDED_PATHS}
     for base, dirs, files in os.walk(root):
-        dirs[:] = sorted(item for item in dirs if item not in SKIP_DIRS)
+        # os.walk does NOT descend into symlinked directories, so anything
+        # reachable ONLY through one is never scanned. A dir-symlink shows up
+        # in `filenames` (it is not a regular directory to os.walk), so both
+        # lists are checked: any symlinked entry that survives the skip
+        # filter is reported fail-closed — matching the "not a regular file"
+        # handling of symlinked files — instead of followed (which could
+        # escape the repo root).
+        kept: list[str] = []
+        for item in dirs:
+            if item in SKIP_DIRS:
+                continue
+            item_path = Path(base) / item
+            if item_path.is_symlink():
+                rel_dir = item_path.relative_to(root).as_posix()
+                violations.append(
+                    f"{rel_dir}: symlinked directory is not scanned — remove it or add an exception"
+                )
+            else:
+                kept.append(item)
+        dirs[:] = sorted(kept)
         for filename in sorted(files):
-            if not filename.endswith(".py"):
+            if filename in SKIP_DIRS:
                 continue
             path = Path(base) / filename
+            if path.is_symlink():
+                # Any symlinked entry that is not a plain .py file symlink
+                # (handled below by the not-regular-file check) is a directory
+                # or broken link whose contents os.walk will never scan —
+                # report it fail-closed. Note is_dir() is unreliable here: a
+                # relative target that does not resolve INSIDE this directory
+                # reads as a broken link even though the link "works" from
+                # elsewhere, and a broken link is itself unscannable.
+                if not filename.endswith(".py"):
+                    relative_dir = path.relative_to(root).as_posix()
+                    violations.append(
+                        f"{relative_dir}: symlinked directory is not scanned — remove it or add an exception"
+                    )
+                    continue
+            if not filename.endswith(".py"):
+                continue
             relative = path.relative_to(root).as_posix()
             if any(path == item or item in path.parents for item in excluded):
                 continue
@@ -232,7 +289,30 @@ def scan_import_exceptions(project_root: str | Path) -> dict[str, Any]:
             symbol_counts: dict[str, int] = {}
             for node in ast.walk(tree):
                 if _is_dynamic_import(node, dynamic_names):
-                    if _contains_domain_seo_string(node):
+                    # Fail closed: the loader is dynamic, so ANY argument
+                    # form must be proven safe. Only a plain string literal
+                    # that does NOT touch the forbidden namespace passes;
+                    # a variable-held name (ast.Name), a concatenation, an
+                    # f-string, or anything else counts as forbidden — the
+                    # value is invisible to static analysis here. The narrow
+                    # DYNAMIC_ARG_FILE_EXEMPTS carve-out is the auditable
+                    # exception, not the rule.
+                    args = getattr(node, "args", [])
+                    if relative in DYNAMIC_ARG_FILE_EXEMPTS:
+                        pass  # audited exemption (see constant's comment)
+                    elif not args:
+                        violations.append(
+                            f"{relative}:{node.lineno}: dynamic domain.seo import is forbidden"
+                        )
+                    elif not (
+                        isinstance(args[0], ast.Constant)
+                        and isinstance(args[0].value, str)
+                        and not _contains_domain_seo_string(args[0])
+                    ):
+                        violations.append(
+                            f"{relative}:{node.lineno}: dynamic domain.seo import is forbidden"
+                        )
+                    elif _contains_domain_seo_string(node):
                         violations.append(
                             f"{relative}:{node.lineno}: dynamic domain.seo import is forbidden"
                         )
@@ -282,12 +362,15 @@ def scan_import_exceptions(project_root: str | Path) -> dict[str, Any]:
                         # `from . import seo` (node.module None) imports the
                         # RESOLVED package's submodule named by each alias:
                         # inside framework/domain/ it binds
-                        # framework.domain.seo. Check the alias-qualified
-                        # forms too before skipping.
-                        if not (node.module is None and any(
+                        # framework.domain.seo. The same alias-qualified form
+                        # exists for ABSOLUTE parent-package imports
+                        # (`from framework.domain import seo` binds
+                        # framework.domain.seo), so check it for both —
+                        # not just the node.module-None relative case.
+                        if not any(
                             _is_domain_seo_module(f"{module}.{alias.name}")
                             for alias in node.names
-                        )):
+                        ):
                             continue
                         submodule_via_relative = True
                     else:

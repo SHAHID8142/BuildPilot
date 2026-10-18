@@ -28,7 +28,11 @@ try {
             exit 0
         }
     }
-    & pwsh -NoProfile -File $tmp
+    # pwsh (PowerShell 7+) is not present on default Windows installs, which
+    # ship only Windows PowerShell 5.1 — fall back to it (install.ps1 header
+    # claims 5.1+ compatibility; audit finding).
+    $shell = if (Get-Command pwsh -ErrorAction SilentlyContinue) { "pwsh" } else { "powershell" }
+    & $shell -NoProfile -File $tmp
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     Write-Host "✨ [SPS-CMS] Update complete!" -ForegroundColor Cyan
 } finally {

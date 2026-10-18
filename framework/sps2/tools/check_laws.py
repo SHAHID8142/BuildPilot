@@ -122,8 +122,6 @@ if skill.is_file():
         v("file-splitting: FILE-SPLITTING.md missing")
     elif "500 lines" not in fs.read_text(encoding="utf-8", errors="replace"):
         v("file-splitting: hard cap (500 lines) missing from FILE-SPLITTING.md")
-        if f"**{law}" not in st:
-            v(f"hard-law core: SKILL.md missing law '{law}'")
 
 # ── SECTION-DOD: the 8 audit-gap items still present ─────────────────────────
 dod = REPO / "skill" / "sps" / "SECTION-DOD.md"

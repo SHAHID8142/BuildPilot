@@ -1,0 +1,59 @@
+# English AI-excess lexicon — density-checked (>3 distinct hits per 500 words
+# is CRITICAL). Words statistically over-represented in LLM output.
+# Method: Princeton "Delve" study (arXiv:2507.07510) excess-vocabulary;
+# Wired/Guardian AI-word lists; AntiSlop Sampler word lists.
+delve
+tapestry
+intricate
+intricacies
+multifaceted
+realm
+landscape
+testament
+pivotal
+crucial
+navigate
+navigating
+foster
+fostering
+bolster
+garner
+showcase
+unveil
+unveiling
+harness
+harnessing
+leverage
+leveraging
+robust
+seamless
+seamlessly
+elevate
+embark
+journey
+unlock
+meticulous
+meticulously
+nuanced
+commendable
+cutting-edge
+revolutionize
+revolutionizing
+empower
+empowering
+world-class
+state-of-the-art
+unparalleled
+effortless
+effortlessly
+transformative
+holistic
+synergy
+paradigm
+unprecedented
+unwavering
+resonate
+vibrant
+bustling
+treasure trove
+hat tip

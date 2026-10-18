@@ -20,7 +20,17 @@ die() { echo "ERROR: $*" >&2; exit 1; }
 
 have_gh() { command -v gh >/dev/null 2>&1; }
 
-slugify() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*$//;s/^-\+//;s/-\+$//' | cut -c1-40; }
+slugify() {
+  local s
+  s="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cs 'a-z0-9' '-' | sed 's/^-*$//;s/^-\+//;s/-\+$//' | cut -c1-40)"
+  # A title with no ASCII alphanumerics (emoji/CJK/Bangla) slugifies to empty,
+  # which would collide every such same-day lesson on id LESSON-<date>-- and
+  # refuse the second capture. Fall back to a deterministic non-empty slug.
+  if [[ -z "$s" ]]; then
+    s="lesson-$(printf '%s' "$1" | cksum | cut -d' ' -f1)"
+  fi
+  printf '%s' "$s"
+}
 
 today() { date +%Y%m%d; }
 
@@ -128,6 +138,10 @@ EOF
       fi
     fi
     scratch="$(mktemp -d)"
+    # Remove the scratch clone on EVERY exit path (nothing-to-send, secret-scan
+    # abort, commit failure, push failure, success) — it holds a full checkout
+    # including the staged lesson content (audit #9).
+    trap 'rm -rf "$scratch"' EXIT
     work="$scratch/BuildPilot"
     if git clone --quiet "https://github.com/${BG_REPO}.git" "$work" 2>/dev/null; then
       :

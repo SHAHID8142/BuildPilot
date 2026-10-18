@@ -1,502 +1,518 @@
 {
-  "schema": "sps2.legacy-exception-manifest/v1",
-  "decision_id": "DEC-7301",
-  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
-  "exception_count": 60,
-  "exceptions": [
-    {
-      "path": ".github/expected-test-modules.txt",
-      "expected_blob": "14280da47c8536f03ea92eab31e1f671114ed061",
-      "expected_mode": "100644",
-      "sha256": "a58f9640b2363fee22f24d89b5c0183e4f62b29f50b72cc7c33cd8e255073456",
-      "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): regenerated from tracked test modules (39 modules incl. new test_gen_law_test.py); content and mode pinned by DEC-7305.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": ".github/workflows/ecosystem-scan.yml",
-      "expected_blob": "6ae064c4040edd4f1073b16516abd0f65f49a7a6",
-      "expected_mode": "100644",
-      "sha256": "fde792ed5d62f43caba2d91f38f9730622322863c1401c1fe418a2ee691340ae",
-      "authorization": "DEC-7305",
-      "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
-    },
-    {
-      "path": ".github/workflows/secret-scan.yml",
-      "expected_blob": "80ea62eb42a36c6f3837ff35d10f2ffd2404af38",
-      "expected_mode": "100644",
-      "sha256": "ce6843798758fa6215bc174dddeb078d04384f5e1905c60024607e2cd3b4a212",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": ".github/workflows/sps-ci.yml",
-      "expected_blob": "99a8eb3cb8afe87b7349982f5f851afde2f6777d",
-      "expected_mode": "100644",
-      "sha256": "f4bf0f9f60c11301bf840fb2fdce6671990eb24ace50382d9d33d0ab326e2fb7",
-      "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): validator-battery job added, MIN_TESTS raised to 1000, permissions/concurrency block added; pinned by DEC-7305 as amended 2026-10-18.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
-    },
-    {
-      "path": ".github/workflows/weekly-audit.yml",
-      "expected_blob": "0fdf95d664e91dcfb17ced936801beab91fba6a7",
-      "expected_mode": "100644",
-      "sha256": "e987de9e3d86279aedfd5671f139c4051fa23e4a67d8c6179a7ba99d005d4e7b",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": ".github/workflows/windows-smoke.yml",
-      "expected_blob": "6692957304f775ef8ef3b5f4f993305128f8a694",
-      "expected_mode": "100644",
-      "sha256": "c19e74ba645b89ee8b1a01735e67cecdce931c530b002f8fb6862e0462d43b1b",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
-    },
-    {
-      "path": ".secrets-allowlist",
-      "expected_blob": "f0b2c4a8697c1802e24576bc9c5e972d77282470",
-      "expected_mode": "100644",
-      "sha256": "dc05745479728131c8e97fb4ef4a7b2683f438cc230e10073e8b791394ed6dc8",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator). Re-pinned 2026-10-18: dummy ghp_ example token from audit reports allowlisted (consent+scan batch)."
-    },
-    {
-      "path": "CATALOG.md",
-      "expected_blob": "6400a4b58abfe855669ee020500e70fb8aa19bd8",
-      "expected_mode": "100644",
-      "sha256": "0112317a90f1737b0ed68758b071479e1bb3f1c01955b05b7e2a64de63f45ddf",
-      "authorization": "DEC-7305",
-      "reason": "profile-conflict resolution (unified install model); content and mode pinned by DEC-7305."
-    },
-    {
-      "path": "CHANGELOG.md",
-      "expected_blob": "6ddefd835197cd5405e6b51cb52ea28dee29e32a",
-      "expected_mode": "100644",
-      "sha256": "78ae9fe1023300618cac4cbdb25d4107eb0ea0b51a76961e29ab75f615412737",
-      "authorization": "DEC-7305",
-      "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17. Re-pinned 2026-10-18: QA round-2 doc-truth fixes."
-    },
-    {
-      "path": "README.md",
-      "expected_blob": "566c8d14e96cb3104a879ffc0b74920610132c7d",
-      "expected_mode": "100644",
-      "sha256": "59f656080e418af637950b500e39fde45b831f48d5a6c1c88f98eda4b21f3651",
-      "authorization": "DEC-7305",
-      "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 doc-truth fixes."
-    },
-    {
-      "path": "framework/sps2/tests/test_hooks.py",
-      "expected_blob": "8a2dfaeba3703455f82e97d03f449d6d257f57ee",
-      "expected_mode": "100644",
-      "sha256": "cbc8204b3b40d2817f487b3363f570bc356c55ecd1a6e91df1ff9a3406598845",
-      "authorization": "DEC-7305",
-      "reason": "T-25/T-32 batch test files (secret-scan, hooks); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "framework/sps2/tests/test_secret_scan.py",
-      "expected_blob": "7a3ab333e7052158901617e54583742c4e003670",
-      "expected_mode": "100644",
-      "sha256": "e16b49594bff024cbf4a5d59c87d4eeea1376cb2eb89a22737fc5b7a8eaa96ab",
-      "authorization": "DEC-7305",
-      "reason": "T-25/T-32 batch test files (secret-scan, hooks); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "get-sps.ps1",
-      "expected_blob": "250a5d62259b4ba83415995d8b9969d7d7d002ad",
-      "expected_mode": "100644",
-      "sha256": "939c88865a5691f4a769aa10983f0d5eb88817ba46337779b2081ee09f523d1d",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: installer QA round-2 fixes."
-    },
-    {
-      "path": "get-sps.sh",
-      "expected_blob": "5fec1427f78a599787ad655b4280326adc45546b",
-      "expected_mode": "100755",
-      "sha256": "fe9a9a9b3a0ac8ca7b1ade9c1be47cde781fb35e2fdaf12ee1b36444c84897f6",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
-    },
-    {
-      "path": "install.ps1",
-      "expected_blob": "2f099d3be4a6aa84fb0240963a5b031bb9fbf7db",
-      "expected_mode": "100644",
-      "sha256": "598bf9b6e3cd34d1d9bc6adbf0fd981256045115b682bf7e72870b6c54e49f3d",
-      "authorization": "DEC-7305",
-      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix."
-    },
-    {
-      "path": "install.sh",
-      "expected_blob": "6adfd64d4b36b08d2bec90e754141496a9d7c1e3",
-      "expected_mode": "100755",
-      "sha256": "a42f27c9f5612974b4f81eb340cb622649109ccd693db64e13d4dbd38017ac4d",
-      "authorization": "DEC-7305",
-      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "scripts/bootstrap-sps.sh",
-      "expected_blob": "5eebb5fc863671eeb9eaeff479a8310e08224cf1",
-      "expected_mode": "100755",
-      "sha256": "57ba65f82f7207279ddbf528467b42751138ea12866e07c60ce642b4d0700949",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
-    },
-    {
-      "path": "scripts/ecosystem-domains.tsv",
-      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
-      "expected_mode": "100644",
-      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": "scripts/ecosystem-scan.sh",
-      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
-      "expected_mode": "100755",
-      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": "scripts/secret-scan.sh",
-      "expected_blob": "b7160c52a35577c7279365e660661db3513a9530",
-      "expected_mode": "100755",
-      "sha256": "cba3ec4b391251d1dd66850b18b58c44a1a526c9bfc89172fc064922e077895f",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "scripts/skill-search.sh",
-      "authorization": "DEC-7305",
-      "reason": "New dynamic skill-selection research helper (DYNAMIC-SKILLS law); pinned by DEC-7305 as amended.",
-      "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
-      "expected_mode": "100755",
-      "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303"
-    },
-    {
-      "path": "scripts/smoke-sps.sh",
-      "expected_blob": "e9dd76f4a3bbe2976719ae84b9f3bdf0a909735f",
-      "expected_mode": "100755",
-      "sha256": "9a9d095e4ca6d4c2c525efb5f9563fb833b8ec3f20e3c5647ba0d8b9fdea05ac",
-      "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): smoke coverage for shell tools (bash -n all scripts, sps-status/lawlog/hygiene happy paths); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
-    },
-    {
-      "path": "scripts/sps-backup.sh",
-      "expected_blob": "6434e9d80da3ce428d3371210b6a91797a08e042",
-      "expected_mode": "100755",
-      "sha256": "8f322424a0ac5f19ba052ecb8febfa8949be66ef68b0e23c66f14c2b9cfa48e5",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
-    },
-    {
-      "path": "scripts/sps-doctor.sh",
-      "expected_blob": "21ad6f3ef7c5902dd094ee976f80a39c1820202d",
-      "expected_mode": "100755",
-      "sha256": "1c60da7e9e6a5f91aa817c9350531b4de32ed631aabd8a5c6b7dcad18184d54f",
-      "authorization": "DEC-7305",
-      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
-    },
-    {
-      "path": "scripts/sps-hook-gate.sh",
-      "expected_blob": "5168dd893990c6f5866b861c2dff5d8c6eaa28d6",
-      "expected_mode": "100755",
-      "sha256": "e75f1451e7af5cc31eab5b7e036ad82a106692011c38c839a57e92ba226e35aa",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "scripts/sps-hooks.sh",
-      "expected_blob": "649a7f7b32be7af14e34f45a52c36ae04fb1f548",
-      "expected_mode": "100755",
-      "sha256": "fa44878d04db4b83df0020598b4594ba94ddf8ce66f9f17e8a27eae336549cc6",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "scripts/sps-hygiene.sh",
-      "expected_blob": "88ab07e0d0e2b40b384823325fd19c01cfbeb876",
-      "sha256": "74dfdc9aea7b15e525605db5efb53c74d3562dfe9f75524110e5ddbbd52b5e3c",
-      "expected_mode": "100755",
-      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
-      "authorization": "DEC-7305"
-    },
-    {
-      "path": "scripts/sps-init.sh",
-      "expected_blob": "442605edc501e29fba458303c4ae458e6c0d53c5",
-      "expected_mode": "100755",
-      "sha256": "d46cfc149f3e10e066666cb703b18c80f032f1d5aab9531e6ff1fd2326a6e213",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "scripts/sps-lawlog.sh",
-      "expected_blob": "02bf9da23ff7d37574687dbc9ac9af8d57bb9484",
-      "sha256": "7c6df20affc92ee712c712cdb32d1cc336401ed4b3525de64b3acd411a7dd0fc",
-      "expected_mode": "100755",
-      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
-      "authorization": "DEC-7305"
-    },
-    {
-      "path": "scripts/sps-lesson.sh",
-      "expected_blob": "9531a8cb0e711474e667643c8975771e47f60315",
-      "expected_mode": "100755",
-      "sha256": "0ff8081de4d262d334c08672e77d41219074e3919ab8f329fa0d96da387aac4d",
-      "authorization": "DEC-7305",
-      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "scripts/sps-provenance.sh",
-      "expected_blob": "d863eb3362c176220ae78f94278602357135a636",
-      "expected_mode": "100755",
-      "sha256": "55128a97d25007b29883a585e5782b9efdb506c381fd06c9fbdb411b1e3e196d",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "scripts/sps-restore.sh",
-      "expected_blob": "deaccb590350323f15ed061af6abba41e6cdcb35",
-      "expected_mode": "100755",
-      "sha256": "2f1a87dfaf48862decda6e5cf873c7e6943dfb4998e4d51b88dcf0349f64728e",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "scripts/sps-status.sh",
-      "expected_blob": "f84bd947a2b59e51fbc6189d623fe86e41d2f9a6",
-      "expected_mode": "100755",
-      "sha256": "e35fbac2242241e88d338597ef041b2279776b0de3e794af7d6256211ee8d72d",
-      "authorization": "DEC-7305",
-      "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
-    },
-    {
-      "path": "scripts/sps-update.sh",
-      "expected_blob": "665c0fe05995a73fdefda096135b18119f350a55",
-      "expected_mode": "100755",
-      "sha256": "7645a40f88924b1ca996af4b733bc0176b724e693cb5031b62464e7c5991edfa",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed. Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "scripts/update-sps.ps1",
-      "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
-      "expected_mode": "100644",
-      "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
-      "authorization": "DEC-7201",
-      "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
-    },
-    {
-      "path": "skill/sps/scripts/bootstrap-sps.sh",
-      "expected_blob": "5eebb5fc863671eeb9eaeff479a8310e08224cf1",
-      "expected_mode": "100755",
-      "sha256": "57ba65f82f7207279ddbf528467b42751138ea12866e07c60ce642b4d0700949",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
-    },
-    {
-      "path": "skill/sps/scripts/check-update.sh",
-      "authorization": "DEC-7305",
-      "reason": "Mirror byte-identical resync with scripts/check-update.sh primary (legacy-path VERSION line that was applied to the primary only, pre-range); content and mode pinned by DEC-7305 as amended. Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).",
-      "expected_blob": "9487f918b1321e6f85b8646502ce14bb07e1eaa9",
-      "expected_mode": "100755",
-      "sha256": "c52bb4d75b88e97f1efbdb777ec148d49ad47b5ceeb06acbaad525cffe40bd7f"
-    },
-    {
-      "path": "skill/sps/scripts/ecosystem-domains.tsv",
-      "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
-      "expected_mode": "100644",
-      "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": "skill/sps/scripts/ecosystem-scan.sh",
-      "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
-      "expected_mode": "100755",
-      "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
-      "authorization": "DEC-7305",
-      "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
-    },
-    {
-      "path": "skill/sps/scripts/secret-scan.sh",
-      "expected_blob": "b7160c52a35577c7279365e660661db3513a9530",
-      "expected_mode": "100755",
-      "sha256": "cba3ec4b391251d1dd66850b18b58c44a1a526c9bfc89172fc064922e077895f",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "skill/sps/scripts/skill-search.sh",
-      "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
-      "expected_mode": "100755",
-      "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303",
-      "authorization": "DEC-7305",
-      "reason": "Mirror of scripts/skill-search.sh required by the CI 'Script mirrors in sync' check (diff -rq scripts skill/sps/scripts); pinned by DEC-7305 as amended."
-    },
-    {
-      "path": "skill/sps/scripts/smoke-sps.sh",
-      "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): byte-identical mirror resync with scripts/smoke-sps.sh primary (shell-tool smoke coverage); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
-      "expected_blob": "e9dd76f4a3bbe2976719ae84b9f3bdf0a909735f",
-      "expected_mode": "100755",
-      "sha256": "9a9d095e4ca6d4c2c525efb5f9563fb833b8ec3f20e3c5647ba0d8b9fdea05ac"
-    },
-    {
-      "path": "skill/sps/scripts/sps-backup.sh",
-      "expected_blob": "6434e9d80da3ce428d3371210b6a91797a08e042",
-      "expected_mode": "100755",
-      "sha256": "8f322424a0ac5f19ba052ecb8febfa8949be66ef68b0e23c66f14c2b9cfa48e5",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
-    },
-    {
-      "path": "skill/sps/scripts/sps-doctor.sh",
-      "authorization": "DEC-7305",
-      "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
-      "expected_blob": "21ad6f3ef7c5902dd094ee976f80a39c1820202d",
-      "expected_mode": "100755",
-      "sha256": "1c60da7e9e6a5f91aa817c9350531b4de32ed631aabd8a5c6b7dcad18184d54f"
-    },
-    {
-      "path": "skill/sps/scripts/sps-hook-gate.sh",
-      "expected_blob": "5168dd893990c6f5866b861c2dff5d8c6eaa28d6",
-      "expected_mode": "100755",
-      "sha256": "e75f1451e7af5cc31eab5b7e036ad82a106692011c38c839a57e92ba226e35aa",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "skill/sps/scripts/sps-hooks.sh",
-      "expected_blob": "649a7f7b32be7af14e34f45a52c36ae04fb1f548",
-      "expected_mode": "100755",
-      "sha256": "fa44878d04db4b83df0020598b4594ba94ddf8ce66f9f17e8a27eae336549cc6",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "skill/sps/scripts/sps-hygiene.sh",
-      "expected_blob": "88ab07e0d0e2b40b384823325fd19c01cfbeb876",
-      "sha256": "74dfdc9aea7b15e525605db5efb53c74d3562dfe9f75524110e5ddbbd52b5e3c",
-      "expected_mode": "100755",
-      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
-      "authorization": "DEC-7305"
-    },
-    {
-      "path": "skill/sps/scripts/sps-init.sh",
-      "expected_blob": "442605edc501e29fba458303c4ae458e6c0d53c5",
-      "expected_mode": "100755",
-      "sha256": "d46cfc149f3e10e066666cb703b18c80f032f1d5aab9531e6ff1fd2326a6e213",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "skill/sps/scripts/sps-lawlog.sh",
-      "expected_blob": "02bf9da23ff7d37574687dbc9ac9af8d57bb9484",
-      "sha256": "7c6df20affc92ee712c712cdb32d1cc336401ed4b3525de64b3acd411a7dd0fc",
-      "expected_mode": "100755",
-      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
-      "authorization": "DEC-7305"
-    },
-    {
-      "path": "skill/sps/scripts/sps-lesson.sh",
-      "expected_blob": "9531a8cb0e711474e667643c8975771e47f60315",
-      "expected_mode": "100755",
-      "sha256": "0ff8081de4d262d334c08672e77d41219074e3919ab8f329fa0d96da387aac4d",
-      "authorization": "DEC-7305",
-      "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "skill/sps/scripts/sps-provenance.sh",
-      "expected_blob": "d863eb3362c176220ae78f94278602357135a636",
-      "expected_mode": "100755",
-      "sha256": "55128a97d25007b29883a585e5782b9efdb506c381fd06c9fbdb411b1e3e196d",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "skill/sps/scripts/sps-restore.sh",
-      "expected_blob": "deaccb590350323f15ed061af6abba41e6cdcb35",
-      "expected_mode": "100755",
-      "sha256": "2f1a87dfaf48862decda6e5cf873c7e6943dfb4998e4d51b88dcf0349f64728e",
-      "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
-    },
-    {
-      "path": "skill/sps/scripts/sps-status.sh",
-      "expected_blob": "f84bd947a2b59e51fbc6189d623fe86e41d2f9a6",
-      "expected_mode": "100755",
-      "sha256": "e35fbac2242241e88d338597ef041b2279776b0de3e794af7d6256211ee8d72d",
-      "authorization": "DEC-7305",
-      "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
-    },
-    {
-      "path": "skill/sps/scripts/sps-update.sh",
-      "expected_blob": "665c0fe05995a73fdefda096135b18119f350a55",
-      "expected_mode": "100755",
-      "sha256": "7645a40f88924b1ca996af4b733bc0176b724e693cb5031b62464e7c5991edfa",
-      "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed. Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
-    },
-    {
-      "path": "skill/sps/scripts/update-sps.ps1",
-      "expected_blob": "ee9dd2565c123b2056c2ffa894866f835be73d9d",
-      "expected_mode": "100644",
-      "sha256": "9cbe05b291234878d0c7b198e84dab343fe7d192cf5168a6a66833ac18bd5412",
-      "authorization": "DEC-7201",
-      "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended."
-    },
-    {
-      "path": "skill/sps-cms/scripts/update.sh",
-      "expected_blob": "56a7c55c5df49fa32d1a79663c445a2e0f081391",
-      "expected_mode": "100755",
-      "sha256": "4f20982eef07f64d027f15e5d28f124b2e20b7ef14ab2954329d5ebd2ff23151",
-      "authorization": "DEC-7305",
-      "reason": "m-7 fix: no more curl|bash remote exec — download to temp, review, typed yes before running. Pinned 2026-10-18: consent+scan audit batch. Authorized by DEC-7305 (consent+scan audit batch 2026-10-18)."
-    },
-    {
-      "path": "skill/sps-cms/scripts/update.ps1",
-      "expected_blob": "669be2e5f066949302e2c451dda19bb07e4ffbfa",
-      "expected_mode": "100644",
-      "sha256": "fe878c72ea487a2becdfb40517d7d82d8ece50f05a4f3217b7ab0c1e628d82d2",
-      "authorization": "DEC-7305",
-      "reason": "m-7 fix: no more Invoke-Expression of remote scripts — download to temp, review, explicit yes before running. Pinned 2026-10-18: consent+scan audit batch. Authorized by DEC-7305 (consent+scan audit batch 2026-10-18)."
-    },
-    {
-      "path": "uninstall.ps1",
-      "expected_blob": "510b299726273fe8345744d4525e9c40b5b60761",
-      "expected_mode": "100644",
-      "sha256": "db5bb9c65e7e8ed563b5f605f391feacd8cf4cdc9e32bd4e0bc0c21661f471b8",
-      "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes."
-    },
-    {
-      "path": "uninstall.sh",
-      "expected_blob": "ff099d71aed48898ac6efe9853cdc9e5eaedfd94",
-      "expected_mode": "100755",
-      "sha256": "27d16a6a0ff8b3d025c5b6a89379a4d8070cc9863b098a803ff105f1832ad814",
-      "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
-    },
-    {
-      "path": "scripts/check-update.sh",
-      "expected_blob": "9487f918b1321e6f85b8646502ce14bb07e1eaa9",
-      "expected_mode": "100755",
-      "sha256": "c52bb4d75b88e97f1efbdb777ec148d49ad47b5ceeb06acbaad525cffe40bd7f",
-      "authorization": "DEC-7305",
-      "reason": "Check-update (update-state cache) — pinned 2026-10-18: QA round-6 cached-state truth fix; script is baseline-protected and now modified."
-    }
-  ],
-  "related_test_artifacts": [
-    {
-      "path": "framework/sps2/tests/test_updater_safety.py",
-      "sha256": "7ef8bb82ab30758e58641da49953e30eecf4c40bd9dc059a479e98d87bb0529e",
-      "authorization": "DEC-7201",
-      "reason": "Updater-safety regression evidence; not a legacy-path exception."
-    }
-  ],
-  "explicitly_excluded_paths": [
-    "scripts/check-update.ps1",
-    "scripts/check-update.sh",
-    "skill/sps/scripts/check-update.ps1",
-    "skill/sps/scripts/check-update.sh"
-  ]
+ "schema": "sps2.legacy-exception-manifest/v1",
+ "decision_id": "DEC-7301",
+ "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
+ "exception_count": 62,
+ "exceptions": [
+  {
+   "path": ".github/expected-test-modules.txt",
+   "expected_blob": "57f8836b6577f440717e4947e8b3f1e5ce0087db",
+   "expected_mode": "100644",
+   "sha256": "8aff45ad3734967181f07be7b2267d192cf1af60e2f3de0e2c60ae0d924ee071",
+   "authorization": "DEC-7305",
+   "reason": "tests/CI audit fix (T-20): regenerated from tracked test modules (39 modules incl. new test_gen_law_test.py); content and mode pinned by DEC-7305.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator); Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (COPY-GATE test module + audit-fix batch) — orchestrator"
+  },
+  {
+   "path": ".github/workflows/ecosystem-scan.yml",
+   "expected_blob": "6ae064c4040edd4f1073b16516abd0f65f49a7a6",
+   "expected_mode": "100644",
+   "sha256": "fde792ed5d62f43caba2d91f38f9730622322863c1401c1fe418a2ee691340ae",
+   "authorization": "DEC-7305",
+   "reason": "Nightly ecosystem-scan workflow (T-19); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
+  },
+  {
+   "path": ".github/workflows/secret-scan.yml",
+   "expected_blob": "80ea62eb42a36c6f3837ff35d10f2ffd2404af38",
+   "expected_mode": "100644",
+   "sha256": "ce6843798758fa6215bc174dddeb078d04384f5e1905c60024607e2cd3b4a212",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": ".github/workflows/sps-ci.yml",
+   "expected_blob": "31811a6bf9123f6c682b86ef2d6fee89cc218e49",
+   "expected_mode": "100644",
+   "sha256": "c65c55e7a6db5544bdd241200fd39c4ec39c8e795873cabbb524ce1fe8c4525a",
+   "authorization": "DEC-7305",
+   "reason": "tests/CI audit fix (T-20): validator-battery job added, MIN_TESTS raised to 1000, permissions/concurrency block added; pinned by DEC-7305 as amended 2026-10-18.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (provenance + copy-gate CI steps, test-count comment) — orchestrator; final release re-pin 2026-10-18 (docs counts + CI copy-gate)"
+  },
+  {
+   "path": ".github/workflows/weekly-audit.yml",
+   "expected_blob": "0fdf95d664e91dcfb17ced936801beab91fba6a7",
+   "expected_mode": "100644",
+   "sha256": "e987de9e3d86279aedfd5671f139c4051fa23e4a67d8c6179a7ba99d005d4e7b",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": ".github/workflows/windows-smoke.yml",
+   "expected_blob": "6692957304f775ef8ef3b5f4f993305128f8a694",
+   "expected_mode": "100644",
+   "sha256": "c19e74ba645b89ee8b1a01735e67cecdce931c530b002f8fb6862e0462d43b1b",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 fixes (scan jq dedup, label bootstrap, exit masking, doc truth)."
+  },
+  {
+   "path": ".secrets-allowlist",
+   "expected_blob": "f0b2c4a8697c1802e24576bc9c5e972d77282470",
+   "expected_mode": "100644",
+   "sha256": "dc05745479728131c8e97fb4ef4a7b2683f438cc230e10073e8b791394ed6dc8",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator). Re-pinned 2026-10-18: dummy ghp_ example token from audit reports allowlisted (consent+scan batch)."
+  },
+  {
+   "path": "CATALOG.md",
+   "expected_blob": "01639d768b2174c1a66797f215c250030aa5ac33",
+   "expected_mode": "100644",
+   "sha256": "477e304b28547ecaafa0e4dd0349f768dfd94c78d323182589700428198a005a",
+   "authorization": "DEC-7305",
+   "reason": "profile-conflict resolution (unified install model); content and mode pinned by DEC-7305.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (stale skills/ path fix + content/copy row) — orchestrator"
+  },
+  {
+   "path": "CHANGELOG.md",
+   "expected_blob": "9f1a7227bcbe02abc4f20defdedf41f478ea7f69",
+   "expected_mode": "100644",
+   "sha256": "ae40998f3441eaffff419b65e2fde0f7be16a9cde5d2ab42f2d2473d721b78ac",
+   "authorization": "DEC-7305",
+   "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17. Re-pinned 2026-10-18: QA round-2 doc-truth fixes.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (test count 1259 + 60 exceptions) — orchestrator; final release re-pin 2026-10-18 (docs counts + CI copy-gate)"
+  },
+  {
+   "path": "README.md",
+   "expected_blob": "e7b2e8c13447d6bbf805bc12797ce07461896ed0",
+   "expected_mode": "100644",
+   "sha256": "88ae6b167788e0d4329c903ec4237432362a58ddd19d4fa1cd2d06cddb2f2f35",
+   "authorization": "DEC-7305",
+   "reason": "trust note updated to accept-new + sps-seo listed; content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-2 doc-truth fixes.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (test count 1259 + skills/ path fixes) — orchestrator; final release re-pin 2026-10-18 (docs counts + CI copy-gate)"
+  },
+  {
+   "path": "framework/sps2/tests/test_hooks.py",
+   "expected_blob": "8a2dfaeba3703455f82e97d03f449d6d257f57ee",
+   "expected_mode": "100644",
+   "sha256": "cbc8204b3b40d2817f487b3363f570bc356c55ecd1a6e91df1ff9a3406598845",
+   "authorization": "DEC-7305",
+   "reason": "T-25/T-32 batch test files (secret-scan, hooks); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "framework/sps2/tests/test_secret_scan.py",
+   "expected_blob": "7a3ab333e7052158901617e54583742c4e003670",
+   "expected_mode": "100644",
+   "sha256": "e16b49594bff024cbf4a5d59c87d4eeea1376cb2eb89a22737fc5b7a8eaa96ab",
+   "authorization": "DEC-7305",
+   "reason": "T-25/T-32 batch test files (secret-scan, hooks); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "get-sps.ps1",
+   "expected_blob": "250a5d62259b4ba83415995d8b9969d7d7d002ad",
+   "expected_mode": "100644",
+   "sha256": "939c88865a5691f4a769aa10983f0d5eb88817ba46337779b2081ee09f523d1d",
+   "authorization": "DEC-7201",
+   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: installer QA round-2 fixes."
+  },
+  {
+   "path": "get-sps.sh",
+   "expected_blob": "5fec1427f78a599787ad655b4280326adc45546b",
+   "expected_mode": "100755",
+   "sha256": "fe9a9a9b3a0ac8ca7b1ade9c1be47cde781fb35e2fdaf12ee1b36444c84897f6",
+   "authorization": "DEC-7201",
+   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+  },
+  {
+   "path": "install.ps1",
+   "expected_blob": "b9e3472fd0fd370552c500b647b44a9b018ec84a",
+   "expected_mode": "100644",
+   "sha256": "bdeaf379b5e11068c53b274adb663c4eb58572f3c00f169de228a5b46cf7a57e",
+   "authorization": "DEC-7305",
+   "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (Invoke-Native Start-Job runspace fix (audit #1)) — orchestrator"
+  },
+  {
+   "path": "install.sh",
+   "expected_blob": "2cbd6eafbd781f0eb873af9f52eda2e8f7674195",
+   "expected_mode": "100755",
+   "sha256": "f7e64e897baa779e7babcf5e7288ea903f250833e341b6c74d93812ec7f0f19d",
+   "authorization": "DEC-7305",
+   "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (PRE_EXISTING_SPS preservation fix (audit #7)) — orchestrator"
+  },
+  {
+   "path": "scripts/bootstrap-sps.sh",
+   "expected_blob": "5eebb5fc863671eeb9eaeff479a8310e08224cf1",
+   "expected_mode": "100755",
+   "sha256": "57ba65f82f7207279ddbf528467b42751138ea12866e07c60ce642b4d0700949",
+   "authorization": "DEC-7201",
+   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+  },
+  {
+   "path": "scripts/ecosystem-domains.tsv",
+   "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+   "expected_mode": "100644",
+   "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
+   "authorization": "DEC-7305",
+   "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+  },
+  {
+   "path": "scripts/ecosystem-scan.sh",
+   "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+   "expected_mode": "100755",
+   "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+   "authorization": "DEC-7305",
+   "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+  },
+  {
+   "path": "scripts/secret-scan.sh",
+   "expected_blob": "b7160c52a35577c7279365e660661db3513a9530",
+   "expected_mode": "100755",
+   "sha256": "cba3ec4b391251d1dd66850b18b58c44a1a526c9bfc89172fc064922e077895f",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
+  },
+  {
+   "path": "scripts/skill-search.sh",
+   "authorization": "DEC-7305",
+   "reason": "New dynamic skill-selection research helper (DYNAMIC-SKILLS law); pinned by DEC-7305 as amended.",
+   "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+   "expected_mode": "100755",
+   "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303"
+  },
+  {
+   "path": "scripts/smoke-sps.sh",
+   "expected_blob": "e9dd76f4a3bbe2976719ae84b9f3bdf0a909735f",
+   "expected_mode": "100755",
+   "sha256": "9a9d095e4ca6d4c2c525efb5f9563fb833b8ec3f20e3c5647ba0d8b9fdea05ac",
+   "authorization": "DEC-7305",
+   "reason": "tests/CI audit fix (T-20): smoke coverage for shell tools (bash -n all scripts, sps-status/lawlog/hygiene happy paths); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
+  },
+  {
+   "path": "scripts/sps-backup.sh",
+   "expected_blob": "1860cba863144ec4c7d5fe5a978dac36d0b7b828",
+   "expected_mode": "100755",
+   "sha256": "48a8f65f1da27f8c89d3ce9b009a68da522295c0a9f5f32da0c30504eba24296",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (restore tmpdir trap (audit #10)) — orchestrator"
+  },
+  {
+   "path": "scripts/sps-doctor.sh",
+   "expected_blob": "21ad6f3ef7c5902dd094ee976f80a39c1820202d",
+   "expected_mode": "100755",
+   "sha256": "1c60da7e9e6a5f91aa817c9350531b4de32ed631aabd8a5c6b7dcad18184d54f",
+   "authorization": "DEC-7305",
+   "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
+  },
+  {
+   "path": "scripts/sps-hook-gate.sh",
+   "expected_blob": "5168dd893990c6f5866b861c2dff5d8c6eaa28d6",
+   "expected_mode": "100755",
+   "sha256": "e75f1451e7af5cc31eab5b7e036ad82a106692011c38c839a57e92ba226e35aa",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "scripts/sps-hooks.sh",
+   "expected_blob": "649a7f7b32be7af14e34f45a52c36ae04fb1f548",
+   "expected_mode": "100755",
+   "sha256": "fa44878d04db4b83df0020598b4594ba94ddf8ce66f9f17e8a27eae336549cc6",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "scripts/sps-hygiene.sh",
+   "expected_blob": "88ab07e0d0e2b40b384823325fd19c01cfbeb876",
+   "sha256": "74dfdc9aea7b15e525605db5efb53c74d3562dfe9f75524110e5ddbbd52b5e3c",
+   "expected_mode": "100755",
+   "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
+   "authorization": "DEC-7305"
+  },
+  {
+   "path": "scripts/sps-init.sh",
+   "expected_blob": "442605edc501e29fba458303c4ae458e6c0d53c5",
+   "expected_mode": "100755",
+   "sha256": "d46cfc149f3e10e066666cb703b18c80f032f1d5aab9531e6ff1fd2326a6e213",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "scripts/sps-lawlog.sh",
+   "expected_blob": "02bf9da23ff7d37574687dbc9ac9af8d57bb9484",
+   "sha256": "7c6df20affc92ee712c712cdb32d1cc336401ed4b3525de64b3acd411a7dd0fc",
+   "expected_mode": "100755",
+   "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
+   "authorization": "DEC-7305"
+  },
+  {
+   "path": "scripts/sps-lesson.sh",
+   "expected_blob": "3ee6774c39c8faedf51c016e204687d6955c5003",
+   "expected_mode": "100755",
+   "sha256": "14779db870a478fff655004b5ab76105de851de6a76ede769704d301275f3e13",
+   "authorization": "DEC-7305",
+   "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (slugify fallback + scratch trap (audit #9, #11)) — orchestrator"
+  },
+  {
+   "path": "scripts/sps-provenance.sh",
+   "expected_blob": "d863eb3362c176220ae78f94278602357135a636",
+   "expected_mode": "100755",
+   "sha256": "55128a97d25007b29883a585e5782b9efdb506c381fd06c9fbdb411b1e3e196d",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "scripts/sps-restore.sh",
+   "expected_blob": "deaccb590350323f15ed061af6abba41e6cdcb35",
+   "expected_mode": "100755",
+   "sha256": "2f1a87dfaf48862decda6e5cf873c7e6943dfb4998e4d51b88dcf0349f64728e",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "scripts/sps-status.sh",
+   "expected_blob": "f84bd947a2b59e51fbc6189d623fe86e41d2f9a6",
+   "expected_mode": "100755",
+   "sha256": "e35fbac2242241e88d338597ef041b2279776b0de3e794af7d6256211ee8d72d",
+   "authorization": "DEC-7305",
+   "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+  },
+  {
+   "path": "scripts/sps-update.sh",
+   "expected_blob": "665c0fe05995a73fdefda096135b18119f350a55",
+   "expected_mode": "100755",
+   "sha256": "7645a40f88924b1ca996af4b733bc0176b724e693cb5031b62464e7c5991edfa",
+   "authorization": "DEC-7201",
+   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed. Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
+  },
+  {
+   "path": "scripts/update-sps.ps1",
+   "expected_blob": "28bc36e22afcf4a14b498d61593e413cb502d4ba",
+   "expected_mode": "100644",
+   "sha256": "be4e6cd0b1ce8ef326e2c0c5cd80b3f184578f3f0935af3251d7121f9138da44",
+   "authorization": "DEC-7201",
+   "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (install-manifest honor fix (audit #2)) — orchestrator"
+  },
+  {
+   "path": "skill/sps/scripts/bootstrap-sps.sh",
+   "expected_blob": "5eebb5fc863671eeb9eaeff479a8310e08224cf1",
+   "expected_mode": "100755",
+   "sha256": "57ba65f82f7207279ddbf528467b42751138ea12866e07c60ce642b4d0700949",
+   "authorization": "DEC-7201",
+   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+  },
+  {
+   "path": "skill/sps/scripts/check-update.sh",
+   "authorization": "DEC-7305",
+   "reason": "Mirror byte-identical resync with scripts/check-update.sh primary (legacy-path VERSION line that was applied to the primary only, pre-range); content and mode pinned by DEC-7305 as amended. Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).",
+   "expected_blob": "9487f918b1321e6f85b8646502ce14bb07e1eaa9",
+   "expected_mode": "100755",
+   "sha256": "c52bb4d75b88e97f1efbdb777ec148d49ad47b5ceeb06acbaad525cffe40bd7f"
+  },
+  {
+   "path": "skill/sps/scripts/ecosystem-domains.tsv",
+   "expected_blob": "30e87f6916320c62524b996d0b796ea70b9da9f3",
+   "expected_mode": "100644",
+   "sha256": "44982d203d7653a277bafae33b495bbc04d519af7f13b13be6f2681a6ff52ba1",
+   "authorization": "DEC-7305",
+   "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+  },
+  {
+   "path": "skill/sps/scripts/ecosystem-scan.sh",
+   "expected_blob": "f0f62384f5ed1091117cd8fafddc862eeb4af87e",
+   "expected_mode": "100755",
+   "sha256": "96d292115961987ff99632240bc8c1b639e1524d5f692b7b27e4972879bf27ba",
+   "authorization": "DEC-7305",
+   "reason": "Nightly skill-ecosystem scan (T-19, report-only); pinned by DEC-7305 as amended 2026-10-18."
+  },
+  {
+   "path": "skill/sps/scripts/secret-scan.sh",
+   "expected_blob": "b7160c52a35577c7279365e660661db3513a9530",
+   "expected_mode": "100755",
+   "sha256": "cba3ec4b391251d1dd66850b18b58c44a1a526c9bfc89172fc064922e077895f",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
+  },
+  {
+   "path": "skill/sps/scripts/skill-search.sh",
+   "expected_blob": "e2b940f4798550fe2d9667c337cfa37fa29a19de",
+   "expected_mode": "100755",
+   "sha256": "3792bf159288da00e35ef159b8318283c6cfc07e362b70f02e8fd7e36d791303",
+   "authorization": "DEC-7305",
+   "reason": "Mirror of scripts/skill-search.sh required by the CI 'Script mirrors in sync' check (diff -rq scripts skill/sps/scripts); pinned by DEC-7305 as amended."
+  },
+  {
+   "path": "skill/sps/scripts/smoke-sps.sh",
+   "authorization": "DEC-7305",
+   "reason": "tests/CI audit fix (T-20): byte-identical mirror resync with scripts/smoke-sps.sh primary (shell-tool smoke coverage); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
+   "expected_blob": "e9dd76f4a3bbe2976719ae84b9f3bdf0a909735f",
+   "expected_mode": "100755",
+   "sha256": "9a9d095e4ca6d4c2c525efb5f9563fb833b8ec3f20e3c5647ba0d8b9fdea05ac"
+  },
+  {
+   "path": "skill/sps/scripts/sps-backup.sh",
+   "expected_blob": "1860cba863144ec4c7d5fe5a978dac36d0b7b828",
+   "expected_mode": "100755",
+   "sha256": "48a8f65f1da27f8c89d3ce9b009a68da522295c0a9f5f32da0c30504eba24296",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (mirror of scripts/ fix) — orchestrator"
+  },
+  {
+   "path": "skill/sps/scripts/sps-doctor.sh",
+   "authorization": "DEC-7305",
+   "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
+   "expected_blob": "21ad6f3ef7c5902dd094ee976f80a39c1820202d",
+   "expected_mode": "100755",
+   "sha256": "1c60da7e9e6a5f91aa817c9350531b4de32ed631aabd8a5c6b7dcad18184d54f"
+  },
+  {
+   "path": "skill/sps/scripts/sps-hook-gate.sh",
+   "expected_blob": "5168dd893990c6f5866b861c2dff5d8c6eaa28d6",
+   "expected_mode": "100755",
+   "sha256": "e75f1451e7af5cc31eab5b7e036ad82a106692011c38c839a57e92ba226e35aa",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "skill/sps/scripts/sps-hooks.sh",
+   "expected_blob": "649a7f7b32be7af14e34f45a52c36ae04fb1f548",
+   "expected_mode": "100755",
+   "sha256": "fa44878d04db4b83df0020598b4594ba94ddf8ce66f9f17e8a27eae336549cc6",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "skill/sps/scripts/sps-hygiene.sh",
+   "expected_blob": "88ab07e0d0e2b40b384823325fd19c01cfbeb876",
+   "sha256": "74dfdc9aea7b15e525605db5efb53c74d3562dfe9f75524110e5ddbbd52b5e3c",
+   "expected_mode": "100755",
+   "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
+   "authorization": "DEC-7305"
+  },
+  {
+   "path": "skill/sps/scripts/sps-init.sh",
+   "expected_blob": "442605edc501e29fba458303c4ae458e6c0d53c5",
+   "expected_mode": "100755",
+   "sha256": "d46cfc149f3e10e066666cb703b18c80f032f1d5aab9531e6ff1fd2326a6e213",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "skill/sps/scripts/sps-lawlog.sh",
+   "expected_blob": "02bf9da23ff7d37574687dbc9ac9af8d57bb9484",
+   "sha256": "7c6df20affc92ee712c712cdb32d1cc336401ed4b3525de64b3acd411a7dd0fc",
+   "expected_mode": "100755",
+   "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure.",
+   "authorization": "DEC-7305"
+  },
+  {
+   "path": "skill/sps/scripts/sps-lesson.sh",
+   "expected_blob": "3ee6774c39c8faedf51c016e204687d6955c5003",
+   "expected_mode": "100755",
+   "sha256": "14779db870a478fff655004b5ab76105de851de6a76ede769704d301275f3e13",
+   "authorization": "DEC-7305",
+   "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (mirror of scripts/ fix) — orchestrator"
+  },
+  {
+   "path": "skill/sps/scripts/sps-provenance.sh",
+   "expected_blob": "d863eb3362c176220ae78f94278602357135a636",
+   "expected_mode": "100755",
+   "sha256": "55128a97d25007b29883a585e5782b9efdb506c381fd06c9fbdb411b1e3e196d",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "skill/sps/scripts/sps-restore.sh",
+   "expected_blob": "deaccb590350323f15ed061af6abba41e6cdcb35",
+   "expected_mode": "100755",
+   "sha256": "2f1a87dfaf48862decda6e5cf873c7e6943dfb4998e4d51b88dcf0349f64728e",
+   "authorization": "DEC-7305",
+   "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+  },
+  {
+   "path": "skill/sps/scripts/sps-status.sh",
+   "expected_blob": "f84bd947a2b59e51fbc6189d623fe86e41d2f9a6",
+   "expected_mode": "100755",
+   "sha256": "e35fbac2242241e88d338597ef041b2279776b0de3e794af7d6256211ee8d72d",
+   "authorization": "DEC-7305",
+   "reason": "/sps status dashboard script (+ mirror per CI mirror law); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch)."
+  },
+  {
+   "path": "skill/sps/scripts/sps-update.sh",
+   "expected_blob": "665c0fe05995a73fdefda096135b18119f350a55",
+   "expected_mode": "100755",
+   "sha256": "7645a40f88924b1ca996af4b733bc0176b724e693cb5031b62464e7c5991edfa",
+   "authorization": "DEC-7201",
+   "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed. Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth)."
+  },
+  {
+   "path": "skill/sps/scripts/update-sps.ps1",
+   "expected_blob": "28bc36e22afcf4a14b498d61593e413cb502d4ba",
+   "expected_mode": "100644",
+   "sha256": "be4e6cd0b1ce8ef326e2c0c5cd80b3f184578f3f0935af3251d7121f9138da44",
+   "authorization": "DEC-7201",
+   "reason": "SPS_REPO_DIR env-override parity with the bash updater (fixes the CI pwsh dirty-source test after the repo rename); content and mode pinned by DEC-7305 as amended.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (mirror of scripts/ fix) — orchestrator"
+  },
+  {
+   "path": "skill/sps-cms/scripts/update.sh",
+   "expected_blob": "56a7c55c5df49fa32d1a79663c445a2e0f081391",
+   "expected_mode": "100755",
+   "sha256": "4f20982eef07f64d027f15e5d28f124b2e20b7ef14ab2954329d5ebd2ff23151",
+   "authorization": "DEC-7305",
+   "reason": "m-7 fix: no more curl|bash remote exec — download to temp, review, typed yes before running. Pinned 2026-10-18: consent+scan audit batch. Authorized by DEC-7305 (consent+scan audit batch 2026-10-18)."
+  },
+  {
+   "path": "skill/sps-cms/scripts/update.ps1",
+   "expected_blob": "b48470857999a7b810283d5e76b66d400d67ba77",
+   "expected_mode": "100644",
+   "sha256": "a31ad6c1c805d1b91281d0c8754c8888778d578317fd7fb906c7ee0702975313",
+   "authorization": "DEC-7305",
+   "reason": "m-7 fix: no more Invoke-Expression of remote scripts — download to temp, review, explicit yes before running. Pinned 2026-10-18: consent+scan audit batch. Authorized by DEC-7305 (consent+scan audit batch 2026-10-18).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (installer exit-code fix (audit #5)) — orchestrator"
+  },
+  {
+   "path": "uninstall.ps1",
+   "expected_blob": "510b299726273fe8345744d4525e9c40b5b60761",
+   "expected_mode": "100644",
+   "sha256": "db5bb9c65e7e8ed563b5f605f391feacd8cf4cdc9e32bd4e0bc0c21661f471b8",
+   "authorization": "DEC-7305",
+   "reason": "Package 3 (path-confinement guard, reparse-point rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes."
+  },
+  {
+   "path": "uninstall.sh",
+   "expected_blob": "4ffba3f87542ba66bc8ddeb79601e43e0bf8a4b9",
+   "expected_mode": "100755",
+   "sha256": "2aaa586c235d9a4aab9bd3385b2178eb8a84839c2b6dc66764774bccbc45b37e",
+   "authorization": "DEC-7305",
+   "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (&&/|| chain fix (audit #8)) — orchestrator"
+  },
+  {
+   "path": "scripts/check-update.sh",
+   "expected_blob": "9487f918b1321e6f85b8646502ce14bb07e1eaa9",
+   "expected_mode": "100755",
+   "sha256": "c52bb4d75b88e97f1efbdb777ec148d49ad47b5ceeb06acbaad525cffe40bd7f",
+   "authorization": "DEC-7305",
+   "reason": "Check-update (update-state cache) — pinned 2026-10-18: QA round-6 cached-state truth fix; script is baseline-protected and now modified."
+  },
+  {
+   "path": "scripts/check-update.ps1",
+   "expected_blob": "0652b5f50b8cd351b18564c716c487c96150048d",
+   "expected_mode": "100644",
+   "sha256": "984320ed0f1e8af9cf7cfe3121d3359323f38b675c0907c02f1a211b6f0cdc94",
+   "authorization": "DEC-7305",
+   "reason": "Check-update PS1 (Windows updater) — pinned 2026-10-18: audit #4 stale skills\\ path fix; baseline-protected scripts/ path."
+  },
+  {
+   "path": "scripts/sps-copycheck.sh",
+   "expected_blob": "16a794701b62961ea0656f2042fb15512ec9d593",
+   "expected_mode": "100755",
+   "sha256": "71e9767b4c661859fc472f3949d996de9e2a555a32cc79751b42d146c5530241",
+   "authorization": "DEC-7305",
+   "reason": "Copy-gate wrapper (COPY-GATE.md enforcement) — pinned 2026-10-18: new script in baseline-protected scripts/; mirror skill/sps/scripts/sps-copycheck.sh is byte-identical."
+  }
+ ],
+ "related_test_artifacts": [
+  {
+   "path": "framework/sps2/tests/test_updater_safety.py",
+   "sha256": "7ef8bb82ab30758e58641da49953e30eecf4c40bd9dc059a479e98d87bb0529e",
+   "authorization": "DEC-7201",
+   "reason": "Updater-safety regression evidence; not a legacy-path exception."
+  }
+ ],
+ "explicitly_excluded_paths": [
+  "scripts/check-update.ps1",
+  "scripts/check-update.sh",
+  "skill/sps/scripts/check-update.ps1",
+  "skill/sps/scripts/check-update.sh"
+ ]
 }

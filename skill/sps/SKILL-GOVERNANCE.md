@@ -20,7 +20,7 @@ Prefer a small number of strong skills over a noisy pile.
 | React | `vercel-react-best-practices` | `vercel-composition-patterns` | |
 | Testing | `webapp-testing` | `agent-browser` live checks | |
 | SEO | `sps-seo` (bundled, synced by installer) | `ai-seo` | |
-| Content | `copywriting` | fact-check | SPS drafts, user edits |
+| Content | COPY-GATE.md (bundled law) | `copywriting` (enhancer), fact-check | copy quality + Bangla standard; SPS drafts, user edits |
 | Surgical behavior | Karpathy guidelines | CONTEXT-EFFICIENCY | |
 | Hallucination gate | `verification-before-completion` | fact-check | single skill only |
 | Security | Trail of Bits skills | host review | full profile / when available |

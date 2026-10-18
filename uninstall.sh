@@ -351,7 +351,14 @@ if command -v claude >/dev/null 2>&1; then
     for plugin in "${CLAUDE_PLUGINS[@]+${CLAUDE_PLUGINS[@]}}"; do
       # The installer mixes scopes (most plugins --scope project, Trail of
       # Bits --scope user), so try both; the manifest does not record scope.
-      claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1 && removed "$plugin (project)"         || claude plugin uninstall "$plugin" --scope user >/dev/null 2>&1 && removed "$plugin (user)" || true
+      # Explicit if/elif: a chained `A && B || C && D || true` would run the
+      # user-scope report even when the project-scope uninstall succeeded
+      # (&& and || share precedence and associate left).
+      if claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1; then
+        removed "$plugin (project)"
+      elif claude plugin uninstall "$plugin" --scope user >/dev/null 2>&1; then
+        removed "$plugin (user)"
+      fi
     done
   fi
 

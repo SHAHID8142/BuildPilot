@@ -34,8 +34,14 @@ jobs:
       - name: Machine law check (DoD / checkpoint / context-budget)
         run: python3 framework/sps2/tools/check_laws.py
 
+      - name: Copy gate (no AI slop / placeholder copy in product docs)
+        run: python3 framework/sps2/tools/check_copy.py . --mode deployment
+
       - name: Docs drift (every command in docs must exist)
         run: python3 framework/sps2/tools/check_docs_drift.py
+
+      - name: Provenance (shipped skills pinned, no drift)
+        run: bash scripts/sps-provenance.sh check --strict
 
       - name: SPS smoke
         run: bash scripts/smoke-sps.sh
@@ -158,7 +164,7 @@ jobs:
           # but a partially-empty run exits 0. Capture output and assert the
           # parsed test count against MIN_TESTS so a green build cannot mean
           # zero executed tests. Raise MIN_TESTS as the suite grows.
-          # 1258 = the full suite as of the 4.4.0 audit-fix batch; the floor is
+          # 1268 = the full suite as of the 4.4.0 audit-fix batch; the floor is
           # set ~96% of that (1210) so losing up to a few dozen tests still
           # fails CI, while adding tests never does.
           MIN_TESTS=1210
@@ -308,4 +314,5 @@ jobs:
           set -euo pipefail
           bash framework/sps2/tools/validate-sps2.sh
           python3 framework/sps2/tools/check_laws.py
+          python3 framework/sps2/tools/check_copy.py . --mode deployment
           python3 framework/sps2/tools/check_generated_tests.py
