@@ -118,11 +118,11 @@
     },
     {
       "path": "install.ps1",
-      "expected_blob": "4d7b6fd6d1a289a89e742e467fb3af0b2551058c",
+      "expected_blob": "2f099d3be4a6aa84fb0240963a5b031bb9fbf7db",
       "expected_mode": "100644",
-      "sha256": "481df450a714e89d83c00067d40c846a4538e4ba412356393ffa8ee06f0245bb",
+      "sha256": "598bf9b6e3cd34d1d9bc6adbf0fd981256045115b682bf7e72870b6c54e49f3d",
       "authorization": "DEC-7305",
-      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes."
+      "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix."
     },
     {
       "path": "install.sh",

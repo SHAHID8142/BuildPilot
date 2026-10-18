@@ -106,7 +106,7 @@ function Invoke-Native {
     param([scriptblock]$Command)
     & $Command
     if ($LASTEXITCODE -ne 0) {
-        throw "command exited with code $LASTEXITCODE: $Command"
+        throw "command exited with code ${LASTEXITCODE}: $Command"
     }
 }
 
