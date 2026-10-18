@@ -114,12 +114,17 @@ if [[ -n "$BASE_REF" ]]; then
 fi
 
 # --- 3. agent/MCP config surfaces (incl. untracked; secrets only) ------------
+# Tracked-set membership via -z + NUL-delimited compare: plain `git ls-files`
+# quotes paths containing spaces, so the substring match would miss them and
+# those files get scanned twice (harmless but wasteful).
+tracked_set="$(git ls-files -z 2>/dev/null | tr '\0' '\n')"
 while IFS= read -r -d '' f; do
   f="${f#./}"
-  case " $(git ls-files -- "$f" 2>/dev/null) " in
-    *" $f "*) ;;               # already scanned as a tracked file
-    *) scan_file "$f" ;;       # untracked config: scan now
-  esac
+  if printf '%s\n' "$tracked_set" | grep -qxF -- "$f"; then
+    :                         # already scanned as a tracked file
+  else
+    scan_file "$f"            # untracked config: scan now
+  fi
 done < <(
   {
     find .claude -type f -print0 2>/dev/null

@@ -141,13 +141,24 @@ echo -e "${DIM}Installing SPS v${VERSION}…${NC}"
 # e.g. --agents claude-code,cursor would silently get AGENTS='*' (every host).
 UPDATE_AGENT_ARGS=()
 if [[ -f "$MANIFEST" ]]; then
-  _saved_agents="$(grep '^AGENTS=' "$MANIFEST" 2>/dev/null | cut -d= -f2-)"
+  _saved_agents="$(grep '^AGENTS=' "$MANIFEST" 2>/dev/null | cut -d= -f2- | tr -d '[:space:]')"
   if [[ -n "$_saved_agents" && "$_saved_agents" != "*" ]]; then
     UPDATE_AGENT_ARGS=(--agents "$_saved_agents")
     echo -e "${DIM}Preserving agents selection:${NC} $_saved_agents"
   fi
+  # Preserve a core-only choice (m-4): a user who installed --no-extras must
+  # not get 26 third-party skills + 11 plugins pulled in by the update's
+  # --yes (which would otherwise read as full extras consent). Older
+  # manifests without the field default to extras (the historical behavior).
+  _saved_extras="$(grep '^INSTALL_EXTRAS=' "$MANIFEST" 2>/dev/null | cut -d= -f2-)"
+  if [[ "$_saved_extras" == "false" ]]; then
+    UPDATE_EXTRAS_ARGS=(--no-extras)
+    echo -e "${DIM}Preserving core-only install (no third-party extras)${NC}"
+  else
+    UPDATE_EXTRAS_ARGS=()
+  fi
 fi
-bash ./install.sh --yes "${UPDATE_AGENT_ARGS[@]+${UPDATE_AGENT_ARGS[@]}}"
+bash ./install.sh --yes "${UPDATE_EXTRAS_ARGS[@]+${UPDATE_EXTRAS_ARGS[@]}}" "${UPDATE_AGENT_ARGS[@]+${UPDATE_AGENT_ARGS[@]}}"
 rc=$?
 if [[ $rc -ne 0 ]]; then
   bad "Reinstall failed (exit $rc). See ~/.sps/install.log"

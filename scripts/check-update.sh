@@ -165,10 +165,15 @@ if [[ "$FORCE" != true && -f "$STATE_FILE" ]]; then
     [[ -z "$latest" ]] && latest="unknown"
     if is_valid_cached_state "$latest" "$status"; then
       [[ "$status" == "offline" ]] && exit 2
+      if [[ "$INSTALLED" == "unknown" ]]; then
+        # No local version info: the cache cannot know whether an update is
+        # available — report unknown rather than inventing "update-available"
+        # from a cache that recorded up-to-date (audit: misreported state).
+        echo "SPS installed: unknown | latest: $latest | status: unknown (cached — no local version recorded)"
+        exit 0
+      fi
       cached_status="update-available"
-      if [[ "$INSTALLED" != "unknown" ]] && {
-        [[ "$INSTALLED" == "$latest" ]] || is_greater "$INSTALLED" "$latest"
-      }; then
+      if [[ "$INSTALLED" == "$latest" ]] || is_greater "$INSTALLED" "$latest"; then
         cached_status="up-to-date"
       fi
       echo "SPS installed: $INSTALLED | latest: $latest | status: $cached_status (cached)"

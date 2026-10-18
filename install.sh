@@ -338,6 +338,10 @@ USE_CONTEXT7=$USE_CONTEXT7
 USE_GRAPHIFY=$USE_GRAPHIFY
 SYNC_PATHS=$(IFS=,; echo "${SYNC_PATHS[*]:-}")
 SPS_VERSION=$VERSION
+# Whether this run installed third-party extras — sps-update.sh reads this
+# to preserve a core-only choice across updates (m-4: "preserves the
+# original install profile" means extras consent too, not just agents).
+INSTALL_EXTRAS=$INSTALL_EXTRAS
 EOF
 }
 

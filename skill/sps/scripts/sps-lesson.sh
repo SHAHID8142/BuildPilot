@@ -127,18 +127,25 @@ EOF
         exit 1
       fi
     fi
-    work="$(mktemp -d)/BuildPilot"
+    scratch="$(mktemp -d)"
+    work="$scratch/BuildPilot"
     if git clone --quiet "https://github.com/${BG_REPO}.git" "$work" 2>/dev/null; then
       :
     else
+      rm -rf "$scratch"
       die "could not clone ${BG_REPO} — check network/credentials"
     fi
     branch="lesson/$(today)-batch"
-    # Same-day re-send: the branch already exists in the fresh clone — switch
-    # to it instead of failing (a failed checkout here would leave HEAD on
-    # the default branch and commit the lessons to the wrong base).
-    git -C "$work" checkout -qb "$branch" 2>/dev/null \
-      || git -C "$work" checkout -q "$branch"
+    # Same-day re-send: the branch may already exist on the remote. Track it
+    # so the local branch builds on the earlier batch (a plain `checkout -b`
+    # would branch from main, diverge, and the push would be rejected
+    # non-fast-forward with the lessons stranded).
+    if git -C "$work" rev-parse -q --verify "origin/$branch" >/dev/null; then
+      git -C "$work" checkout -q --track "origin/$branch" 2>/dev/null \
+        || git -C "$work" checkout -q "$branch"
+    else
+      git -C "$work" checkout -qb "$branch"
+    fi
     mkdir -p "$work/lessons/inbox"
     copied=0
     for f in "${lessons[@]+${lessons[@]}}"; do
@@ -161,19 +168,27 @@ EOF
     # copies first, then run secret-scan.sh inside the clone (it scans tracked
     # files of the repo it finds itself in) — so what is scanned == what is sent.
     git -C "$work" add lessons/inbox
-    scan="$(dirname "$0")/secret-scan.sh"
-    [[ -f "$scan" ]] || scan="$(pwd)/scripts/secret-scan.sh"
+    # Resolve the scanner to an ABSOLUTE path before cd-ing into the clone:
+    # dirname "$0" is cwd-relative, and the scan runs via (cd "$work" && …),
+    # so a relative path breaks in the documented cross-project flow (a
+    # client project has no scripts/ of its own). Fallback: the installed
+    # checkout under ~/.sps.
+    scan_dir="$(cd "$(dirname "$0")" 2>/dev/null && pwd)" || scan_dir=""
+    scan="$scan_dir/secret-scan.sh"
+    if [[ -z "$scan_dir" || ! -f "$scan" ]]; then
+      scan="$HOME/.sps/src/BuildPilot/scripts/secret-scan.sh"
+    fi
     if [[ -f "$scan" ]]; then
       echo "Running secret scan over the ${copied} staged lesson(s)…"
       if ! (cd "$work" && bash "$scan"); then
-        echo "ABORTED — secret-scan flagged the lesson content." >&2
+        echo "ABORTED — secret-scan flagged the lesson content (or failed to run)." >&2
         echo "Redact the lesson files in .sps/lessons/pending/ and try again." >&2
         exit 1
       fi
     else
       # Fail CLOSED (audit m-3): a missing scanner must never become an
       # unscanned push to the public repo. Tell the user how to fix it.
-      echo "ABORTED — secret-scan.sh not found (looked next to this script and in $(pwd)/scripts)." >&2
+      echo "ABORTED — secret-scan.sh not found (looked next to this script and in ~/.sps/src/BuildPilot/scripts)." >&2
       echo "A lesson containing a client secret must never push unscanned." >&2
       echo "Run from a full checkout (scripts/ + skill/sps/scripts/) or reinstall: bash ~/.sps/src/BuildPilot/scripts/sps-doctor.sh --fix" >&2
       exit 1
@@ -192,8 +207,9 @@ EOF
         echo "Pushed branch $branch — open the PR at: https://github.com/${BG_REPO}/compare/${BG_BRANCH_BASE}...$branch"
       fi
     else
-      echo "Could not push (no write access?). Branch committed locally in: $work"
-      echo "Push manually or copy lessons/inbox/* into your BuildPilot clone."
+      echo "Could not push (no write access?). Branch committed locally in: $work" >&2
+      echo "Push manually or copy lessons/inbox/* into your BuildPilot clone." >&2
+      exit 1
     fi
     ;;
 
