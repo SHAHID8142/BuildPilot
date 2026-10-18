@@ -1,0 +1,1 @@
+- 2026-10-18: ffmpeg 9.0.2_1 via brew (user-approved in-session for T-40 launch-video skill; global, /opt/homebrew, 53.9MB)

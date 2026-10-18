@@ -406,7 +406,7 @@ ExtrasStep "prisma-client-api" ([scriptblock]::Create("Invoke-Native { npx skill
 ExtrasStep "prisma-cli" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y $agentArgsString }"))
 ExtrasStep "vercel-react-native-skills" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y $agentArgsString }"))
 ExtrasStep "sleek-design-mobile-apps" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y $agentArgsString }"))
-ExtrasStep "fact-check" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y $agentArgsString }"))
+ExtrasStep "fact-check" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/jwynia/agent-skills --skill fact-check --full-depth -g -y $agentArgsString }"))
 ExtrasStep "grill-me" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y $agentArgsString }"))
 ExtrasStep "caveman" ([scriptblock]::Create("Invoke-Native { npx skills add https://github.com/mattpocock/skills --skill caveman -g -y $agentArgsString }"))
 

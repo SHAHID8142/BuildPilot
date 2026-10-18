@@ -2,7 +2,7 @@
  "schema": "sps2.legacy-exception-manifest/v1",
  "decision_id": "DEC-7301",
  "baseline_commit": "c39694fedd34b0b0e9fa91d24ac543d21ad52c9f",
- "exception_count": 62,
+ "exception_count": 65,
  "exceptions": [
   {
    "path": ".github/expected-test-modules.txt",
@@ -70,11 +70,11 @@
   },
   {
    "path": "CHANGELOG.md",
-   "expected_blob": "9f1a7227bcbe02abc4f20defdedf41f478ea7f69",
+   "expected_blob": "72a203688817f05793fc4be2d3e797fcee873e29",
    "expected_mode": "100644",
-   "sha256": "ae40998f3441eaffff419b65e2fde0f7be16a9cde5d2ab42f2d2473d721b78ac",
+   "sha256": "066e488d64496ff42f5f37ac87b78903a51d14a640ecdff602e7e2c77bf882f3",
    "authorization": "DEC-7305",
-   "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17. Re-pinned 2026-10-18: QA round-2 doc-truth fixes.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (test count 1259 + 60 exceptions) — orchestrator; final release re-pin 2026-10-18 (docs counts + CI copy-gate)"
+   "reason": "profile-vocabulary tension resolved (R-4); content and mode pinned by DEC-7305.; re-pinned for 4.1.0 (T-17 + changelog) by DEC-7305 as amended 2026-10-17. Re-pinned 2026-10-18: QA round-2 doc-truth fixes.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (test count 1259 + 60 exceptions) — orchestrator; final release re-pin 2026-10-18 (docs counts + CI copy-gate); Re-pinned 2026-10-18: CI-failure batch (65 exceptions mirror pins + count doc 62->65)"
   },
   {
    "path": "README.md",
@@ -118,19 +118,19 @@
   },
   {
    "path": "install.ps1",
-   "expected_blob": "b9e3472fd0fd370552c500b647b44a9b018ec84a",
+   "expected_blob": "dc2bd23998fa75d77b3b4da198589e849bb2ef85",
    "expected_mode": "100644",
-   "sha256": "bdeaf379b5e11068c53b274adb663c4eb58572f3c00f169de228a5b46cf7a57e",
+   "sha256": "4fca2f8b17082176eff5b4bb9e3cb2cb6fce455977d156c8cd77aa75b02bb852",
    "authorization": "DEC-7305",
-   "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (Invoke-Native Start-Job runspace fix (audit #1)) — orchestrator"
+   "reason": "Package 2 (SSH host-key verification) + sps-seo sync + skill-dir path repair; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes. Re-pinned 2026-10-18: Invoke-Native message ${LASTEXITCODE} parse fix.; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (Invoke-Native Start-Job runspace fix (audit #1)) — orchestrator; Re-pinned 2026-10-18: fact-check skill add gains --full-depth (upstream repo nested fact-check 5 levels deep, npx scanner default depth missed it — windows-smoke CI failure)"
   },
   {
    "path": "install.sh",
-   "expected_blob": "2cbd6eafbd781f0eb873af9f52eda2e8f7674195",
+   "expected_blob": "1fec502271f63814169b448e56c990e205781152",
    "expected_mode": "100755",
-   "sha256": "f7e64e897baa779e7babcf5e7288ea903f250833e341b6c74d93812ec7f0f19d",
+   "sha256": "50d51fdf153830a31efc06053e25351b01f1cc9b141463d018ab3c9992c70244",
    "authorization": "DEC-7305",
-   "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (PRE_EXISTING_SPS preservation fix (audit #7)) — orchestrator"
+   "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: QA round-6 (absolute scanner path, branch tracking, extras preservation, cache truth).; Re-pinned 2026-10-18: audit-fix batch + COPY-GATE (PRE_EXISTING_SPS preservation fix (audit #7)) — orchestrator; Re-pinned 2026-10-18: fact-check skill add gains --full-depth (upstream repo nested fact-check 5 levels deep, npx scanner default depth missed it — windows-smoke CI failure)"
   },
   {
    "path": "scripts/bootstrap-sps.sh",
@@ -499,6 +499,30 @@
    "sha256": "71e9767b4c661859fc472f3949d996de9e2a555a32cc79751b42d146c5530241",
    "authorization": "DEC-7305",
    "reason": "Copy-gate wrapper (COPY-GATE.md enforcement) — pinned 2026-10-18: new script in baseline-protected scripts/; mirror skill/sps/scripts/sps-copycheck.sh is byte-identical."
+  },
+  {
+   "path": "skill/sps-cms/scripts/install.ps1",
+   "expected_blob": "ef6f682ae822b58422f1963ba7a9c0d11602738a",
+   "expected_mode": "100644",
+   "sha256": "4f4e729877f9e3e203957e75c14e2282bc499980421341806e8c0af28fe35de0",
+   "authorization": "DEC-7305",
+   "reason": "sps-cms installer fail-closed exit codes (audit #5) — skill/ mirror; CI run 39139195116 caught the missing pin"
+  },
+  {
+   "path": "skill/sps/scripts/check-update.ps1",
+   "expected_blob": "0652b5f50b8cd351b18564c716c487c96150048d",
+   "expected_mode": "100644",
+   "sha256": "984320ed0f1e8af9cf7cfe3121d3359323f38b675c0907c02f1a211b6f0cdc94",
+   "authorization": "DEC-7305",
+   "reason": "stale skills\\ path fix (audit #4) — skill/ mirror; CI run 39139195116 caught the missing pin"
+  },
+  {
+   "path": "skill/sps/scripts/sps-copycheck.sh",
+   "expected_blob": "16a794701b62961ea0656f2042fb15512ec9d593",
+   "expected_mode": "100755",
+   "sha256": "71e9767b4c661859fc472f3949d996de9e2a555a32cc79751b42d146c5530241",
+   "authorization": "DEC-7305",
+   "reason": "copy-gate wrapper mirror (byte-identical to scripts/sps-copycheck.sh); CI run 39139195116 caught the missing pin"
   }
  ],
  "related_test_artifacts": [

@@ -600,7 +600,7 @@ extras_step "prisma-client-api" npx skills add https://github.com/prisma/skills 
 extras_step "prisma-cli" npx skills add https://github.com/prisma/skills --skill prisma-cli -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "vercel-react-native-skills" npx skills add https://github.com/vercel-labs/agent-skills --skill vercel-react-native-skills -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "sleek-design-mobile-apps" npx skills add https://github.com/sleekdotdesign/agent-skills --skill sleek-design-mobile-apps -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
-extras_step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
+extras_step "fact-check" npx skills add https://github.com/jwynia/agent-skills --skill fact-check --full-depth -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "grill-me" npx skills add https://github.com/mattpocock/skills --skill grill-me -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 extras_step "caveman" npx skills add https://github.com/mattpocock/skills --skill caveman -g -y "${AGENT_ARGS[@]+${AGENT_ARGS[@]}}"
 
