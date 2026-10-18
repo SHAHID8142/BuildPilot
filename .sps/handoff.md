@@ -1,6 +1,6 @@
 # Handoff (rolled 2026-10-18; prior log → .sps/archive/handoff-2026-10-18-pre-audit-fix-batch.md)
 
-## STATE: CI-fix chain complete through f0ce913. sps-ci GREEN (381f282, 6c54bfd, b2a1b36, e766bfc); secret-scan GREEN everywhere. windows-smoke: root cause #1 fact-check depth → --full-depth (CI-verified installing); root cause #2 caveman deleted upstream → removed from installers, TotalSteps 27, canonical now 3e6f298b… (6 chain advances this session). Final windows-smoke run on f0ce913 in progress at pause; if red, read its log FIRST. Reports: reports/QA-2026-10-18-ci-fix-mirror-pins-full-depth.md + addendum-caveman. (2026-10-18 late)
+## STATE: CI-fix chain complete through f0ce913. sps-ci GREEN (381f282, 6c54bfd, b2a1b36, e766bfc); secret-scan GREEN everywhere. windows-smoke: root cause #1 fact-check depth → --full-depth (CI-verified installing); root cause #2 caveman deleted upstream → removed from installers, TotalSteps 27, canonical now 3e6f298b… (6 chain advances this session). FINAL: windows-smoke GREEN on bfe60fb (run with both fixes) — ALL CI GREEN, CI-fix loop CLOSED. Head: bfe60fb. Reports: reports/QA-2026-10-18-ci-fix-mirror-pins-full-depth.md + addendum-caveman. (2026-10-18 late)
 
 Done this batch: 21 audit fixes verified; COPY-GATE shipped (law 21, CI, DoD);
 import-scanner hardening #12–#16; legacy manifest now 65 records (canonical
