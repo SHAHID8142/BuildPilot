@@ -140,7 +140,7 @@ is_safe_uninstall_target() {
   real="$(cd "$(dirname "$candidate")" 2>/dev/null && pwd -P)" || return 1
   [ -n "$real" ] || return 1
   local root real_root
-  for root in "${UNINSTALL_ROOTS[@]}"; do
+  for root in "${UNINSTALL_ROOTS[@]+${UNINSTALL_ROOTS[@]}}"; do
     real_root="$(cd "$root" 2>/dev/null && pwd -P)" || continue
     case "$real/" in
       "$real_root/"|"$real_root"/*) return 0 ;;
@@ -166,7 +166,7 @@ record_cleaned_root() {
   local raw="$1" abs existing
   [[ -z "$raw" ]] && return 0
   abs="$(cd "$raw" 2>/dev/null && pwd -P)" || return 0
-  for existing in "${CLEANED_ROOT_PATHS[@]}"; do
+  for existing in "${CLEANED_ROOT_PATHS[@]+${CLEANED_ROOT_PATHS[@]}}"; do
     [[ "$existing" == "$abs" ]] && return 0
   done
   CLEANED_ROOT_PATHS+=("$abs")
@@ -182,7 +182,7 @@ remove_agent_skill() {
   # goose/crush/trae/junie/zed/openclaw/droid/qoder/kilocode/warp/grok/
   # hermes/autohand/zeroclaw installs behind. The .mdc probe clears rule
   # files in the rules dirs.
-  for root in "${UNINSTALL_ROOTS[@]}"; do
+  for root in "${UNINSTALL_ROOTS[@]+${UNINSTALL_ROOTS[@]}}"; do
     for candidate in "$root/$name" "$root/$name.mdc"; do
       if [ -e "$candidate" ] && safe_rm "$candidate"; then
         found=true
@@ -228,7 +228,7 @@ build_agent_args() {
     return
   fi
   IFS=',' read -r -a _agents <<< "$AGENTS"
-  for agent in "${_agents[@]}"; do
+  for agent in "${_agents[@]+${_agents[@]}}"; do
     [[ -n "$agent" ]] && REMOVE_AGENT_ARGS+=(--agent "$agent")
   done
 }
@@ -265,10 +265,10 @@ build_agent_args
 
 if command -v npx >/dev/null 2>&1; then
   section "Removing skills via Skills CLI"
-  npx skills remove "${MANAGED_SKILLS[@]}" -g -y "${REMOVE_AGENT_ARGS[@]}" >/dev/null 2>&1 || true
+  npx skills remove "${MANAGED_SKILLS[@]+${MANAGED_SKILLS[@]}}" -g -y "${REMOVE_AGENT_ARGS[@]+${REMOVE_AGENT_ARGS[@]}}" >/dev/null 2>&1 || true
 fi
 
-for skill in "${MANAGED_SKILLS[@]}"; do
+for skill in "${MANAGED_SKILLS[@]+${MANAGED_SKILLS[@]}}"; do
   [ -n "$skill" ] || continue
   remove_agent_skill "$skill"
 done
@@ -316,24 +316,24 @@ DEFAULT_SYNC_PATHS=(
   "$HOME/.zeroclaw/skills"
 )
 if ((${#SYNC_PATHS[@]} == 0)); then
-  SYNC_PATHS=("${DEFAULT_SYNC_PATHS[@]}")
+  SYNC_PATHS=("${DEFAULT_SYNC_PATHS[@]+${DEFAULT_SYNC_PATHS[@]}}")
 fi
 # CORE_SYNC_SKILLS must mirror install.sh sync_core_skill's three synced
 # skills. Every deletion still goes through safe_rm (allowlist-guarded).
 CORE_SYNC_SKILLS=(sps sps-cms sps-seo)
 # Dedupe: manifest SYNC_PATHS may overlap DEFAULT_SYNC_PATHS.
-for dest_root in "${SYNC_PATHS[@]}" "${DEFAULT_SYNC_PATHS[@]}"; do
+for dest_root in "${SYNC_PATHS[@]+${SYNC_PATHS[@]}}" "${DEFAULT_SYNC_PATHS[@]+${DEFAULT_SYNC_PATHS[@]}}"; do
   [[ -z "$dest_root" ]] && continue
   _seen=false
-  for _prev in "${_DEDUPED_SYNC_ROOTS[@]}"; do
+  for _prev in "${_DEDUPED_SYNC_ROOTS[@]+${_DEDUPED_SYNC_ROOTS[@]}}"; do
     [[ "$_prev" == "$dest_root" ]] && _seen=true && break
   done
   $_seen && continue
   _DEDUPED_SYNC_ROOTS+=("$dest_root")
 done
-for dest_root in "${_DEDUPED_SYNC_ROOTS[@]}"; do
+for dest_root in "${_DEDUPED_SYNC_ROOTS[@]+${_DEDUPED_SYNC_ROOTS[@]}}"; do
   _root_cleaned=false
-  for skill_name in "${CORE_SYNC_SKILLS[@]}"; do
+  for skill_name in "${CORE_SYNC_SKILLS[@]+${CORE_SYNC_SKILLS[@]}}"; do
     if [ -e "$dest_root/$skill_name" ] && safe_rm "$dest_root/$skill_name"; then
       removed "${dest_root/#$HOME/\~}/$skill_name"
       _root_cleaned=true
@@ -348,7 +348,7 @@ section "Removing Claude plugins"
 
 if command -v claude >/dev/null 2>&1; then
   if ((${#CLAUDE_PLUGINS[@]})); then
-    for plugin in "${CLAUDE_PLUGINS[@]}"; do
+    for plugin in "${CLAUDE_PLUGINS[@]+${CLAUDE_PLUGINS[@]}}"; do
       # The installer mixes scopes (most plugins --scope project, Trail of
       # Bits --scope user), so try both; the manifest does not record scope.
       claude plugin uninstall "$plugin" --scope project >/dev/null 2>&1 && removed "$plugin (project)"         || claude plugin uninstall "$plugin" --scope user >/dev/null 2>&1 && removed "$plugin (user)" || true
@@ -357,7 +357,7 @@ if command -v claude >/dev/null 2>&1; then
 
   # Remove marketplaces
   if ((${#CLAUDE_MARKETPLACES[@]})); then
-    for mkt in "${CLAUDE_MARKETPLACES[@]}"; do
+    for mkt in "${CLAUDE_MARKETPLACES[@]+${CLAUDE_MARKETPLACES[@]}}"; do
       claude plugin marketplace remove "$mkt" >/dev/null 2>&1 && removed "marketplace: $mkt" || true
     done
   fi

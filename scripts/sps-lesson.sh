@@ -111,7 +111,7 @@ EOF
       echo "About to publish ${#lessons[@]} lesson(s) to the PUBLIC repo ${BG_REPO}"
       echo "(branch lesson/$(today)-batch, then a pull request):"
       echo
-      for f in "${lessons[@]}"; do
+      for f in "${lessons[@]+${lessons[@]}}"; do
         echo "  ── $f ──"
         # Show the full content: this text is about to leave the machine,
         # so the user must be able to review exactly what is published.
@@ -134,13 +134,28 @@ EOF
       die "could not clone ${BG_REPO} — check network/credentials"
     fi
     branch="lesson/$(today)-batch"
-    git -C "$work" checkout -qb "$branch"
+    # Same-day re-send: the branch already exists in the fresh clone — switch
+    # to it instead of failing (a failed checkout here would leave HEAD on
+    # the default branch and commit the lessons to the wrong base).
+    git -C "$work" checkout -qb "$branch" 2>/dev/null \
+      || git -C "$work" checkout -q "$branch"
     mkdir -p "$work/lessons/inbox"
     copied=0
-    for f in "${lessons[@]}"; do
-      cp "$f" "$work/lessons/inbox/"
+    for f in "${lessons[@]+${lessons[@]}}"; do
+      dest="$work/lessons/inbox/$(basename "$f")"
+      # Same id already on the branch: skip rather than silently overwrite
+      # the tracked copy (the reviewer would lose the earlier version).
+      if [[ -e "$dest" ]]; then
+        echo "  skip (already on branch): $(basename "$f")"
+        continue
+      fi
+      cp "$f" "$dest"
       copied=$((copied+1))
     done
+    if [[ "$copied" -eq 0 ]]; then
+      echo "Nothing new to send — every lesson is already on $branch."
+      exit 0
+    fi
     # Secret-scan the exact bytes about to be pushed (audit m-3): a lesson
     # containing a client API key must never reach the public repo. Stage the
     # copies first, then run secret-scan.sh inside the clone (it scans tracked
@@ -156,10 +171,16 @@ EOF
         exit 1
       fi
     else
-      echo "warning: secret-scan.sh not found — skipping the pre-push secret scan" >&2
+      # Fail CLOSED (audit m-3): a missing scanner must never become an
+      # unscanned push to the public repo. Tell the user how to fix it.
+      echo "ABORTED — secret-scan.sh not found (looked next to this script and in $(pwd)/scripts)." >&2
+      echo "A lesson containing a client secret must never push unscanned." >&2
+      echo "Run from a full checkout (scripts/ + skill/sps/scripts/) or reinstall: bash ~/.sps/src/BuildPilot/scripts/sps-doctor.sh --fix" >&2
+      exit 1
     fi
     git -C "$work" -c user.name="SPS Lesson Bot" -c user.email="lessons@users.noreply.github.com" \
-      commit -qm "Lessons from client project ($(basename "$PWD")): ${copied} item(s)"
+      commit -qm "Lessons from client project ($(basename "$PWD")): ${copied} item(s)" \
+      || { echo "ABORTED — git commit failed; nothing was pushed." >&2; exit 1; }
     if git -C "$work" push -q "https://github.com/${BG_REPO}.git" "$branch" 2>/dev/null; then
       if have_gh; then
         gh pr create -R "$BG_REPO" --base "$BG_BRANCH_BASE" --head "$branch" \
@@ -184,7 +205,7 @@ EOF
     echo "Pending lessons (${#lessons[@]}) — review each per LESSONS.md (user approves every one):"
     echo
     n=0
-    for f in "${lessons[@]}"; do
+    for f in "${lessons[@]+${lessons[@]}}"; do
       n=$((n+1))
       category="$(sed -n 's/^category:[[:space:]]*//p' "$f" | head -n 1)"
       severity="$(sed -n 's/^severity:[[:space:]]*//p' "$f" | head -n 1)"

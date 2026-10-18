@@ -108,13 +108,15 @@ for d, _dirs, files in os.walk(root):
         total += st.st_size
         mtimes.append(st.st_mtime)
 if mtimes:
-    fmt = lambda t: time.strftime("%Y-%m-%d %H:%M", time.localtime(t))
+    fmt = lambda t: time.strftime("%Y-%m-%dT%H:%M", time.localtime(t))
     newest, oldest = fmt(max(mtimes)), fmt(min(mtimes))
 else:
     newest = oldest = "?"
 print(count, total, newest, oldest)
 PY
 )"
+  # mtimes use T (not a space) as the date/time separator so this 4-field
+  # read cannot split them (audit: "newest mtime: 2026-10-18" truncation).
   read -r fcount fsize newest oldest <<<"$summary"
   echo "RESTORE PREVIEW: $snap"
   echo "  files: $fcount   total size: $fsize bytes   newest mtime: $newest   oldest mtime: $oldest"

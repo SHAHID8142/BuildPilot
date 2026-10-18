@@ -75,18 +75,24 @@ scan_file() {
   while IFS= read -r hit; do
     [[ -z "$hit" ]] && continue
     line="${hit%%:*}"
-    text="${hit#*:}"
-    is_allowlisted "$text" && continue
-    record_hit "$f" "$line" "$text"
+    # Test the allowlist against the MATCHED TEXT only (same as the diff
+    # path below), never the whole line — a line pairing an allowlisted
+    # fixture with a real secret must still be reported.
+    while IFS= read -r text; do
+      [[ -z "$text" ]] && continue
+      is_allowlisted "$text" && continue
+      record_hit "$f" "$line" "$text"
+    done < <(printf '%s\n' "${hit#*:}" | grep -Eo -- "$PATTERNS" 2>/dev/null || true)
   done < <(grep -InE -- "$PATTERNS" "$f" 2>/dev/null || true)
 }
 
 export PATTERNS
 
 # --- 1. tracked files (binary files skipped via grep -I) ---------------------
-while IFS= read -r f; do
+# -z round-trip: filenames with newlines survive (no tr split into bogus paths).
+while IFS= read -r -d '' f; do
   scan_file "$f"
-done < <(git ls-files -z | tr '\0' '\n')
+done < <(git ls-files -z)
 
 # --- 2. diff vs origin/main (added lines only) -------------------------------
 BASE_REF="origin/main"

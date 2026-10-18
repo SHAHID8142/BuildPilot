@@ -91,13 +91,24 @@ except Exception:
 try:
     st = subprocess.run(["git", "status", "--porcelain", "-z", "--untracked-files=all"], capture_output=True).stdout
     toks = st.decode("utf-8", "replace").split("\0")
-    for tok in toks:
+    i = 0
+    while i < len(toks):
+        tok = toks[i]
+        i += 1
         if not tok:
             continue
+        # -z format: XY <path>\0 [<origPath>\0 for renames]. Consume the
+        # rename pair explicitly so the post-rename path is never parsed as
+        # a standalone root path (audit NIT). -z never quotes, so no
+        # quote-stripping (the old .replace mangled legit quoted names).
         p = tok[3:] if len(tok) > 3 and tok[2] == " " else tok
-        p = p.replace('"', "")
         if p.startswith("../") or "/" in p:
+            # Still consume a rename orig-path if present.
+            if tok[:2] in ("R ", "RM") and i < len(toks) and toks[i]:
+                i += 1
             continue
+        if tok[:2] in ("R ", "RM") and i < len(toks) and toks[i]:
+            i += 1  # skip the paired orig-path token
         if p:
             out.add(p)
 except Exception:

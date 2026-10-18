@@ -37,7 +37,11 @@ rm -rf "$TMP/status-repo"
 mkdir -p "$TMP/status-repo"
 git -C "$TMP/status-repo" init -q
 git -C "$TMP/status-repo" -c user.email=smoke@example.com -c user.name=smoke commit -q --allow-empty -m init
-if bash "$REPO/scripts/sps-status.sh" > "$TMP/status.out" 2>&1 && grep -q "SPS Status" "$TMP/status.out"; then
+# Run INSIDE the scratch repo (cd): the status script inspects the
+# invocation cwd, so calling it from $REPO would test the BuildPilot
+# checkout, not the fixture (audit: the old call passed from any cwd).
+if ( cd "$TMP/status-repo" && bash "$REPO/scripts/sps-status.sh" ) > "$TMP/status.out" 2>&1 \
+    && grep -q "SPS Status" "$TMP/status.out"; then
   pass "sps-status.sh happy path"
 else
   fail "sps-status.sh happy path"

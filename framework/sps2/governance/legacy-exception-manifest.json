@@ -126,11 +126,11 @@
     },
     {
       "path": "install.sh",
-      "expected_blob": "c7bc9ef95565cb78205611471ca05dd72c9cae1a",
+      "expected_blob": "005b5e454c10b757c2df3b0d624f6d3a54f3cb68",
       "expected_mode": "100755",
-      "sha256": "d1f657445181ba163e27cdfc42210b1382ec6ce2c5c27350db3baf69b33fc022",
+      "sha256": "ba652dd574990c9d33ba99543bd5b72508467a2e2a8e6c4797ff0eaa1888b506",
       "authorization": "DEC-7305",
-      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
+      "reason": "T-17 backup-before-replace + universal host registry (--agent '*' covers 30+ hosts); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/bootstrap-sps.sh",
@@ -158,11 +158,11 @@
     },
     {
       "path": "scripts/secret-scan.sh",
-      "expected_blob": "60757c2122337f677f667409ebc63ca1f6190d69",
+      "expected_blob": "5ed6cfd51bc4ef2db4a420f15c43c58b7b6a879a",
       "expected_mode": "100755",
-      "sha256": "d7b47596a691bf9847ed8ec032cc40c00f869e4c37e6225e619cc5c1a9333956",
+      "sha256": "f38eacc5270bc3d0b9f2c38d1a1265b42a9742711b1876d9d31fb952799e37cd",
       "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/skill-search.sh",
@@ -174,27 +174,27 @@
     },
     {
       "path": "scripts/smoke-sps.sh",
-      "expected_blob": "d5d1768118954530ab065cd778bf3e025732123f",
+      "expected_blob": "e9dd76f4a3bbe2976719ae84b9f3bdf0a909735f",
       "expected_mode": "100755",
-      "sha256": "3454728d629166a654c032c94aeb6303270af85997bac67e053da7731293f8ae",
+      "sha256": "9a9d095e4ca6d4c2c525efb5f9563fb833b8ec3f20e3c5647ba0d8b9fdea05ac",
       "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): smoke coverage for shell tools (bash -n all scripts, sps-status/lawlog/hygiene happy paths); pinned by DEC-7305 as amended 2026-10-18."
+      "reason": "tests/CI audit fix (T-20): smoke coverage for shell tools (bash -n all scripts, sps-status/lawlog/hygiene happy paths); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/sps-backup.sh",
-      "expected_blob": "e15c4dc770abec852483fa463b5a37cdfc37c77c",
+      "expected_blob": "6434e9d80da3ce428d3371210b6a91797a08e042",
       "expected_mode": "100755",
-      "sha256": "ed78e2dada0164a177198658a2700b13a13fc7d6d13f084b6633bee8e6bf3e2b",
+      "sha256": "8f322424a0ac5f19ba052ecb8febfa8949be66ef68b0e23c66f14c2b9cfa48e5",
       "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/sps-doctor.sh",
-      "expected_blob": "03cd8b35c89e46f7747babbe9b7397b4ec601731",
+      "expected_blob": "21ad6f3ef7c5902dd094ee976f80a39c1820202d",
       "expected_mode": "100755",
-      "sha256": "a15c9b501a353dd86fd421b665cf80eb525f65ee9a9e38ac9080096295154cbc",
+      "sha256": "1c60da7e9e6a5f91aa817c9350531b4de32ed631aabd8a5c6b7dcad18184d54f",
       "authorization": "DEC-7305",
-      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch)."
+      "reason": "sps-seo skill presence check added to doctor managed-skills audit; content and mode pinned by DEC-7301. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/sps-hook-gate.sh",
@@ -214,10 +214,10 @@
     },
     {
       "path": "scripts/sps-hygiene.sh",
-      "expected_blob": "008fdde256c285d83a1510c22d7dd16c8cc488bd",
-      "sha256": "b83c8088e065eab04457864d5efff52e8c291b9786e5850aa59d3540a5f18bdc",
+      "expected_blob": "88ab07e0d0e2b40b384823325fd19c01cfbeb876",
+      "sha256": "74dfdc9aea7b15e525605db5efb53c74d3562dfe9f75524110e5ddbbd52b5e3c",
       "expected_mode": "100755",
-      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch).",
+      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
       "authorization": "DEC-7305"
     },
     {
@@ -238,11 +238,11 @@
     },
     {
       "path": "scripts/sps-lesson.sh",
-      "expected_blob": "671742aaf5aa9d5d43a9e28d12d7ffa40baa7292",
+      "expected_blob": "7174a5a9c1b6ce2eab55271d8f6bdabf426f8672",
       "expected_mode": "100755",
-      "sha256": "b9c967b2f13be0c752b8dfb7d1421c9374e761323fa5cd76bfc3988f3d5d08ab",
+      "sha256": "aca4937f99341a5b9eccf83c1cc0b8d755bb1b6a675f0d2ec4b45152cad2e4bb",
       "authorization": "DEC-7305",
-      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
+      "reason": "Cross-project lesson capture/promotion (LESSONS.md); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/sps-provenance.sh",
@@ -270,11 +270,11 @@
     },
     {
       "path": "scripts/sps-update.sh",
-      "expected_blob": "7ef2ad45d3a03ab3ba8da0e95395794d33f27aab",
+      "expected_blob": "901f24d9abc814be467e00d7e3df6574d63692c2",
       "expected_mode": "100755",
-      "sha256": "c1390288ca8e8c340db7ab55dc68601ea9a981120bf3636721a63f632744d7be",
+      "sha256": "0ff090bb4865dfa18d074669a5850d10d06fdeb5f033fb3a95708adc1adc3d74",
       "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "scripts/update-sps.ps1",
@@ -318,11 +318,11 @@
     },
     {
       "path": "skill/sps/scripts/secret-scan.sh",
-      "expected_blob": "60757c2122337f677f667409ebc63ca1f6190d69",
+      "expected_blob": "5ed6cfd51bc4ef2db4a420f15c43c58b7b6a879a",
       "expected_mode": "100755",
-      "sha256": "d7b47596a691bf9847ed8ec032cc40c00f869e4c37e6225e619cc5c1a9333956",
+      "sha256": "f38eacc5270bc3d0b9f2c38d1a1265b42a9742711b1876d9d31fb952799e37cd",
       "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "skill/sps/scripts/skill-search.sh",
@@ -335,26 +335,26 @@
     {
       "path": "skill/sps/scripts/smoke-sps.sh",
       "authorization": "DEC-7305",
-      "reason": "tests/CI audit fix (T-20): byte-identical mirror resync with scripts/smoke-sps.sh primary (shell-tool smoke coverage); pinned by DEC-7305 as amended 2026-10-18.",
-      "expected_blob": "d5d1768118954530ab065cd778bf3e025732123f",
+      "reason": "tests/CI audit fix (T-20): byte-identical mirror resync with scripts/smoke-sps.sh primary (shell-tool smoke coverage); pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
+      "expected_blob": "e9dd76f4a3bbe2976719ae84b9f3bdf0a909735f",
       "expected_mode": "100755",
-      "sha256": "3454728d629166a654c032c94aeb6303270af85997bac67e053da7731293f8ae"
+      "sha256": "9a9d095e4ca6d4c2c525efb5f9563fb833b8ec3f20e3c5647ba0d8b9fdea05ac"
     },
     {
       "path": "skill/sps/scripts/sps-backup.sh",
-      "expected_blob": "e15c4dc770abec852483fa463b5a37cdfc37c77c",
+      "expected_blob": "6434e9d80da3ce428d3371210b6a91797a08e042",
       "expected_mode": "100755",
-      "sha256": "ed78e2dada0164a177198658a2700b13a13fc7d6d13f084b6633bee8e6bf3e2b",
+      "sha256": "8f322424a0ac5f19ba052ecb8febfa8949be66ef68b0e23c66f14c2b9cfa48e5",
       "authorization": "DEC-7305",
-      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
+      "reason": "T-24..T-37 hardening batch (backup/restore, secrets gate, hooks, init scaffold, provenance, weekly audit, CI workflows); Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator) Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "skill/sps/scripts/sps-doctor.sh",
       "authorization": "DEC-7305",
-      "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch).",
-      "expected_blob": "03cd8b35c89e46f7747babbe9b7397b4ec601731",
+      "reason": "Byte-identical mirror resync with scripts/sps-doctor.sh primary (sps-seo check + pre-rename path fallback); pinned by DEC-7305 as amended. Re-pinned 2026-10-17: context-budget checks added (CONTEXT-BUDGET.md). Re-pinned 2026-10-18: T-29 skill-provenance check added (concurrent agent edit, same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
+      "expected_blob": "21ad6f3ef7c5902dd094ee976f80a39c1820202d",
       "expected_mode": "100755",
-      "sha256": "a15c9b501a353dd86fd421b665cf80eb525f65ee9a9e38ac9080096295154cbc"
+      "sha256": "1c60da7e9e6a5f91aa817c9350531b4de32ed631aabd8a5c6b7dcad18184d54f"
     },
     {
       "path": "skill/sps/scripts/sps-hook-gate.sh",
@@ -374,10 +374,10 @@
     },
     {
       "path": "skill/sps/scripts/sps-hygiene.sh",
-      "expected_blob": "008fdde256c285d83a1510c22d7dd16c8cc488bd",
-      "sha256": "b83c8088e065eab04457864d5efff52e8c291b9786e5850aa59d3540a5f18bdc",
+      "expected_blob": "88ab07e0d0e2b40b384823325fd19c01cfbeb876",
+      "sha256": "74dfdc9aea7b15e525605db5efb53c74d3562dfe9f75524110e5ddbbd52b5e3c",
       "expected_mode": "100755",
-      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch).",
+      "reason": "T-20/T-23: law-log ledger + directory-hygiene checker (user-approved builds, 2026-10-18) Pinned by DEC-7305 amendment procedure. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom.",
       "authorization": "DEC-7305"
     },
     {
@@ -398,11 +398,11 @@
     },
     {
       "path": "skill/sps/scripts/sps-lesson.sh",
-      "expected_blob": "671742aaf5aa9d5d43a9e28d12d7ffa40baa7292",
+      "expected_blob": "7174a5a9c1b6ce2eab55271d8f6bdabf426f8672",
       "expected_mode": "100755",
-      "sha256": "b9c967b2f13be0c752b8dfb7d1421c9374e761323fa5cd76bfc3988f3d5d08ab",
+      "sha256": "aca4937f99341a5b9eccf83c1cc0b8d755bb1b6a675f0d2ec4b45152cad2e4bb",
       "authorization": "DEC-7305",
-      "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review)."
+      "reason": "Mirror of scripts/sps-lesson.sh (lesson channel) per CI mirror law; pinned by DEC-7305 as amended 2026-10-18. Re-pinned 2026-10-18: review subcommand now prints Problem/Rule/Applies-to per lesson with next actions (/sps lesson review). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "skill/sps/scripts/sps-provenance.sh",
@@ -430,11 +430,11 @@
     },
     {
       "path": "skill/sps/scripts/sps-update.sh",
-      "expected_blob": "7ef2ad45d3a03ab3ba8da0e95395794d33f27aab",
+      "expected_blob": "901f24d9abc814be467e00d7e3df6574d63692c2",
       "expected_mode": "100755",
-      "sha256": "c1390288ca8e8c340db7ab55dc68601ea9a981120bf3636721a63f632744d7be",
+      "sha256": "0ff090bb4865dfa18d074669a5850d10d06fdeb5f033fb3a95708adc1adc3d74",
       "authorization": "DEC-7201",
-      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
+      "reason": "Ratified updater-safety workstream; content and mode pinned by DEC-7301. Re-pinned 2026-10-18: shell-scripts audit fixes (same audit batch). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed. Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     },
     {
       "path": "skill/sps/scripts/update-sps.ps1",
@@ -470,11 +470,11 @@
     },
     {
       "path": "uninstall.sh",
-      "expected_blob": "c42c48a6ec01e10843b8185842ece85d01fd8f04",
+      "expected_blob": "ff099d71aed48898ac6efe9853cdc9e5eaedfd94",
       "expected_mode": "100755",
-      "sha256": "18d310cc504505f0fae238604f18c4de451d0c478d57b30413c141a2bdfb1384",
+      "sha256": "27d16a6a0ff8b3d025c5b6a89379a4d8070cc9863b098a803ff105f1832ad814",
       "authorization": "DEC-7305",
-      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: remaining empty-array :- expansions fixed."
+      "reason": "Package 3 (path-confinement guard safe_rm, symlink rejection) + sps-seo registration; content and mode pinned by DEC-7305. Re-pinned 2026-10-18: installer QA round-2 fixes (empty-array expansion, agent/sync-root registry parity, manifest preservation on core-only reinstall). Re-pinned 2026-10-18: scripts QA round-5 + bash-3.2 set -u safe array idiom."
     }
   ],
   "related_test_artifacts": [

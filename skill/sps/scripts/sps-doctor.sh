@@ -11,11 +11,17 @@ if [ -t 1 ]; then
 else
   GREEN=''; RED=''; YELLOW=''; CYAN=''; BOLD=''; DIM=''; NC=''
 fi
-PROJECT="${1:-}"
+PROJECT=""
 FIX=false
 for arg in "$@"; do
-  [[ "$arg" == "--fix" || "$arg" == "-f" ]] && FIX=true && PROJECT=""
+  if [[ "$arg" == "--fix" || "$arg" == "-f" ]]; then
+    FIX=true
+  else
+    # Non-flag argument = project dir (never wiped by seeing --fix).
+    PROJECT="$arg"
+  fi
 done
+PROJECT="${PROJECT:-${SPS_PROJECT_DIR:-}}"
 
 echo ""
 echo -e "${CYAN}${BOLD}SPS Doctor${NC}"

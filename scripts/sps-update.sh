@@ -27,6 +27,7 @@ for arg in "$@"; do
     --check) MODE="check" ;;
     --yes|-y) MODE="auto" ;;
     --force|-f) MODE="force" ;;
+    *) echo "unknown option: $arg (usage: sps-update.sh [--check|--yes|--force])" >&2; exit 1 ;;
   esac
 done
 
@@ -146,7 +147,7 @@ if [[ -f "$MANIFEST" ]]; then
     echo -e "${DIM}Preserving agents selection:${NC} $_saved_agents"
   fi
 fi
-bash ./install.sh --yes "${UPDATE_AGENT_ARGS[@]}"
+bash ./install.sh --yes "${UPDATE_AGENT_ARGS[@]+${UPDATE_AGENT_ARGS[@]}}"
 rc=$?
 if [[ $rc -ne 0 ]]; then
   bad "Reinstall failed (exit $rc). See ~/.sps/install.log"
