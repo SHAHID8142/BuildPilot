@@ -266,7 +266,7 @@ jobs:
           # import_exceptions.py each pin their manifest's canonical SHA-256
           # inside the module that verifies it, so a coordinated tamper could
           # edit manifest + constant together and pass every in-repo check.
-          # The expected hashes live in .github/manifest-anchors.env — a
+          # The expected hashes live in framework/sps2/governance/manifest-anchors.env — a
           # separate pinned file, because embedding them HERE would make the
           # workflow self-referential (this workflow is itself pinned in the
           # legacy manifest: workflow pins manifest hash, manifest pins
@@ -288,7 +288,7 @@ jobs:
               exit 1
             fi
             echo "manifest anchor OK: ${manifest} = ${actual}"
-          done < .github/manifest-anchors.env
+          done < framework/sps2/governance/manifest-anchors.env
 
       - name: sps2 validator + law + generated-test guards
         env:

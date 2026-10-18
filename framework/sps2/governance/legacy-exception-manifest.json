@@ -30,9 +30,9 @@
     },
     {
       "path": ".github/workflows/sps-ci.yml",
-      "expected_blob": "fa0e17ceef062b99a73d6d1b11ab0928ad794287",
+      "expected_blob": "a2c3ffee8f5aea7cbc4fe6e807b57cc715b52810",
       "expected_mode": "100644",
-      "sha256": "21088545720e55d9a331975103c875b48e5d3fd62e603b0de64e7b07e173cdae",
+      "sha256": "207c63e90ff51135e86d5ad7c4d5c6342ce1a4828cf2bd55b55f3ff57af692bd",
       "authorization": "DEC-7305",
       "reason": "tests/CI audit fix (T-20): validator-battery job added, MIN_TESTS raised to 1000, permissions/concurrency block added; pinned by DEC-7305 as amended 2026-10-18.; Re-pinned 2026-10-18: T-24..T-37 batch integration (orchestrator)"
     },

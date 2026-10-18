@@ -5,14 +5,14 @@ module that pins the manifest's canonical SHA-256 as a constant INSIDE
 itself, so a coordinated tamper could edit manifest + constant together and
 pass every in-repo check. This module enforces the dual anchor added by the
 audit fix: the same canonical hashes are pinned in
-.github/manifest-anchors.env (consumed by the sps-ci.yml validator-battery
+framework/sps2/governance/manifest-anchors.env (consumed by the sps-ci.yml validator-battery
 step) and cross-checked here. A coordinated edit must now touch the
 manifest, the module constant, the anchors file, AND this test before
 anything drifts silently. Accepted residual: anyone with repo write can
 still edit all of these surfaces; final detection remains git history + PR
 review.
 
-WHY .github/manifest-anchors.env AND NOT literals in sps-ci.yml itself:
+WHY framework/sps2/governance/manifest-anchors.env AND NOT literals in sps-ci.yml itself:
 sps-ci.yml is pinned in the legacy manifest, so embedding manifest hashes
 in it would self-reference (workflow pins manifest hash; manifest pins
 workflow bytes) and never converge. The anchors file is also pinned but
@@ -28,7 +28,7 @@ from framework.sps2.governance import import_exceptions, legacy_exceptions
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "sps-ci.yml"
-ANCHORS_FILE = REPO_ROOT / ".github" / "manifest-anchors.env"
+ANCHORS_FILE = REPO_ROOT / "framework" / "sps2" / "governance" / "manifest-anchors.env"
 
 # Anchor lines in manifest-anchors.env: "<manifest-path>:<64-hex>".
 _ANCHOR_LINE = re.compile(r"^(?P<manifest>[^#\s][^:]*):(?P<hash>[0-9a-f]{64})$", re.M)
