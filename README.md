@@ -203,6 +203,59 @@ aliases of sync). New to the skill? The one-page cheat sheet is at
 
 ---
 
+## How to talk to your agent (what to type, when)
+
+You never need special syntax — plain sentences work. But these phrasings
+trigger exactly the right behavior at each stage:
+
+**Starting a project** (in your project folder, with your agent open):
+
+```text
+/sps                                          ← start the workflow
+Build me a <what>, for <who>, deployed to <where>.   ← then answer the kickoff questions
+That's all the answers                        ← done with the questionnaire
+Confirm the platform                          ← your yes at the platform gate
+Approve the plan                              ← your yes before any code is written
+```
+
+**While it builds** — you're the foreman's boss, every section stops for you:
+
+```text
+Approve                                       ← yes to this section as shown
+Request changes: <what to change>             ← it fixes and re-asks
+Batch approve                                 ← let low-risk sections run without stopping
+Why?                                          ← it must explain before continuing
+I'll do that step now                         ← you're on an external step (API key, DNS)
+```
+
+**Checking and steering:**
+
+```text
+/sps status                                   ← "where am I?" — branch, queue, clocks
+/sps audit                                    ← score the project against the rules
+Stop. Let's discuss.                          ← full stop, nothing proceeds until you resume
+```
+
+**When something's wrong:**
+
+```text
+/sps doctor                                   ← install/host feels broken — run this first
+Here's what I saw: <paste the error>          ← report exactly what happened
+Capture a lesson: <what went wrong>           ← turn a mistake into a permanent rule
+```
+
+**Finishing:**
+
+```text
+/sps unlock                                   ← project done; final handoff
+```
+
+> Two habits worth keeping: never paste real secrets into the chat (put them
+> in `.env` yourself, masked in conversation), and when you don't understand
+> a gate, ask — "explain what you're deciding" — rather than approving blind.
+
+---
+
 ## Handy scripts (copy-paste, run from the repo root)
 
 Everyday maintenance — all safe, read-only unless noted:
