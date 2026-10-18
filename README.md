@@ -203,6 +203,62 @@ aliases of sync). New to the skill? The one-page cheat sheet is at
 
 ---
 
+## Handy scripts (copy-paste, run from the repo root)
+
+Everyday maintenance — all safe, read-only unless noted:
+
+```bash
+# Project dashboard — branch, queue, pending lessons, support clocks
+bash scripts/sps-status.sh
+
+# Health check — install, host, and skill integrity (add --fix to repair)
+bash scripts/sps-doctor.sh
+
+# Back up your project memory (.sps/) — keeps the last 10 snapshots
+bash scripts/sps-backup.sh snapshot
+
+# See all backup snapshots with sizes and ages
+bash scripts/sps-backup.sh list
+```
+
+Occasional but worth knowing:
+
+```bash
+# Scaffold a fresh client project for the SPS workflow (idempotent)
+bash scripts/sps-init.sh [target-dir]
+
+# Tidy up stray files — report only (add `fix` to safely move them to quarantine)
+bash scripts/sps-hygiene.sh
+
+# Check for updates without changing anything
+bash scripts/sps-update.sh --check
+
+# Roll back an installed skill to a previous backup (interactive picker)
+bash scripts/sps-restore.sh
+
+# Capture a lesson learned in this project, then send it to BuildPilot
+bash scripts/sps-lesson.sh capture "short title"
+bash scripts/sps-lesson.sh send          # shows everything first, asks before publishing
+```
+
+CI-style checks you can run locally (the same ones GitHub runs on every push):
+
+```bash
+# Scan for secret-shaped values before you push
+bash scripts/secret-scan.sh
+
+# Verify shipped third-party skills haven't been tampered with
+bash scripts/sps-provenance.sh check --strict
+
+# The referee's own report card — are all SPS laws currently satisfied?
+python3 framework/sps2/tools/check_laws.py .
+
+# Full smoke test of the skillset
+bash scripts/smoke-sps.sh
+```
+
+---
+
 ## What's in this repository (two things, clearly separated)
 
 | | The **skill** (`skill/`) | The **framework** (`framework/`) |
