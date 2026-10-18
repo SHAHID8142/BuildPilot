@@ -23,7 +23,9 @@ Each section ends with a user manual check before the next section starts.
   skill/sps/COMPANY-LIFECYCLE.md (1 month all-type support + 1 month free
   SEO standard on every completed job).
 
-## BUPT alias
-"BUPT" is the User's shortcut for this project's SPS skill: when the User says
-"load bupt" (or any variant), read `skill/sps/SKILL.md` and operate as the SPS
-workflow from `skill/sps/`. Same thing as `/sps`.
+## Skill alias (BUPT / BuildPilot)
+"BUPT" and "BuildPilot" are the User's shortcuts for this project's SPS skill:
+when the User says "load bupt", "load BuildPilot", "load the BuildPilot", or
+any variant — with or without the word "SPS" — read `skill/sps/SKILL.md` and
+operate as the SPS workflow from `skill/sps/`. Same thing as `/sps`. Never
+ask the User to repeat it with a different name; the alias is already enough.
